@@ -3,7 +3,7 @@ import routes from "../constants/routes";
 import { LoginPage } from "../pages/login";
 import { RegisterAccountPage } from "../pages/register";
 import { Dashboard } from "../layouts/dashboard";
-import { AccountListPage } from "../pages/account/list";
+import { AccountListPage } from "../pages/accounts/list";
 import { CourseListPage } from "../pages/course/list";
 import { CourseDetailPage } from "../pages/course/detail";
 import RootRoute from "./RootRoute";
@@ -20,6 +20,11 @@ import SemesterDetailPage from "../pages/semester/detail";
 import TeamDetailPage from "../pages/team/detail";
 import StudentTeamReportPage from "../pages/report/student";
 import ProjectReportDetailPage from "../pages/report/detail";
+import { HomePage } from "../pages/home";
+import { MaterialListPage } from "../pages/materials/list";
+import { MaterialTypeListPage } from "../pages/material-types/list";
+import { ItemTypeListPage } from "../pages/item-types/list";
+import { ItemListPage } from "../pages/items/list";
 
 export const router = createBrowserRouter([
 	{
@@ -40,10 +45,41 @@ export const router = createBrowserRouter([
 				element: <Dashboard />,
 				children: [
 					{
+						path: routes.dashboard.home,
+						element: <HomePage />,
+					},
+					{
 						path: routes.dashboard.accounts,
 						element: <AccountListPage />,
 					},
+					{
+						path: routes.dashboard.orders,
+						element: <AccountListPage />,
+					},
+					{
+						path: routes.dashboard.quotes,
+						element: <AccountListPage />,
+					},
+					{
+						path: routes.dashboard.materials,
+						element: <MaterialListPage />,
+					},
+					{
+						path: routes.dashboard.materialTypes,
+						element: <MaterialTypeListPage />,
+					},
+					{
+						path: routes.dashboard.items,
+						element: <ItemListPage />,
+					},
+					{
+						path: routes.dashboard.itemTypes,
+						element: <ItemTypeListPage />,
+					},
 
+					//
+					// old routes
+					//
 					{
 						path: routes.dashboard.courses,
 						element: <CourseListPage />,

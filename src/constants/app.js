@@ -1,153 +1,212 @@
 import { TaskStatus } from "./enum";
+import logoUrlBig from '../assets/images/logo.png';
+import logoUrlMedium from '../assets/images/logo-256.png';
+import logoUrl from '../assets/images/logo-128.png';
+
+export { logoUrlBig, logoUrlMedium, logoUrl };
 
 export const roles = {
 	ADMIN: "Admin",
 	FACTORY: "Factory",
-	LEADER: "Leader",
+	LEADER: "Manager",
 	WORKER: "Worker",
 };
 
 export const ALL_PERMISSIONS = {
-	account: {
-		view: "account.view",
-		create: "account.create",
-		update: "account.update",
-		sider: "account.sider",
+	accounts: {
+		view: "accounts.view",
+		create: "accounts.create",
+		update: "accounts.update",
+		sider: "accounts.sider",
 	},
-	class: {
-		view: "class.view",
-		create: "class.create",
-		update: "class.update",
-		delete: "class.delete",
-		enroll: "class.enroll",
-		settings: "class.settings",
-		sider: "class.sider",
+	orders: {
+		view: "orders.view",
+		create: "orders.create",
+		update: "orders.update",
+		sider: "orders.sider",
 	},
-	course: {
-		view: "course.view",
-		create: "course.create",
-		update: "course.update",
-		delete: "course.delete",
-		sider: "course.sider",
+	quotes: {
+		view: "quotes.view",
+		create: "quotes.create",
+		update: "quotes.update",
+		sider: "quotes.sider",
 	},
-	project: {
-		view: "project.view",
-		create: "project.create",
-		update: "project.update",
-		delete: "project.delete",
-		sider: "project.sider",
+	//
+	materials: {
+		view: "materials.view",
+		create: "materials.create",
+		update: "materials.update",
+		sider: "materials.sider",
 	},
-	team: {
-		view: "team.view",
-		create: "team.create",
-		update: "team.update",
-		delete: "team.delete",
-		sider: "team.sider",
+	materialTypes: {
+		view: "materialTypes.view",
+		create: "materialTypes.create",
+		update: "materialTypes.update",
+		sider: "materialTypes.sider",
 	},
-	task: {
-		view: "task.view",
-		create: "task.create",
-		update: "task.update",
-		delete: "task.delete",
+	items: {
+		view: "items.view",
+		create: "items.create",
+		update: "items.update",
+		sider: "items.sider",
 	},
-	report: {
-		view: "report.view",
-		sider: "report.sider",
+	itemTypes: {
+		view: "itemTypes.view",
+		create: "itemTypes.create",
+		update: "itemTypes.update",
+		sider: "itemTypes.sider",
 	},
-	semester: {
-		sider: "semester.sider",
-		view: "semester.view",
-		create: "semester.create",
-		update: "semester.update",
-		delete: "semester.delete",
+	employees: {
+		view: "employees.view",
+		create: "employees.create",
+		update: "employees.update",
+		sider: "employees.sider",
+	},
+	groups: {
+		view: "groups.view",
+		create: "groups.create",
+		update: "groups.update",
+		sider: "groups.sider",
+	},
+	managersTasks: {
+		view: "managersTasks.view",
+		create: "managersTasks.create",
+		update: "managersTasks.update",
+		sider: "managersTasks.sider",
+	},
+	managersReports: {
+		view: "managersReports.view",
+		create: "managersReports.create",
+		update: "managersReports.update",
+		sider: "managersReports.sider",
+	},
+	//
+	workers: {
+		view: "workers.view",
+		create: "workers.create",
+		update: "workers.update",
+		sider: "workers.sider",
+	},
+	workersTasks: {
+		view: "workersTasks.view",
+		create: "workersTasks.create",
+		update: "workersTasks.update",
+		sider: "workersTasks.sider",
+	},
+	workersReports: {
+		view: "workersReports.view",
+		create: "workersReports.create",
+		update: "workersReports.update",
+		sider: "workersReports.sider",
+	},
+	//
+	tasks: {
+		view: "tasks.view",
+		create: "tasks.create",
+		update: "tasks.update",
+		sider: "tasks.sider",
+	},
+	reports: {
+		view: "reports.view",
+		create: "reports.create",
+		update: "reports.update",
+		sider: "reports.sider",
 	},
 };
 
 export const USER_PERMISSIONS = {
 	[roles.ADMIN]: [
-		// ACCOUNT
-		ALL_PERMISSIONS.account.sider,
-		ALL_PERMISSIONS.account.view,
-		ALL_PERMISSIONS.account.create,
-		ALL_PERMISSIONS.account.update,
-		// CLASS
-		ALL_PERMISSIONS.class.sider,
-		ALL_PERMISSIONS.class.view,
-		ALL_PERMISSIONS.class.create,
-		ALL_PERMISSIONS.class.update,
-		ALL_PERMISSIONS.class.delete,
-		ALL_PERMISSIONS.class.settings,
-		// COURSE
-		ALL_PERMISSIONS.course.sider,
-		ALL_PERMISSIONS.course.view,
-		ALL_PERMISSIONS.course.create,
-		ALL_PERMISSIONS.course.update,
-		ALL_PERMISSIONS.course.delete,
-		// PROJECT
-		ALL_PERMISSIONS.project.view,
-		ALL_PERMISSIONS.project.create,
-		ALL_PERMISSIONS.project.update,
-		ALL_PERMISSIONS.project.delete,
-		//TEAM
-		ALL_PERMISSIONS.team.view,
-		ALL_PERMISSIONS.team.create,
-		ALL_PERMISSIONS.team.update,
-		ALL_PERMISSIONS.team.delete,
-		//TASK
-		ALL_PERMISSIONS.task.view,
-		ALL_PERMISSIONS.task.create,
-		ALL_PERMISSIONS.task.update,
-		ALL_PERMISSIONS.task.delete,
-		// SEMESTER
-		ALL_PERMISSIONS.semester.sider,
-		ALL_PERMISSIONS.semester.view,
-		ALL_PERMISSIONS.semester.create,
-		ALL_PERMISSIONS.semester.update,
-		ALL_PERMISSIONS.semester.delete,
+		// ACCOUNTS
+		ALL_PERMISSIONS.accounts.sider,
+		ALL_PERMISSIONS.accounts.view,
+		ALL_PERMISSIONS.accounts.create,
+		ALL_PERMISSIONS.accounts.update,
+		// ORDERS
+		ALL_PERMISSIONS.orders.sider,
+		ALL_PERMISSIONS.orders.view,
+		ALL_PERMISSIONS.orders.create,
+		ALL_PERMISSIONS.orders.update,
+		// QUOTES
+		ALL_PERMISSIONS.quotes.sider,
+		ALL_PERMISSIONS.quotes.view,
+		ALL_PERMISSIONS.quotes.create,
+		ALL_PERMISSIONS.quotes.update,
 	],
 	[roles.FACTORY]: [
-		// CLASS
-		ALL_PERMISSIONS.class.sider,
-		ALL_PERMISSIONS.class.view,
-		ALL_PERMISSIONS.class.update,
-		ALL_PERMISSIONS.class.delete,
-		ALL_PERMISSIONS.class.settings,
-		// COURSE
-		ALL_PERMISSIONS.course.view,
-		// PROJECT
-		ALL_PERMISSIONS.project.view,
-		ALL_PERMISSIONS.project.create,
-		ALL_PERMISSIONS.project.update,
-		ALL_PERMISSIONS.project.delete,
-		//TEAM
-		ALL_PERMISSIONS.team.view,
-		//TASK
-		ALL_PERMISSIONS.task.view,
-		// REPORT
-		ALL_PERMISSIONS.report.sider,
-		ALL_PERMISSIONS.report.view,
+		// QUOTES
+		ALL_PERMISSIONS.quotes.sider,
+		ALL_PERMISSIONS.quotes.view,
+		ALL_PERMISSIONS.quotes.create,
+		ALL_PERMISSIONS.quotes.update,
+		// materials
+		ALL_PERMISSIONS.materials.sider,
+		ALL_PERMISSIONS.materials.view,
+		ALL_PERMISSIONS.materials.create,
+		ALL_PERMISSIONS.materials.update,
+		// materialTypes
+		ALL_PERMISSIONS.materialTypes.sider,
+		ALL_PERMISSIONS.materialTypes.view,
+		ALL_PERMISSIONS.materialTypes.create,
+		ALL_PERMISSIONS.materialTypes.update,
+		// items
+		ALL_PERMISSIONS.items.sider,
+		ALL_PERMISSIONS.items.view,
+		ALL_PERMISSIONS.items.create,
+		ALL_PERMISSIONS.items.update,
+		// itemTypes
+		ALL_PERMISSIONS.itemTypes.sider,
+		ALL_PERMISSIONS.itemTypes.view,
+		ALL_PERMISSIONS.itemTypes.create,
+		ALL_PERMISSIONS.itemTypes.update,
+		// employees
+		ALL_PERMISSIONS.employees.sider,
+		ALL_PERMISSIONS.employees.view,
+		ALL_PERMISSIONS.employees.create,
+		ALL_PERMISSIONS.employees.update,
+		// groups
+		ALL_PERMISSIONS.groups.sider,
+		ALL_PERMISSIONS.groups.view,
+		ALL_PERMISSIONS.groups.create,
+		ALL_PERMISSIONS.groups.update,
+		// managersTasks
+		ALL_PERMISSIONS.managersTasks.sider,
+		ALL_PERMISSIONS.managersTasks.view,
+		ALL_PERMISSIONS.managersTasks.create,
+		ALL_PERMISSIONS.managersTasks.update,
+		// managersReports
+		ALL_PERMISSIONS.managersReports.sider,
+		ALL_PERMISSIONS.managersReports.view,
+		ALL_PERMISSIONS.managersReports.create,
+		ALL_PERMISSIONS.managersReports.update,
+	],
+	[roles.LEADER]: [
+		// workers
+		ALL_PERMISSIONS.workers.sider,
+		ALL_PERMISSIONS.workers.view,
+		ALL_PERMISSIONS.workers.create,
+		ALL_PERMISSIONS.workers.update,
+		// workersTasks
+		ALL_PERMISSIONS.workersTasks.sider,
+		ALL_PERMISSIONS.workersTasks.view,
+		ALL_PERMISSIONS.workersTasks.create,
+		ALL_PERMISSIONS.workersTasks.update,
+		// workersReports
+		ALL_PERMISSIONS.workersReports.sider,
+		ALL_PERMISSIONS.workersReports.view,
+		ALL_PERMISSIONS.workersReports.create,
+		ALL_PERMISSIONS.workersReports.update,
 	],
 	[roles.WORKER]: [
-		// CLASS
-		ALL_PERMISSIONS.class.sider,
-		ALL_PERMISSIONS.class.view,
-		ALL_PERMISSIONS.class.enroll,
-		// COURSE
-		ALL_PERMISSIONS.course.view,
-		// PROJECT
-		ALL_PERMISSIONS.project.sider,
-		ALL_PERMISSIONS.project.view,
-		//TEAM
-		ALL_PERMISSIONS.team.sider,
-		ALL_PERMISSIONS.team.view,
-		ALL_PERMISSIONS.team.create,
-		ALL_PERMISSIONS.team.update,
-		ALL_PERMISSIONS.team.delete,
-		// TASK
-		ALL_PERMISSIONS.task.view,
-		ALL_PERMISSIONS.task.create,
-		ALL_PERMISSIONS.task.update,
-		ALL_PERMISSIONS.task.delete,
+		// tasks
+		ALL_PERMISSIONS.tasks.sider,
+		ALL_PERMISSIONS.tasks.view,
+		ALL_PERMISSIONS.tasks.create,
+		ALL_PERMISSIONS.tasks.update,
+		// reports
+		ALL_PERMISSIONS.reports.sider,
+		ALL_PERMISSIONS.reports.view,
+		ALL_PERMISSIONS.reports.create,
+		ALL_PERMISSIONS.reports.update,
 	],
 };
 

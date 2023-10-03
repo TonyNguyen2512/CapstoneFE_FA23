@@ -1,5 +1,5 @@
 import BaseApi from ".";
-import { mockAccounts } from "../__mocks__/account";
+import { mockAccounts } from "../__mocks__/accounts";
 
 const login = async (email, password) => {
 	try {
@@ -12,7 +12,7 @@ const login = async (email, password) => {
 		// 	localStorage.setItem("jwt", jwt);
 		// 	return true;
 		// }
-		let user = mockAccounts.find((item) => item.email === email && item.password === password)
+		let user = mockAccounts.find((item) => (item.email === email || item.username === email) && item.password === password)
 		if (!!user) {
 			localStorage.setItem("user", JSON.stringify(user));
 			return true

@@ -1,12 +1,14 @@
 import BaseApi from ".";
+import { mockAccounts } from "../__mocks__/accounts";
 
 const resource = "Users";
 
 export const searchUsers = async (keyword) => {
 	try {
-		const query = keyword ? `?search=${keyword}` : "";
-		const response = await BaseApi.get(`/${resource}/SearchUser${query}`);
-		return response.data;
+		// const query = keyword ? `?search=${keyword}` : "";
+		// const response = await BaseApi.get(`/${resource}/SearchUser${query}`);
+		// return response.data;
+		return mockAccounts;
 	} catch (error) {
 		console.log("Error search users: ", error);
 		return [];

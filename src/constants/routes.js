@@ -4,12 +4,34 @@ const routes = {
 	register: "/register",
 	dashboard: {
 		root: "/dashboard",
+		home: "home",
+		profile: "profile",
+		// admin
+		accounts: "accounts",
+		orders: "orders",
+		quotes: "quotes", // factory
+		// factory
+		materials: "materials",
+		materialTypes: "material-types",
+		items: "items",
+		itemTypes: "item-types",
+		employees: "employees",
+		groups: "groups",
+		managersTasks: "managers-tasks",
+		managersReports: "managers-reports",
+		// leader / manager
+		workers: "workers",
+		workersTasks: "workers-tasks",
+		workersReports: "workers-reports",
+		// worker
+		tasks: "tasks",
+		reports: "reports",
+
+		// old //
 		courses: "courses",
 		classes: "classes",
-		accounts: "accounts",
 		projects: "projects",
 		teams: "teams",
-		profile: "profile",
 		teamRequest: "team-requests",
 		report: "team-report",
 		semester: "semester",

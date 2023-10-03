@@ -1,0 +1,72 @@
+/* Variables */
+:root {
+  --primary: #ddb850;
+  --info: #1e90ff;
+  --success: #29cb00;
+  --danger: #ff0000;
+  --light-gray: #ddd;
+  --dark-gray: #333;
+  --gray: #666;
+  /* for pastel theme */
+  --pastel-warning: #f1ca7f;
+  --pastel-success: #59e077;
+  --pastel-danger: #ff7777;
+}
+/* Color-set Customized Fields */
+.app-text-primary {
+  color: var(--primary);
+}
+.app-fill-primary {
+  fill: var(--primary);
+}
+.app-border-primary {
+  border: 2px solid var(--primary);
+}
+.app-bg-primary {
+  background-color: var(--primary);
+}
+.btn-primary:hover {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  opacity: 0.9;
+}
+
+/* Initial Values */
+html,
+body {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.circle {
+  border-radius: 50%;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* a,
+i,
+p,
+span,
+h1,
+h2,
+h3,
+h4,
+h5 {
+  color: #333;
+} */

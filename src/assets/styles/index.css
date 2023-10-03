@@ -1,0 +1,9 @@
+@import url(/src/assets/styles/init.css);
+@import url(/src/assets/styles/layout.css);
+@import url(/src/assets/styles/tailwind.css);
+
+/* Global styles */
+html,
+body {
+  font-family: "Roboto", sans-serif;
+}

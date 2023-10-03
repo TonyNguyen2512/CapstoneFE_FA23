@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Overrides for tailwind */
+.dashboard-sider.ant-layout-sider,
+.dashboard-sider .ant-layout-sider-trigger {
+  border-right: 1px solid #ddd !important;
+}
+
+.activity-sider.ant-layout-sider {
+  border-left: 1px solid #ddd !important;
+}
