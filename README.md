@@ -1,1 +1,1 @@
-# JAMA Decor Frontend Repository
+# CapstoneFE_FA23
