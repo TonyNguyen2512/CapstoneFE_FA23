@@ -28,7 +28,7 @@ const ItemTypeList = () => {
     //   return 0; // no change in order
     // });
     // setItemTypeList(data);
-    setItemTypeList(mockItemTypes);
+    setItemTypeList([]);
     setLoading(false);
   };
 

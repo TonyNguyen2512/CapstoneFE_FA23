@@ -1,0 +1,137 @@
+export const mockTasks = [
+  {
+    id: "1",
+    name: "Đơn 1",
+    description: "Đơn 1",
+    timeStart: new Date("2022-01-01"),
+    timeEnd: new Date("2022-10-01"),
+    completedTime: new Date("2022-10-01"),
+    productCompleted: 1,
+    productFailed: 0,
+    status: 5,
+    isDeleted: false
+  },
+  {
+    id: "2",
+    name: "Đơn 2",
+    description: "Đơn 2",
+    timeStart: new Date("2022-10-22"),
+    timeEnd: new Date("2023-01-01"),
+    completedTime: new Date("2023-01-01"),
+    productCompleted: 1,
+    productFailed: 0,
+    status: 5,
+    isDeleted: false
+  },
+  {
+    id: "3",
+    name: "Đơn 3",
+    description: "Đơn 3",
+    timeStart: new Date("2023-04-01"),
+    timeEnd: new Date("2023-05-01"),
+    completedTime: new Date("2023-05-01"),
+    productCompleted: 0,
+    productFailed: 1,
+    status: 5,
+    isDeleted: false
+  },
+  {
+    id: "4",
+    name: "Đơn 4",
+    description: "Đơn 4",
+    timeStart: new Date("2023-04-01"),
+    timeEnd: new Date("2023-05-01"),
+    completedTime: null,
+    productCompleted: 0,
+    productFailed: 1,
+    status: 3,
+    isDeleted: false,
+  },
+  {
+    id: "5",
+    name: "Đơn 5",
+    description: "Đơn 5",
+    timeStart: new Date("2023-04-01"),
+    timeEnd: new Date("2023-05-01"),
+    completedTime: null,
+    productCompleted: 0,
+    productFailed: 1,
+    status: 2,
+    isDeleted: false
+  },
+  {
+    id: "6",
+    name: "Đơn 6",
+    description: "Đơn 6",
+    timeStart: new Date("2023-04-01"),
+    timeEnd: new Date("2023-05-01"),
+    completedTime: null,
+    productCompleted: 0,
+    productFailed: 1,
+    status: 4,
+    isDeleted: false
+  },
+  {
+    id: "7",
+    name: "Đơn 7",
+    description: "Đơn 7",
+    timeStart: new Date("2023-04-01"),
+    timeEnd: new Date("2023-05-01"),
+    completedTime: null,
+    productCompleted: 0,
+    productFailed: 1,
+    status: 4,
+    isDeleted: false
+  },
+];
+
+export const enumTaskStatuses = [
+  {
+    id: "0",
+    enum: "Created",
+    name: "Đã Tạo",
+    color: "",
+  },
+  {
+    id: "1",
+    enum: "WaitingForActivation",
+    name: "Chờ Kích Hoạt",
+    color: "",
+  },
+  {
+    id: "2",
+    enum: "WaitingToRun",
+    name: "Trong Hàng Đợi",
+    color: "",
+  },
+  {
+    id: "3",
+    enum: "Running",
+    name: "Đang Tiến Hành",
+    color: "",
+  },
+  {
+    id: "4",
+    enum: "WaitingForChildrenToComplete",
+    name: "Đang Chờ Công việc Khác",
+    color: "",
+  },
+  {
+    id: "5",
+    enum: "RanToCompletion",
+    name: "Đã Hoàn Thành",
+    color: "",
+  },
+  {
+    id: "6",
+    enum: "Canceled",
+    name: "Đã Huỷ",
+    color: "",
+  },
+  {
+    id: "7",
+    enum: "Faulted",
+    name: "Có Lỗi Xảy Ra",
+    color: "",
+  },
+]

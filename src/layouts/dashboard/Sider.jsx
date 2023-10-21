@@ -10,6 +10,7 @@ import {
   DataUser,
   CategoryManagement,
   AdjacentItem,
+  FileEditing,
 } from "@icon-park/react";
 import { Menu, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -54,9 +55,11 @@ export const AppSider = () => {
 
   const itemKeys = {
     DASHBOARD: "DASHBOARD",
+    //
     ACCOUNTS: "MANAGE_ACCOUNTS",
     ORDERS: "MANAGE_ORDERS",
     QUOTES: "MANAGE_QUOTES",
+    //
     P_MATERIALS: "P_MATERIALS",
     MATERIALS: "MANAGE_MATERIALS",
     MATERIAL_TYPES: "MANAGE_MATERIAL_TYPES",
@@ -68,6 +71,13 @@ export const AppSider = () => {
     GROUPS: "MANAGE_GROUPS",
     MANAGERS_TASKS: "MANAGE_MANAGERS_TASKS",
     MANAGERS_REPORTS: "MANAGE_MANAGERS_REPORTS",
+    //
+    WORKERS: "MANAGE_WORKERS",
+    WORKERS_TASKS: "MANAGE_WORKERS_TASKS",
+    WORKERS_REPORTS: "MANAGE_WORKERS_REPORTS",
+    //
+    TASKS: "MANAGE_TASKS",
+    REPORTS: "MANAGE_REPORTS",
   };
   const iconSize = 20;
   const items = [
@@ -81,17 +91,17 @@ export const AppSider = () => {
       icon: <UserOutlined size={iconSize} />,
       label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
     },
-    canViewOrders && {
-      key: itemKeys.ORDERS,
-      icon: <FormOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Đơn đặt hàng</Link>,
-    },
-    canViewQuotes && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
-    {
+    // canViewOrders && {
+    //   key: itemKeys.ORDERS,
+    //   icon: <FormOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Đơn đặt hàng</Link>,
+    // },
+    // canViewQuotes && {
+    //   key: itemKeys.QUOTES,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    // },
+    (canViewMaterialTypes || canViewMaterials) && {
       key: itemKeys.P_MATERIALS,
       icon: <BuildOutlined size={iconSize} />,
       label: "Nguyên vật liệu",
@@ -108,7 +118,7 @@ export const AppSider = () => {
         },
       ],
     },
-    {
+    (canViewItemTypes || canViewItems) && {
       key: itemKeys.P_ITEMS,
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
@@ -125,7 +135,7 @@ export const AppSider = () => {
         },
       ],
     },
-    {
+    (canViewEmployees || canViewGroups) && {
       key: itemKeys.P_EMPLOYEES,
       icon: <DataUser size={iconSize - 2} />,
       label: "Nhân sự",
@@ -154,29 +164,30 @@ export const AppSider = () => {
     },
     //
     canViewWorkers && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+      key: itemKeys.WORKERS,
+      icon: <FileDoneOutlined size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.root}>Quản lý công nhân</Link>,
     },
     canViewWorkersTasks && {
-      key: itemKeys.QUOTES,
+      key: itemKeys.WORKERS_TASKS,
       icon: <FileDoneOutlined size={iconSize} />,
       label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
     },
     canViewWorkersReports && {
-      key: itemKeys.QUOTES,
+      key: itemKeys.WORKERS_REPORTS,
       icon: <FileDoneOutlined size={iconSize} />,
       label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
     },
+    //
     canViewTasks && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+      key: itemKeys.TASKS,
+      icon: <ListView size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.tasks}>Công việc</Link>,
     },
     canViewReports && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+      key: itemKeys.REPORTS,
+      icon: <FileEditing size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.reports}>Danh sách đánh giá</Link>,
     },
   ];
 

@@ -2,7 +2,7 @@ import axios from "axios";
 import config from "../constants/config";
 
 const BaseApi = axios.create({
-	baseURL: config.BASE_URL,
+	baseURL: process.env.REACT_APP_API_URL,
 });
 
 BaseApi.interceptors.request.use(
