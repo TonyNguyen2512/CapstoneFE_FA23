@@ -56,8 +56,8 @@ const ProfilePage = () => {
               <Form.Item name="fullName" label="Họ và tên">
                 <Input placeholder="Họ và tên..." defaultValue={user?.fullName} />
               </Form.Item>
-              <Form.Item name="birthday" label="Sinh nhật">
-                <Input placeholder="Sinh nhật..." defaultValue={user?.birthday} />
+              <Form.Item name="dob" label="Sinh nhật">
+                <Input placeholder="Sinh nhật..." defaultValue={user?.dob} />
               </Form.Item>
               <Form.Item name="address" label="Địa chỉ">
                 <Input placeholder="Địa chỉ..." defaultValue={user?.address} />

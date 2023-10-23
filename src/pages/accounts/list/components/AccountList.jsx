@@ -21,15 +21,28 @@ const AccountList = () => {
     setAccountLoading(true);
     const data = await UserApi.searchUsers(keyword);
     data.sort((a, b) => {
-      if (a.role === roles.ADMIN) {
+      if (a.role.name === roles.ADMIN) {
         return -1; // a comes before b
       }
-      if (b.role === roles.ADMIN) {
+      if (b.role.name === roles.ADMIN) {
         return 1; // b comes before a
       }
       return 0; // no change in order
     });
-    setAccounts(data);
+    // data.map((d) => {
+    //   return {
+    //     ...d,
+    //     role: d.role?.name || "",
+    //   };
+    // });
+    setAccounts(
+      data.map((d) => {
+        return {
+          ...d,
+          role: d.role?.name || "",
+        };
+      })
+    );
     setAccountLoading(false);
   };
 
@@ -101,12 +114,12 @@ const AccountList = () => {
       key: "fullName",
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
-    {
-      title: "Ngày sinh",
-      dataIndex: "birthday",
-      key: "birthday",
-      sorter: (a, b) => a.birthday.localeCompare(b.birthday),
-    },
+    // {
+    //   title: "Ngày sinh",
+    //   dataIndex: "birthday",
+    //   key: "birthday",
+    //   sorter: (a, b) => a.birthday.localeCompare(b.birthday),
+    // },
     {
       title: "Địa chỉ",
       dataIndex: "address",
@@ -115,16 +128,16 @@ const AccountList = () => {
     },
     {
       title: "Số điện thoại",
-      dataIndex: "phone",
-      key: "phone",
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      dataIndex: "userName",
+      key: "userName",
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
     },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    //   sorter: (a, b) => a.email.localeCompare(b.email),
-    // },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
     {
       title: "Vai trò",
       dataIndex: "role",

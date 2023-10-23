@@ -1,10 +1,11 @@
 {
   "name": "jama-decor-fe",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@icon-park/react": "^1.4.2",
+    "@microsoft/signalr": "^7.0.12",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -35,6 +36,7 @@
   },
   "scripts": {
     "dev": "react-scripts start --watchAll",
+    "mindev": "react-scripts start --max-old-space-size=2048",
     "build": "react-scripts build",
     "start": "react-scripts start",
     "eject": "react-scripts eject"

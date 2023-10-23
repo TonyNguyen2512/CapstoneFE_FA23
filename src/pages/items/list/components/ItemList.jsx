@@ -2,9 +2,9 @@ import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Modal, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { roles } from "../../../../constants/app";
 import { UpdateItemModal } from "../../components/UpdateItemModal";
 import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
+import ItemApi from "../../../../apis/item";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -14,22 +14,13 @@ const ItemList = () => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const userRef = useRef();
-  const rolesRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setItemList(data);
-    setItemList(mockItems);
+    const response = await ItemApi.getAllItem(keyword);
+    console.log(response.data);
+    setItemList(response.data);
+    // setItemList(mockItems);
     setLoading(false);
   };
 
@@ -44,9 +35,6 @@ const ItemList = () => {
     setPreviewUrl("");
     setIsModalOpen(false);
   };
-  useEffect(() => {
-    getData();
-  }, []);
 
   const getActionItems = (record) => {
     const { isActive, id } = record;
@@ -107,13 +95,6 @@ const ItemList = () => {
       },
       sorter: (a, b) => a.typeId.localeCompare(b.typeId),
     },
-    // {
-    //   title: "Số lượng",
-    //   dataIndex: "quantity",
-    //   key: "quantity",
-    //   align: "center",
-    //   sorter: (a, b) => a.quantity.localeCompare(b.quantity),
-    // },
     {
       title: "Đơn giá",
       dataIndex: "amount",
@@ -125,35 +106,6 @@ const ItemList = () => {
       },
       sorter: (a, b) => a.amount.localeCompare(b.amount),
     },
-    // {
-    //   title: "Tình trạng",
-    //   dataIndex: "isActive",
-    //   key: "isActive",
-    //   width: "30%",
-    //   align: "center",
-    //   render: (_, { isActive }) => {
-    //     return (
-    //       <span style={{ color: isActive ? "#29CB00" : "#FF0000" }}>
-    //         {isActive ? "Đang hoạt động" : "Không hoạt động"}
-    //       </span>
-    //     );
-    //   },
-    //   sorter: (a, b) => a.isActive - b.isActive,
-    //   filter: {
-    //     placeholder: "Chọn trạng thái",
-    //     label: "Trạng thái",
-    //     filterOptions: [
-    //       {
-    //         label: "Đang hoạt động",
-    //         value: false,
-    //       },
-    //       {
-    //         label: "Khóa",
-    //         value: true,
-    //       },
-    //     ],
-    //   },
-    // },
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -172,6 +124,10 @@ const ItemList = () => {
   const handleSearch = (value) => {
     getData(value);
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <>

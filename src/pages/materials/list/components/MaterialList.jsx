@@ -2,9 +2,9 @@ import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Modal, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { roles } from "../../../../constants/app";
 import { UpdateMaterialModal } from "../../components/UpdateMaterialModal";
 import { mockMaterialTypes, mockMaterials } from "../../../../__mocks__/jama/materials";
+import MaterialApi from "../../../../apis/material";
 
 const MaterialList = () => {
   const [loading, setLoading] = useState(false);
@@ -14,22 +14,13 @@ const MaterialList = () => {
   const [previewUrl, setPreviewUrl] = useState("");
 
   const userRef = useRef();
-  const rolesRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setMaterialList(data);
-    setMaterialList(mockMaterials);
+    const response = await MaterialApi.getAllMaterial(keyword);
+
+    setMaterialList(response.data);
+    // setMaterialList(mockMaterials);
     setLoading(false);
   };
 

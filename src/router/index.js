@@ -25,6 +25,8 @@ import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
 import { ItemTypeListPage } from "../pages/item-types/list";
 import { ItemListPage } from "../pages/items/list";
+import { TaskListPage } from "../pages/tasks/list";
+import { TaskDetailsPage } from "../pages/tasks/details";
 
 export const router = createBrowserRouter([
 	{
@@ -74,6 +76,19 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: routes.dashboard.itemTypes,
+						element: <ItemTypeListPage />,
+					},
+					//
+					{
+						path: routes.dashboard.tasks,
+						element: <TaskListPage />,
+					},
+					{
+						path: `${routes.dashboard.tasks}/:id`,
+						element: <TaskDetailsPage />,
+					},
+					{
+						path: routes.dashboard.reports,
 						element: <ItemTypeListPage />,
 					},
 
