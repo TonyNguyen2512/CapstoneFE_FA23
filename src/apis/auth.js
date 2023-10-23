@@ -33,15 +33,9 @@ const login = async (username, password) => {
 
 const authorize = async () => {
 	try {
-<<<<<<< HEAD
-		const response = await BaseApi.get("/User");
-		const user = response.data;
-		return user;
-=======
 		const userId = localStorage.getItem("userId");
 		const response = await BaseApi.get("/User/GetById/" + userId);
 		return response.data;
->>>>>>> 48be394173a2928fdcf5f64e066e52f0076689f3
 		// const user = JSON.parse(localStorage.getItem("user")) || {};
 		// return user
 	} catch (error) {
@@ -50,11 +44,6 @@ const authorize = async () => {
 	}
 };
 
-<<<<<<< HEAD
-const AuthApi = {
-	login,
-	getUser,
-=======
 const register = async (email, fullName, password, roleId) => {
 	const response = await BaseApi.post("/User/Register", {
 		email: email,
@@ -69,7 +58,6 @@ const AuthApi = {
 	login,
 	authorize,
 	register,
->>>>>>> 48be394173a2928fdcf5f64e066e52f0076689f3
 };
 
 export default AuthApi;
