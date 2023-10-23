@@ -26,7 +26,7 @@ export const getRoleName = (role) => {
 			return "Admin";
 		case roles.FACTORY:
 			return "Quản đốc";
-		case roles.LEADER:
+		case roles.MANAGER:
 			return "Quản lý";
 		case roles.WORKER:
 			return "Công nhân";

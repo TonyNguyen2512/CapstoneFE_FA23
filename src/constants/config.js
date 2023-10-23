@@ -1,5 +1,5 @@
 const config = {
-	BASE_URL: "https://localhost:7291/api",
+	BASE_URL: "https://localhost:7245/api",
 	SIDER_WIDTH: 250,
 };
 

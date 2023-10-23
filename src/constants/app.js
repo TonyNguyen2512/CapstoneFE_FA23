@@ -8,7 +8,7 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 export const roles = {
 	ADMIN: "Admin",
 	FACTORY: "Factory",
-	LEADER: "Manager",
+	MANAGER: "Manager",
 	WORKER: "Worker",
 };
 
@@ -50,12 +50,12 @@ export const ALL_PERMISSIONS = {
 		update: "items.update",
 		sider: "items.sider",
 	},
-	itemTypes: {
-		view: "itemTypes.view",
-		create: "itemTypes.create",
-		update: "itemTypes.update",
-		sider: "itemTypes.sider",
-	},
+	// itemTypes: {
+	// 	view: "itemTypes.view",
+	// 	create: "itemTypes.create",
+	// 	update: "itemTypes.update",
+	// 	sider: "itemTypes.sider",
+	// },
 	employees: {
 		view: "employees.view",
 		create: "employees.create",
@@ -154,10 +154,10 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.items.create,
 		ALL_PERMISSIONS.items.update,
 		// itemTypes
-		ALL_PERMISSIONS.itemTypes.sider,
-		ALL_PERMISSIONS.itemTypes.view,
-		ALL_PERMISSIONS.itemTypes.create,
-		ALL_PERMISSIONS.itemTypes.update,
+		// ALL_PERMISSIONS.itemTypes.sider,
+		// ALL_PERMISSIONS.itemTypes.view,
+		// ALL_PERMISSIONS.itemTypes.create,
+		// ALL_PERMISSIONS.itemTypes.update,
 		// employees
 		ALL_PERMISSIONS.employees.sider,
 		ALL_PERMISSIONS.employees.view,
@@ -179,7 +179,7 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.managersReports.create,
 		ALL_PERMISSIONS.managersReports.update,
 	],
-	[roles.LEADER]: [
+	[roles.MANAGER]: [
 		// workers
 		ALL_PERMISSIONS.workers.sider,
 		ALL_PERMISSIONS.workers.view,

@@ -63,7 +63,7 @@ export const ProfileBar = () => {
           items,
         }}
       >
-        <span className="cursor-pointer text-[#666] font-semibold">
+        <span className="cursor-pointer text-[#666] font-semibold" style={{ marginRight: "0px"}}>
           {user?.fullName}
           <Down className="ml-1 absolute top-[0.2rem] bottom-0" />
         </span>

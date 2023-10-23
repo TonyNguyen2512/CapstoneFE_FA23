@@ -1,4 +1,3 @@
-import BaseApi from ".";
 import { roles } from "../constants/app";
 
 const resource = "Role";
@@ -15,7 +14,7 @@ const getAllRoles = async () => {
 				name: roles.FACTORY
 			},
 			{
-				name: roles.LEADER
+				name: roles.MANAGER
 			},
 			{
 				name: roles.WORKER
