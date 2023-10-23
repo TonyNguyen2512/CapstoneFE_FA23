@@ -4,10 +4,10 @@ export const mockAccounts = [
 	{
 		id: "1",
 		fullName: "Administrator",
-		email: "admin@gmail.com",
+		email: "manager@gmail.com",
 		username: "admin01",
 		password: '123456',
-		role: roles.ADMIN,
+		role: roles.FACTORY,
 		birthday: '15/03/2001',
 		address: 'Toà nhà K, đường số 8, khu 15, quận 9, thành phố Hồ Chí Minh',
 		phone: '0975790652',
@@ -17,10 +17,10 @@ export const mockAccounts = [
 	{
 		id: "2",
 		fullName: "Factory",
-		email: "factory@gmail.com",
+		email: "worker@gmail.com",
 		username: "factory01",
 		password: '123456',
-		role: roles.FACTORY,
+		role: roles.WORKER,
 		birthday: '20/10/1986',
 		address: 'Toà nhà S, đường số 4, khu 1, quận 9, thành phố Hồ Chí Minh',
 		phone: '0975790200',
@@ -30,7 +30,7 @@ export const mockAccounts = [
 	{
 		id: "3",
 		fullName: "Manager",
-		email: "manager@gmail.com",
+		email: "manager01@gmail.com",
 		username: "manager01",
 		password: '123456',
 		role: roles.MANAGER,
@@ -40,8 +40,6 @@ export const mockAccounts = [
 		isBan: false,
 		active: true,
 	},
-
-
 	{
 		id: "4",
 		fullName: "Worker",

@@ -14,7 +14,7 @@ const routes = {
 		materials: "materials",
 		materialTypes: "material-types",
 		items: "items",
-		itemTypes: "item-types",
+		// itemTypes: "item-types",
 		employees: "employees",
 		groups: "groups",
 		managersTasks: "managers-tasks",

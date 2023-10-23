@@ -133,12 +133,12 @@ export const AppSider = () => {
         canViewEmployees && {
           key: itemKeys.EMPLOYEES,
           icon: <UserOutlined size={iconSize} />,
-          label: <Link to={routes.dashboard.root}>Quản lý Nhân sự</Link>,
+          label: <Link to={routes.dashboard.employees}>Quản lý Nhân sự</Link>,
         },
         canViewGroups && {
           key: itemKeys.GROUPS,
           icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Quản lý Tổ</Link>,
+          label: <Link to={routes.dashboard.groups}>Quản lý Tổ</Link>,
         },
       ],
     },
@@ -204,6 +204,10 @@ export const AppSider = () => {
         return itemKeys.ITEMS;
       case routes.dashboard.itemTypes:
         return itemKeys.ITEM_TYPES;
+      case routes.dashboard.employees:
+        return itemKeys.EMPLOYEES;
+      case routes.dashboard.groups:
+        return itemKeys.GROUPS;
     }
 
     return undefined;
