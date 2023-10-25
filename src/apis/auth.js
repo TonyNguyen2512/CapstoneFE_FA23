@@ -14,7 +14,7 @@ const login = async (username, password) => {
 		});
 		if (response.status === 200) {
 			const jwt = response.data.result["access_token"];
-			const userId = response.data.result["userID"];
+			const userId = response.data.result["userId"];
 			localStorage.setItem("jwt", jwt);
 			localStorage.setItem("userId", userId);
 			return true;
@@ -33,8 +33,8 @@ const login = async (username, password) => {
 
 const authorize = async () => {
 	try {
-		const userId = localStorage.getItem("userId");
-		const response = await BaseApi.get("/User/GetById/" + userId);
+		const id = localStorage.getItem("userId");
+		const response = await BaseApi.get("/User/GetById/" + id);
 		return response.data;
 		// const user = JSON.parse(localStorage.getItem("user")) || {};
 		// return user
@@ -42,7 +42,7 @@ const authorize = async () => {
 		console.log("Error get user: ", error);
 		return undefined;
 	}
-};
+}; 
 
 const register = async (email, fullName, password, roleId) => {
 	const response = await BaseApi.post("/User/Register", {
