@@ -5,7 +5,7 @@ import MaterialCategoryApi from "../../../apis/material-category";
 
 export const MaterialTypeModal = ({ data, open, onCancel, onSuccess }) => {
   const isCreate = !data;
-  const typeMessage = isCreate ? "Tạo" : "Cập nhật";
+  const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
   const formRef = useRef();
   const [loading, setLoading] = useState(false);
@@ -33,7 +33,7 @@ export const MaterialTypeModal = ({ data, open, onCancel, onSuccess }) => {
     <BaseModal
       open={open}
       onCancel={onCancel}
-      title={`${typeMessage} Loại vật liệu`}
+      title={`${typeMessage} loại vật liệu`}
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >

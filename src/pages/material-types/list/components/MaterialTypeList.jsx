@@ -1,4 +1,4 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
+import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Space, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
@@ -29,7 +29,16 @@ const MaterialTypeList = () => {
     const { isDeleted } = record;
     return [
       {
-        key: "UPDATE_ROLE",
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen/>,
+        onClick: () => {
+          materialTypeRef.current = record;
+          // setShowUpdateMaterialTypeModal(true);
+        },
+      },
+      {
+        key: "UPDATE_MATERIAL_TYPE",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
@@ -44,11 +53,12 @@ const MaterialTypeList = () => {
         icon: !isDeleted ? <Forbid /> : <Unlock />,
         onClick: () => {
           confirm({
-            title: "Xoá Loại vật liệu",
+            title: "Xoá loại vật liệu",
             content: `Chắc chắn xoá "${record.name}"?`,
             type: "confirm",
-            cancelText: "Cancel",
-            onOk: () => deleteItem(record.id),
+            
+            cancelText: "Hủy",
+            onOk: () => deleteMaterialCategory(record.id),
             onCancel: () => {},
             closable: true,
           });
@@ -59,12 +69,14 @@ const MaterialTypeList = () => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: "30%",
-      align: "center",
-      sorter: (a, b) => a.id.localeCompare(b.id),
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
     },
     {
       title: "Tên loại vật liệu",
@@ -83,35 +95,35 @@ const MaterialTypeList = () => {
       },
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
-    {
-      title: "Tình trạng",
-      dataIndex: "isDeleted",
-      key: "isDeleted",
-      width: "20%",
-      align: "center",
-      render: (_, { isDeleted }) => {
-        return (
-          <span style={{ color: isDeleted ? "#FF0000" : "#29CB00" }}>
-            {isDeleted ? "Không hoạt động" : "Đang hoạt động"}
-          </span>
-        );
-      },
-      sorter: (a, b) => a.isDeleted - b.isDeleted,
-      // filter: {
-      //   placeholder: "Chọn trạng thái",
-      //   label: "Trạng thái",
-      //   filterOptions: [
-      //     {
-      //       label: "Đang hoạt động",
-      //       value: false,
-      //     },
-      //     {
-      //       label: "Khóa",
-      //       value: true,
-      //     },
-      //   ],
-      // },
-    },
+    // {
+    //   title: "Tình trạng",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   width: "20%",
+    //   align: "center",
+    //   render: (_, { isDeleted }) => {
+    //     return (
+    //       <span style={{ color: isDeleted ? "#FF0000" : "#29CB00" }}>
+    //         {isDeleted ? "Không hoạt động" : "Đang hoạt động"}
+    //       </span>
+    //     );
+    //   },
+    //   sorter: (a, b) => a.isDeleted - b.isDeleted,
+    //   // filter: {
+    //   //   placeholder: "Chọn trạng thái",
+    //   //   label: "Trạng thái",
+    //   //   filterOptions: [
+    //   //     {
+    //   //       label: "Đang hoạt động",
+    //   //       value: false,
+    //   //     },
+    //   //     {
+    //   //       label: "Khóa",
+    //   //       value: true,
+    //   //     },
+    //   //   ],
+    //   // },
+    // },
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -132,7 +144,7 @@ const MaterialTypeList = () => {
     getData(value);
   };
 
-  const deleteItem = async (value) => {
+  const deleteMaterialCategory = async (value) => {
     setLoading(true);
     const success = await MaterialCategoryApi.deleteMaterialCategory(value);
     if (success) {
@@ -149,7 +161,7 @@ const MaterialTypeList = () => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
-          type="primay"
+          type="primary"
           className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowUpdateMaterialTypeModal(true)}
         >
@@ -161,7 +173,7 @@ const MaterialTypeList = () => {
         dataSource={materialTypeList}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={true}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm loại vật liệu...",
