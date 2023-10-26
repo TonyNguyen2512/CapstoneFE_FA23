@@ -157,6 +157,11 @@ export const AppSider = () => {
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.root}>Quản lý công việc</Link>,
     },
+    canViewWorkersTasks && {
+      key: itemKeys.WORKERS_TASKS,
+      icon: <ListView size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.root}>Quản lý công việc</Link>,
+    },
     canViewManagersReports && {
       key: itemKeys.MANAGERS_REPORTS,
       icon: <HourglassNull size={iconSize - 4} />,
@@ -168,16 +173,16 @@ export const AppSider = () => {
       icon: <FileDoneOutlined size={iconSize - 4} />,
       label: <Link to={routes.dashboard.root}>Quản lý công nhân</Link>,
     },
-    canViewWorkersTasks && {
-      key: itemKeys.WORKERS_TASKS,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
-    canViewWorkersReports && {
-      key: itemKeys.WORKERS_REPORTS,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
+    // canViewWorkersTasks && {
+    //   key: itemKeys.WORKERS_TASKS,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    // },
+    // canViewWorkersReports && {
+    //   key: itemKeys.WORKERS_REPORTS,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    // },
     //
     canViewTasks && {
       key: itemKeys.TASKS,

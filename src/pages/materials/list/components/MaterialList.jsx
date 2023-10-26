@@ -1,10 +1,11 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space } from "antd";
+import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
+import { Button, Dropdown, Modal, Space, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { UpdateMaterialModal } from "../../components/UpdateMaterialModal";
-import { mockMaterialTypes, mockMaterials } from "../../../../__mocks__/jama/materials";
 import MaterialApi from "../../../../apis/material";
+import dayjs from "dayjs";
+import confirm from "antd/es/modal/confirm";
+import { MaterialModal } from "../../components/MaterialModal";
 
 const MaterialList = () => {
   const [loading, setLoading] = useState(false);
@@ -12,7 +13,7 @@ const MaterialList = () => {
   const [materialList, setMaterialList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
-
+  const materialRef = useRef();
   const userRef = useRef();
 
   const getData = async (keyword) => {
@@ -39,10 +40,31 @@ const MaterialList = () => {
     getData();
   }, []);
 
+  const deleteMaterialCategory = async (value) => {
+    setLoading(true);
+    const success = await MaterialApi.deleteMaterial(value);
+    if (success) {
+      message.success("Xoá thành công");
+    } else {
+      message.error("Xoá thất bại");
+    }
+    getData();
+    setLoading(false);
+  };
+
   const getActionItems = (record) => {
-    const { isActive, id } = record;
+    const { isDeleted, id } = record;
 
     return [
+      {
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen />,
+        onClick: () => {
+          userRef.current = record;
+          // setShowUpdateMaterialModal(true);
+        },
+      },
       {
         key: "UPDATE_ROLE",
         label: "Cập nhật thông tin",
@@ -54,21 +76,35 @@ const MaterialList = () => {
       },
       {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {},
+        label: isDeleted ? "Mở khóa" : "Khóa",
+        danger: !isDeleted,
+        icon: !isDeleted ? <Forbid /> : <Unlock />,
+        onClick: () => {
+          confirm({
+            title: "Xoá vật liệu",
+            content: `Chắc chắn xoá "${record.name}"?`,
+            type: "confirm",
+
+            cancelText: "Hủy",
+            onOk: () => deleteMaterialCategory(record.id),
+            onCancel: () => {},
+            closable: true,
+          });
+        },
       },
     ];
   };
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-      sorter: (a, b) => a.id.localeCompare(b.id),
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
     },
     {
       title: "Tên vật liệu",
@@ -80,79 +116,84 @@ const MaterialList = () => {
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Mã vật liệu",
-      dataIndex: "code",
-      key: "code",
-      align: "center",
+      title: "Mã vật liệu (SKU)",
+      dataIndex: "sku",
+      key: "sku",
+      // align: "center",
       sorter: (a, b) => a.code.localeCompare(b.code),
     },
     {
       title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
-      align: "center",
-      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
-    },
-    {
-      title: "Đơn giá",
       dataIndex: "amount",
       key: "amount",
-      align: "center",
-      render: (_, { amount }) => {
-        return <span>{amount} VND</span>;
-      },
-      sorter: (a, b) => a.amount.localeCompare(b.amount),
+      // align: "center",
+      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
     },
-    {
-      title: "Thành tiền",
-      dataIndex: "total",
-      key: "total",
-      align: "center",
-      render: (_, { quantity, amount }) => {
-        return <span>{quantity * amount} VND</span>;
-      },
-    },
+    // {
+    //   title: "Đơn giá",
+    //   dataIndex: "price",
+    //   key: "price",
+    //   // align: "center",
+    //   render: (_, { price }) => {
+    //     return <span>{price.toLocaleString()} VNĐ</span>;
+    //   },
+    //   sorter: (a, b) => a.price.localeCompare(b.price),
+    // },
+    // {
+    //   title: "Thành tiền",
+    //   dataIndex: "totalPrice",
+    //   key: "totalPrice",
+    //   // align: "center",
+    //   render: (_, { totalPrice }) => {
+    //     return <span>{totalPrice.toLocaleString()} VNĐ</span>;
+    //   },
+    //   sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
+    // },
     {
       title: "Ngày nhập",
-      dataIndex: "addedDate",
-      key: "addedDate",
-      align: "center",
+      dataIndex: "importDate",
+      key: "importDate",
+      // align: "center",
+      render: (_, record) => {
+        const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
+        return <span>{formattedDate}</span>;
+      },
       sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
     },
     {
-      title: "Nơi nhập",
-      dataIndex: "addedLocation",
-      key: "addedLocation",
+      title: "Nhà cung cấp",
+      dataIndex: "supplier",
+      key: "supplier",
       sorter: (a, b) => a.addedLocation.localeCompare(b.addedLocation),
     },
     // {
     //   title: "Tình trạng",
-    //   dataIndex: "isActive",
-    //   key: "isActive",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
     //   width: "30%",
     //   align: "center",
-    //   render: (_, { isActive }) => {
+    //   render: (_, { isDeleted }) => {
     //     return (
-    //       <span style={{ color: isActive ? "#29CB00" : "#FF0000" }}>
-    //         {isActive ? "Đang hoạt động" : "Không hoạt động"}
+    //       <span style={{ color: isDeleted ? "#FF0000" : "#29CB00" }}>
+    //         {isDeleted ? "Không hoạt động" : "Đang hoạt động"}
     //       </span>
     //     );
     //   },
-    //   sorter: (a, b) => a.isActive - b.isActive,
-    //   filter: {
-    //     placeholder: "Chọn trạng thái",
-    //     label: "Trạng thái",
-    //     filterOptions: [
-    //       {
-    //         label: "Đang hoạt động",
-    //         value: false,
-    //       },
-    //       {
-    //         label: "Khóa",
-    //         value: true,
-    //       },
-    //     ],
-    //   },
+    //   sorter: (a, b) => a.isDeleted - b.isDeleted,
+    //   // filter: {
+    //   //   placeholder: "Chọn trạng thái",
+    //   //   label: "Trạng thái",
+    //   //   filterOptions: [
+    //   //     {
+    //   //       label: "Đang hoạt động",
+    //   //       value: false,
+    //   //     },
+    //   //     {
+    //   //       label: "Không hoạt động",
+    //   //       value: true,
+    //   //     },
+    //   //   ],
+    //   // },
     // },
     {
       title: "Thao tác",
@@ -177,7 +218,11 @@ const MaterialList = () => {
     <>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
-        <Button className="btn-primary app-bg-primary font-semibold text-white" type="primay">
+        <Button
+          className="btn-primary app-bg-primary font-semibold text-white"
+          type="primary"
+          onClick={() => setShowUpdateMaterialModal(true)}
+        >
           Thêm vật liệu
         </Button>
       </Space>
@@ -194,13 +239,15 @@ const MaterialList = () => {
           width: 300,
         }}
       />
-      {/* <UpdateMaterialModal
-        user={userRef.current}
+      <MaterialModal
+        data={materialRef.current}
         open={showUpdateMaterialModal}
-        onCancel={() => setShowUpdateMaterialModal(false)}
-        allRoles={rolesRef.current}
+        onCancel={() => {
+          setShowUpdateMaterialModal(false);
+          materialRef.current = null;
+        }}
         onSuccess={() => getData()}
-      /> */}
+      />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />
       </Modal>
