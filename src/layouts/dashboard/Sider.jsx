@@ -94,12 +94,12 @@ export const AppSider = () => {
     // canViewOrders && {
     //   key: itemKeys.ORDERS,
     //   icon: <FormOutlined size={iconSize} />,
-    //   label: <Link to={routes.dashboard.root}>Đơn đặt hàng</Link>,
+    //   label: <Link to={routes.dashboard.orders}>Đơn đặt hàng</Link>,
     // },
     // canViewQuotes && {
     //   key: itemKeys.QUOTES,
     //   icon: <FileDoneOutlined size={iconSize} />,
-    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    //   label: <Link to={routes.dashboard.quotes}>Duyệt báo giá</Link>,
     // },
     (canViewMaterialTypes || canViewMaterials) && {
       key: itemKeys.P_MATERIALS,
@@ -138,29 +138,29 @@ export const AppSider = () => {
     (canViewEmployees || canViewGroups) && {
       key: itemKeys.P_EMPLOYEES,
       icon: <DataUser size={iconSize - 2} />,
-      label: "Nhân sự",
+      label: "Quản lý nhân sự",
       children: [
-        canViewEmployees && {
-          key: itemKeys.EMPLOYEES,
-          icon: <UserOutlined size={iconSize} />,
-          label: <Link to={routes.dashboard.employees}>Quản lý Nhân sự</Link>,
-        },
         canViewGroups && {
           key: itemKeys.GROUPS,
           icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.groups}>Quản lý Tổ</Link>,
+          label: <Link to={routes.dashboard.root}>Tổ</Link>,
+        },
+        canViewEmployees && {
+          key: itemKeys.EMPLOYEES,
+          icon: <UserOutlined size={iconSize} />,
+          label: <Link to={routes.dashboard.root}>Công nhân</Link>,
         },
       ],
     },
     canViewManagersTasks && {
       key: itemKeys.MANAGERS_TASKS,
       icon: <ListView size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.root}>Quản lý công việc</Link>,
+      label: <Link to={routes.dashboard.managersTasks}>Quản lý công việc</Link>,
     },
     canViewWorkersTasks && {
       key: itemKeys.WORKERS_TASKS,
       icon: <ListView size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.root}>Quản lý công việc</Link>,
+      label: <Link to={routes.dashboard.workersTasks}>Quản lý công việc</Link>,
     },
     canViewManagersReports && {
       key: itemKeys.MANAGERS_REPORTS,
@@ -218,13 +218,19 @@ export const AppSider = () => {
         return itemKeys.MATERIAL_TYPES;
       case routes.dashboard.items:
         return itemKeys.ITEMS;
-      case routes.dashboard.itemTypes:
-        return itemKeys.ITEM_TYPES;
-      case routes.dashboard.employees:
-        return itemKeys.EMPLOYEES;
+      case routes.dashboard.workersTasks:
+        return itemKeys.WORKERS_TASKS;
+      case routes.dashboard.managersTasks:
+        return itemKeys.MANAGERS_TASKS;
+      case routes.dashboard.workersReports:
+        return itemKeys.WORKERS_REPORTS;
+      case routes.dashboard.managersReports:
+        return itemKeys.MANAGERS_REPORTS;
       case routes.dashboard.groups:
         return itemKeys.GROUPS;
-    }
+      case routes.dashboard.workers:
+        return itemKeys.WORKERS;
+   }
 
     return undefined;
   };

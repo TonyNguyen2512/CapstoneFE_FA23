@@ -1,14 +1,13 @@
 import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Card, Col, Dropdown, Modal, Row, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { BaseTable } from "../../../../components/BaseTable";
-import { roles } from "../../../../constants/app";
-import { UpdateMaterialModal } from "../../components/UpdateMaterialModal";
-import { mockMaterialTypes, mockMaterials } from "../../../../__mocks__/jama/materials";
-import { enumTaskStatuses, mockTasks } from "../../../../__mocks__/jama/tasks";
-import { formatDate } from "../../../../utils";
+import { formatDate } from "../../../../../utils";
+import { mockMaterials } from "../../../../../__mocks__/jama/materials";
+import { enumTaskStatuses } from "../../../../../__mocks__/jama/tasks";
+import { mockTasks } from "../../../../../__mocks__/task";
 
-const TaskList = () => {
+
+const WorkerTaskDetailPage = () => {
   const [loading, setLoading] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [taskList, setTaskList] = useState([]);
@@ -87,7 +86,7 @@ const TaskList = () => {
         <Row gutter={[32, 16]}>
           {mockTasks.map((e) => (
             <Col span={12}>
-              <Card style={{ borderRadius: "1rem", gap: "2rem" }} loading={loading}>
+              <Card style={{ borderRadius: "1rem" }} loading={loading}>
                 <Row>Tên đơn hàng: {e?.taskName}</Row>
                 <Row>
                   <Col span={12}>Ngày bắt đầu: {formatDate(e?.timeStart, "DD/MM/YYYY")}</Col>
@@ -99,6 +98,19 @@ const TaskList = () => {
           ))}
         </Row>
       </Space>
+      {/* <BaseTable
+        title="Danh sách công việc"
+        dataSource={taskList}
+        columns={columns}
+        loading={loading}
+        pagination={false}
+        searchOptions={{
+          visible: true,
+          placeholder: "Tìm kiếm công việc...",
+          onSearch: handleSearch,
+          width: 300,
+        }}
+      /> */}
       {/* <UpdateMaterialModal
         user={userRef.current}
         open={showUpdateMaterialModal}
@@ -113,4 +125,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;
+export default WorkerTaskDetailPage;
