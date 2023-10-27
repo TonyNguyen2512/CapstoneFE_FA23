@@ -45,6 +45,7 @@ export const AppSider = () => {
   const canViewItemTypes = permissions?.includes(ALL_PERMISSIONS.itemTypes?.sider);
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
+  const canViewSquads = permissions?.includes(ALL_PERMISSIONS.squads?.sider);
   const canViewManagersTasks = permissions?.includes(ALL_PERMISSIONS.managersTasks?.sider);
   const canViewManagersReports = permissions?.includes(ALL_PERMISSIONS.managersReports?.sider);
   const canViewWorkers = permissions?.includes(ALL_PERMISSIONS.workers?.sider);
@@ -69,6 +70,7 @@ export const AppSider = () => {
     P_EMPLOYEES: "P_EMPLOYEES",
     EMPLOYEES: "MANAGE_EMPLOYEES",
     GROUPS: "MANAGE_GROUPS",
+    SQUADS: "MANAGE_SQUADS",
     MANAGERS_TASKS: "MANAGE_MANAGERS_TASKS",
     MANAGERS_REPORTS: "MANAGE_MANAGERS_REPORTS",
     //
@@ -135,7 +137,7 @@ export const AppSider = () => {
         },
       ],
     },
-    (canViewEmployees || canViewGroups) && {
+    (canViewEmployees || canViewGroups || canViewSquads) && {
       key: itemKeys.P_EMPLOYEES,
       icon: <DataUser size={iconSize - 2} />,
       label: "Quản lý nhân sự",
@@ -145,9 +147,19 @@ export const AppSider = () => {
           icon: <EveryUser size={iconSize - 4} />,
           label: <Link to={routes.dashboard.root}>Tổ</Link>,
         },
+        canViewSquads && {
+          key: itemKeys.SQUADS,
+          icon: <EveryUser size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.root}>Nhóm</Link>,
+        },
         canViewEmployees && {
           key: itemKeys.EMPLOYEES,
-          icon: <UserOutlined size={iconSize} />,
+          icon: <UserOutlined size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.root}>Nhân viên</Link>,
+        },
+        canViewWorkers && {
+          key: itemKeys.WORKERS,
+          icon: <FileDoneOutlined size={iconSize - 4} />,
           label: <Link to={routes.dashboard.root}>Công nhân</Link>,
         },
       ],
@@ -168,11 +180,7 @@ export const AppSider = () => {
       label: <Link to={routes.dashboard.root}>Báo cáo tiến độ</Link>,
     },
     //
-    canViewWorkers && {
-      key: itemKeys.WORKERS,
-      icon: <FileDoneOutlined size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.root}>Quản lý công nhân</Link>,
-    },
+   
     // canViewWorkersTasks && {
     //   key: itemKeys.WORKERS_TASKS,
     //   icon: <FileDoneOutlined size={iconSize} />,
@@ -228,6 +236,8 @@ export const AppSider = () => {
         return itemKeys.MANAGERS_REPORTS;
       case routes.dashboard.groups:
         return itemKeys.GROUPS;
+      case routes.dashboard.squads:
+        return itemKeys.SQUADS;
       case routes.dashboard.workers:
         return itemKeys.WORKERS;
    }
