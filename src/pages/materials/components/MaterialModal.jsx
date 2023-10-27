@@ -17,19 +17,13 @@ import MaterialApi from "../../../apis/material";
 import { MaterialSelect } from "./MaterialSelect";
 import { useSearchParams } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
 export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [placement, SetPlacement] = useState("topLeft");
-  // const { token } = theme.useToken();
-  // const [color, setColor] = useState(token.colorPrimary);
-  // const bgColor = useMemo(() => (typeof color === "string" ? color : color.toHexString()), [color]);
-
-  const [color, setColor] = useState("#ffffff");
-
-  const handleColorChange = (newColor) => {
-    setColor(newColor.toHexString());
-  };
+  const { token } = theme.useToken();
+  const [color, setColor] = useState(token.colorPrimary);
 
   const btnStyle = {
     width: "100%",
@@ -37,7 +31,6 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
     backgroundColor: color,
     margin: "center",
   };
-  console.log("Color: ", color);
 
   const dateFormat = "DD/MM/YYYY";
   const isCreate = !data;
@@ -46,11 +39,16 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const formRef = useRef();
   const [loading, setLoading] = useState(false);
 
+  console.log({...data, importDate : dayjs(data?.importDate , "DD/MM/YYYY")});
+  console.log(data)
+
   const handleMaterial = async (values) => {
     setLoading(true);
+    const body = {...values, color: typeof color === "string" ? color : color.toHexString()};
     const success = isCreate
-      ? await MaterialApi.createMaterial(values)
-      : await MaterialApi.updateMaterial(values);
+      ? await MaterialApi.createMaterial(body)
+      : await MaterialApi.updateMaterial(body);
+      console.log(values);
     if (success) {
       message.success(`${typeMessage} thành công`);
       onSuccess();
@@ -98,7 +96,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           price: data?.price,
           thickness: data?.thickness,
           supplier: data?.supplier,
-          importDate: data?.importDate,
+          importDate: data && data.importDate ? dayjs(data.importDate) : null,
           importPlace: data?.importPlace,
           image: data?.image,
           isDeleted: data?.isDeleted,
@@ -122,9 +120,9 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
             },
           ]}
         >
-          <Input showCount maxLength={255} placeholder="Tên loại vật liệu..." />
+          <Input placeholder="Tên loại vật liệu..." />
         </Form.Item>
-        {/* <Form.Item
+        <Form.Item
           name="categoryId"
           label="Loại vật liệu"
           rules={[
@@ -139,7 +137,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
             onChange={handleChangeMaterial}
             onLoaded={onMaterialsLoaded}
           />
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item
           name="color"
           label="Màu vật liệu"
@@ -150,9 +148,10 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           //   },
           // ]}
         >
-          <ColorPicker value={color} onChange={handleColorChange}>
+          <ColorPicker value={color} onChange={(color) => setColor(color.toHexString())}>
             <Button type="primary" style={btnStyle} align="center"></Button>
           </ColorPicker>
+          
         </Form.Item>
         <Form.Item
           name="unit"
@@ -262,7 +261,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           />
         </Form.Item>
         <Form.Item
-          name="importDate"
+          name="image"
           label="Chọn hình"
           rules={[
             {
@@ -279,8 +278,8 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
             size="large"
           >
             <Upload
-              action="https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188"
               listType="picture"
+              beforeUpload={() => { return false }}
               maxCount={1}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>

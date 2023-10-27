@@ -158,7 +158,7 @@ const MaterialList = () => {
         const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
-      sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
+      // sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
     },
     {
       title: "Nhà cung cấp",
