@@ -91,11 +91,11 @@ export const AppSider = () => {
       icon: <UserOutlined size={iconSize} />,
       label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
     },
-    // canViewOrders && {
-    //   key: itemKeys.ORDERS,
-    //   icon: <FormOutlined size={iconSize} />,
-    //   label: <Link to={routes.dashboard.orders}>Đơn đặt hàng</Link>,
-    // },
+    canViewOrders && {
+      key: itemKeys.ORDERS,
+      icon: <FormOutlined size={iconSize} />,
+      label: <Link to={routes.dashboard.orders}>Đơn đặt hàng</Link>,
+    },
     // canViewQuotes && {
     //   key: itemKeys.QUOTES,
     //   icon: <FileDoneOutlined size={iconSize} />,
@@ -230,7 +230,7 @@ export const AppSider = () => {
         return itemKeys.GROUPS;
       case routes.dashboard.workers:
         return itemKeys.WORKERS;
-   }
+    }
 
     return undefined;
   };
