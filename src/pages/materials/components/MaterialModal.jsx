@@ -34,7 +34,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
   // const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
-  const formRef = useRef();
+  const form = Form.useFormInstance();
   const [loading, setLoading] = useState(false);
 
   console.log({...data, importDate : dayjs(data?.importDate , "DD/MM/YYYY")});
@@ -42,7 +42,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
 
   const handleMaterial = async (values) => {
     setLoading(true);
-    const body = {...values, color: typeof color === "C19135" ? color : color.toHexString()};
+    const body = {...values, color: typeof color === "string" ? color : color.toHexString()};
     const success = isCreate
       ? await MaterialApi.createMaterial(body)
       : await MaterialApi.updateMaterial(body);
@@ -81,10 +81,11 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
       onCancel={onCancel}
       title={`${typeMessage} vật liệu`}
       confirmLoading={loading}
-      onOk={() => formRef.current?.submit()}
+    
+      onOk={() => form.submit}
     >
       <Form
-        ref={formRef}
+        form={form}
         initialValues={{
           id: data?.id,
           name: data?.name,
