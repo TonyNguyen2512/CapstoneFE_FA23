@@ -19,11 +19,9 @@ import { useSearchParams } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
-export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
+export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [placement, SetPlacement] = useState("topLeft");
-  const { token } = theme.useToken();
-  const [color, setColor] = useState(token.colorPrimary);
+  const [color, setColor] = useState();
 
   const btnStyle = {
     width: "100%",
@@ -33,22 +31,22 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   };
 
   const dateFormat = "DD/MM/YYYY";
-  const isCreate = !data;
+  // const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
   const formRef = useRef();
   const [loading, setLoading] = useState(false);
 
   console.log({...data, importDate : dayjs(data?.importDate , "DD/MM/YYYY")});
-  console.log(data)
+  console.log("Data: ", data);
 
   const handleMaterial = async (values) => {
     setLoading(true);
-    const body = {...values, color: typeof color === "string" ? color : color.toHexString()};
+    const body = {...values, color: typeof color === "C19135" ? color : color.toHexString()};
     const success = isCreate
       ? await MaterialApi.createMaterial(body)
       : await MaterialApi.updateMaterial(body);
-      console.log(values);
+      console.log(isCreate);
     if (success) {
       message.success(`${typeMessage} thành công`);
       onSuccess();
@@ -58,14 +56,11 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
     setLoading(false);
     onCancel();
   };
-
+  
   useEffect(() => {
     console.log(isCreate, data);
   }, [searchParams]);
 
-  const placementChange = (e) => {
-    SetPlacement(e.target.value);
-  };
 
   const handleChangeMaterial = (id) => {
     setSearchParams({
@@ -91,6 +86,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
       <Form
         ref={formRef}
         initialValues={{
+          id: data?.id,
           name: data?.name,
           color: data?.color,
           price: data?.price,
@@ -100,7 +96,9 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           importPlace: data?.importPlace,
           image: data?.image,
           isDeleted: data?.isDeleted,
-          categoryId: data?.categoryId,
+          unit: data?.unit,
+          amount: data?.amount,
+          materialCategoryId: data?.materialCategoryId,
         }}
         onFinish={handleMaterial}
         layout="vertical"
@@ -123,7 +121,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           <Input placeholder="Tên loại vật liệu..." />
         </Form.Item>
         <Form.Item
-          name="categoryId"
+          name="materialCategoryId"
           label="Loại vật liệu"
           rules={[
             {
@@ -141,14 +139,8 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
         <Form.Item
           name="color"
           label="Màu vật liệu"
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: "Vui lòng nhập tên loại vật liệu",
-          //   },
-          // ]}
         >
-          <ColorPicker value={color} onChange={(color) => setColor(color.toHexString())}>
+          <ColorPicker onChange={(color) => setColor(color.toHexString())}>
             <Button type="primary" style={btnStyle} align="center"></Button>
           </ColorPicker>
           
@@ -263,12 +255,12 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
         <Form.Item
           name="image"
           label="Chọn hình"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
-            },
-          ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Vui lòng nhập tên loại vật liệu",
+          //   },
+          // ]}
         >
           <Space
             direction="vertical"

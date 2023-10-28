@@ -23,7 +23,6 @@ const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
     // }
   } catch (error) {
     console.log("Error get item: ", error);
-    return [];
   }
 };
 

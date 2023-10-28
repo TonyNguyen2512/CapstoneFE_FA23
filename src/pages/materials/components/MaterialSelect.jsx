@@ -16,9 +16,10 @@ export const MaterialSelect = ({
   const getMaterials = async () => {
     setLoading(true);
     const data = await MaterialCategoryApi.getAllMaterialCategory();
-    setMaterial(data);
+    console.log(data);
+    setMaterial(data ? data.data : []);
     setLoading(false);
-    onLoaded && onLoaded(data);
+    onLoaded && onLoaded(data.data);
   };
 
   useEffect(() => {
