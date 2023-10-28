@@ -20,9 +20,7 @@ const MaterialList = () => {
   const getData = async (keyword) => {
     setLoading(true);
     const response = await MaterialApi.getAllMaterial(keyword);
-
     setMaterialList(response.data);
-    // setMaterialList(mockMaterials);
     setLoading(false);
   };
 
