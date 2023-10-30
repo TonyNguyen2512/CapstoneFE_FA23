@@ -5,7 +5,7 @@ import { usePermissions } from "../../../../hooks/permission";
 
 export const WorkerTaskListPage = () => {
   const permissions = usePermissions();
-  const canView = permissions?.includes(ALL_PERMISSIONS.tasks.view);
+  const canView = permissions?.includes(ALL_PERMISSIONS.workersTasks.view);
 
   return <div>{canView && <WorkerTaskList />}</div>;
 };
