@@ -6,76 +6,126 @@ import {
   Form,
   Input,
   InputNumber,
-  Select,
+  Radio,
+  Space,
+  Upload,
   message,
   theme,
 } from "antd";
 import BaseModal from "../../../components/BaseModal";
 import MaterialApi from "../../../apis/material";
 import { MaterialSelect } from "./MaterialSelect";
+import { useSearchParams } from "react-router-dom";
+import { UploadOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
 
-export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
-  const { token } = theme.useToken();
-  const [color, setColor] = useState(token.colorPrimary);
-  const bgColor = useMemo(() => (typeof color === "string" ? color : color.toHexString()), [color]);
+const initValues = {
+  id: "",
+  name: "",
+  color: "",
+  price: 0,
+  thickness: 0,
+  supplier: "",
+  importDate: null,
+  importPlace: "",
+  image: "",
+  unit: "",
+  amount: 0,
+  materialCategoryId: "",
+};
+
+export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [initialValues, setInitialValues] = useState();
+  const [color, setColor] = useState();
+  const [form] = Form.useForm();
+  const dateFormat = "DD/MM/YYYY";
+  const typeMessage = isCreate ? "Thêm" : "Cập nhật";
+
+  const [loading, setLoading] = useState(false);
+
+  console.log({ ...data, importDate: dayjs(data?.importDate, "DD/MM/YYYY") });
+  console.log("Data: ", data);
+
+  const handleValue = (values) => {
+    form.setFieldsValue(values);
+  };
+
   const btnStyle = {
     width: "100%",
     height: "35px",
-    backgroundColor: bgColor,
+    backgroundColor: form.getFieldValue("color"),
     margin: "center",
   };
 
-  const dateFormat = "DD/MM/YYYY";
-  const isCreate = !data;
-  const typeMessage = isCreate ? "Thêm" : "Cập nhật";
-
-  const formRef = useRef();
-  const [loading, setLoading] = useState(false);
-
-  const handleUpdateRole = async (values) => {
+  const handleMaterial = async (values) => {
     setLoading(true);
-    const success = isCreate
-      ? await MaterialApi.createMaterial(values)
-      : await MaterialApi.updateMaterial(values);
-    if (success) {
-      message.success(`${typeMessage} thành công`);
-      onSuccess();
-    } else {
-      message.error(`${typeMessage} thất bại`);
-    }
+    // const body = { ...values, color: typeof color === "string" ? color : color.toHexString() };
+    // const success = isCreate
+    //   ? await MaterialApi.createMaterial(body)
+    //   : await MaterialApi.updateMaterial(body);
+    // console.log(isCreate);
+    // if (success) {
+    //   message.success(`${typeMessage} thành công`);
+    //   onSuccess();
+    // } else {
+    //   message.error(`${typeMessage} thất bại`);
+    // }
+    setInitialValues(values);
+    console.log("Values: ", values);
     setLoading(false);
     onCancel();
   };
 
   useEffect(() => {
-    console.log(isCreate, data);
-  }, []);
+    handleValue({
+      id: data?.id,
+      name: data?.name,
+      color: data?.color,
+      price: data?.price,
+      thickness: data?.thickness,
+      supplier: data?.supplier,
+      importDate: data && data.importDate ? dayjs(data.importDate) : null,
+      importPlace: data?.importPlace,
+      image: data?.image,
+      isDeleted: data?.isDeleted,
+      unit: data?.unit,
+      amount: data?.amount,
+      materialCategoryId: data?.materialCategoryId,
+    });
+  }, [data]);
+
+  console.log(data);
+  console.log(form.getFieldValue("color"));
+
+  const handleChangeMaterial = (id) => {
+    setSearchParams({
+      material: id,
+    });
+  };
+
+  const onMaterialsLoaded = (data) => {
+    if (data && data.length > 0) {
+      searchParams.set("material", data[0].id);
+      setSearchParams(searchParams);
+    }
+  };
 
   return (
     <BaseModal
       open={open}
-      onCancel={onCancel}
+      onCancel={() => {
+        onCancel();
+        form.resetFields();
+      }}
       title={`${typeMessage} vật liệu`}
       confirmLoading={loading}
-      onOk={() => formRef.current?.submit()}
+      onOk={() => {
+        form.submit();
+        form.resetFields();
+      }}
     >
-      <Form
-        ref={formRef}
-        initialValues={{
-          name: data?.name,
-          categoryId: data?.categoryId,
-          price: data?.price,
-          thickness: data?.thickness,
-          supplier: data?.supplier,
-          importDate: data?.importDate,
-          importPlace: data?.importPlace,
-          image: data?.image,
-          color: data?.color,
-          isDeleted: data?.isDeleted,
-        }}
-        onFinish={handleUpdateRole}
-        layout="vertical"
-      >
+      <Form form={form} initialValues={initialValues} onFinish={handleMaterial} layout="vertical">
         {!isCreate && (
           <Form.Item name="id" hidden>
             <Input />
@@ -91,23 +141,36 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
             },
           ]}
         >
-          <Input showCount maxLength={255} placeholder="Tên loại vật liệu..." />
+          <Input placeholder="Tên loại vật liệu..." />
         </Form.Item>
         <Form.Item
-          name="type"
+          name="materialCategoryId"
           label="Loại vật liệu"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
+              message: "Vui lòng chọn tên loại vật liệu",
             },
           ]}
         >
-          <MaterialSelect />
+          <MaterialSelect
+            value={searchParams.get("material")}
+            onChange={handleChangeMaterial}
+            onLoaded={onMaterialsLoaded}
+          />
+        </Form.Item>
+        <Form.Item name="color" label="Màu vật liệu">
+          <ColorPicker
+            onChange={(value) => {
+              form.setFieldValue("color", value.toHexString());
+            }}
+          >
+            <Button type="primary" style={btnStyle} align="center"></Button>
+          </ColorPicker>
         </Form.Item>
         <Form.Item
-          name="color"
-          label="Màu vật liệu"
+          name="unit"
+          label="Đơn vị đo"
           rules={[
             {
               required: true,
@@ -115,9 +178,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
             },
           ]}
         >
-          <ColorPicker value={color} onChange={setColor}>
-            <Button type="primary" style={btnStyle} align="center"></Button>
-          </ColorPicker>
+          <Input placeholder="Tên loại vật liệu..." />
         </Form.Item>
         <Form.Item
           name="amount"
@@ -206,13 +267,41 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
           ]}
         >
           <DatePicker
-            readOnly={true}
+            inputReadOnly="true"
             style={{
               width: "100%",
             }}
             format={dateFormat}
             placeholder="Chọn ngày nhập vật liệu..."
           />
+        </Form.Item>
+        <Form.Item
+          name="image"
+          label="Chọn hình"
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: "Vui lòng nhập tên loại vật liệu",
+          //   },
+          // ]}
+        >
+          <Space
+            direction="vertical"
+            style={{
+              width: "100%",
+            }}
+            size="large"
+          >
+            <Upload
+              listType="picture"
+              beforeUpload={() => {
+                return false;
+              }}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Upload</Button>
+            </Upload>
+          </Space>
         </Form.Item>
       </Form>
     </BaseModal>

@@ -1,50 +1,51 @@
 import { Select } from "antd";
 import React, { useEffect, useState } from "react";
-import ClassApi from "../../../apis/class";
+import MaterialCategoryApi from "../../../apis/material-category";
 
 export const MaterialSelect = ({
-	value,
-	onChange,
-	allowClear,
-	className,
-	disabled,
-	onLoaded,
+  value,
+  onChange,
+  allowClear,
+  meterialName,
+  disabled,
+  onLoaded,
 }) => {
-	const [classes, setClasses] = useState([]);
-	const [loading, setLoading] = useState(false);
+  const [material, setMaterial] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-	const getClasses = async () => {
-		setLoading(true);
-		const data = await ClassApi.searchClass();
-		setClasses(data);
-		setLoading(false);
-		onLoaded && onLoaded(data);
-	};
+  const getMaterials = async () => {
+    setLoading(true);
+    const data = await MaterialCategoryApi.getAllMaterialCategory();
+    console.log(data);
+    setMaterial(data ? data.data : []);
+    setLoading(false);
+    onLoaded && onLoaded(data.data);
+  };
 
-	useEffect(() => {
-		getClasses();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+  useEffect(() => {
+    getMaterials();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-	const classOptions = classes.map((e) => {
-		return {
-			value: e.classId,
-			label: e.className,
-		};
-	});
+  const meterialOptions = material.map((e) => {
+  	return {
+  		value: e.id,
+  		label: e.name,
+  	};
+  });
 
-	return (
-		<Select
-			className={className}
-			showSearch
-			value={value}
-			options={classOptions}
-			placeholder="Chọn loại vật liệu..."
-            optionFilterProp="children"
-			loading={loading}
-			onChange={onChange}
-			allowClear={allowClear}
-			disabled={disabled}
-		/>
-	);
+  return (
+    <Select
+      className={meterialName}
+      showSearch
+      value={value}
+      options={meterialOptions}
+      placeholder="Chọn loại vật liệu..."
+      optionFilterProp="children"
+      loading={loading}
+      onChange={onChange}
+      allowClear={allowClear}
+      disabled={disabled}
+    />
+  );
 };

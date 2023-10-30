@@ -1,5 +1,5 @@
 import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space, message } from "antd";
+import { Button, ColorPicker, Dropdown, Input, Modal, Space, Tooltip, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import MaterialApi from "../../../../apis/material";
@@ -13,15 +13,14 @@ const MaterialList = () => {
   const [materialList, setMaterialList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [isCreate, setIsCreate] = useState(true);
   const materialRef = useRef();
   const userRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
     const response = await MaterialApi.getAllMaterial(keyword);
-
     setMaterialList(response.data);
-    // setMaterialList(mockMaterials);
     setLoading(false);
   };
 
@@ -61,7 +60,7 @@ const MaterialList = () => {
         label: "Xem thông tin chi tiết",
         icon: <PreviewOpen />,
         onClick: () => {
-          userRef.current = record;
+          materialRef.current = record;
           // setShowUpdateMaterialModal(true);
         },
       },
@@ -70,7 +69,8 @@ const MaterialList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          userRef.current = record;
+          setIsCreate(false);
+          materialRef.current = record;
           setShowUpdateMaterialModal(true);
         },
       },
@@ -111,7 +111,13 @@ const MaterialList = () => {
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.name}</span>;
+        console.log(record.image);
+        return (
+          <Tooltip title={() => <img src={record.image} className="w-full" />}>
+            {record.name}
+          </Tooltip>
+          // <span onClick={() => showModal(record)}>{record.name}</span>
+        );
       },
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
@@ -120,35 +126,14 @@ const MaterialList = () => {
       dataIndex: "sku",
       key: "sku",
       // align: "center",
-      sorter: (a, b) => a.code.localeCompare(b.code),
+      sorter: (a, b) => a.sku.localeCompare(b.sku),
     },
     {
       title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
-      // align: "center",
-      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
+      sorter: (a, b) => a.amount - b.amount,
     },
-    // {
-    //   title: "Đơn giá",
-    //   dataIndex: "price",
-    //   key: "price",
-    //   // align: "center",
-    //   render: (_, { price }) => {
-    //     return <span>{price.toLocaleString()} VNĐ</span>;
-    //   },
-    //   sorter: (a, b) => a.price.localeCompare(b.price),
-    // },
-    // {
-    //   title: "Thành tiền",
-    //   dataIndex: "totalPrice",
-    //   key: "totalPrice",
-    //   // align: "center",
-    //   render: (_, { totalPrice }) => {
-    //     return <span>{totalPrice.toLocaleString()} VNĐ</span>;
-    //   },
-    //   sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
-    // },
     {
       title: "Ngày nhập",
       dataIndex: "importDate",
@@ -158,43 +143,33 @@ const MaterialList = () => {
         const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
-      sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
+      sorter: (a, b) => a.importDate.localeCompare(b.importDate),
     },
     {
       title: "Nhà cung cấp",
       dataIndex: "supplier",
       key: "supplier",
-      sorter: (a, b) => a.addedLocation.localeCompare(b.addedLocation),
+      sorter: (a, b) => a.supplier.localeCompare(b.supplier),
     },
-    // {
-    //   title: "Tình trạng",
-    //   dataIndex: "isDeleted",
-    //   key: "isDeleted",
-    //   width: "30%",
-    //   align: "center",
-    //   render: (_, { isDeleted }) => {
-    //     return (
-    //       <span style={{ color: isDeleted ? "#FF0000" : "#29CB00" }}>
-    //         {isDeleted ? "Không hoạt động" : "Đang hoạt động"}
-    //       </span>
-    //     );
-    //   },
-    //   sorter: (a, b) => a.isDeleted - b.isDeleted,
-    //   // filter: {
-    //   //   placeholder: "Chọn trạng thái",
-    //   //   label: "Trạng thái",
-    //   //   filterOptions: [
-    //   //     {
-    //   //       label: "Đang hoạt động",
-    //   //       value: false,
-    //   //     },
-    //   //     {
-    //   //       label: "Không hoạt động",
-    //   //       value: true,
-    //   //     },
-    //   //   ],
-    //   // },
-    // },
+    {
+      title: "Mã màu",
+      dataIndex: "color",
+      key: "color",
+      // align: "center",
+      render: (_, color) => {
+        return (
+          <Tooltip title={color?.color} >
+            <Button
+              block
+              type="primary"
+              style={{ background: color?.color }}
+              align="center"
+            ></Button>
+          </Tooltip>
+        );
+      },
+      // sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
+    },
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -242,9 +217,11 @@ const MaterialList = () => {
       <MaterialModal
         data={materialRef.current}
         open={showUpdateMaterialModal}
+        isCreate={isCreate}
         onCancel={() => {
           setShowUpdateMaterialModal(false);
           materialRef.current = null;
+          setIsCreate(true);
         }}
         onSuccess={() => getData()}
       />

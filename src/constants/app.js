@@ -68,6 +68,12 @@ export const ALL_PERMISSIONS = {
 		update: "groups.update",
 		sider: "groups.sider",
 	},
+	squads: {
+		view: "squads.view",
+		create: "squads.create",
+		update: "squads.update",
+		sider: "squads.sider",
+	},
 	managersTasks: {
 		view: "managersTasks.view",
 		create: "managersTasks.create",
@@ -153,11 +159,6 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.items.view,
 		ALL_PERMISSIONS.items.create,
 		ALL_PERMISSIONS.items.update,
-		// itemTypes
-		// ALL_PERMISSIONS.itemTypes.sider,
-		// ALL_PERMISSIONS.itemTypes.view,
-		// ALL_PERMISSIONS.itemTypes.create,
-		// ALL_PERMISSIONS.itemTypes.update,
 		// employees
 		ALL_PERMISSIONS.employees.sider,
 		ALL_PERMISSIONS.employees.view,
@@ -168,6 +169,11 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.groups.view,
 		ALL_PERMISSIONS.groups.create,
 		ALL_PERMISSIONS.groups.update,
+		// workers squad
+		ALL_PERMISSIONS.squads.sider,
+		ALL_PERMISSIONS.squads.view,
+		ALL_PERMISSIONS.squads.create,
+		ALL_PERMISSIONS.squads.update,
 		// managersTasks
 		ALL_PERMISSIONS.managersTasks.sider,
 		ALL_PERMISSIONS.managersTasks.view,
@@ -180,6 +186,11 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.managersReports.update,
 	],
 	[roles.MANAGER]: [
+		// workers squad
+		ALL_PERMISSIONS.squads.sider,
+		ALL_PERMISSIONS.squads.view,
+		ALL_PERMISSIONS.squads.create,
+		ALL_PERMISSIONS.squads.update,
 		// workers
 		ALL_PERMISSIONS.workers.sider,
 		ALL_PERMISSIONS.workers.view,

@@ -1,6 +1,6 @@
 import BaseApi from ".";
 
-const resource = "Category";
+const resource = "MaterialCategory";
 
 
 const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
@@ -23,7 +23,6 @@ const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
     // }
   } catch (error) {
     console.log("Error get item: ", error);
-    return false;
   }
 };
 
