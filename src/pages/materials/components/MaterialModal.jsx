@@ -54,7 +54,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
   const btnStyle = {
     width: "100%",
     height: "35px",
-    backgroundColor: form.getFieldValue("color"),
+    // backgroundColor: form.getFieldValue("color"),
     margin: "center",
   };
 
@@ -111,6 +111,10 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
     }
   };
 
+  useEffect(() => {
+    // console.log(form.getFieldValue("color"), color);
+  }, [form, color]);
+
   return (
     <BaseModal
       open={open}
@@ -162,10 +166,15 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
         <Form.Item name="color" label="Màu vật liệu">
           <ColorPicker
             onChange={(value) => {
+              setColor(value.toHexString());
               form.setFieldValue("color", value.toHexString());
             }}
           >
-            <Button type="primary" style={btnStyle} align="center"></Button>
+            <Button
+              type="primary"
+              style={{ ...btnStyle, backgroundColor: color || form.getFieldsValue("color") }}
+              align="center"
+            ></Button>
           </ColorPicker>
         </Form.Item>
         <Form.Item
