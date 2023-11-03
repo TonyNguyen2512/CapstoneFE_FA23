@@ -7,6 +7,7 @@ import { BaseTable } from "../../../../components/BaseTable";
 import { roles } from "../../../../constants/app";
 import { getRoleName } from "../../../../utils";
 import { UpdateRoleModal } from "../../components/UpdateRoleModal";
+import { AccountModal } from "../../components/AccountModal";
 
 const AccountList = () => {
   const [accountLoading, setAccountLoading] = useState(false);
@@ -20,15 +21,28 @@ const AccountList = () => {
     setAccountLoading(true);
     const data = await UserApi.searchUsers(keyword);
     data.sort((a, b) => {
-      if (a.role === roles.ADMIN) {
+      if (a.role.name === roles.ADMIN) {
         return -1; // a comes before b
       }
-      if (b.role === roles.ADMIN) {
+      if (b.role.name === roles.ADMIN) {
         return 1; // b comes before a
       }
       return 0; // no change in order
     });
-    setAccounts(data);
+    // data.map((d) => {
+    //   return {
+    //     ...d,
+    //     role: d.role?.name || "",
+    //   };
+    // });
+    setAccounts(
+      data.map((d) => {
+        return {
+          ...d,
+          role: d.role?.name || "",
+        };
+      })
+    );
     setAccountLoading(false);
   };
 
@@ -100,12 +114,12 @@ const AccountList = () => {
       key: "fullName",
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
-    {
-      title: "Ngày sinh",
-      dataIndex: "birthday",
-      key: "birthday",
-      sorter: (a, b) => a.birthday.localeCompare(b.birthday),
-    },
+    // {
+    //   title: "Ngày sinh",
+    //   dataIndex: "birthday",
+    //   key: "birthday",
+    //   sorter: (a, b) => a.birthday.localeCompare(b.birthday),
+    // },
     {
       title: "Địa chỉ",
       dataIndex: "address",
@@ -114,16 +128,16 @@ const AccountList = () => {
     },
     {
       title: "Số điện thoại",
-      dataIndex: "phone",
-      key: "phone",
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      dataIndex: "userName",
+      key: "userName",
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
     },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    //   sorter: (a, b) => a.email.localeCompare(b.email),
-    // },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
     {
       title: "Vai trò",
       dataIndex: "role",
@@ -137,10 +151,11 @@ const AccountList = () => {
                 ? "#FF7777"
                 : role === roles.FACTORY
                 ? "#4ECA69"
-                : role === roles.LEADER
+                : role === roles.MANAGER
                 ? "#F1CA7F"
                 : "#59A7DE"
             }
+            style={{ fontWeight: "bold" }}
           >
             {getRoleName(role)}
           </Tag>
@@ -175,7 +190,7 @@ const AccountList = () => {
           // <Tag color={!isBan ? "#29CB00" : "#FF0000"}>
           //   {!isBan ? "Đang hoạt động" : "Không hoạt động"}
           // </Tag>
-          <span style={{ color: !isBan ? "#29CB00" : "#FF0000" }}>
+          <span style={{ color: !isBan ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
             {!isBan ? "Đang hoạt động" : "Không hoạt động"}
           </span>
         );
@@ -190,12 +205,13 @@ const AccountList = () => {
             value: false,
           },
           {
-            label: "Khóa",
+            label: "Không hoạt động",
             value: true,
           },
         ],
       },
     },
+    {},
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -233,6 +249,7 @@ const AccountList = () => {
           width: 300,
         }}
       />
+      <AccountModal title="Thêm học kỳ"></AccountModal>
       <UpdateRoleModal
         user={userRef.current}
         open={showUpdateRoleModal}

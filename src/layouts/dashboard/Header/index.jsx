@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 
 export const AppHeader = () => {
   const location = useLocation();
-  const [title, setTitle] = useState("Bảng điều khiển");
+  const [title, setTitle] = useState("Quản lý xưởng nội thất JAMA");
 
   useEffect(() => {
     // setTitle(getTitle(location.pathname));

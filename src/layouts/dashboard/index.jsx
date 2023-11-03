@@ -9,6 +9,7 @@ import animationData from "../../assets/lotties/home-animation";
 import AuthApi from "../../apis/auth";
 import { UserContext } from "../../providers/user";
 import { getRoleName } from "../../utils";
+import { roles } from "../../constants/app";
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -18,24 +19,22 @@ export const Dashboard = () => {
   const [user, setUser] = useState();
 
   useEffect(() => {
-    AuthApi.getUser()
+    AuthApi.authorize()
       .then((user) => {
         if (!user) {
-          // localStorage.removeItem("jwt");
+          localStorage.removeItem("jwt");
           localStorage.removeItem("user");
           navigate(routes.login);
           return;
         }
-        document.title = `${getRoleName(user.role)} | Dashboard`;
+        document.title = `${getRoleName(user.role.name)} | Dashboard`;
         setUser(user);
-        if (location.pathname === routes.dashboard.root) {
-          // var path = routes.dashboard.classes;
-          // if (user.role === roles.ADMIN) {
-          // 	path = routes.dashboard.accounts;
-          // }
-          // navigate(path);
-          navigate(routes.dashboard.home);
+        var path = routes.dashboard.home;
+
+        if (user.role.name === roles.WORKER) {
+          path = routes.dashboard.tasks;
         }
+        navigate(path);
       })
       .catch((error) => {
         console.log(error);

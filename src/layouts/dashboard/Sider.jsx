@@ -10,6 +10,7 @@ import {
   DataUser,
   CategoryManagement,
   AdjacentItem,
+  FileEditing,
 } from "@icon-park/react";
 import { Menu, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -44,6 +45,7 @@ export const AppSider = () => {
   const canViewItemTypes = permissions?.includes(ALL_PERMISSIONS.itemTypes?.sider);
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
+  const canViewSquads = permissions?.includes(ALL_PERMISSIONS.squads?.sider);
   const canViewManagersTasks = permissions?.includes(ALL_PERMISSIONS.managersTasks?.sider);
   const canViewManagersReports = permissions?.includes(ALL_PERMISSIONS.managersReports?.sider);
   const canViewWorkers = permissions?.includes(ALL_PERMISSIONS.workers?.sider);
@@ -54,9 +56,11 @@ export const AppSider = () => {
 
   const itemKeys = {
     DASHBOARD: "DASHBOARD",
+    //
     ACCOUNTS: "MANAGE_ACCOUNTS",
     ORDERS: "MANAGE_ORDERS",
     QUOTES: "MANAGE_QUOTES",
+    //
     P_MATERIALS: "P_MATERIALS",
     MATERIALS: "MANAGE_MATERIALS",
     MATERIAL_TYPES: "MANAGE_MATERIAL_TYPES",
@@ -66,8 +70,16 @@ export const AppSider = () => {
     P_EMPLOYEES: "P_EMPLOYEES",
     EMPLOYEES: "MANAGE_EMPLOYEES",
     GROUPS: "MANAGE_GROUPS",
+    SQUADS: "MANAGE_SQUADS",
     MANAGERS_TASKS: "MANAGE_MANAGERS_TASKS",
     MANAGERS_REPORTS: "MANAGE_MANAGERS_REPORTS",
+    //
+    WORKERS: "MANAGE_WORKERS",
+    WORKERS_TASKS: "MANAGE_WORKERS_TASKS",
+    WORKERS_REPORTS: "MANAGE_WORKERS_REPORTS",
+    //
+    TASKS: "MANAGE_TASKS",
+    REPORTS: "MANAGE_REPORTS",
   };
   const iconSize = 20;
   const items = [
@@ -84,14 +96,14 @@ export const AppSider = () => {
     canViewOrders && {
       key: itemKeys.ORDERS,
       icon: <FormOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Đơn đặt hàng</Link>,
+      label: <Link to={routes.dashboard.orders}>Đơn đặt hàng</Link>,
     },
-    canViewQuotes && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
-    {
+    // canViewQuotes && {
+    //   key: itemKeys.QUOTES,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.quotes}>Duyệt báo giá</Link>,
+    // },
+    (canViewMaterialTypes || canViewMaterials) && {
       key: itemKeys.P_MATERIALS,
       icon: <BuildOutlined size={iconSize} />,
       label: "Nguyên vật liệu",
@@ -108,7 +120,7 @@ export const AppSider = () => {
         },
       ],
     },
-    {
+    (canViewItemTypes || canViewItems) && {
       key: itemKeys.P_ITEMS,
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
@@ -125,27 +137,42 @@ export const AppSider = () => {
         },
       ],
     },
-    {
+    (canViewEmployees || canViewGroups || canViewSquads) && {
       key: itemKeys.P_EMPLOYEES,
       icon: <DataUser size={iconSize - 2} />,
-      label: "Nhân sự",
+      label: "Quản lý nhân sự",
       children: [
-        canViewEmployees && {
-          key: itemKeys.EMPLOYEES,
-          icon: <UserOutlined size={iconSize} />,
-          label: <Link to={routes.dashboard.root}>Quản lý Nhân sự</Link>,
-        },
         canViewGroups && {
           key: itemKeys.GROUPS,
           icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Quản lý Tổ</Link>,
+          label: <Link to={routes.dashboard.root}>Tổ</Link>,
+        },
+        canViewSquads && {
+          key: itemKeys.SQUADS,
+          icon: <EveryUser size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.root}>Nhóm</Link>,
+        },
+        canViewEmployees && {
+          key: itemKeys.EMPLOYEES,
+          icon: <UserOutlined size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.root}>Nhân viên</Link>,
+        },
+        canViewWorkers && {
+          key: itemKeys.WORKERS,
+          icon: <FileDoneOutlined size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.root}>Công nhân</Link>,
         },
       ],
     },
     canViewManagersTasks && {
       key: itemKeys.MANAGERS_TASKS,
       icon: <ListView size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.root}>Quản lý công việc</Link>,
+      label: <Link to={routes.dashboard.managersTasks}>Quản lý công việc</Link>,
+    },
+    canViewWorkersTasks && {
+      key: itemKeys.WORKERS_TASKS,
+      icon: <ListView size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.workersTasks}>Quản lý công việc</Link>,
     },
     canViewManagersReports && {
       key: itemKeys.MANAGERS_REPORTS,
@@ -153,30 +180,27 @@ export const AppSider = () => {
       label: <Link to={routes.dashboard.root}>Báo cáo tiến độ</Link>,
     },
     //
-    canViewWorkers && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
-    canViewWorkersTasks && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
-    canViewWorkersReports && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
-    },
+   
+    // canViewWorkersTasks && {
+    //   key: itemKeys.WORKERS_TASKS,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    // },
+    // canViewWorkersReports && {
+    //   key: itemKeys.WORKERS_REPORTS,
+    //   icon: <FileDoneOutlined size={iconSize} />,
+    //   label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+    // },
+    //
     canViewTasks && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+      key: itemKeys.TASKS,
+      icon: <ListView size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.tasks}>Công việc</Link>,
     },
     canViewReports && {
-      key: itemKeys.QUOTES,
-      icon: <FileDoneOutlined size={iconSize} />,
-      label: <Link to={routes.dashboard.root}>Duyệt báo giá</Link>,
+      key: itemKeys.REPORTS,
+      icon: <FileEditing size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.reports}>Danh sách đánh giá</Link>,
     },
   ];
 
@@ -202,8 +226,20 @@ export const AppSider = () => {
         return itemKeys.MATERIAL_TYPES;
       case routes.dashboard.items:
         return itemKeys.ITEMS;
-      case routes.dashboard.itemTypes:
-        return itemKeys.ITEM_TYPES;
+      case routes.dashboard.workersTasks:
+        return itemKeys.WORKERS_TASKS;
+      case routes.dashboard.managersTasks:
+        return itemKeys.MANAGERS_TASKS;
+      case routes.dashboard.workersReports:
+        return itemKeys.WORKERS_REPORTS;
+      case routes.dashboard.managersReports:
+        return itemKeys.MANAGERS_REPORTS;
+      case routes.dashboard.groups:
+        return itemKeys.GROUPS;
+      case routes.dashboard.squads:
+        return itemKeys.SQUADS;
+      case routes.dashboard.workers:
+        return itemKeys.WORKERS;
     }
 
     return undefined;

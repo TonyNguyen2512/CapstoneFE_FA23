@@ -25,6 +25,11 @@ import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
 import { ItemTypeListPage } from "../pages/item-types/list";
 import { ItemListPage } from "../pages/items/list";
+import { WorkerTaskListPage } from "../pages/tasks/workerTask/list";
+import { ManagerTaskListPage } from "../pages/tasks/managerTask/list";
+import { ManagerTaskDetailsPage } from "../pages/tasks/managerTask/details";
+import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
+import { OrderListPage } from "../pages/orders/list";
 
 export const router = createBrowserRouter([
 	{
@@ -54,7 +59,7 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: routes.dashboard.orders,
-						element: <AccountListPage />,
+						element: <OrderListPage />,
 					},
 					{
 						path: routes.dashboard.quotes,
@@ -74,6 +79,27 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: routes.dashboard.itemTypes,
+						element: <ItemTypeListPage />,
+					},
+					//
+					{
+						path: routes.dashboard.workersTasks,
+						element: <WorkerTaskListPage />,
+					},
+					{
+						path: `${routes.dashboard.workersTasks}/:id`,
+						element: <WorkerTaskDetailsPage />,
+					},
+					{
+						path: routes.dashboard.managersTasks,
+						element: <ManagerTaskListPage />,
+					},
+					{
+						path: `${routes.dashboard.managersTasks}/:id`,
+						element: <ManagerTaskDetailsPage />,
+					},
+					{
+						path: routes.dashboard.reports,
 						element: <ItemTypeListPage />,
 					},
 

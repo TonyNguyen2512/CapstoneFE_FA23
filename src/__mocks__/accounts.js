@@ -33,7 +33,7 @@ export const mockAccounts = [
 		email: "manager@gmail.com",
 		username: "manager01",
 		password: '123456',
-		role: roles.LEADER,
+		role: roles.MANAGER,
 		birthday: '12/08/1999',
 		address: 'Toà nhà 102, đường E, khu 7, quận 9, thành phố Hồ Chí Minh',
 		phone: '0916772234',

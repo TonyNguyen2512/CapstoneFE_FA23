@@ -1,126 +1,129 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space, Tag, message } from "antd";
+import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
+import { Button, Dropdown, Space, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import RoleApi from "../../../../apis/role";
-import UserApi from "../../../../apis/user";
 import { BaseTable } from "../../../../components/BaseTable";
-import { roles } from "../../../../constants/app";
-import { getRoleName } from "../../../../utils";
-import { UpdateMaterialTypeModal } from "../../components/UpdateMaterialTypeModal";
-import { mockMaterialTypes } from "../../../../__mocks__/jama/materials";
-
+import { MaterialTypeModal } from "../../components/MaterialTypeModal";
+import MaterialCategoryApi from "../../../../apis/material-category";
+import { ConfirmDeleteModal } from "../../../../components/ConfirmDeleteModal";
+import confirm from "antd/es/modal/confirm";
 const MaterialTypeList = () => {
   const [loading, setLoading] = useState(false);
   const [showUpdateMaterialTypeModal, setShowUpdateMaterialTypeModal] = useState(false);
   const [materialTypeList, setMaterialTypeList] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState("");
 
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const materialTypeRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setMaterialTypeList(data);
-    setMaterialTypeList(mockMaterialTypes);
+    const response = await MaterialCategoryApi.getAllMaterialCategory(keyword);
+
+    setMaterialTypeList(response.data);
     setLoading(false);
   };
 
-  const showModal = (item) => {
-    setLoading(true);
-    setPreviewUrl(item.imageUrl);
-    setLoading(false);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setPreviewUrl("");
-    setIsModalOpen(false);
-  };
   useEffect(() => {
     getData();
   }, []);
 
   const getActionItems = (record) => {
-    const { isActive } = record;
-
+    const { isDeleted } = record;
     return [
       {
-        key: "UPDATE_ROLE",
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen/>,
+        onClick: () => {
+          materialTypeRef.current = record;
+          // setShowUpdateMaterialTypeModal(true);
+        },
+      },
+      {
+        key: "UPDATE_MATERIAL_TYPE",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          userRef.current = record;
+          materialTypeRef.current = record;
           setShowUpdateMaterialTypeModal(true);
         },
       },
       {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {},
+        danger: !isDeleted,
+        label: !isDeleted ? "Xoá" : "Phục hồi",
+        icon: !isDeleted ? <Forbid /> : <Unlock />,
+        onClick: () => {
+          confirm({
+            title: "Xoá loại vật liệu",
+            content: `Chắc chắn xoá "${record.name}"?`,
+            type: "confirm",
+            
+            cancelText: "Hủy",
+            onOk: () => deleteMaterialCategory(record.id),
+            onCancel: () => {},
+            closable: true,
+          });
+        },
       },
     ];
   };
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: "20%",
-      align: "center",
-      sorter: (a, b) => a.id.localeCompare(b.id),
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
     },
     {
       title: "Tên loại vật liệu",
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.name}</span>;
-      },
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Tình trạng",
-      dataIndex: "isActive",
-      key: "isActive",
-      width: "30%",
-      align: "center",
-      render: (_, { isActive }) => {
         return (
-          <span style={{ color: isActive ? "#29CB00" : "#FF0000" }}>
-            {isActive ? "Đang hoạt động" : "Không hoạt động"}
+          <span
+            onClick={() => {
+              /*showModal(record) */
+            }}
+          >
+            {record.name}
           </span>
         );
       },
-      sorter: (a, b) => a.isActive - b.isActive,
-      // filter: {
-      //   placeholder: "Chọn trạng thái",
-      //   label: "Trạng thái",
-      //   filterOptions: [
-      //     {
-      //       label: "Đang hoạt động",
-      //       value: false,
-      //     },
-      //     {
-      //       label: "Khóa",
-      //       value: true,
-      //     },
-      //   ],
-      // },
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
+    // {
+    //   title: "Tình trạng",
+    //   dataIndex: "isDeleted",
+    //   key: "isDeleted",
+    //   width: "20%",
+    //   align: "center",
+    //   render: (_, { isDeleted }) => {
+    //     return (
+    //       <span style={{ color: isDeleted ? "#FF0000" : "#29CB00" }}>
+    //         {isDeleted ? "Không hoạt động" : "Đang hoạt động"}
+    //       </span>
+    //     );
+    //   },
+    //   sorter: (a, b) => a.isDeleted - b.isDeleted,
+    //   // filter: {
+    //   //   placeholder: "Chọn trạng thái",
+    //   //   label: "Trạng thái",
+    //   //   filterOptions: [
+    //   //     {
+    //   //       label: "Đang hoạt động",
+    //   //       value: false,
+    //   //     },
+    //   //     {
+    //   //       label: "Khóa",
+    //   //       value: true,
+    //   //     },
+    //   //   ],
+    //   // },
+    // },
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -141,11 +144,27 @@ const MaterialTypeList = () => {
     getData(value);
   };
 
+  const deleteMaterialCategory = async (value) => {
+    setLoading(true);
+    const success = await MaterialCategoryApi.deleteMaterialCategory(value);
+    if (success) {
+      message.success("Xoá thành công");
+    } else {
+      message.error("Xoá thất bại");
+    }
+    getData();
+    setLoading(false);
+  };
+
   return (
     <>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
-        <Button className="btn-primary app-bg-primary font-semibold text-white" type="primay">
+        <Button
+          type="primary"
+          className="btn-primary app-bg-primary font-semibold text-white"
+          onClick={() => setShowUpdateMaterialTypeModal(true)}
+        >
           Thêm loại vật liệu
         </Button>
       </Space>
@@ -154,7 +173,7 @@ const MaterialTypeList = () => {
         dataSource={materialTypeList}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={true}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm loại vật liệu...",
@@ -162,16 +181,15 @@ const MaterialTypeList = () => {
           width: 300,
         }}
       />
-      {/* <UpdateMaterialTypeModal
-        user={userRef.current}
+      <MaterialTypeModal
+        data={materialTypeRef.current}
         open={showUpdateMaterialTypeModal}
-        onCancel={() => setShowUpdateMaterialTypeModal(false)}
-        allRoles={rolesRef.current}
+        onCancel={() => {
+          setShowUpdateMaterialTypeModal(false);
+          materialTypeRef.current = null;
+        }}
         onSuccess={() => getData()}
-      /> */}
-      <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
-        <img src={previewUrl} className="w-full h-full object-cover mt-8" />
-      </Modal>
+      />
     </>
   );
 };
