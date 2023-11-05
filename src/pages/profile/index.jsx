@@ -6,6 +6,7 @@ import { useRole } from "../../hooks/role";
 import { roles } from "../../constants/app";
 import { Container } from "react-bootstrap";
 import { UserOutlined } from "@ant-design/icons";
+import moment from "moment";
 
 const { Title } = Typography;
 
@@ -51,13 +52,22 @@ const ProfilePage = () => {
                 <Input placeholder="Email..." value={user?.email} readOnly />
               </Form.Item>
               <Form.Item name="password" label="Mật khẩu">
-                <Input placeholder="Mật khẩu..." value={user?.password} disabled readOnly />
+                <Input
+                  type="password"
+                  placeholder="Mật khẩu..."
+                  value={user?.password}
+                  disabled
+                  readOnly
+                />
               </Form.Item>
               <Form.Item name="fullName" label="Họ và tên">
                 <Input placeholder="Họ và tên..." defaultValue={user?.fullName} />
               </Form.Item>
               <Form.Item name="dob" label="Sinh nhật">
-                <Input placeholder="Sinh nhật..." defaultValue={user?.dob} />
+                <Input
+                  placeholder="Sinh nhật..."
+                  defaultValue={user?.dob ? moment(user.dob).format("DD/MM/YYYY") : undefined}
+                />
               </Form.Item>
               <Form.Item name="address" label="Địa chỉ">
                 <Input placeholder="Địa chỉ..." defaultValue={user?.address} />
