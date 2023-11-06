@@ -1,7 +1,7 @@
 import React from "react";
-import ManagerTaskList from "./components/TaskList";
 import { ALL_PERMISSIONS } from "../../../../constants/app";
 import { usePermissions } from "../../../../hooks/permission";
+import ManagerTaskList from "./components/ManagerTaskList";
 
 export const ManagerTaskListPage = () => {
   const permissions = usePermissions();
