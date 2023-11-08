@@ -9,11 +9,14 @@ import { Button, Dropdown, Spin, Typography, message } from "antd";
 import UserApi from "../../../apis/user";
 import { BaseTable } from "../../../components/BaseTable";
 import { Edit, Error, More } from "@icon-park/react";
+import routes from "../../../constants/routes";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const OrderDetailPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
@@ -123,14 +126,14 @@ const OrderDetailPage = () => {
   }, [id]);
 
   return (
-    <Spin spinning={loading}>
-      <OrderDetailsProvider
-        details={details}
-        list={itemList}
-        users={users}
-        reload={() => getDetails()}
-      >
-        <BasePageContent>
+    <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.orders}`)}>
+      <Spin spinning={loading}>
+        <OrderDetailsProvider
+          details={details}
+          list={itemList}
+          users={users}
+          reload={() => getDetails()}
+        >
           <section className="mt-4">
             <OrderDetail />
           </section>
@@ -149,9 +152,9 @@ const OrderDetailPage = () => {
               }}
             />
           </section>
-        </BasePageContent>
-      </OrderDetailsProvider>
-    </Spin>
+        </OrderDetailsProvider>
+      </Spin>
+    </BasePageContent>
   );
 };
 
