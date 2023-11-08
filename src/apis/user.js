@@ -7,15 +7,27 @@ export const searchUsers = async (keyword) => {
 	try {
 		// const query = keyword ? `?search=${keyword}` : "";
 		let params = {};
-		if (keyword) params = { ...params, keyword };
-		const response = await BaseApi.get(`/${resource}`, { params: params });
-		return response.data;
-		// return mockAccounts;
+		if (keyword) {
+			params = { ...params, keyword };
+			const response = await BaseApi.get(`/${resource}`, { params: params });
+			return response.data;
+		}
 	} catch (error) {
 		console.log("Error search users: ", error);
 		return [];
 	}
 };
+
+export const getAll = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAll`);
+		return response.data.data;
+	} catch (error) {
+		console.log("Error search users: ", error);
+		return [];
+	}
+};
+
 
 const getUserByEmail = async (email) => {
 	try {
@@ -75,6 +87,9 @@ const UserApi = {
 	banUser,
 	unbanUser,
 	updateUserRole,
+	getUserByEmail,
+	getUserRole,
+	getAll,
 };
 
 export default UserApi;

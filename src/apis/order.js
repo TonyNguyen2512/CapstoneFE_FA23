@@ -2,7 +2,6 @@ import BaseApi from ".";
 
 const resource = "Order";
 
-
 const getAllOrders = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
@@ -72,9 +71,9 @@ const createOrder = async (data) => {
   }
 };
 
-const updateOrder = async (data) => {
+const updateOrder = async (id, status) => {
   try {
-    const response = await BaseApi.put(`/${resource}/UpdateOrder`, data);
+    const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);
@@ -84,8 +83,8 @@ const updateOrder = async (data) => {
 
 const deleteOrder = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/DeleteOrder/${id}`);
-    return response.status === 200;
+    const success = await updateOrder(id, 5);
+    return success;
   } catch (error) {
     console.log("Error delete item: ", error);
     return false;

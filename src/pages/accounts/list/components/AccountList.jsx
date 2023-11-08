@@ -19,22 +19,17 @@ const AccountList = () => {
 
   const getUsers = async (keyword) => {
     setAccountLoading(true);
-    const data = await UserApi.searchUsers(keyword);
-    data.sort((a, b) => {
-      if (a.role.name === roles.ADMIN) {
+    const data = await UserApi.getAll();
+    console.log(data);
+    data?.sort((a, b) => {
+      if (a.role?.name === roles.ADMIN) {
         return -1; // a comes before b
       }
-      if (b.role.name === roles.ADMIN) {
+      if (b.role?.name === roles.ADMIN) {
         return 1; // b comes before a
       }
       return 0; // no change in order
     });
-    // data.map((d) => {
-    //   return {
-    //     ...d,
-    //     role: d.role?.name || "",
-    //   };
-    // });
     setAccounts(
       data.map((d) => {
         return {
@@ -114,12 +109,6 @@ const AccountList = () => {
       key: "fullName",
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
-    // {
-    //   title: "Ngày sinh",
-    //   dataIndex: "birthday",
-    //   key: "birthday",
-    //   sorter: (a, b) => a.birthday.localeCompare(b.birthday),
-    // },
     {
       title: "Địa chỉ",
       dataIndex: "address",
@@ -149,7 +138,7 @@ const AccountList = () => {
             color={
               role === roles.ADMIN
                 ? "#FF7777"
-                : role === roles.FACTORY
+                : role === roles.FACTORY || role === roles.FOREMAN
                 ? "#4ECA69"
                 : role === roles.MANAGER
                 ? "#F1CA7F"
@@ -241,7 +230,7 @@ const AccountList = () => {
         dataSource={accounts}
         columns={columns}
         loading={accountLoading}
-        pagination={false}
+        pagination={true}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",

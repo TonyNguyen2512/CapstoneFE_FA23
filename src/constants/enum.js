@@ -31,7 +31,7 @@ export const orderLabels = [
 	'Bị từ Chối',
 	'Đã duyệt',
 	'Đang tiến hành',
-	'Huỷ đơn',
+	'Đã huỷ',
 	'Hoàn thành',
 ]
 
