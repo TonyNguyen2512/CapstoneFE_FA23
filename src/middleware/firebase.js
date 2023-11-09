@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getStorage, ref } from "firebase/storage";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -19,14 +20,11 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+// Initialize Cloud Storage and get a reference to the service
+const storage = getStorage(app);
 
-// Begin 
+// Create a child reference
+export const quotesRef = ref(storage, 'Orders/Quotes');
+export const contractsRef = ref(storage, 'Orders/Contracts');
 
-const getListItems = async (db, collectionName) => {
-  const collection = collection(db, collectionName);
-  const snapshot = await getDocs(collection);
-  const itemList = snapshot.docs.map(doc => doc.data());
-  return itemList;
-}
-
-// End
+export default storage;

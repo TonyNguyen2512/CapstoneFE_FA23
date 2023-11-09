@@ -196,6 +196,7 @@ const OrderList = () => {
         data={orderRef.current}
         users={accounts || []}
         open={showOrderModal}
+        isCreate={!orderRef.current}
         onCancel={() => {
           setShowOrderModal(false);
           orderRef.current = null;

@@ -81,6 +81,15 @@ const updateOrder = async (id, status) => {
   }
 };
 
+const updateStatus = async (id, status) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error update item: ", error);
+    return false;
+  }
+};
 const deleteOrder = async (id) => {
   try {
     const success = await updateOrder(id, 5);
@@ -97,6 +106,7 @@ const OrderApi = {
   getOrderById,
   createOrder,
   updateOrder,
+  updateStatus,
   deleteOrder,
 };
 

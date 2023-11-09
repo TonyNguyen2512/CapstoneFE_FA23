@@ -7,24 +7,79 @@ import TextArea from "antd/lib/input/TextArea";
 import UserApi from "../../../apis/user";
 import { roles } from "../../../constants/app";
 import { getRoleName } from "../../../utils";
+import storage, { contractsRef, quotesRef } from "../../../middleware/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess }) => {
   const dateFormat = "DD/MM/YYYY";
   const formRef = useRef();
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const [quoteUrl, setQuoteUrl] = useState(data?.fileQuote ?? "");
+  const [contractUrl, setContractUrl] = useState(data?.fileContract ?? "");
 
   const handleUploadQuote = (event) => {
-    let fileName = event.target?.name ?? event.target?.uid;
+    setLoading(true);
+    const file = event.file;
+    const fileName = event.file?.name;
+    const uploadTask = uploadBytesResumable(ref(quotesRef, fileName), file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        // update progress
+        setProgress(percent);
+      },
+      (err) => {
+        console.log(err);
+        setLoading(false);
+      },
+      () => {
+        setProgress(0);
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          formRef.current.setFieldValue("fileQuote", url);
+          setQuoteUrl(url);
+        });
+      }
+    );
+    setLoading(false);
   };
 
   const handleUploadContract = (event) => {
-    let fileName = event.target?.name ?? event.target?.uid;
+    setLoading(true);
+    const file = event.file;
+    const fileName = event.file?.name;
+    const uploadTask = uploadBytesResumable(ref(contractsRef, fileName), file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        // update progress
+        setProgress(percent);
+      },
+      (err) => {
+        console.log(err);
+        setLoading(false);
+      },
+      () => {
+        setProgress(0);
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          formRef.current.setFieldValue("fileContract", url);
+          setContractUrl(url);
+        });
+      }
+    );
+    setLoading(false);
   };
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    const body = { ...values };
+    console.log(values);
+    const body = { ...values, fileQuote: quoteUrl, fileContract: contractUrl };
     const success = isCreate ? await OrderApi.createOrder(body) : await OrderApi.updateOrder(body);
     if (success) {
       message.success(`${typeMessage} thành công`);
@@ -45,6 +100,10 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
       title={`${typeMessage} đơn hàng`}
       onOk={() => formRef.current?.submit()}
     >
+      {/* <div>
+        <input type="file" accept="image/*" onChange={handleChange} />
+        <button>Upload to Firebase</button>
+      </div> */}
       <Form
         ref={formRef}
         layout="vertical"
@@ -100,7 +159,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
               <Upload
                 listType="picture"
                 beforeUpload={() => false}
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 // disabled={!!formRef.current?.getFieldValue("fileQuote")}
                 onChange={handleUploadQuote}
                 maxCount={1}
@@ -119,7 +178,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
               <Upload
                 listType="picture"
                 beforeUpload={() => false}
-                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                accept=".xlsx, .xls, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 // disabled={!!formRef.current?.getFieldValue("fileContract")}
                 onChange={handleUploadContract}
                 maxCount={1}

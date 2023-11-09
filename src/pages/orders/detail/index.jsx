@@ -49,9 +49,10 @@ const OrderDetailPage = () => {
   const columns = [
     {
       title: "Tên sản phẩm",
-      dataIndex: "item",
-      key: "item",
-      sorter: (a, b) => a?.item.localeCompare(b?.item),
+      dataIndex: "itemName",
+      key: "itemName",
+      render: (_, record) => <span>{record?.item?.name}</span>,
+      sorter: (a, b) => a?.item?.name.localeCompare(b?.item?.name),
     },
     {
       title: "Số lượng",
@@ -146,7 +147,7 @@ const OrderDetailPage = () => {
               pagination={false}
               searchOptions={{
                 visible: true,
-                placeholder: "Tìm kiếm đơn đặt hàng...",
+                placeholder: "Tìm kiếm sản phẩm...",
                 onSearch: handleSearch,
                 width: 300,
               }}

@@ -22,7 +22,7 @@ const getListByOrderId = async (id, search, pageIndex = 1, pageSize = 10) => {
     const response = await BaseApi.get(`/${resource}/GetByOrderIdWithPaging`, {
       params: params,
     });
-    return response.data;
+    return response.data?.data || response.data;
   } catch (error) {
     console.log("Error get items: ", error);
     return false;
