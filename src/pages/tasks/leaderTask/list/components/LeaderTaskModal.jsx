@@ -1,14 +1,11 @@
-import { Info } from "@icon-park/react";
-import { Row, Col, Form, Input, Select, DatePicker, Button, Tooltip } from "antd";
+import { Form, Input, Select, DatePicker } from "antd";
 import dayjs from "dayjs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import BaseModal from "../../../../../components/BaseModal";
-import { RichTextEditor } from "../../../../../components/RichTextEditor";
-import { mockItems } from "../../../../../__mocks__/jama/items";
-import { mockTasks } from "../../../../../__mocks__/jama/tasks";
-import { formatDate } from "../../../../../utils";
+// import { mockItems } from "../../../../../__mocks__/jama/items";
+// import { mockTasks } from "../../../../../__mocks__/jama/tasks";
 
-export const ManagerTaskModal = ({
+export const LeaderTaskModal = ({
 	open,
 	onCancel,
 	onSubmit,
@@ -19,18 +16,15 @@ export const ManagerTaskModal = ({
 	const FORMAT_DATE = "DD/MM/YYYY";
 	const title = `${mode === "1" ? "Thêm" : "Cập nhật"} công việc`;
 
-	const [itemList, setItemList] = useState([]);
-	const [taskList, setTaskList] = useState([]);
-	const [taskNameRef, setTaskNameRef] = useState([]);
-	const [managerNameRef, setManagerNameRef] = useState([]);
-	const [timeStartFormat, setTimeStartFormat] = useState([]);
-	const [timeEndFormat, setTimeEndFormat] = useState([]);
+	// const [itemList, setItemList] = useState([]);
+	// const [taskList, setTaskList] = useState([]);
+	// const [taskNameRef, setTaskNameRef] = useState([]);
+	// const [managerNameRef, setManagerNameRef] = useState([]);
+	// const [timeStartFormat, setTimeStartFormat] = useState([]);
+	// const [timeEndFormat, setTimeEndFormat] = useState([]);
 
-	const [initialValues, setInitialValues] = useState();
-	const [mgrTaskForm] = Form.useForm();
-	const handleValue = (values) => {
-		mgrTaskForm.setFieldsValue(values);
-	};
+	const initialValues = useState();
+	const [leaderTaskForm] = Form.useForm();
 
 	const onFinish = async (values) => {
 		const data = {
@@ -45,11 +39,15 @@ export const ManagerTaskModal = ({
 
 	useEffect(() => {
 
-		const itemData = mockItems;
-		setItemList(itemData);
+		// const itemData = mockItems;
+		// setItemList(itemData);
 
-		const taskData = mockTasks;
-		setTaskList(taskData);
+		// const taskData = mockTasks;
+		// setTaskList(taskData);
+
+		const handleValue = (values) => {
+			leaderTaskForm.setFieldsValue(values);
+		};
 
 		handleValue({
 			id: dataSource?.id,
@@ -59,25 +57,25 @@ export const ManagerTaskModal = ({
 			timeEnd: dataSource?.timeEnd && dayjs(dataSource?.timeEnd)
 		});
 
-	}, [dataSource]);
+	}, [dataSource, leaderTaskForm]);
 
 	return (
 		<BaseModal
 			open={open}
 			onCancel={() => {
 				onCancel();
-				mgrTaskForm.resetFields();
+				leaderTaskForm.resetFields();
 			}}
 			title={title}
 			onOk={() => {
-				mgrTaskForm.current?.submit();
+				leaderTaskForm.current?.submit();
 			}}
 			confirmLoading={confirmLoading}
 			width="30%"
 			okText="Nhập"
 		>
 			<Form
-				form={mgrTaskForm}
+				form={leaderTaskForm}
 				layout="vertical"
 				onFinish={onFinish}
 				initialValues={initialValues}
@@ -98,9 +96,9 @@ export const ManagerTaskModal = ({
 					<Select
 						placeholder="Tên đơn hàng"
 						// options={id}
-						onChange={(value) => {
-							setTaskNameRef(value);
-						}}
+						// onChange={(value) => {
+						// 	setTaskNameRef(value);
+						// }}
 					/>
 				</Form.Item>
 				<Form.Item
@@ -116,9 +114,9 @@ export const ManagerTaskModal = ({
 					<Select
 						placeholder="Chọn loại công việc"
 						// options={}
-						onChange={(value) => {
-							setManagerNameRef(value);
-						}}
+						// onChange={(value) => {
+						// 	setManagerNameRef(value);
+						// }}
 					/>
 				</Form.Item>
 				<Form.Item

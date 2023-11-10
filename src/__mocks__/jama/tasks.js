@@ -1,3 +1,16 @@
+
+const dataTaskMembers = [{
+  id: 1,
+  fullName: "Trần Quang Đạt"
+}, {
+  id: 2,
+  fullName: "Phan Thanh Đức"
+}, {
+  id: 3,
+  fullName: "Lê Tấn Phát"
+},
+]
+
 export const mockTasks = [
   {
     id: "1",
@@ -15,7 +28,8 @@ export const mockTasks = [
     productCompleted: 1,
     productFailed: 0,
     status: 1,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "2",
@@ -33,7 +47,8 @@ export const mockTasks = [
     productCompleted: 1,
     productFailed: 0,
     status: 2,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "3",
@@ -51,7 +66,8 @@ export const mockTasks = [
     productCompleted: 0,
     productFailed: 1,
     status: 3,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "4",
@@ -70,6 +86,7 @@ export const mockTasks = [
     productFailed: 1,
     status: 4,
     isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "5",
@@ -87,7 +104,8 @@ export const mockTasks = [
     productCompleted: 0,
     productFailed: 1,
     status: 5,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "6",
@@ -105,7 +123,8 @@ export const mockTasks = [
     productCompleted: 0,
     productFailed: 1,
     status: 6,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
   {
     id: "7",
@@ -123,9 +142,11 @@ export const mockTasks = [
     productCompleted: 0,
     productFailed: 1,
     status: 7,
-    isDeleted: false
+    isDeleted: false,
+    members: dataTaskMembers,
   },
 ];
+
 
 export const enumTaskStatuses = [
   {

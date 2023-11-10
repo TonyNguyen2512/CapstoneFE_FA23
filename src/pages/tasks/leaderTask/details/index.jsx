@@ -1,22 +1,28 @@
 import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Typography, Modal, Row, Space } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { mockTasks } from "../../../../__mocks__/jama/tasks";
 import { mockMaterials } from "../../../../__mocks__/jama/materials";
 import { mockProcedures } from "../../../../__mocks__/jama/procedures";
 
-import { ManagerTaskInfo } from "./components/ManagerTaskInfo";
-import { ManagerTaskMaterial } from "./components/ManagerTaskMaterial";
-import { ManagerTaskProcedure } from "./components/ManagerTaskProcedure";
-import { ManagerTaskProcedureOverview } from "./components/ManagerTaskProcedureOverview";
+import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
+import { LeaderTaskMaterial } from "./components/LeaderTaskMaterial";
+import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
+import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
+import { UserContext } from "../../../../providers/user";
+import LeaderTasksApi from "../../../../apis/leader-task";
+import OrderApi from "../../../../apis/order";
 
 
-export const ManagerTaskDetailsPage = () => {
+export const LeaderTaskDetailsPage = () => {
+  
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [taskInfo, setTaskInfo] = useState();
+  const [orderInfo, setOrderInfo] = useState([]);
+  const [taskInfo, setTaskInfo] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const [procedureInfo, setProcedureInfo] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,10 +32,11 @@ export const ManagerTaskDetailsPage = () => {
   const userRef = useRef();
   const rolesRef = useRef();
 
-  const getData = async (taskId, handleLoading) => {
+  const getData = async (id, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
+    const data = await OrderApi.getOrderById(id);
     // const data = await UserApi.searchUsers(keyword);
     // data.sort((a, b) => {
     //   if (a.role === roles.ADMIN) {
@@ -41,8 +48,8 @@ export const ManagerTaskDetailsPage = () => {
     //   return 0; // no change in order
     // });
     // setTaskList(data);
-    const dataTaskInfo = mockTasks.find(x => x.id === taskId);
-    setTaskInfo(dataTaskInfo);
+    setOrderInfo(data);
+    // setTaskInfo(data);
 
     setMaterialInfo(mockMaterials)
 
@@ -97,20 +104,20 @@ export const ManagerTaskDetailsPage = () => {
 
   return (
     <Space direction="vertical" className="w-full gap-6">
-      <ManagerTaskInfo
-        dataSource={taskInfo}
+      <LeaderTaskInfo
+        dataSource={orderInfo}
         loading={loading}
       />
-      <ManagerTaskMaterial
+      <LeaderTaskMaterial
         title="Danh sách vật liệu"
         dataSource={materialInfo}
       />
-      <ManagerTaskProcedureOverview
-        title="Tiến độ công việc"
+      <LeaderTaskProcedureOverview
+        title="Tiến độ quy trình"
         dataSource={procedureInfo}
       />
-      <ManagerTaskProcedure
-        title="Danh sách tiến độ"
+      <LeaderTaskProcedure
+        title="Danh sách quy trình"
         dataSource={procedureInfo}
       />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>

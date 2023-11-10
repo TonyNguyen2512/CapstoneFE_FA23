@@ -9,9 +9,9 @@ import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
 import { enumProcedureStatus } from "../../../../../__mocks__/jama/procedures";
-import { ManagerTaskProcedureModal } from "./ManagerTaskProcedureModal";
+import { WorkerTaskProcedureModal } from "./WorkerTaskProcedureModal";
 
-export const ManagerTaskProcedure = ({
+export const WorkerTaskProcedure = ({
   title,
   dataSource
 }) => {
@@ -29,7 +29,7 @@ export const ManagerTaskProcedure = ({
 
   useEffect(() => {
     setMaterial(dataSource);
-    setTitleInfo(title + ` (${dataSource?.length})`)
+    setTitleInfo(title + ` (${dataSource?.tasks.length})`)
   });
 
 
@@ -272,7 +272,7 @@ export const ManagerTaskProcedure = ({
           width: 300,
         }}
       />
-      <ManagerTaskProcedureModal
+      {/* <WorkerTaskProcedureModal
         open={showCreateModal}
         onCancel={() => {
           setShowCreateModal(false);
@@ -282,7 +282,7 @@ export const ManagerTaskProcedure = ({
         confirmLoading={procedureCreating}
         mode="1"
       />
-      <ManagerTaskProcedureModal
+      <WorkerTaskProcedureModal
         open={showDetailModal}
         onCancel={() => {
           setShowDetailModal(false);
@@ -292,7 +292,7 @@ export const ManagerTaskProcedure = ({
         confirmLoading={procedureUpdating}
         dataSource={procedureRef.current}
         mode="2"
-      />
+      /> */}
     </>
   );
 };

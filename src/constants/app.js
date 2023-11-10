@@ -74,17 +74,17 @@ export const ALL_PERMISSIONS = {
 		update: "squads.update",
 		sider: "squads.sider",
 	},
-	managersTasks: {
-		view: "managersTasks.view",
-		create: "managersTasks.create",
-		update: "managersTasks.update",
-		sider: "managersTasks.sider",
+	leadersTasks: {
+		view: "leadersTasks.view",
+		create: "leadersTasks.create",
+		update: "leadersTasks.update",
+		sider: "leadersTasks.sider",
 	},
-	managersReports: {
-		view: "managersReports.view",
-		create: "managersReports.create",
-		update: "managersReports.update",
-		sider: "managersReports.sider",
+	leadersReports: {
+		view: "leadersReports.view",
+		create: "leadersReports.create",
+		update: "leadersReports.update",
+		sider: "leadersReports.sider",
 	},
 	//
 	workers: {
@@ -174,16 +174,16 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.squads.view,
 		ALL_PERMISSIONS.squads.create,
 		ALL_PERMISSIONS.squads.update,
-		// managersTasks
-		ALL_PERMISSIONS.managersTasks.sider,
-		ALL_PERMISSIONS.managersTasks.view,
-		ALL_PERMISSIONS.managersTasks.create,
-		ALL_PERMISSIONS.managersTasks.update,
-		// managersReports
-		ALL_PERMISSIONS.managersReports.sider,
-		ALL_PERMISSIONS.managersReports.view,
-		ALL_PERMISSIONS.managersReports.create,
-		ALL_PERMISSIONS.managersReports.update,
+		// leadersTasks
+		ALL_PERMISSIONS.leadersTasks.sider,
+		ALL_PERMISSIONS.leadersTasks.view,
+		ALL_PERMISSIONS.leadersTasks.create,
+		ALL_PERMISSIONS.leadersTasks.update,
+		// leadersReports
+		ALL_PERMISSIONS.leadersReports.sider,
+		ALL_PERMISSIONS.leadersReports.view,
+		ALL_PERMISSIONS.leadersReports.create,
+		ALL_PERMISSIONS.leadersReports.update,
 	],
 	[roles.MANAGER]: [
 		// workers squad

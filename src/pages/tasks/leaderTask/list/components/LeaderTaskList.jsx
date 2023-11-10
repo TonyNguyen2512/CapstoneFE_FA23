@@ -1,16 +1,20 @@
 import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Space } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { enumTaskStatuses, mockTasks } from "../../../../../__mocks__/jama/tasks";
 import { message } from "antd/lib";
 import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
-import ManagerTaskApi from "../../../../../apis/manager-task";
+import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { useNavigate } from "react-router-dom";
-import { ManagerTaskModal } from "./ManagerTaskModal";
+import { LeaderTaskModal } from "./LeaderTaskModal";
+import { UserContext } from "../../../../../providers/user";
+import LeaderTasksApi from "../../../../../apis/leader-task";
+import OrderApi from "../../../../../apis/order";
 
-const ManagerTaskList = () => {
+const LeaderTaskList = () => {
+  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -23,20 +27,10 @@ const ManagerTaskList = () => {
   const userRef = useRef();
   // const rolesRef = useRef();
 
-  const getData = async (keyword) => {
+  const getData = async (leaderId) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
-    setTaskList(mockTasks);
+    const data = await OrderApi.getAllOrders();
+    setTaskList(data.data);
     setLoading(false);
   };
 
@@ -53,8 +47,10 @@ const ManagerTaskList = () => {
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    // getData("3e375ec4-3713-4fd8-a3d2-08dbdf6e15d8");
+    console.log("user.id", user.id)
+    getData(user.id);
+  }, [user]);
 
   
 
@@ -111,6 +107,7 @@ const ManagerTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
+          console.log(record.id)
           navigate(record?.id)
         },
       },
@@ -166,13 +163,6 @@ const ManagerTaskList = () => {
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Nhóm",
-      dataIndex: "team",
-      key: "team",
-      align: "center",
-      sorter: (a, b) => a.team.localeCompare(b.team),
     },
     {
       title: "Thời gian bắt đầu",
@@ -267,7 +257,7 @@ const ManagerTaskList = () => {
         }}
       />
       
-      <ManagerTaskModal
+      <LeaderTaskModal
         open={showCreateModal}
         onCancel={() => {
           setShowCreateModal(false);
@@ -277,7 +267,7 @@ const ManagerTaskList = () => {
         confirmLoading={taskCreateLoading}
         mode="1"
       />
-      <ManagerTaskModal
+      <LeaderTaskModal
         open={showUpdateModal}
         onCancel={() => {
           setShowUpdateModal(false);
@@ -292,4 +282,4 @@ const ManagerTaskList = () => {
   );
 };
 
-export default ManagerTaskList;
+export default LeaderTaskList;

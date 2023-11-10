@@ -25,7 +25,7 @@ const taskStatusOptions = [
 	},
 ];
 
-export const ManagerTaskProcedureModal = ({
+export const LeaderTaskProcedureModal = ({
 	open,
 	onCancel,
 	onSubmit,
@@ -43,12 +43,12 @@ export const ManagerTaskProcedureModal = ({
 	// setTitle(`${mode === "1" ? "Thêm" : "Đánh giá"} báo cáo`);
 
 	const [initialValues, setInitialValues] = useState();
-	const [mgnTaskProcedureform] = Form.useForm();
+	const [leadTaskProcedureform] = Form.useForm();
 
 	const [loading, setLoading] = useState(false);
 
 	const handleValue = (values) => {
-		mgnTaskProcedureform.setFieldsValue(values);
+		leadTaskProcedureform.setFieldsValue(values);
 	};
 
 	const onFinish = async (values) => {
@@ -67,9 +67,9 @@ export const ManagerTaskProcedureModal = ({
 
 	const handleTitle = (values) => {
 		if (mode === "1") {
-			setTitle("Thêm đánh giá báo cáo")
+			setTitle("Thêm quy trình")
 		} else {
-			setTitle(`Đánh giá báo cáo ${values}`)
+			setTitle(`Chỉnh sửa quy trình ${values}`)
 		}
 	}
 
@@ -91,18 +91,18 @@ export const ManagerTaskProcedureModal = ({
 			open={open}
 			onCancel={() => {
 				onCancel();
-				mgnTaskProcedureform.resetFields();
+				leadTaskProcedureform.resetFields();
 			}}
 			title={title}
 			onOk={() => {
-				mgnTaskProcedureform.current.submit();
+				leadTaskProcedureform.submit();
 			}}
 			confirmLoading={confirmLoading}
 			width="50%"
 			okText="Gửi"
 		>
 			<Form
-				form={mgnTaskProcedureform}
+				form={leadTaskProcedureform}
 				layout="vertical"
 				onFinish={onFinish}
 				initialValues={initialValues}
@@ -112,11 +112,11 @@ export const ManagerTaskProcedureModal = ({
 				</Form.Item>
 				<Form.Item
 					name="name"
-					label="Tên đơn hàng"
+					label="Tên quy trình"
 					rules={[
 						{
 							required: true,
-							message: "Vui lòng nhập tên đơn hàng",
+							message: "Vui lòng nhập tên quy trình",
 						},
 					]}
 				>
@@ -128,18 +128,18 @@ export const ManagerTaskProcedureModal = ({
 				</Form.Item>
 				<Form.Item
 					name="username"
-					label="Tên quản lý"
+					label="Tên nhóm trưởng"
 					rules={[
 						{
 							required: true,
-							message: "Vui lòng nhập tên quản lý",
+							message: "Vui lòng nhập tên nhóm trưởng",
 						},
 					]}
 				>
 					<Input
 						showCount
 						maxLength={255}
-						placeholder="Tên quản lý"
+						placeholder="Tên nhóm trưởng"
 					/>
 				</Form.Item>
 				<Form.Item

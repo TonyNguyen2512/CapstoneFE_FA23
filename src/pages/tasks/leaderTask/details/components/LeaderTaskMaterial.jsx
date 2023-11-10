@@ -5,7 +5,7 @@ import { BaseTable } from "../../../../../components/BaseTable";
 import { mockMaterials } from "../../../../../__mocks__/jama/materials";
 
 
-export const ManagerTaskMaterial = ({
+export const LeaderTaskMaterial = ({
   title,
   dataSource
 }) => {
