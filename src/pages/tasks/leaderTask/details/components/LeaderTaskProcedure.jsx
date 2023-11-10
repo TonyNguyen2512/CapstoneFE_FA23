@@ -16,7 +16,7 @@ export const LeaderTaskProcedure = ({
   dataSource
 }) => {
   const { Title } = Typography;
-  const [material, setMaterial] = useState([]);
+  const [taskList, setTaskList] = useState([]);
   const [titleInfo, setTitleInfo] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -28,28 +28,17 @@ export const LeaderTaskProcedure = ({
   const procedureRef = useRef();
 
   useEffect(() => {
-    setMaterial(dataSource);
-    setTitleInfo(title + ` (${dataSource?.length})`)
+    setTaskList(dataSource?.data);
+    setTitleInfo(title + ` (${taskList?.length})`)
   });
 
 
   const getData = async (keyword) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
     console.log("keyword ", keyword)
     const data = mockMaterials.filter(x => x.name.indexOf(keyword) > -1);
     console.log("search: ", data)
-    setMaterial(data);
+    setTaskList(data);
     setLoading(false);
   };
 
@@ -128,34 +117,39 @@ export const LeaderTaskProcedure = ({
       },
     },
     {
-      title: "Tên tiến độ",
+      title: "Tên công việc",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Tên việc",
-      dataIndex: "jobName",
-      key: "jobName",
-      sorter: (a, b) => a.sku.localeCompare(b.sku),
     },
     {
       title: "Mô tả",
       dataIndex: "description",
       key: "description",
       align: "center",
-      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
+      sorter: (a, b) => a.description.localeCompare(b.description),
     },
     {
-      title: "Ngày báo cáo",
-      dataIndex: "timeReport",
-      key: "timeReport",
+      title: "Ngày bắt đầu",
+      dataIndex: "startTime",
+      key: "startTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.timeReport).format("DD/MM/YYYY");
+        const formattedDate = dayjs(record.startTime).format("DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
-      sorter: (a, b) => a.timeReport.localeCompare(b.timeReport),
+      sorter: (a, b) => a.startTime.localeCompare(b.startTime),
+    },
+    {
+      title: "Ngày kết thúc",
+      dataIndex: "endTime",
+      key: "endTime",
+      align: "center",
+      render: (_, record) => {
+        const formattedDate = dayjs(record.endTime).format("DD/MM/YYYY");
+        return <span>{formattedDate}</span>;
+      },
+      sorter: (a, b) => a.endTime.localeCompare(b.endTime),
     },
     {
       title: "Trạng thái",
@@ -169,21 +163,7 @@ export const LeaderTaskProcedure = ({
           </span>
         );
       },
-      sorter: (a, b) => a.isDeleted - b.isDeleted,
-      // filter: {
-      //   placeholder: "Chọn trạng thái",
-      //   label: "Trạng thái",
-      //   filterOptions: [
-      //     {
-      //       label: "Đang hoạt động",
-      //       value: false,
-      //     },
-      //     {
-      //       label: "Không hoạt động",
-      //       value: true,
-      //     },
-      //   ],
-      // },
+      sorter: (a, b) => a.status - b.status,
     },
     {
       title: "Hành động",
@@ -224,8 +204,8 @@ export const LeaderTaskProcedure = ({
     // } else {
     // 	message.error("Có lỗi xảy ra");
     // }
-    setMaterial(values);
-    console.log(material);
+    setTaskList(values);
+    console.log(taskList);
     setProcedureCreating(false);
     setShowCreateModal(false);
   };
@@ -261,7 +241,7 @@ export const LeaderTaskProcedure = ({
         </Row>
       </Row>
       <BaseTable
-        dataSource={material}
+        dataSource={taskList}
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}

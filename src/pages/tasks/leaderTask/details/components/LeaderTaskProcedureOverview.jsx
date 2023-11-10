@@ -1,6 +1,5 @@
 import { Typography, Space } from "antd";
 import { Col, Descriptions, Row } from "antd/lib";
-import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
 
@@ -17,7 +16,7 @@ export const LeaderTaskProcedureOverview = ({
   dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource;
+  const allTasks = dataSource.data;
   const completedTasks = allTasks?.filter(
     (e) => e.status === ProcedureStatus.completed
   );
@@ -30,7 +29,7 @@ export const LeaderTaskProcedureOverview = ({
     (e) => e.status !== ProcedureStatus.inprocessing
   );
 
-  const expireDate = allTasks?.filter((e) =>
+  const expireTasks = allTasks?.filter((e) =>
     moment(e.timeReport).isBefore(now()) && e.status !== ProcedureStatus.completed
   );
 
@@ -48,46 +47,29 @@ export const LeaderTaskProcedureOverview = ({
         completed={completedTasks?.length}
         notCompleted={notCompletedTasks?.length}
         inprocess={inprocess?.length}
-        expireDate={expireDate?.length}
+        expireDate={expireTasks?.length}
       />
       <Descriptions
         items={[
           {
             label: "Tổng số quy trình",
             children: allTasks?.length,
-            labelStyle: {
-              color: "black"
-            }
           },
           {
             label: "Quy trình đạt",
-            children: allTasks?.filter(
-              (e) => e.status === ProcedureStatus.completed
-            )?.length,
-            labelStyle: {
-              color: "#29CB00"
-            }
+            children: completedTasks?.length,
           },
           {
             label: "Quy trình không đạt",
             children: notCompletedTasks?.length,
-            labelStyle: {
-              color: "#FF0000"
-            }
           },
           {
             label: "Quy trình đang tiến hành",
             children: inprocess?.length,
-            labelStyle: {
-              color: "#CB7A00"
-            }
           },
           {
             label: "Quy trình đã quá hạn",
-            children: expireDate?.length,
-            labelStyle: {
-              color: "#FF0000"
-            }
+            children: expireTasks?.length,
           },
         ]}
       />

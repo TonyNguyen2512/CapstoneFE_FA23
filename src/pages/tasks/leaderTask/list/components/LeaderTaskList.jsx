@@ -20,7 +20,7 @@ const LeaderTaskList = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [taskCreateLoading, setTaskCreateLoading] = useState(false);
   const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
-  const [taskList, setTaskList] = useState([]);
+  const [orderList, setOrderList] = useState([]);
   const navigate = useNavigate();
 
   const taskRef = useRef();
@@ -30,7 +30,7 @@ const LeaderTaskList = () => {
   const getData = async (leaderId) => {
     setLoading(true);
     const data = await OrderApi.getAllOrders();
-    setTaskList(data.data);
+    setOrderList(data.data);
     setLoading(false);
   };
 
@@ -47,7 +47,6 @@ const LeaderTaskList = () => {
   };
 
   useEffect(() => {
-    // getData("3e375ec4-3713-4fd8-a3d2-08dbdf6e15d8");
     console.log("user.id", user.id)
     getData(user.id);
   }, [user]);
@@ -107,6 +106,7 @@ const LeaderTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
+          console.log("record.id")
           console.log(record.id)
           navigate(record?.id)
         },
@@ -166,25 +166,25 @@ const LeaderTaskList = () => {
     },
     {
       title: "Thời gian bắt đầu",
-      dataIndex: "timeStart",
-      key: "timeStart",
+      dataIndex: "startTime",
+      key: "startTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.timeStart).format("DD/MM/YYYY");
+        const formattedDate = record.startTime ? dayjs(record.startTime).format("DD/MM/YYYY") : "";
         return <span>{formattedDate}</span>;
       },
-      sorter: (a, b) => dateSort(a.timeStart, b.timeStart),
+      sorter: (a, b) => dateSort(a.startTime, b.startTime),
     },
     {
       title: "Thời gian kết thúc",
-      dataIndex: "timeEnd",
-      key: "timeEnd",
+      dataIndex: "endTime",
+      key: "endTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.timeEnd).format("DD/MM/YYYY");
+        const formattedDate = record.endTime ? dayjs(record.endTime).format("DD/MM/YYYY") : "";
         return <span>{formattedDate}</span>;
       },
-      sorter: (a, b) => dateSort(a.timeEnd, b.timeEnd),
+      sorter: (a, b) => dateSort(a.endTime, b.endTime),
     },
     {
       title: "Trạng thái",
@@ -245,7 +245,7 @@ const LeaderTaskList = () => {
       </Space>
       <BaseTable
         title="Danh sách công việc"
-        dataSource={taskList}
+        dataSource={orderList}
         columns={columns}
         loading={loading}
         pagination={true}

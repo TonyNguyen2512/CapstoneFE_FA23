@@ -1,4 +1,3 @@
-// OLD
 import BaseApi from ".";
 
 const resource = "LeaderTask";
@@ -50,9 +49,20 @@ const deleteLeaderTasks = async (leaderTasksId) => {
 
 const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) => {
 	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
 		const response = await BaseApi.get(`/${resource}/GetByOrderId/${orderId}`, {
-			searchName, pageIndex, pageSize
+			params: params,
 		});
+		console.log(response.data)
 		return response.data;
 	} catch (error) {
 		console.log("Error get leader tasks by order id: ", error);

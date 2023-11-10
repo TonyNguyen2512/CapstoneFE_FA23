@@ -17,6 +17,16 @@ export const searchUsers = async (keyword) => {
 	}
 };
 
+const getUserById = async (id) => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error get user by id: ", error);
+		return false;
+	}
+};
+
 const getUserByEmail = async (email) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/${email}`);
@@ -75,6 +85,7 @@ const UserApi = {
 	banUser,
 	unbanUser,
 	updateUserRole,
+	getUserById,
 };
 
 export default UserApi;

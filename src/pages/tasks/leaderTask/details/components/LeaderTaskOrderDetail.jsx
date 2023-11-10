@@ -1,48 +1,35 @@
-import { Typography, Col, Row, Space } from "antd";
-import dayjs from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { mockMaterials } from "../../../../../__mocks__/jama/materials";
 
-
-export const LeaderTaskMaterial = ({
+export const LeaderTaskOrderDetail = ({
   title,
   dataSource
 }) => {
-  const { Title } = Typography;
-  const [material, setMaterial] = useState([]);
+  const [orderDetails, setOrderDetails] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
-    setMaterial(dataSource);
-  });
+    console.log("test detail order view")
+    console.log(dataSource)
+    const dataDetails = [];
+    if(dataSource?.data) {
+      dataSource.data?.forEach((data) => {
+        // console.log(data)
+        dataDetails.push({
+          id: data.id,
+          name: data.item.name,
+          quantity: data.quantity,
+          price: data.price,
+          totalPrice: data.totalPrice,
+        });
+      });
+    }
+    setOrderDetails(dataDetails);
+  }, [dataSource]);
 
-  const showModal = (item) => {
-    setLoading(true);
-    setPreviewUrl(item.imageUrl);
-    setLoading(false);
-    setIsModalOpen(true);
-  };
-
-
-  const getData = async (keyword) => {
-    setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
-    const data = mockMaterials.filter(x => x.name.indexOf(keyword) > -1);
-    setMaterial(data);
-    setLoading(false);
+  const getData = (keyword) => {
+    // setLoading(true);
+    // setLoading(false);
   };
 
   const columns = [
@@ -60,18 +47,12 @@ export const LeaderTaskMaterial = ({
       title: "Loại vật liệu",
       dataIndex: "name",
       key: "name",
-      render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.name}</span>;
-      },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a.item.name.localeCompare(b.item.name),
     },
     {
       title: "Mã vật liệu",
       dataIndex: "sku",
       key: "sku",
-      render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.sku}</span>;
-      },
       sorter: (a, b) => a.sku.localeCompare(b.sku),
     },
     {
@@ -135,7 +116,7 @@ export const LeaderTaskMaterial = ({
     <>
       <BaseTable
         title={title}
-        dataSource={material}
+        dataSource={orderDetails}
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}

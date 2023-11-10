@@ -3,7 +3,10 @@ import { roles } from "../constants/app";
 import routes from "../constants/routes";
 
 export const formatDate = (date, pattern) => {
-	const result = moment(date).format(pattern);
+	let result = "";
+	if (date) {
+		result = moment(date).format(pattern);
+	}
 	return result;
 };
 

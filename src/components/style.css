@@ -1,6 +1,0 @@
-.progress > .ant-progress-steps-outer > .ant-progress-steps-item {
-    --minCustom: 0;
-
-    min-width: var(--minCustom) !important;
-    margin-inline-end:0 !important;
-}

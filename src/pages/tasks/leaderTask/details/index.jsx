@@ -1,33 +1,25 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Typography, Modal, Row, Space } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import { mockTasks } from "../../../../__mocks__/jama/tasks";
-import { mockMaterials } from "../../../../__mocks__/jama/materials";
-import { mockProcedures } from "../../../../__mocks__/jama/procedures";
-
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
-import { LeaderTaskMaterial } from "./components/LeaderTaskMaterial";
+import { LeaderTaskOrderDetail } from "./components/LeaderTaskOrderDetail";
 import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
 import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
+import OrderDetailApi from "../../../../apis/order-detail";
+import { Space } from "antd";
 
 
 export const LeaderTaskDetailsPage = () => {
-  
+
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [orderInfo, setOrderInfo] = useState([]);
+  const [orderDetail, setOrderDetail] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
-  const [materialInfo, setMaterialInfo] = useState();
-  const [procedureInfo, setProcedureInfo] = useState();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const { Title } = Typography;
+  const [orderDetailInfo, setOrderDetailInfo] = useState();
 
   const userRef = useRef();
   const rolesRef = useRef();
@@ -36,71 +28,30 @@ export const LeaderTaskDetailsPage = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    const data = await OrderApi.getOrderById(id);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
-    setOrderInfo(data);
-    // setTaskInfo(data);
+    console.log("test detail")
+    // retrieve order data by id
+    const dataOrder = await OrderApi.getOrderById(id);
+    
+    console.log(dataOrder)
+      // retrieve order detail by order id
+    const dataOrderDetails = await OrderDetailApi.getOrderDetailById(dataOrder?.id);
+    // // retrieve leader task by order id
+    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(dataOrder?.id);
 
-    setMaterialInfo(mockMaterials)
+    setOrderInfo(dataOrder);
 
-    setProcedureInfo(mockProcedures);
+    setOrderDetailInfo(dataOrderDetails)
+
+    setTaskInfo(dataLeaderTasks);
 
     setLoading(false);
   };
 
-  const showModal = (item) => {
-    setLoading(true);
-    setPreviewUrl(item.imageUrl);
-    setLoading(false);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setPreviewUrl("");
-    setIsModalOpen(false);
-  };
   useEffect(() => {
     if (id) {
       getData(id, true);
     }
   }, [id]);
-
-  const getActionItems = (record) => {
-    const { isActive, id } = record;
-
-    return [
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          userRef.current = record;
-          setShowUpdateModal(true);
-        },
-      },
-      {
-        key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => { },
-      },
-    ];
-  };
-
-  const handleSearch = (value) => {
-    getData(value);
-  };
 
   return (
     <Space direction="vertical" className="w-full gap-6">
@@ -108,21 +59,18 @@ export const LeaderTaskDetailsPage = () => {
         dataSource={orderInfo}
         loading={loading}
       />
-      <LeaderTaskMaterial
+      <LeaderTaskOrderDetail
         title="Danh sách vật liệu"
-        dataSource={materialInfo}
+        dataSource={orderDetailInfo}
       />
       <LeaderTaskProcedureOverview
         title="Tiến độ quy trình"
-        dataSource={procedureInfo}
+        dataSource={taskInfo}
       />
       <LeaderTaskProcedure
         title="Danh sách quy trình"
-        dataSource={procedureInfo}
+        dataSource={taskInfo}
       />
-      <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
-        <img src={previewUrl} className="w-full h-full object-cover mt-8" />
-      </Modal>
     </Space>
   );
 };
