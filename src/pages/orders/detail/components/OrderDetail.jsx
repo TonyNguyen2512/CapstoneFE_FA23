@@ -1,51 +1,103 @@
-import { Card, Descriptions, Typography } from "antd";
-import React, { useContext } from "react";
-import { useNavigate } from "react-router";
 import { OrderDetailsContext } from "../../../../providers/orderDetails";
+import { Button, Card, Col, Row, Spin, Typography } from "antd";
+import OrderApi from "../../../../apis/order";
+import { useParams } from "react-router-dom";
+import { DocDetail, Download } from "@icon-park/react";
+import React, { useContext, useState } from "react";
 import dayjs from "dayjs";
 
 const { Title } = Typography;
 
 export const OrderDetail = () => {
-  const navigate = useNavigate();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(false);
 
   const { details, users, list } = useContext(OrderDetailsContext);
 
-  return (
-    <Card title="Chi tiết đơn hàng">
-      <Title level={5} style={{ fontWeight: 500 }}>
-        Tên đơn hàng: {details?.name}
-      </Title>
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      const data = await OrderApi.exportOrder(id);
 
-      <Descriptions
-        className="mt-4"
-        items={[
-          {
-            label: "Tên khách hàng",
-            children: details?.customerName,
-          },
-          {
-            label: "Ngày tạo đơn",
-            children: dayjs(details?.createTime).format("HH:mm DD/MM/YYYY"),
-          },
-          {
-            label: " Báo giá xưởng",
-            children: details?.totalPrice,
-          },
-          {
-            label: "Bản vẽ 2D",
-            children: "banve2d.pdf",
-          },
-          {
-            label: "Bản vẽ 3D",
-            children: "banve3d.pdf",
-          },
-          {
-            label: " Bản vẽ kỹ thuật",
-            children: "banvekythuat.pdf",
-          },
-        ]}
-      />
-    </Card>
+      var fileName = new Date() + "order-export.pdf";
+      var downloadFile = new Blob([data], { type: "application/pdf" });
+      var fileURL = window.URL.createObjectURL(downloadFile);
+      var a = document.createElement("a");
+      a.download = fileName;
+      a.href = fileURL;
+      a.click();
+    } catch (err) {
+    } finally {
+      setTimeout(() => {
+        setLoading(false);
+      }, 800);
+    }
+  };
+
+  const handleDownload = (url, type) => {
+    // var fileName = type + "order-export.pdf";
+    var a = document.createElement("a");
+    // a.download = fileName;
+    a.href = url;
+    a.click();
+  };
+
+  return (
+    <Spin spinning={loading}>
+      <Card title="Chi tiết đơn hàng">
+        <Title level={5} style={{ fontWeight: 500 }}>
+          Tên đơn hàng: {details?.name}
+        </Title>
+        <Row gutter={[16, 16]}>
+          <Col className="gutter-row" span={10}>
+            Tên khách hàng: <strong>{details?.customerName}</strong>
+          </Col>
+          <Col className="gutter-row" span={10}>
+            Ngày tạo đơn: <strong>{dayjs(details?.createTime).format("HH:mm DD/MM/YYYY")}</strong>
+          </Col>
+          <Col className="gutter-row" span={4}>
+            Báo giá xưởng: <strong>{details?.totalPrice}</strong>
+          </Col>
+          <Col className="gutter-row" span={10}>
+            Bảng báo giá:{" "}
+            {details?.fileQuote ? (
+              <strong>
+                <a href="javascript:;" onClick={() => handleDownload(details?.fileQuote, "Quote")}>
+                  Tải xuống
+                </a>
+              </strong>
+            ) : (
+              <strong>{"{ Trống }"}</strong>
+            )}
+          </Col>
+          <Col className="gutter-row" span={10}>
+            Hợp đồng:{" "}
+            {details?.fileContract ? (
+              <strong>
+                <a
+                  href="javascript:;"
+                  onClick={() => handleDownload(details?.fileContract, "Contract")}
+                >
+                  Tải xuống
+                </a>
+              </strong>
+            ) : (
+              <strong>{"{ Trống }"}</strong>
+            )}
+          </Col>
+          <Col className="gutter-row" span={4}>
+            <Button
+              className="flex-center border-2 border-gray-400 text-gray-600"
+              icon={<DocDetail />}
+              title="Export"
+              name="Export"
+              onClick={handleExport}
+            >
+              Export PDF
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+    </Spin>
   );
 };

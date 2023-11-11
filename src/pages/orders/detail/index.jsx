@@ -144,7 +144,7 @@ const OrderDetailPage = () => {
               dataSource={itemList}
               columns={columns}
               loading={loading}
-              pagination={false}
+              pagination={{ pageSize: 5 }}
               searchOptions={{
                 visible: true,
                 placeholder: "Tìm kiếm sản phẩm...",

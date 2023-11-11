@@ -184,7 +184,7 @@ const OrderList = () => {
         dataSource={orders}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={{ pageSize: 10 }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm đơn đặt hàng...",

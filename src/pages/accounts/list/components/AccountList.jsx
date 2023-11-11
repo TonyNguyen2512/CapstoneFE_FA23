@@ -230,7 +230,7 @@ const AccountList = () => {
         dataSource={accounts}
         columns={columns}
         loading={accountLoading}
-        pagination={true}
+        pagination={{ pageSize: 10 }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",

@@ -100,6 +100,16 @@ const deleteOrder = async (id) => {
   }
 };
 
+const exportOrder = async (id) => {
+  try {
+    const response = await BaseApi.get(`/${resource}/ExportQuoteAsPDF/${id}`, { responseType: 'blob' });
+    return response.data;
+  } catch (error) {
+    console.log("Error export order: ", error);
+    return undefined;
+  }
+};
+
 const OrderApi = {
   getAllOrders,
   searchOrders,
@@ -108,6 +118,7 @@ const OrderApi = {
   updateOrder,
   updateStatus,
   deleteOrder,
+  exportOrder,
 };
 
 export default OrderApi;
