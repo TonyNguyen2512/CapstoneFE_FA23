@@ -6,7 +6,7 @@ import { roles } from "../../../constants/app";
 import UserApi from "../../../apis/user";
 
 export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
-  const defaultRoleId = "e0acdcdf-704a-49c6-6aad-08dbe2a052a2";
+  const defaultRoleId = "9d6bc81a-65e6-4952-0f98-08dbe279bce0";
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
