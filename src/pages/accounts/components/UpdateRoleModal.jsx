@@ -1,25 +1,18 @@
-import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
+import React, { useRef, useState } from "react";
 import { Form, Select, message } from "antd";
 import UserApi from "../../../apis/user";
-import { getRoleName } from "../../../utils";
 
-export const UpdateRoleModal = ({ user, open, onCancel, allRoles, onSuccess }) => {
+export const UpdateRoleModal = ({ user, open, onCancel, roleOptions, onSuccess }) => {
   const formRef = useRef();
 
   const [loading, setLoading] = useState(false);
-
-  const roleOptions = allRoles?.map((e) => {
-    return {
-      value: e.id,
-      label: getRoleName(e.name),
-    };
-  });
+  const [roleId, setRoleId] = useState(user?.roleId || user?.role?.id || "");
 
   const handleUpdateRole = async (values) => {
     const { roleId } = values;
     setLoading(true);
-    const success = await UserApi.updateUserRole(user.userId, roleId);
+    const success = await UserApi.updateUserRole(user.id, roleId);
     if (success) {
       message.success("Cập nhật vai trò thành công");
       onSuccess();
@@ -34,14 +27,14 @@ export const UpdateRoleModal = ({ user, open, onCancel, allRoles, onSuccess }) =
     <BaseModal
       open={open}
       onCancel={onCancel}
-      title="Cập nhật vai trò"
+      title={`Cập nhật vai trò`}
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
       <Form
         ref={formRef}
         initialValues={{
-          roleId: user?.roleId,
+          roleId: user?.roleId || user?.role?.id,
         }}
         onFinish={handleUpdateRole}
       >
@@ -54,7 +47,11 @@ export const UpdateRoleModal = ({ user, open, onCancel, allRoles, onSuccess }) =
             },
           ]}
         >
-          <Select options={roleOptions} placeholder="Chọn vai trò" />
+          <Select
+            options={roleOptions}
+            placeholder="Chọn vai trò..."
+            onChange={(e) => setRoleId(e)}
+          />
         </Form.Item>
       </Form>
     </BaseModal>

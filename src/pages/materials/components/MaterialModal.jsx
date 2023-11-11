@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   ColorPicker,
@@ -6,11 +6,9 @@ import {
   Form,
   Input,
   InputNumber,
-  Radio,
   Space,
   Upload,
   message,
-  theme,
 } from "antd";
 import BaseModal from "../../../components/BaseModal";
 import MaterialApi from "../../../apis/material";
@@ -19,20 +17,20 @@ import { useSearchParams } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
-const initValues = {
-  id: "",
-  name: "",
-  color: "",
-  price: 0,
-  thickness: 0,
-  supplier: "",
-  importDate: null,
-  importPlace: "",
-  image: "",
-  unit: "",
-  amount: 0,
-  materialCategoryId: "",
-};
+// const initValues = {
+//   id: "",
+//   name: "",
+//   color: "",
+//   price: 0,
+//   thickness: 0,
+//   supplier: "",
+//   importDate: null,
+//   importPlace: "",
+//   image: "",
+//   unit: "",
+//   amount: 0,
+//   materialCategoryId: "",
+// };
 
 export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -60,19 +58,18 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
 
   const handleMaterial = async (values) => {
     setLoading(true);
-    // const body = { ...values, color: typeof color === "string" ? color : color.toHexString() };
-    // const success = isCreate
-    //   ? await MaterialApi.createMaterial(body)
-    //   : await MaterialApi.updateMaterial(body);
-    // console.log(isCreate);
-    // if (success) {
-    //   message.success(`${typeMessage} thành công`);
-    //   onSuccess();
-    // } else {
-    //   message.error(`${typeMessage} thất bại`);
-    // }
+    console.log('asdsdgafhgdjf', values);
+    const body = { ...values, color: typeof color === "string" ? color : color.toHexString() };
+    const success = isCreate
+      ? await MaterialApi.createMaterial(body)
+      : await MaterialApi.updateMaterial(body);
+    if (success) {
+      message.success(`${typeMessage} thành công`);
+      onSuccess();
+    } else {
+      message.error(`${typeMessage} thất bại`);
+    }
     setInitialValues(values);
-    console.log("Values: ", values);
     setLoading(false);
     onCancel();
   };
@@ -172,7 +169,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
           >
             <Button
               type="primary"
-              style={{ ...btnStyle, backgroundColor: color || form.getFieldsValue("color") }}
+              style={{ ...btnStyle, backgroundColor: color || form.getFieldValue("color") }}
               align="center"
             ></Button>
           </ColorPicker>

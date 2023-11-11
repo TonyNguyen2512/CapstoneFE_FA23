@@ -23,8 +23,9 @@ export const getTitle = (route) => {
 export const getRoleName = (role) => {
 	switch (role) {
 		case roles.ADMIN:
-			return "Admin";
+			return "Quản trị viên";
 		case roles.FACTORY:
+		case roles.FOREMAN:
 			return "Quản đốc";
 		case roles.MANAGER:
 			return "Quản lý";

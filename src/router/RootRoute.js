@@ -22,6 +22,8 @@ const RootRoute = () => {
 			} else {
 				if (path === routes.root) {
 					navigate(routes.dashboard.root);
+				} else {
+					navigate(path);
 				}
 			}
 		}

@@ -8,6 +8,7 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 export const roles = {
 	ADMIN: "Admin",
 	FACTORY: "Factory",
+	FOREMAN: "Foreman",
 	MANAGER: "Manager",
 	WORKER: "Worker",
 };
@@ -137,6 +138,53 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.quotes.view,
 		ALL_PERMISSIONS.quotes.create,
 		ALL_PERMISSIONS.quotes.update,
+	],
+	[roles.FOREMAN]: [
+		// QUOTES
+		ALL_PERMISSIONS.quotes.sider,
+		ALL_PERMISSIONS.quotes.view,
+		ALL_PERMISSIONS.quotes.create,
+		ALL_PERMISSIONS.quotes.update,
+		// materials
+		ALL_PERMISSIONS.materials.sider,
+		ALL_PERMISSIONS.materials.view,
+		ALL_PERMISSIONS.materials.create,
+		ALL_PERMISSIONS.materials.update,
+		// materialTypes
+		ALL_PERMISSIONS.materialTypes.sider,
+		ALL_PERMISSIONS.materialTypes.view,
+		ALL_PERMISSIONS.materialTypes.create,
+		ALL_PERMISSIONS.materialTypes.update,
+		// items
+		ALL_PERMISSIONS.items.sider,
+		ALL_PERMISSIONS.items.view,
+		ALL_PERMISSIONS.items.create,
+		ALL_PERMISSIONS.items.update,
+		// employees
+		ALL_PERMISSIONS.employees.sider,
+		ALL_PERMISSIONS.employees.view,
+		ALL_PERMISSIONS.employees.create,
+		ALL_PERMISSIONS.employees.update,
+		// groups
+		ALL_PERMISSIONS.groups.sider,
+		ALL_PERMISSIONS.groups.view,
+		ALL_PERMISSIONS.groups.create,
+		ALL_PERMISSIONS.groups.update,
+		// workers squad
+		ALL_PERMISSIONS.squads.sider,
+		ALL_PERMISSIONS.squads.view,
+		ALL_PERMISSIONS.squads.create,
+		ALL_PERMISSIONS.squads.update,
+		// managersTasks
+		ALL_PERMISSIONS.managersTasks.sider,
+		ALL_PERMISSIONS.managersTasks.view,
+		ALL_PERMISSIONS.managersTasks.create,
+		ALL_PERMISSIONS.managersTasks.update,
+		// managersReports
+		ALL_PERMISSIONS.managersReports.sider,
+		ALL_PERMISSIONS.managersReports.view,
+		ALL_PERMISSIONS.managersReports.create,
+		ALL_PERMISSIONS.managersReports.update,
 	],
 	[roles.FACTORY]: [
 		// QUOTES

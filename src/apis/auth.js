@@ -1,4 +1,5 @@
 import BaseApi from ".";
+import { mockAccounts } from "../__mocks__/accounts";
 
 const login = async (username, password) => {
 	try {
@@ -8,6 +9,7 @@ const login = async (username, password) => {
 		// 	localStorage.setItem("user", JSON.stringify(user));
 		// 	return true
 		// }
+
 		const response = await BaseApi.post("/User/Login", {
 			phoneNumber: username,
 			password: password,
@@ -19,12 +21,7 @@ const login = async (username, password) => {
 			localStorage.setItem("userId", userId);
 			return true;
 		}
-		// let user = mockAccounts.find((item) => (item.email === email || item.username === email) && item.password === password)
-		// if (!!user) {
-		// 	localStorage.setItem("user", JSON.stringify(user));
-		// 	return true
-		// }
-		// return false
+		return false
 	} catch (error) {
 		console.log("Wrong email or password", error);
 		return false;
@@ -42,7 +39,7 @@ const authorize = async () => {
 		console.log("Error get user: ", error);
 		return undefined;
 	}
-}; 
+};
 
 const register = async (email, fullName, password, roleId) => {
 	const response = await BaseApi.post("/User/Register", {

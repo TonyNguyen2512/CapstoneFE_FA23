@@ -30,6 +30,7 @@ import { ManagerTaskListPage } from "../pages/tasks/managerTask/list";
 import { ManagerTaskDetailsPage } from "../pages/tasks/managerTask/details";
 import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
+import OrderDetailPage from "../pages/orders/detail";
 
 export const router = createBrowserRouter([
 	{
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
 					{
 						path: routes.dashboard.orders,
 						element: <OrderListPage />,
+					},
+					{
+						path: `${routes.dashboard.orders}/:id`,
+						element: <OrderDetailPage />,
 					},
 					{
 						path: routes.dashboard.quotes,

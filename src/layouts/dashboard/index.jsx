@@ -30,9 +30,12 @@ export const Dashboard = () => {
         document.title = `${getRoleName(user.role.name)} | Dashboard`;
         setUser(user);
         var path = routes.dashboard.home;
-
-        if (user.role.name === roles.WORKER) {
-          path = routes.dashboard.tasks;
+        if (!location) {
+          if (user.role.name === roles.WORKER) {
+            path = routes.dashboard.tasks;
+          }
+        } else {
+          path = location;
         }
         navigate(path);
       })
