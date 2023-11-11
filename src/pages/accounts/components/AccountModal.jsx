@@ -11,7 +11,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
 
-  const [roleName, setRoleName] = useState(roleOptions.find((r) => r.value === defaultRoleId).key);
+  const [roleName, setRoleName] = useState(roleOptions.find((r) => r.value === defaultRoleId)?.key);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (val) => {

@@ -29,6 +29,8 @@ export const getRoleName = (role) => {
 			return "Quản đốc";
 		case roles.MANAGER:
 			return "Quản lý";
+		case roles.LEADER:
+			return "Trưởng nhóm";
 		case roles.WORKER:
 			return "Công nhân";
 		default:

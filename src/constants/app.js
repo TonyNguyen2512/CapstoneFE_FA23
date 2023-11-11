@@ -9,6 +9,7 @@ export const roles = {
 	ADMIN: "Admin",
 	FACTORY: "Factory",
 	FOREMAN: "Foreman",
+	LEADER: "Leader",
 	MANAGER: "Manager",
 	WORKER: "Worker",
 };

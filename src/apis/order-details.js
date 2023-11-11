@@ -4,7 +4,7 @@ const resource = "OrderDetail";
 
 // Order Section //
 
-const getListByOrderId = async (id, search, pageIndex = 1, pageSize = 1000) => {
+const getListByOrderId = async (id, search, pageIndex, pageSize) => {
   try {
     var params = {};
     if (id) {
