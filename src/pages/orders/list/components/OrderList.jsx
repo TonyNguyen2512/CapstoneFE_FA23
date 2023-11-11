@@ -138,16 +138,16 @@ const OrderList = () => {
         </span>
       ),
       sorter: (a, b) => a.status - b.status,
-      filter: {
-        placeholder: "Chọn tình trạng",
-        label: "Tình trạng",
-        filterOptions: orderLabels.map((e, index) => {
-          return {
-            label: e,
-            value: index,
-          };
-        }),
-      },
+      // filter: {
+      //   placeholder: "Chọn tình trạng",
+      //   label: "Tình trạng",
+      //   filterOptions: orderLabels.map((e, index) => {
+      //     return {
+      //       label: e,
+      //       value: index,
+      //     };
+      //   }),
+      // },
     },
     {
       title: "Hành động",
@@ -184,7 +184,7 @@ const OrderList = () => {
         dataSource={orders}
         columns={columns}
         loading={loading}
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 8 }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm đơn đặt hàng...",

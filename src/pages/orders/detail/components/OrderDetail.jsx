@@ -48,7 +48,7 @@ export const OrderDetail = () => {
         <Title level={5} style={{ fontWeight: 500 }}>
           Tên đơn hàng: {details?.name}
         </Title>
-        <Row gutter={[16, 16]}>
+        <Row className="mt-4" gutter={[16, 16]}>
           <Col className="gutter-row" span={10}>
             Tên khách hàng: <strong>{details?.customerName}</strong>
           </Col>
@@ -67,7 +67,7 @@ export const OrderDetail = () => {
                 </a>
               </strong>
             ) : (
-              <strong>{"{ Trống }"}</strong>
+              <strong>{"{Trống}"}</strong>
             )}
           </Col>
           <Col className="gutter-row" span={10}>

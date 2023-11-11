@@ -51,6 +51,7 @@ const OrderDetailPage = () => {
       title: "Tên sản phẩm",
       dataIndex: "itemName",
       key: "itemName",
+      width: "25%",
       render: (_, record) => <span>{record?.item?.name}</span>,
       sorter: (a, b) => a?.item?.name.localeCompare(b?.item?.name),
     },
@@ -58,25 +59,27 @@ const OrderDetailPage = () => {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
-      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
+      width: 120,
+      sorter: (a, b) => a?.quantity.localeCompare(b?.quantity),
     },
     {
       title: "Đơn giá",
       dataIndex: "price",
       key: "price",
-      sorter: (a, b) => a.price.localeCompare(b.price),
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
     {
       title: "Thành tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
-      sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
+      sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
     },
     {
       title: "Ghi chú",
       dataIndex: "description",
       key: "description",
-      sorter: (a, b) => a.description.localeCompare(b.description),
+      width: "30%",
+      // sorter: (a, b) => a?.description.localeCompare(b?.description),
     },
     {
       title: "Hành động",
@@ -94,30 +97,30 @@ const OrderDetailPage = () => {
 
   const getActionItems = (record) => {
     return [
-      {
-        key: "UPDATE_ORDER",
-        label: "Cập nhật đơn hàng",
-        icon: <Edit />,
-        onClick: () => {
-          orderRef.current = record;
-          // setShowOrderModal(true);
-        },
-      },
-      {
-        key: "CANCEL_ORDER",
-        label: "Huỷ đơn",
-        danger: true,
-        icon: <Error />,
-        onClick: async () => {
-          let success = await OrderApi.deleteOrder(record.id);
-          if (success) {
-            message.success(`Huỷ đơn hàng thành công!`);
-          } else {
-            message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
-          }
-          handleSearch();
-        },
-      },
+      // {
+      //   key: "UPDATE_ORDER",
+      //   label: "Cập nhật đơn hàng",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     orderRef.current = record;
+      //     // setShowOrderModal(true);
+      //   },
+      // },
+      // {
+      //   key: "CANCEL_ORDER",
+      //   label: "Huỷ đơn",
+      //   danger: true,
+      //   icon: <Error />,
+      //   onClick: async () => {
+      //     let success = await OrderApi.deleteOrder(record.id);
+      //     if (success) {
+      //       message.success(`Huỷ đơn hàng thành công!`);
+      //     } else {
+      //       message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
+      //     }
+      //     handleSearch();
+      //   },
+      // },
     ];
   };
 

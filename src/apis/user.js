@@ -5,7 +5,6 @@ const resource = "User";
 
 export const searchUsers = async (keyword) => {
 	try {
-		// const query = keyword ? `?search=${keyword}` : "";
 		let params = {};
 		if (keyword) {
 			params = { ...params, keyword };
@@ -18,10 +17,15 @@ export const searchUsers = async (keyword) => {
 	}
 };
 
-export const getAll = async () => {
+export const getAll = async (keyword) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/GetAll`);
-		return response.data.data;
+		if (!!keyword) {
+			return searchUsers(keyword);
+		}
+		else {
+			const response = await BaseApi.get(`/${resource}/GetAll`);
+			return response.data.data;
+		}
 	} catch (error) {
 		console.log("Error search users: ", error);
 		return [];
@@ -49,9 +53,20 @@ const getUserRole = async (id) => {
 	}
 };
 
+
+const createUser = async (role, user) => {
+	try {
+		const response = await BaseApi.post(`/${resource}/Create${role}`, user);
+		return response.status === 200;
+	} catch (error) {
+		console.log("Error ban user: ", error);
+		return false;
+	}
+};
+
 const banUser = async (id) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/BanUser/${id}`);
+		const response = await BaseApi.put(`/${resource}/BanUser/${id}`);
 		return response.status === 200;
 	} catch (error) {
 		console.log("Error ban user: ", error);
@@ -61,7 +76,7 @@ const banUser = async (id) => {
 
 const unbanUser = async (id) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/UnbanUser/${id}`);
+		const response = await BaseApi.put(`/${resource}/UnBanUser/${id}`);
 		return response.status === 200;
 	} catch (error) {
 		console.log("Error unban user: ", error);
@@ -71,7 +86,7 @@ const unbanUser = async (id) => {
 
 const updateUserRole = async (userId, roleId) => {
 	try {
-		const response = await BaseApi.put(`/${resource}/UpdateUserRole`, {
+		const response = await BaseApi.put(`/${resource}/UpdateRole`, {
 			userId,
 			roleId,
 		});
@@ -86,6 +101,7 @@ const UserApi = {
 	searchUsers,
 	banUser,
 	unbanUser,
+	createUser,
 	updateUserRole,
 	getUserByEmail,
 	getUserRole,
