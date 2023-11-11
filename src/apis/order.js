@@ -27,7 +27,7 @@ const getAllOrders = async (search, pageIndex, pageSize) => {
   }
 };
 
-const searchOrders = async (search, pageIndex, pageSize) => {
+const searchOrders = async (search, pageIndex, pageSize = 1000) => {
   try {
     var params = {};
     if (search) {
