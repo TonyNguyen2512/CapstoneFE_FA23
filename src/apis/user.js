@@ -17,6 +17,37 @@ export const searchUsers = async (keyword) => {
 	}
 };
 
+const getUserById = async (id) => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error get user by id: ", error);
+		return false;
+	}
+};
+
+const getUserByRole = async (role) => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetByRole/${role}`);
+		return response.data;
+	} catch (error) {
+		console.log("Error get user by role: ", error);
+		return false;
+	}
+};
+
+const getAllUser = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAll`);
+		console.log("getAllUser", response.data)
+		return response.data;
+	} catch (error) {
+		console.log("Error get user by role: ", error);
+		return false;
+	}
+};
+
 const getUserByEmail = async (email) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/${email}`);
@@ -75,6 +106,9 @@ const UserApi = {
 	banUser,
 	unbanUser,
 	updateUserRole,
+	getUserById,
+	getUserByRole,
+	getAllUser,
 };
 
 export default UserApi;

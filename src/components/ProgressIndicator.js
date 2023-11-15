@@ -6,5 +6,5 @@ export const ProgressIndicator = ({ total, completed }) => {
 		return Math.round((completed / total) * 100);
 	};
 
-	return <Progress percent={calculatePercentage()} />;
+    return <Progress percent={calculatePercentage()} />;
 };

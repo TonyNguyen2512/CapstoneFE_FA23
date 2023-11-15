@@ -62,7 +62,7 @@ const ClassListPage = () => {
 			keyword,
 			courseId,
 			undefined,
-			role === roles.FACTORY ? user?.userId : undefined
+			role === roles.FOREMAN ? user?.userId : undefined
 		);
 		if (enrolled !== undefined) {
 			data = data?.filter((e) => e.enrolled === enrolled);
