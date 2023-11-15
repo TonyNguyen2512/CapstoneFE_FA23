@@ -45,9 +45,6 @@ export const LeaderTaskProcedureOverview = ({
       <ProgressIndicator
         total={allTasks?.length ?? 0}
         completed={completedTasks?.length}
-        notCompleted={notCompletedTasks?.length}
-        inprocess={inprocess?.length}
-        expireDate={expireTasks?.length}
       />
       <Descriptions
         items={[

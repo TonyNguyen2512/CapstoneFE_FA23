@@ -1,8 +1,15 @@
-import { Row, Col, Form, Input, Select, DatePicker } from "antd";
+import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber } from "antd";
 import { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../../../components/BaseModal";
 import { RichTextEditor } from "../../../../../components/RichTextEditor";
+import { modalModes } from "../../../../../constants/enum";
+import dayjs from "dayjs";
+import UserApi from "../../../../../apis/user";
+import { roles } from "../../../../../constants/app";
+import ItemApi from "../../../../../apis/item";
+import moment from "moment";
 
+const { Text } = Typography;
 
 const ProcedureStatus = {
 	notCompleted: 2,
@@ -38,18 +45,23 @@ export const LeaderTaskProcedureModal = ({
 
 	// const isLeader = user?.userId === team?.leader?.id;
 
+	const [loading, setLoading] = useState(false);
 	const [title, setTitle] = useState(false);
-	
-	// setTitle(`${mode === "1" ? "Thêm" : "Đánh giá"} báo cáo`);
 
 	const [initialValues, setInitialValues] = useState();
 	const [leadTaskProcedureform] = Form.useForm();
+	const [leadersData, setLeadersData] = useState([]);
+	const [itemsData, setItemsData] = useState([]);
+	const [startTime, setStartTime] = useState();
+	const [endTime, setEndTime] = useState();
 
-	const [loading, setLoading] = useState(false);
+	const isCreate = mode === modalModes.CREATE;
 
 	const handleValue = (values) => {
 		leadTaskProcedureform.setFieldsValue(values);
 	};
+
+	console.log("dataSource?.id", dataSource?.id)
 
 	const onFinish = async (values) => {
 		const data = {
@@ -66,24 +78,44 @@ export const LeaderTaskProcedureModal = ({
 	};
 
 	const handleTitle = (values) => {
-		if (mode === "1") {
-			setTitle("Thêm quy trình")
-		} else {
-			setTitle(`Chỉnh sửa quy trình ${values}`)
+		switch (mode) {
+			case modalModes.UPDATE:
+				setTitle(`Chỉnh sửa quy trình ${values}`)
+				break;
+			case modalModes.CREATE:
+			default:
+				setTitle("Thêm quy trình")
+				break;
 		}
 	}
 
+	const getLeaderInfo = async () => {
+		setLoading(true);
+		const data = await UserApi.getAllUser();
+		// const leadersData = await UserApi.getUserByRole(roles.LEADER)?.data;
+		setLeadersData(data?.data);
+		setLoading(false);
+	}
+
+	const getItemInfo = async () => {
+		setLoading(true);
+		const data = await ItemApi.getAllItem();
+		setItemsData(data?.data);
+		setLoading(false);
+		console.log("itemsData", itemsData)
+	}
+
+	const handleChange = (values) => {
+		setStartTime(values?.[0]);
+		setEndTime(values?.[1]);
+	};
+
 	useEffect(() => {
-		handleValue({
-			id: dataSource?.id,
-			name: dataSource?.name,
-			username: dataSource?.username,
-			jobName: dataSource?.jobName,
-			description: dataSource?.description,
-			status: dataSource?.status,
-			timeReport: dataSource?.timeReport,
-		});
 		handleTitle(dataSource?.name);
+		getLeaderInfo();
+		getItemInfo();
+		setStartTime(dayjs(dataSource?.startTime).format("DD/MM/YYYY"))
+		setEndTime(dayjs(dataSource?.endTime).format("DD/MM/YYYY"))
 	}, [dataSource]);
 
 	return (
@@ -112,7 +144,7 @@ export const LeaderTaskProcedureModal = ({
 				</Form.Item>
 				<Form.Item
 					name="name"
-					label="Tên quy trình"
+					label="Tên công việc"
 					rules={[
 						{
 							required: true,
@@ -123,51 +155,84 @@ export const LeaderTaskProcedureModal = ({
 					<Input
 						showCount
 						maxLength={255}
-						placeholder="Tên đơn hàng"
+						placeholder="Tên công việc"
 					/>
 				</Form.Item>
 				<Form.Item
-					name="username"
-					label="Tên nhóm trưởng"
+					name="leaderId"
+					label="Nhóm trưởng"
 					rules={[
 						{
-							required: true,
-							message: "Vui lòng nhập tên nhóm trưởng",
+							required: isCreate && true,
+							message: "Vui lòng chọn nhóm trưởng",
 						},
 					]}
 				>
-					<Input
-						showCount
-						maxLength={255}
-						placeholder="Tên nhóm trưởng"
+					<Select
+						className="w-full"
+						placeholder="Chọn nhóm trưởng"
+						options={leadersData?.map((e) => {
+							return {
+								label: e.fullName,
+								value: e.id,
+							};
+						})}
+						disabled={!isCreate}
 					/>
 				</Form.Item>
 				<Form.Item
-					name="jobName"
-					label="Tên việc"
+					name="itemId"
+					label="Sản phẩm"
 					rules={[
 						{
 							required: true,
-							message: "Vui lòng nhập tên việc",
+							message: "Vui lòng chọn sản phẩm",
 						},
 					]}
 				>
-					<Input
-						showCount
-						maxLength={255}
-						placeholder="Tên việc"
+					<Select
+						className="w-full"
+						placeholder="Chọn sản phẩm"
+						options={itemsData?.map((e) => {
+							return {
+								label: e.name,
+								value: e.id,
+							};
+						})}
+						disabled={!isCreate}
 					/>
 				</Form.Item>
 				<Row gutter={16}>
 					<Col span={12}>
-						<Form.Item name="status" label="Đánh giá">
-							<Select
-								options={taskStatusOptions}
-								placeholder="Đánh giá"
+						<Form.Item 
+						name="priority" 
+						label="Độ ưu tiên">
+							<InputNumber 
+								min={1} 
+								max={10}
+								placeholder="Độ ưu tiên"
 							/>
 						</Form.Item>
 					</Col>
 				</Row>
+				<Form.Item
+					name="dates"
+					label="Thời gian"
+					rules={[
+						{
+							required: true,
+							message: "Vui lòng chọn ngày bắt đầu & kết thúc",
+						},
+					]}
+				>
+					<DatePicker.RangePicker
+						value={[startTime, endTime]}
+						format="DD/MM/YYYY"
+						placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+						onChange={handleChange}
+						className="w-full"
+					/>
+				</Form.Item>
 				<Form.Item
 					label="Mô tả"
 					name="description"

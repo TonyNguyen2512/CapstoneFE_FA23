@@ -7,8 +7,8 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 
 export const roles = {
 	ADMIN: "Admin",
-	FACTORY: "Factory",
-	MANAGER: "Manager",
+	FOREMAN: "Foreman",
+	LEADER: "Leader",
 	WORKER: "Worker",
 };
 
@@ -138,7 +138,7 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.quotes.create,
 		ALL_PERMISSIONS.quotes.update,
 	],
-	[roles.FACTORY]: [
+	[roles.FOREMAN]: [
 		// QUOTES
 		ALL_PERMISSIONS.quotes.sider,
 		ALL_PERMISSIONS.quotes.view,
@@ -185,7 +185,7 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.leadersReports.create,
 		ALL_PERMISSIONS.leadersReports.update,
 	],
-	[roles.MANAGER]: [
+	[roles.LEADER]: [
 		// workers squad
 		ALL_PERMISSIONS.squads.sider,
 		ALL_PERMISSIONS.squads.view,

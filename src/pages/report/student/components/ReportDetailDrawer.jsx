@@ -121,7 +121,7 @@ export const ReportDetailDrawer = ({
 						]}
 					/>
 				)}
-				{role === roles.FACTORY && (
+				{role === roles.FOREMAN && (
 					<Form
 						ref={formRef}
 						layout="vertical"

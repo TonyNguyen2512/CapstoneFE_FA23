@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
 
-export const LeaderTaskOrderDetail = ({
+export const LeaderTaskMaterials = ({
   title,
   dataSource
 }) => {
-  const [orderDetails, setOrderDetails] = useState([]);
+  const [materialsInfo, setMaterialsInfo] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export const LeaderTaskOrderDetail = ({
         });
       });
     }
-    setOrderDetails(dataDetails);
+    setMaterialsInfo(dataDetails);
   }, [dataSource]);
 
   const getData = (keyword) => {
@@ -57,28 +57,21 @@ export const LeaderTaskOrderDetail = ({
     },
     {
       title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
+      dataIndex: "itemQuantity",
+      key: "itemQuantity",
       align: "center",
-      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
-    },
-    {
-      title: "Số lượng đã dùng",
-      dataIndex: "quantityUsed",
-      key: "quantityUsed",
-      align: "center",
-      sorter: (a, b) => a.quantityUsed.localeCompare(b.quantityUsed),
+      sorter: (a, b) => a.itemQuantity.localeCompare(b.itemQuantity),
     },
     {
       title: "Đơn giá",
-      dataIndex: "amount",
-      key: "amount",
+      dataIndex: "price",
+      key: "price",
       align: "center",
-      render: (totalPrice) => {
-        const number = formatNum(totalPrice);
+      render: (price) => {
+        const number = formatNum(price);
         return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
       },
-      sorter: (a, b) => a.amount - b.amount,
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "thiệt hại",
@@ -93,14 +86,14 @@ export const LeaderTaskOrderDetail = ({
     },
     {
       title: "Thành tiền",
-      dataIndex: "amount",
-      key: "amount",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
       align: "center",
       render: (totalPrice) => {
         const number = formatNum(totalPrice);
         return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
       },
-      sorter: (a, b) => a.amount - b.amount,
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
     },
   ];
 
@@ -116,7 +109,7 @@ export const LeaderTaskOrderDetail = ({
     <>
       <BaseTable
         title={title}
-        dataSource={orderDetails}
+        dataSource={materialsInfo}
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}

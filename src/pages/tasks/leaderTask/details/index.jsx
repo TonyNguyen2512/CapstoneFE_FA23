@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
-import { LeaderTaskOrderDetail } from "./components/LeaderTaskOrderDetail";
+import { LeaderTaskMaterials } from "./components/LeaderTaskMaterials";
 import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
 import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
 import { UserContext } from "../../../../providers/user";
@@ -59,7 +59,7 @@ export const LeaderTaskDetailsPage = () => {
         dataSource={orderInfo}
         loading={loading}
       />
-      <LeaderTaskOrderDetail
+      <LeaderTaskMaterials
         title="Danh sách vật liệu"
         dataSource={orderDetailInfo}
       />

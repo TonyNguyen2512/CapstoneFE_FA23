@@ -27,7 +27,7 @@ const LeaderTaskList = () => {
   const userRef = useRef();
   // const rolesRef = useRef();
 
-  const getData = async (leaderId) => {
+  const getData = async () => {
     setLoading(true);
     const data = await OrderApi.getAllOrders();
     setOrderList(data.data);

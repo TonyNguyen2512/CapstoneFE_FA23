@@ -10,6 +10,7 @@ import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
 import { enumProcedureStatus } from "../../../../../__mocks__/jama/procedures";
 import { LeaderTaskProcedureModal } from "./LeaderTaskProcedureModal";
+import { modalModes } from "../../../../../constants/enum";
 
 export const LeaderTaskProcedure = ({
   title,
@@ -21,9 +22,11 @@ export const LeaderTaskProcedure = ({
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [procedureCreating, setProcedureCreating] = useState(false);
   const [procedureUpdating, setProcedureUpdating] = useState(false);
+  const [procedureDetail, setProcedureDetail] = useState(false);
 
   const procedureRef = useRef();
 
@@ -46,23 +49,22 @@ export const LeaderTaskProcedure = ({
     const { isActive, id } = record;
 
     return [
-      // {
-      //   key: "VIEW_DETAIL",
-      //   label: "Xem thông tin chi tiết",
-      //   icon: <PreviewOpen />,
-      //   onClick: () => {
-      //     procedureRef.current = record;
-      //     // navigate(record?.id)
-      //     setShowDetailModal(true);
-      //   },
-      // },
+      {
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen />,
+        onClick: () => {
+          procedureRef.current = record;
+          setShowDetailModal(true);
+        },
+      },
       {
         key: "UPDATE_ROLE",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
           procedureRef.current = record;
-          setShowDetailModal(true);
+          setShowUpdateModal(true);
         },
       },
       {
@@ -121,6 +123,24 @@ export const LeaderTaskProcedure = ({
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Quy trình",
+      dataIndex: "procedureName",
+      key: "procedureName",
+      sorter: (a, b) => a.procedureName.localeCompare(b.procedureName),
+    },
+    {
+      title: "Nhóm trưởng",
+      dataIndex: "leaderName",
+      key: "leaderName",
+      sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
+    },
+    {
+      title: "Sản phẩm",
+      dataIndex: "itemName",
+      key: "itemName",
+      sorter: (a, b) => a.itemName.localeCompare(b.itemName),
     },
     {
       title: "Mô tả",
@@ -260,7 +280,18 @@ export const LeaderTaskProcedure = ({
         }}
         onSubmit={handleSubmitCreate}
         confirmLoading={procedureCreating}
-        mode="1"
+        mode={modalModes.CREATE}
+      />
+      <LeaderTaskProcedureModal
+        open={showUpdateModal}
+        onCancel={() => {
+          setShowUpdateModal(false);
+          procedureRef.current = null;
+        }}
+        onSubmit={handleSubmitUpdate}
+        confirmLoading={procedureUpdating}
+        dataSource={procedureRef.current}
+        mode={modalModes.UPDATE}
       />
       <LeaderTaskProcedureModal
         open={showDetailModal}
@@ -268,10 +299,9 @@ export const LeaderTaskProcedure = ({
           setShowDetailModal(false);
           procedureRef.current = null;
         }}
-        onSubmit={handleSubmitUpdate}
-        confirmLoading={procedureUpdating}
+        confirmLoading={procedureDetail}
         dataSource={procedureRef.current}
-        mode="2"
+        mode={modalModes.DETAIL}
       />
     </>
   );
