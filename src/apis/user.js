@@ -5,18 +5,19 @@ const resource = "User";
 
 export const searchUsers = async (keyword) => {
 	try {
-		// const query = keyword ? `?search=${keyword}` : "";
 		let params = {};
-		if (keyword) params = { ...params, keyword };
-		const response = await BaseApi.get(`/${resource}`, { params: params });
-		return response.data;
-		// return mockAccounts;
+		if (keyword) {
+			params = { ...params, keyword };
+			const response = await BaseApi.get(`/${resource}`, { params: params });
+			return response.data;
+		}
 	} catch (error) {
 		console.log("Error search users: ", error);
 		return [];
 	}
 };
 
+<<<<<<< HEAD
 const getUserById = async (id) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
@@ -47,6 +48,23 @@ const getAllUser = async () => {
 		return false;
 	}
 };
+=======
+export const getAll = async (keyword) => {
+	try {
+		if (!!keyword) {
+			return searchUsers(keyword);
+		}
+		else {
+			const response = await BaseApi.get(`/${resource}/GetAll`);
+			return response.data.data;
+		}
+	} catch (error) {
+		console.log("Error search users: ", error);
+		return [];
+	}
+};
+
+>>>>>>> 72c12e8f453c819ef60347f9bf853e3e7dfeef89
 
 const getUserByEmail = async (email) => {
 	try {
@@ -68,9 +86,20 @@ const getUserRole = async (id) => {
 	}
 };
 
+
+const createUser = async (role, user) => {
+	try {
+		const response = await BaseApi.post(`/${resource}/Create${role}`, user);
+		return response.status === 200;
+	} catch (error) {
+		console.log("Error ban user: ", error);
+		return false;
+	}
+};
+
 const banUser = async (id) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/BanUser/${id}`);
+		const response = await BaseApi.put(`/${resource}/BanUser/${id}`);
 		return response.status === 200;
 	} catch (error) {
 		console.log("Error ban user: ", error);
@@ -80,7 +109,7 @@ const banUser = async (id) => {
 
 const unbanUser = async (id) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/UnbanUser/${id}`);
+		const response = await BaseApi.put(`/${resource}/UnBanUser/${id}`);
 		return response.status === 200;
 	} catch (error) {
 		console.log("Error unban user: ", error);
@@ -90,7 +119,7 @@ const unbanUser = async (id) => {
 
 const updateUserRole = async (userId, roleId) => {
 	try {
-		const response = await BaseApi.put(`/${resource}/UpdateUserRole`, {
+		const response = await BaseApi.put(`/${resource}/UpdateRole`, {
 			userId,
 			roleId,
 		});
@@ -105,10 +134,17 @@ const UserApi = {
 	searchUsers,
 	banUser,
 	unbanUser,
+	createUser,
 	updateUserRole,
+<<<<<<< HEAD
 	getUserById,
 	getUserByRole,
 	getAllUser,
+=======
+	getUserByEmail,
+	getUserRole,
+	getAll,
+>>>>>>> 72c12e8f453c819ef60347f9bf853e3e7dfeef89
 };
 
 export default UserApi;

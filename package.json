@@ -16,6 +16,7 @@
     "dompurify": "^3.0.5",
     "echarts": "^5.4.3",
     "echarts-for-react": "^3.0.2",
+    "firebase": "^10.5.2",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -35,7 +36,7 @@
     "tailwindcss": "^3.3.3"
   },
   "scripts": {
-    "dev": "react-scripts start --watchAll",
+    "dev": "react-scripts start --watch=true",
     "mindev": "react-scripts start --max-old-space-size=2048",
     "build": "react-scripts build",
     "start": "react-scripts start",

@@ -7,18 +7,18 @@ export const BaseTable = ({
 	columns,
 	title,
 	dataSource,
+	expandedRowRender,
 	searchOptions = {
 		visible: true,
 		placeholder: "Tìm kiếm...",
 		width: undefined,
-		onSearch: () => {},
+		onSearch: () => { },
 	},
 	pagination,
 	actions,
 	loading,
-	reload,
-	expandedRowRender,
 	rowKey,
+	reload,
 }) => {
 	const all = useRef();
 
@@ -71,11 +71,11 @@ export const BaseTable = ({
 											options
 												? options
 												: values.map((v) => {
-														return {
-															label: v,
-															value: v,
-														};
-												  })
+													return {
+														label: v,
+														value: v,
+													};
+												})
 										}
 										onChange={(value) => {
 											if (!value) {
