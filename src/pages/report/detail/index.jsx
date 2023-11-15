@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { useParams } from "react-router";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 import { Spin, Typography, message } from "antd";
 import { TeamProvider } from "../../../providers/team";
 import { TeacherTeamProgressOverview } from "./components/TeacherTeamProgressOverview";
@@ -29,7 +29,7 @@ const ProjectReportDetailPage = () => {
 	const getTeam = async () => {
 		if (!id) return;
 		setLoading(true);
-		const data = await TeamApi.getProjectTeamDetailByTeacher(id);
+		const data = await GroupApi.getProjectTeamDetailByTeacher(id);
 		setTeam(data);
 		setLoading(false);
 	};

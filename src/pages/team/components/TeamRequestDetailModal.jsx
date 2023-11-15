@@ -4,7 +4,7 @@ import { Button, Col, List, Row, Typography, message } from "antd";
 import { Check, Forbid } from "@icon-park/react";
 import { useRole } from "../../../hooks/role";
 import { roles } from "../../../constants/app";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 
 const { Text, Title } = Typography;
 
@@ -18,14 +18,14 @@ export const TeamRequestDetailModal = ({ open, onCancel, teamRequest }) => {
 
 	const getAcceptTeamRequest = async (teamId) => {
 		setLoading(true);
-		const result = await TeamApi.AcceptTeamRequest(teamId);
+		const result = await GroupApi.AcceptTeamRequest(teamId);
 		setShowAcceptTeamRequestModal(result);
 		setLoading(false);
 	};
 
 	const getDenyTeamRequest = async (teamId) => {
 		setLoading(true);
-		const result = await TeamApi.DenyTeamRequest(teamId);
+		const result = await GroupApi.DenyTeamRequest(teamId);
 		setShowDenyTeamRequestModal(result);
 		setLoading(false);
 	};

@@ -2,7 +2,7 @@ import { Row, Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { ClassSelect } from "../../project/components/ClassSelect";
 import { useSearchParams } from "react-router-dom";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 import { ProjectTeamList } from "./components/ProjectTeamList";
 
 const { Title } = Typography;
@@ -17,7 +17,7 @@ export const TeamListPage = () => {
 		const classId = searchParams.get("class");
 		if (!classId) return;
 		setLoading(true);
-		const data = await TeamApi.getJoinedProjectTeams(classId);
+		const data = await GroupApi.getJoinedProjectTeams(classId);
 		setTeams(data);
 		setLoading(false);
 	};

@@ -154,14 +154,14 @@ export const router = createBrowserRouter([
 						path: `${routes.dashboard.semester}/:id`,
 						element: <SemesterDetailPage />,
 					},
-					{
-						path: routes.dashboard.teams,
-						element: <TeamListPage />,
-					},
-					{
-						path: `${routes.dashboard.teams}/:id`,
-						element: <TeamDetailPage />,
-					},
+					// {
+					// 	path: routes.dashboard.teams,
+					// 	element: <TeamListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.teams}/:id`,
+					// 	element: <TeamDetailPage />,
+					// },
 					{
 						path: `${routes.dashboard.studentReport}/:id`,
 						element: <StudentTeamReportPage />,

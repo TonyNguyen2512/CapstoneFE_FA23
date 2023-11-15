@@ -1,6 +1,6 @@
 import { Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 import { ProjectReportList } from "./components/ProjectReportList";
 const { Title } = Typography;
 
@@ -10,7 +10,7 @@ const ProjectReportListPage = () => {
 
 	const getProjectTeams = async () => {
 		setLoading(true);
-		const list = await TeamApi.getProjectTeamsByTeacher();
+		const list = await GroupApi.getProjectTeamsByTeacher();
 		setTeams(list);
 		setLoading(false);
 	};

@@ -10,7 +10,7 @@ import {
 	message,
 } from "antd";
 import React from "react";
-import TeamApi from "../../../../apis/team";
+import GroupApi from "../../../../apis/group";
 import { roles } from "../../../../constants/app";
 import { TeamRequestStatus } from "../../../../constants/enum";
 import { useRole } from "../../../../hooks/role";
@@ -21,7 +21,7 @@ export const TeamRequestList = ({ teamRequests, onClickItem, reload }) => {
 	const role = useRole();
 
 	const handleApprove = async (teamId) => {
-		const success = await TeamApi.AcceptTeamRequest(teamId);
+		const success = await GroupApi.AcceptTeamRequest(teamId);
 		if (success) {
 			message.success("Đã duyệt yêu cầu đăng ký nhóm");
 			reload();
@@ -31,7 +31,7 @@ export const TeamRequestList = ({ teamRequests, onClickItem, reload }) => {
 	};
 
 	const handleDeny = async (teamId) => {
-		const success = await TeamApi.DenyTeamRequest(teamId);
+		const success = await GroupApi.DenyTeamRequest(teamId);
 		if (success) {
 			message.success("Đã từ chối yêu cầu đăng ký nhóm");
 			reload();
@@ -41,7 +41,7 @@ export const TeamRequestList = ({ teamRequests, onClickItem, reload }) => {
 	};
 
 	const handleCancel = async (teamId) => {
-		const success = await TeamApi.cancelTeamRequest(teamId);
+		const success = await GroupApi.cancelTeamRequest(teamId);
 		if (success) {
 			message.success("Đã hủy yêu cầu đăng ký nhóm");
 			reload();

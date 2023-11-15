@@ -31,7 +31,6 @@ const routes = {
 		courses: "courses",
 		classes: "classes",
 		projects: "projects",
-		teams: "teams",
 		teamRequest: "team-requests",
 		report: "team-report",
 		semester: "semester",

@@ -2,7 +2,7 @@ import { Spin, message, Typography, Descriptions } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import ReportApi from "../../../apis/report";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { ReportSection } from "../components/ReportSection";
 import { ReportDetailDrawer } from "./components/ReportDetailDrawer";
@@ -42,7 +42,7 @@ const StudentTeamReportPage = () => {
 		if (!id) return;
 
 		setLoading(true);
-		const data = await TeamApi.getJoinedProjectTeamById(id);
+		const data = await GroupApi.getJoinedProjectTeamById(id);
 		setTeam(data);
 		setLoading(false);
 	};

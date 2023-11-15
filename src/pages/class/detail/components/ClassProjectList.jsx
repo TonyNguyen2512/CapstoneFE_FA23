@@ -2,7 +2,7 @@ import { Delete, Edit, More, Plus } from "@icon-park/react";
 import { Button, Col, Dropdown, Row, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import ProjectApi from "../../../../apis/project";
-import TeamApi from "../../../../apis/team";
+import GroupApi from "../../../../apis/group";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ConfirmDeleteModal } from "../../../../components/ConfirmDeleteModal";
 import { ALL_PERMISSIONS, roles } from "../../../../constants/app";
@@ -66,7 +66,7 @@ export const ClassProjectList = ({ onViewDescription }) => {
 			users: listStudent.filter((item) => item !== user?.userId),
 		};
 
-		const response = await TeamApi.registerProjectTeam(data);
+		const response = await GroupApi.registerProjectTeam(data);
 		if (response.code === 0) {
 			message.success("Đăng ký nhóm thành công");
 			reload(false);

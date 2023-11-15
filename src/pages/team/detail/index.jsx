@@ -1,7 +1,7 @@
 import { Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import TeamApi from "../../../apis/team";
+import GroupApi from "../../../apis/group";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { TeamProvider } from "../../../providers/team";
 import { TeamBasicInfo } from "./components/TeamBasicInfo";
@@ -25,7 +25,7 @@ const TeamDetailPage = () => {
 		if (handleLoading) {
 			setLoading(true);
 		}
-		const data = await TeamApi.getJoinedProjectTeamById(teamId);
+		const data = await GroupApi.getJoinedProjectTeamById(teamId);
 		allTasks.current = data?.tasks;
 		setTeam(data);
 		if (handleLoading) {
