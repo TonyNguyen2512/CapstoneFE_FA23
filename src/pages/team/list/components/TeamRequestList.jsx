@@ -51,7 +51,7 @@ export const TeamRequestList = ({ teamRequests, onClickItem, reload }) => {
 	};
 
 	const getActionItems = (record) => {
-		if (role === roles.FACTORY) {
+		if (role === roles.FOREMAN) {
 			return [
 				{
 					label: "Duyệt yêu cầu",

@@ -88,7 +88,7 @@ export const ClassList = ({ classes, onDelete }) => {
 
 	return (
 		<>
-			{role === roles.FACTORY && <Title level={5}>Lớp học của tôi</Title>}
+			{role === roles.FOREMAN && <Title level={5}>Lớp học của tôi</Title>}
 			<Table
 				dataSource={classes}
 				columns={columns}

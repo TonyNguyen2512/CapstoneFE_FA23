@@ -1,5 +1,5 @@
 import React from "react";
-import WorkerTaskList from "./components/TaskList";
+import WorkerTaskList from "./components/WorkerTaskList";
 import { ALL_PERMISSIONS } from "../../../../constants/app";
 import { usePermissions } from "../../../../hooks/permission";
 

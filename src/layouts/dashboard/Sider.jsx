@@ -46,8 +46,8 @@ export const AppSider = () => {
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
   const canViewSquads = permissions?.includes(ALL_PERMISSIONS.squads?.sider);
-  const canViewManagersTasks = permissions?.includes(ALL_PERMISSIONS.managersTasks?.sider);
-  const canViewManagersReports = permissions?.includes(ALL_PERMISSIONS.managersReports?.sider);
+  const canViewLeadersTasks = permissions?.includes(ALL_PERMISSIONS.leadersTasks?.sider);
+  const canViewLeadersReports = permissions?.includes(ALL_PERMISSIONS.leadersReports?.sider);
   const canViewWorkers = permissions?.includes(ALL_PERMISSIONS.workers?.sider);
   const canViewWorkersTasks = permissions?.includes(ALL_PERMISSIONS.workersTasks?.sider);
   const canViewWorkersReports = permissions?.includes(ALL_PERMISSIONS.workersReports?.sider);
@@ -164,7 +164,7 @@ export const AppSider = () => {
         },
       ],
     },
-    canViewManagersTasks && {
+    canViewLeadersTasks && {
       key: itemKeys.MANAGERS_TASKS,
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.managersTasks}>Quản lý công việc</Link>,
@@ -174,7 +174,7 @@ export const AppSider = () => {
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.workersTasks}>Quản lý công việc</Link>,
     },
-    canViewManagersReports && {
+    canViewLeadersReports && {
       key: itemKeys.MANAGERS_REPORTS,
       icon: <HourglassNull size={iconSize - 4} />,
       label: <Link to={routes.dashboard.root}>Báo cáo tiến độ</Link>,

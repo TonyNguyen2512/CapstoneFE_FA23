@@ -149,9 +149,9 @@ const AccountList = () => {
             color={
               role === roles.ADMIN
                 ? "#FF7777"
-                : role === roles.FACTORY
+                : role === roles.FOREMAN
                 ? "#4ECA69"
-                : role === roles.MANAGER
+                : role === roles.LEADER
                 ? "#F1CA7F"
                 : "#59A7DE"
             }
@@ -175,8 +175,8 @@ const AccountList = () => {
             value: roles.WORKER,
           },
           {
-            label: getRoleName(roles.FACTORY),
-            value: roles.FACTORY,
+            label: getRoleName(roles.FOREMAN),
+            value: roles.FOREMAN,
           },
         ],
       },

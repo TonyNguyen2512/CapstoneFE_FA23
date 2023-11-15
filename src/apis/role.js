@@ -11,10 +11,10 @@ const getAllRoles = async () => {
 				name: roles.ADMIN
 			},
 			{
-				name: roles.FACTORY
+				name: roles.FOREMAN
 			},
 			{
-				name: roles.MANAGER
+				name: roles.LEADER
 			},
 			{
 				name: roles.WORKER

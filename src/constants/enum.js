@@ -44,3 +44,9 @@ export const orderColors = [
 	'#FF0000',
 	'#29CB00',
 ]
+
+export const modalModes = {
+	CREATE: "1",
+	UPDATE: "2",
+	DETAIL: "3"
+}

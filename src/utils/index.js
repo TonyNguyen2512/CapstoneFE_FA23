@@ -3,7 +3,10 @@ import { roles } from "../constants/app";
 import routes from "../constants/routes";
 
 export const formatDate = (date, pattern) => {
-	const result = moment(date).format(pattern);
+	let result = "";
+	if (date) {
+		result = moment(date).format(pattern);
+	}
 	return result;
 };
 
@@ -24,9 +27,9 @@ export const getRoleName = (role) => {
 	switch (role) {
 		case roles.ADMIN:
 			return "Admin";
-		case roles.FACTORY:
+		case roles.FOREMAN:
 			return "Quản đốc";
-		case roles.MANAGER:
+		case roles.LEADER:
 			return "Quản lý";
 		case roles.WORKER:
 			return "Công nhân";

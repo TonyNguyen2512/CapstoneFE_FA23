@@ -1,9 +1,9 @@
-import { Typography, Col, Row, Space, Card } from "antd";
+import { Typography, Col, Row, Space, Card, Collapse, List } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { formatDate } from "../../../../../utils";
 import { enumTaskStatuses } from "../../../../../__mocks__/jama/tasks";
 
-export const ManagerTaskInfo = ({
+export const WorkerTaskInfo = ({
 	dataSource,
 	loading
 }) => {
@@ -22,6 +22,7 @@ export const ManagerTaskInfo = ({
 	useEffect(() => {
 		all.current = dataSource;
 		setTask(dataSource);
+		console.log(dataSource);
 	}, [dataSource]);
 
 	return (
@@ -46,6 +47,38 @@ export const ManagerTaskInfo = ({
 							<Col className="gutter-row" span={8}>
 								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(task?.status) }}>
 									{getTaskStatus(task?.status)}</strong></span>
+							</Col>
+						</Row>
+						<Row gutter={[16, 16]}>
+							<Col className="gutter-row" span={6}>
+								<Collapse
+									ghost
+									items={[
+										{
+											label: `Thành viên nhóm (${task?.members?.length ?? 0})`,
+											children: (
+												<List
+													rowKey={(item) => item.id}
+													dataSource={task?.members}
+													renderItem={(item) => {
+														return (
+															<List.Item>
+																<span>
+																	{item.fullName}
+																	{/* {user?.userId === item.id && (
+																		<span className="ml-2" style={{ fontWeight: "bold" }}>
+																			(Tôi)
+																		</span>
+																	)} */}
+																</span>
+															</List.Item>
+														);
+													}}
+												/>
+											),
+										},
+									]}
+								/>
 							</Col>
 						</Row>
 					</Card>

@@ -56,7 +56,7 @@ export const TeamRequestDetailModal = ({ open, onCancel, teamRequest }) => {
 				renderItem={renderMemberItem}
 				className="mb-4"
 			/>
-			{role === roles.FACTORY && (
+			{role === roles.FOREMAN && (
 				<Row gutter={8} justify="end">
 					<Col>
 						<Button

@@ -10,7 +10,7 @@ export const AccountModal = ({ open, onCancel, accounts, title }) => {
 			label: "Sinh viên",
 		},
 		{
-			value: roles.FACTORY,
+			value: roles.FOREMAN,
 			label: "Giáo viên",
 		},
 	];
