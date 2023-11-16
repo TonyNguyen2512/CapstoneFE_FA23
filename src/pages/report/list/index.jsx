@@ -1,6 +1,6 @@
 import { Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
-import TeamApi from "../../../apis/team";
+import TeamApi from "../../../apis/group";
 import { ProjectReportList } from "./components/ProjectReportList";
 const { Title } = Typography;
 
