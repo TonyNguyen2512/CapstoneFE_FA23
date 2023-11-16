@@ -13,19 +13,10 @@ const getAllRoles = async () => {
 				name: roles.ADMIN
 			},
 			{
-<<<<<<< HEAD
 				name: roles.FOREMAN
 			},
 			{
 				name: roles.LEADER
-=======
-				id: "d571b862-0b11-48bf-789a-08dbd80933d7",
-				name: roles.FACTORY
-			},
-			{
-				id: "49d97a61-dc6a-47e7-5b4d-08dbd8fefeb1",
-				name: roles.MANAGER
->>>>>>> 72c12e8f453c819ef60347f9bf853e3e7dfeef89
 			},
 			{
 				id: "e0acdcdf-704a-49c6-6aad-08dbe2a052a2",

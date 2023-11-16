@@ -17,7 +17,6 @@ export const searchUsers = async (keyword) => {
 	}
 };
 
-<<<<<<< HEAD
 const getUserById = async (id) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
@@ -48,7 +47,6 @@ const getAllUser = async () => {
 		return false;
 	}
 };
-=======
 export const getAll = async (keyword) => {
 	try {
 		if (!!keyword) {
@@ -64,7 +62,6 @@ export const getAll = async (keyword) => {
 	}
 };
 
->>>>>>> 72c12e8f453c819ef60347f9bf853e3e7dfeef89
 
 const getUserByEmail = async (email) => {
 	try {
@@ -136,15 +133,12 @@ const UserApi = {
 	unbanUser,
 	createUser,
 	updateUserRole,
-<<<<<<< HEAD
 	getUserById,
 	getUserByRole,
 	getAllUser,
-=======
 	getUserByEmail,
 	getUserRole,
 	getAll,
->>>>>>> 72c12e8f453c819ef60347f9bf853e3e7dfeef89
 };
 
 export default UserApi;
