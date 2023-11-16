@@ -5,12 +5,11 @@ import { enumTaskStatuses, mockTasks } from "../../../../../__mocks__/jama/tasks
 import { message } from "antd/lib";
 import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
-import ManagerTaskApi from "../../../../../apis/manager-task";
+import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { useNavigate } from "react-router-dom";
-import { ManagerTaskModal } from "./ManagerTaskModal";
 
-const ManagerTaskList = () => {
+const WorkerTaskList = () => {
   const [loading, setLoading] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -114,15 +113,16 @@ const ManagerTaskList = () => {
           navigate(record?.id)
         },
       },
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          taskRef.current = record;
-          setShowUpdateModal(true);
-        },
-      },
+      // {
+      //   key: "UPDATE_ROLE",
+      //   label: "Cập nhật thông tin",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     taskRef.current = record;
+      //     // setShowUpdateModal(true);
+      //     navigate(routes.dashboard.workersTasks + "/" + record?.id)
+      //   },
+      // },
       {
         key: "SET_STATUS",
         label: isActive ? "Mở khóa" : "Khóa",
@@ -157,12 +157,6 @@ const ManagerTaskList = () => {
     },
     {
       title: "Tên đơn hàng",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Tên công việc",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
@@ -267,7 +261,7 @@ const ManagerTaskList = () => {
         }}
       />
       
-      <ManagerTaskModal
+      {/* <ManagerTaskModal
         open={showCreateModal}
         onCancel={() => {
           setShowCreateModal(false);
@@ -287,9 +281,9 @@ const ManagerTaskList = () => {
         confirmLoading={taskUpdateLoading}
         dataSource={taskRef.current}
         mode="2"
-      />
+      /> */}
     </>
   );
 };
 
-export default ManagerTaskList;
+export default WorkerTaskList;

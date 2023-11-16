@@ -26,8 +26,8 @@ import { MaterialTypeListPage } from "../pages/material-types/list";
 import { ItemTypeListPage } from "../pages/item-types/list";
 import { ItemListPage } from "../pages/items/list";
 import { WorkerTaskListPage } from "../pages/tasks/workerTask/list";
-import { ManagerTaskListPage } from "../pages/tasks/managerTask/list";
-import { ManagerTaskDetailsPage } from "../pages/tasks/managerTask/details";
+import { LeaderTaskListPage } from "../pages/tasks/leaderTask/list";
+import { LeaderTaskDetailsPage } from "../pages/tasks/leaderTask/details";
 import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
 import OrderDetailPage from "../pages/orders/detail";
@@ -97,11 +97,11 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: routes.dashboard.managersTasks,
-						element: <ManagerTaskListPage />,
+						element: <LeaderTaskListPage />,
 					},
 					{
 						path: `${routes.dashboard.managersTasks}/:id`,
-						element: <ManagerTaskDetailsPage />,
+						element: <LeaderTaskDetailsPage />,
 					},
 					{
 						path: routes.dashboard.reports,

@@ -84,3 +84,41 @@ export const enumProcedureStatus = [
     color: "#cb050f",
   },
 ];
+
+export const mockWorkerProcedure = 
+  {
+    id: 1,
+    project: {
+      id: 1
+    },
+    tasks: [
+      {
+        id: "1",
+        name: "Tiến độ 1",
+        description: "Việc 1",
+        timeReport: new Date("2023-11-01"),
+        status: 0,
+        isDeleted: false,
+        assignees: [
+          "2", "3"
+        ],
+      },
+      {
+        id: "2",
+        name: "Tiến độ 2",
+        description: "Việc 2",
+        timeReport: new Date("2023-11-02"),
+        status: 1,
+        isDeleted: false,
+        assignees: [
+          "2", "3"
+        ],
+      }
+    ],
+    members: [
+      {
+        id: "3e375ec4-3713-4fd8-a3d2-08dbdf6e15d8"
+      }
+    ]
+  }
+;

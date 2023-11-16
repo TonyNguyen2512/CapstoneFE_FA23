@@ -2,7 +2,7 @@ import { Delete, Edit, More, Plus } from "@icon-park/react";
 import { Button, Col, Dropdown, Row, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import ProjectApi from "../../../../apis/project";
-import TeamApi from "../../../../apis/team";
+import TeamApi from "../../../../apis/group";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ConfirmDeleteModal } from "../../../../components/ConfirmDeleteModal";
 import { ALL_PERMISSIONS, roles } from "../../../../constants/app";
@@ -136,7 +136,7 @@ export const ClassProjectList = ({ onViewDescription }) => {
 							)}
 						</Col>
 						<Col>
-							{role === roles.FACTORY && (
+							{role === roles.FOREMAN && (
 								<Dropdown menu={{ items: teacherActionItems(record) }}>
 									<Button icon={<More />} className="flex-center" />
 								</Dropdown>

@@ -10,7 +10,7 @@ import {
 	message,
 } from "antd";
 import React from "react";
-import TeamApi from "../../../../apis/team";
+import TeamApi from "../../../../apis/group";
 import { roles } from "../../../../constants/app";
 import { TeamRequestStatus } from "../../../../constants/enum";
 import { useRole } from "../../../../hooks/role";
@@ -51,7 +51,7 @@ export const TeamRequestList = ({ teamRequests, onClickItem, reload }) => {
 	};
 
 	const getActionItems = (record) => {
-		if (role === roles.FACTORY) {
+		if (role === roles.FOREMAN) {
 			return [
 				{
 					label: "Duyệt yêu cầu",

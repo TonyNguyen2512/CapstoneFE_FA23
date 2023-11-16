@@ -1,7 +1,7 @@
 import { Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import TeamApi from "../../../apis/team";
+import TeamApi from "../../../apis/group";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { TeamProvider } from "../../../providers/team";
 import { TeamBasicInfo } from "./components/TeamBasicInfo";

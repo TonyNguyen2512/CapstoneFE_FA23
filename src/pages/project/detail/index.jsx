@@ -153,7 +153,7 @@ const ProjectDetailPage = () => {
 							</span>
 						}
 					>
-						{role === roles.FACTORY && (
+						{role === roles.FOREMAN && (
 							<div className="mt-4">
 								<ProjectStudentList />
 								<Divider />

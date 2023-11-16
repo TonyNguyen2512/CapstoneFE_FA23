@@ -4,7 +4,7 @@ import { Button, Col, List, Row, Typography, message } from "antd";
 import { Check, Forbid } from "@icon-park/react";
 import { useRole } from "../../../hooks/role";
 import { roles } from "../../../constants/app";
-import TeamApi from "../../../apis/team";
+import TeamApi from "../../../apis/group";
 
 const { Text, Title } = Typography;
 
@@ -56,7 +56,7 @@ export const TeamRequestDetailModal = ({ open, onCancel, teamRequest }) => {
 				renderItem={renderMemberItem}
 				className="mb-4"
 			/>
-			{role === roles.FACTORY && (
+			{role === roles.FOREMAN && (
 				<Row gutter={8} justify="end">
 					<Col>
 						<Button

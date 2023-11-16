@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { useParams } from "react-router";
-import TeamApi from "../../../apis/team";
+import TeamApi from "../../../apis/group";
 import { Spin, Typography, message } from "antd";
 import { TeamProvider } from "../../../providers/team";
 import { TeacherTeamProgressOverview } from "./components/TeacherTeamProgressOverview";

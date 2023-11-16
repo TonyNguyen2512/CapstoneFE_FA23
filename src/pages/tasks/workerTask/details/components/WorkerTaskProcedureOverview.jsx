@@ -12,12 +12,12 @@ const ProcedureStatus = {
 	new: 0,
 };
 
-export const ManagerTaskProcedureOverview = ({
+export const WorkerTaskProcedureOverview = ({
   title,
   dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource;
+  const allTasks = dataSource?.tasks;
   const completedTasks = allTasks?.filter(
     (e) => e.status === ProcedureStatus.completed
   );
