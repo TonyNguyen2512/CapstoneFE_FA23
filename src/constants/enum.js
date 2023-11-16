@@ -50,3 +50,27 @@ export const modalModes = {
 	UPDATE: "2",
 	DETAIL: "3"
 }
+
+export const eTaskStatus = {
+	New: 0,
+	InProgress: 1,
+	Pending: 2,
+	NotAchived: 3,
+	Completed: 4,
+}; 
+
+export const eTaskLabels = [
+	'Mới tạo',
+	'Đang tiến hành',
+	'Chờ duyệt',
+	'Không hoàn thành',
+	'Hoàn thành',
+]
+
+export const eTaskColors = [
+	'#BEBB6D',
+	'#FBD305',
+	'#FF0000',
+	'#FF0000',
+	'#29CB00',
+]

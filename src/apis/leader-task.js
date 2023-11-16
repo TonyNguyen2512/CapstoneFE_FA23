@@ -1,24 +1,51 @@
 import BaseApi from ".";
+import ApiCodes from "../constants/apiCode";
 
 const resource = "LeaderTask";
+
+const createSuccessCode = 41;
+const udpateSuccessCode = 99;
+const updateStatusSuccessCode = 100;
+const deleteSuccessCode = 101;
+
+const errorComposer = (error) => {
+	if (error.response.data) {
+		const { code } = error.response.data
+		return {
+			code,
+			message: ApiCodes[code],
+		}
+	}
+	return {
+		message: "Có lỗi xảy ra",
+		code: -1
+	};
+}
+
+const successComposer = (messageId) => {
+	return {
+		code: 0,
+		message: ApiCodes[messageId]
+	}
+}
 
 const createLeaderTasks = async (data) => {
 	try {
 		const response = await BaseApi.post(`/${resource}/Create`, data);
-		return response.status === 200;
+		return successComposer(createSuccessCode);
 	} catch (error) {
 		console.log("Error create manager task: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
 const updateLeaderTasks = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/Update`, data);
-		return response.status === 200;
+		return successComposer(udpateSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
@@ -30,20 +57,20 @@ const updateLeaderTasksStatus = async (leaderTasksId, status) => {
 				status,
 			}
 		);
-		return response.status === 200;
+		return successComposer(updateStatusSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task status: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
 const deleteLeaderTasks = async (leaderTasksId) => {
 	try {
 		const response = await BaseApi.delete(`/${resource}/Delete/${leaderTasksId}`);
-		return response.status === 200;
+		return successComposer(deleteSuccessCode);
 	} catch (error) {
 		console.log("Error delete manager task: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
@@ -66,7 +93,7 @@ const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) 
 		return response.data;
 	} catch (error) {
 		console.log("Error get leader tasks by order id: ", error);
-		return [];
+		return errorComposer(error);
 	}
 };
 
@@ -76,7 +103,7 @@ const getLeaderTaskById = async (id) => {
 		return response.data;
 	} catch (error) {
 		console.log("Error get leader task by id: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
@@ -88,7 +115,7 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 		return response.data;
 	} catch (error) {
 		console.log("Error get leader tasks by leader id: ", error);
-		return [];
+		return errorComposer(error);
 	}
 };
 

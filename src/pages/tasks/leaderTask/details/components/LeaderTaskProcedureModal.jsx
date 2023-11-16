@@ -2,12 +2,13 @@ import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber } fr
 import { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../../../components/BaseModal";
 import { RichTextEditor } from "../../../../../components/RichTextEditor";
-import { modalModes } from "../../../../../constants/enum";
+import { eTaskLabels, eTaskStatus, modalModes } from "../../../../../constants/enum";
 import dayjs from "dayjs";
 import UserApi from "../../../../../apis/user";
 import { roles } from "../../../../../constants/app";
 import ItemApi from "../../../../../apis/item";
 import moment from "moment";
+import { formatDate } from "../../../../../utils";
 
 const { Text } = Typography;
 
@@ -52,27 +53,39 @@ export const LeaderTaskProcedureModal = ({
 	const [leadTaskProcedureform] = Form.useForm();
 	const [leadersData, setLeadersData] = useState([]);
 	const [itemsData, setItemsData] = useState([]);
-	const [startTime, setStartTime] = useState();
-	const [endTime, setEndTime] = useState();
+	const [statusList, setStatusList] = useState([]);
+	const isStartTime = dataSource?.startTime ? true : false;
+	const isEndTime = dataSource?.endTime ? true : false;
 
 	const isCreate = mode === modalModes.CREATE;
 
-	const handleValue = (values) => {
-		leadTaskProcedureform.setFieldsValue(values);
-	};
-
-	console.log("dataSource?.id", dataSource?.id)
-
 	const onFinish = async (values) => {
-		const data = {
-			id: values.id,
-			name: values.name,
-			username: values.username,
-			jobName: values.jobName,
-			description: values.description,
-			status: values.status,
-			timeReport: values?.timeReport,
-			isDeleted: values?.isDeleted
+		const dates = values.dates;
+		console.log("values", values)
+		let data = {};
+		if (isCreate) {
+			data = {
+				name: values?.name,
+				leaderId: values?.leaderId,
+				orderId: dataSource?.orderId,
+				itemId: values?.itemId,
+				priority: values?.priority,
+				itemQuantity: values?.itemQuantity,
+				startTime: '2023-11-01',
+				endTime: '2023-11-02',
+				description: values?.description,
+			}
+		} else {
+			data = {
+				id: values?.id,
+				name: values?.name,
+				priority: values?.priority,
+				itemQuantity: values?.itemQuantity,
+				startTime: dates?.[0],
+				endTime: dates?.[1],
+				description: values?.description,
+				status: values?.status,
+			}
 		}
 		await onSubmit(data);
 	};
@@ -102,35 +115,45 @@ export const LeaderTaskProcedureModal = ({
 		const data = await ItemApi.getAllItem();
 		setItemsData(data?.data);
 		setLoading(false);
-		console.log("itemsData", itemsData)
 	}
 
-	const handleChange = (values) => {
-		setStartTime(values?.[0]);
-		setEndTime(values?.[1]);
-	};
+	const getETaskStatus = () => {
+		let data = [];
+		for (const status in eTaskStatus) {
+			data.push({
+				value: eTaskStatus[status],
+				label: eTaskLabels[eTaskStatus[status]],
+			})
+		}
+		setStatusList(data);
+	}
 
 	useEffect(() => {
+		setInitialValues({
+			id: dataSource?.id || "",
+			name: dataSource?.name || "",
+			leaderId: dataSource?.leaderId || "",
+			itemId: dataSource?.itemId || "",
+			priority: dataSource?.priority || "",
+			description: dataSource?.description || "",
+			itemQuantity: dataSource?.itemQuantity || "",
+			dates: [isStartTime ? dayjs(dataSource?.startTime) : "", isEndTime ? dayjs(dataSource?.endTime) : ""],
+			status: dataSource?.status || "",
+		});
 		handleTitle(dataSource?.name);
 		getLeaderInfo();
 		getItemInfo();
-		setStartTime(dayjs(dataSource?.startTime).format("DD/MM/YYYY"))
-		setEndTime(dayjs(dataSource?.endTime).format("DD/MM/YYYY"))
+		getETaskStatus();
 	}, [dataSource]);
 
 	return (
 		<BaseModal
 			open={open}
-			onCancel={() => {
-				onCancel();
-				leadTaskProcedureform.resetFields();
-			}}
+			onCancel={onCancel}
 			title={title}
-			onOk={() => {
-				leadTaskProcedureform.submit();
-			}}
+			onOk={() => leadTaskProcedureform.submit()}
 			confirmLoading={confirmLoading}
-			width="50%"
+			width="40%"
 			okText="Gửi"
 		>
 			<Form
@@ -163,7 +186,7 @@ export const LeaderTaskProcedureModal = ({
 					label="Nhóm trưởng"
 					rules={[
 						{
-							required: isCreate && true,
+							required: true,
 							message: "Vui lòng chọn nhóm trưởng",
 						},
 					]}
@@ -204,13 +227,42 @@ export const LeaderTaskProcedureModal = ({
 				</Form.Item>
 				<Row gutter={16}>
 					<Col span={12}>
-						<Form.Item 
-						name="priority" 
-						label="Độ ưu tiên">
-							<InputNumber 
-								min={1} 
+						<Form.Item
+							name="priority"
+							label="Độ ưu tiên"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng thêm độ ưu tiên",
+								},
+							]}
+						>
+							<InputNumber
+								min={1}
 								max={10}
+								defaultValue=""
 								placeholder="Độ ưu tiên"
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
+				<Row gutter={16}>
+					<Col span={12}>
+						<Form.Item
+							name="itemQuantity"
+							label="Số lượng sản phẩm"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng thêm số lượng sản phẩm",
+								},
+							]}
+						>
+							<InputNumber
+								min={1}
+								max={10}
+								defaultValue=""
+								placeholder="Số lượng sản phẩm"
 							/>
 						</Form.Item>
 					</Col>
@@ -226,13 +278,29 @@ export const LeaderTaskProcedureModal = ({
 					]}
 				>
 					<DatePicker.RangePicker
-						value={[startTime, endTime]}
 						format="DD/MM/YYYY"
 						placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
-						onChange={handleChange}
 						className="w-full"
 					/>
 				</Form.Item>
+				{!isCreate &&
+					<Form.Item
+						name="status"
+						label="Trạng thái"
+						rules={[
+							{
+								required: true,
+								message: "Vui lòng chọn trạng thái",
+							},
+						]}
+					>
+						<Select
+							className="w-full"
+							placeholder="Chọn sản phẩm"
+							options={statusList}
+						/>
+					</Form.Item>
+				}
 				<Form.Item
 					label="Mô tả"
 					name="description"

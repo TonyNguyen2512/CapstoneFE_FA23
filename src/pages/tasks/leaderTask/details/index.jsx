@@ -9,6 +9,7 @@ import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
 import OrderDetailApi from "../../../../apis/order-detail";
 import { Space } from "antd";
+import MaterialApi from "../../../../apis/material";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -17,9 +18,8 @@ export const LeaderTaskDetailsPage = () => {
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
-  const [orderDetail, setOrderDetail] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
-  const [orderDetailInfo, setOrderDetailInfo] = useState();
+  const [materialInfo, setMaterialInfo] = useState();
 
   const userRef = useRef();
   const rolesRef = useRef();
@@ -32,20 +32,27 @@ export const LeaderTaskDetailsPage = () => {
     // retrieve order data by id
     const dataOrder = await OrderApi.getOrderById(id);
     
-    console.log(dataOrder)
+    console.log("dataOrder", dataOrder)
       // retrieve order detail by order id
-    const dataOrderDetails = await OrderDetailApi.getOrderDetailById(dataOrder?.id);
-    // // retrieve leader task by order id
-    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(dataOrder?.id);
+    const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
+
+    getLeaderData(id);
 
     setOrderInfo(dataOrder);
 
-    setOrderDetailInfo(dataOrderDetails)
-
-    setTaskInfo(dataLeaderTasks);
+    setMaterialInfo(dataMaterials)
 
     setLoading(false);
   };
+
+  const getLeaderData = async() => {
+    setLoading(true);
+    // // retrieve leader task by order id
+    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+    setTaskInfo(dataLeaderTasks);
+
+    setLoading(false);
+  }
 
   useEffect(() => {
     if (id) {
@@ -61,7 +68,7 @@ export const LeaderTaskDetailsPage = () => {
       />
       <LeaderTaskMaterials
         title="Danh sách vật liệu"
-        dataSource={orderDetailInfo}
+        dataSource={materialInfo}
       />
       <LeaderTaskProcedureOverview
         title="Tiến độ quy trình"
@@ -70,6 +77,8 @@ export const LeaderTaskDetailsPage = () => {
       <LeaderTaskProcedure
         title="Danh sách quy trình"
         dataSource={taskInfo}
+        orderId={id}
+        reloadData={getLeaderData}
       />
     </Space>
   );

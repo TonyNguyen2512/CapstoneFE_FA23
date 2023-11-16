@@ -20,7 +20,6 @@ const getAllItem = async (search, pageIndex, pageSize) => {
       const response = await BaseApi.get(`/${resource}/GetAll`, {
         params: params,
       });
-      console.log("get all item", response.data)
       return response.data;
     }
   } catch (error) {

@@ -62,6 +62,16 @@ const getOrderById = async (id) => {
   }
 };
 
+const getQuoteMaterialByOrderId = async (orderId) => {
+  try {
+    const response = await BaseApi.get(`/${resource}/GetQuoteMaterialById/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error get quote material by order id: ", error);
+    return undefined;
+  }
+}
+
 const createOrder = async (data) => {
   try {
     const response = await BaseApi.post(`/${resource}`, data);
@@ -99,6 +109,7 @@ const OrderApi = {
   createOrder,
   updateOrder,
   deleteOrder,
+  getQuoteMaterialByOrderId,
 };
 
 export default OrderApi;
