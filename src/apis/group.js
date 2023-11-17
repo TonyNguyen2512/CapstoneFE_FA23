@@ -6,7 +6,7 @@ const resource = "Group";
 
 const getAllUserByGroupId = async (id) => {
 	try {
-		const response = await BaseApi.post(
+		const response = await BaseApi.get(
 			`/${resource}/GetAllUserByGroupId/${id}`,
 			{
 				params: {

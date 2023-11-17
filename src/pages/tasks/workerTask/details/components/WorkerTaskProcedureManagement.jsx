@@ -7,7 +7,8 @@ import { TaskBoard } from "./TaskBoard";
 const { Title } = Typography;
 
 export const WorkerTaskProcedureManagement = ({
-	dataSource
+	dataWorkerTasks,
+	dataGroupMembers,
 }) => {
 
 	const { user } = useContext(UserContext);
@@ -19,13 +20,13 @@ export const WorkerTaskProcedureManagement = ({
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-	console.log("Manager")
-	console.log(dataSource)
+	// console.log("Manager")
+	// console.log(dataSource)
 
 	const taskRef = useRef();
 
 	const handleSubmitCreate = async (values) => {
-		const projectId = dataSource?.project?.id;
+		const projectId = dataWorkerTasks?.project?.id;
 		const request = {
 			projectId: projectId,
 			taskName: values?.taskName,
@@ -78,7 +79,7 @@ export const WorkerTaskProcedureManagement = ({
 			<Row align="middle" className="mb-3" justify="space-between">
 				<Row align="middle">
 					<Title level={5} style={{ margin: 0 }}>
-						Công việc ({dataSource?.tasks?.length})
+						Công việc ({dataWorkerTasks?.length})
 					</Title>
 					{/* {isLeader && ( */}
 						<Button
@@ -93,15 +94,15 @@ export const WorkerTaskProcedureManagement = ({
 					<Select
 						allowClear
 						placeholder="Chọn thành viên"
-						options={dataSource?.members?.map((e) => {
+						options={dataGroupMembers?.map((e) => {
 							return {
 								label: `${e.fullName}${e.id === user?.userId ? " (Tôi)" : ""}`,
 								value: e.id,
 							};
 						})}
-						onChange={(value) => {
-							filterTask && filterTask(value);
-						}}
+						// onChange={(value) => {
+						// 	filterTask && filterTask(value);
+						// }}
 						style={{ width: 250 }}
 					/>
 				</Row>
@@ -115,7 +116,7 @@ export const WorkerTaskProcedureManagement = ({
 					taskRef.current = task;
 					setShowDeleteModal(true);
 				}}
-				dataSource={dataSource}
+				dataSource={dataWorkerTasks}
 			/>
 			{/* <TaskCreateModal
 				open={showCreateModal}

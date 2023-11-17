@@ -16,12 +16,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 	const { user } = useContext(UserContext);
 	const { team, reload } = useContext(TeamContext);
 
-	console.log("team");
-	console.log(team);
-	console.log("reload");
-	
-	console.log(reload);
-
 	// const isLeader = user?.userId === team?.leader?.id;
 
 	const [columns, setColumns] = useState([
@@ -108,7 +102,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 	};
 
 	function loadColumn(tasks) {
-		console.log("test reload")
 		const todoTasks = tasks?.filter((e) => e.status === TaskStatus.new);
 
 		const inProgressTasks = tasks?.filter(

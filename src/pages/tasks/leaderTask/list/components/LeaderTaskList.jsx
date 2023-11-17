@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../../../providers/user";
 import OrderApi from "../../../../../apis/order";
 import { orderColors, orderLabels } from "../../../../../constants/enum";
@@ -16,6 +16,7 @@ import { dateSort, formatMoney, formatNum } from "../../../../../utils";
 const LeaderTaskList = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const { id } = useParams();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [taskCreateLoading, setTaskCreateLoading] = useState(false);

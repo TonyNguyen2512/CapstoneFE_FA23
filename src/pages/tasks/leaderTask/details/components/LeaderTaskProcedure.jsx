@@ -1,4 +1,4 @@
-import { Edit, Forbid, More, Unlock, Plus } from "@icon-park/react";
+import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
 import { Typography, Row, message } from "antd";
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import { LeaderTaskProcedureModal } from "./LeaderTaskProcedureModal";
 import { OrderStatus, eTaskColors, eTaskLabels, eTaskStatus, modalModes } from "../../../../../constants/enum";
 import LeaderTasksApi from "../../../../../apis/leader-task";
 import { TeamContext } from "../../../../../providers/team";
+import routes from "../../../../../constants/routes";
 
 export const LeaderTaskProcedure = ({
   title,
@@ -34,7 +35,7 @@ export const LeaderTaskProcedure = ({
   const leaderTaskInfo = useRef();
 
   useEffect(() => {
-    setTaskList(dataSource?.data);
+    setTaskList(dataSource);
     setTitleInfo(title + ` (${taskList ? taskList?.length : 0})`)
   });
 
@@ -42,14 +43,15 @@ export const LeaderTaskProcedure = ({
     const { isActive, id } = record;
 
     return [
-      // {
-      //   key: "VIEW_DETAIL",
-      //   label: "Xem thông tin chi tiết",
-      //   icon: <PreviewOpen />,
-      //   onClick: () => {
-      //     procedureRef.current = record;
-      //   },
-      // },
+      {
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen />,
+        onClick: () => {
+          leaderTaskInfo.current = record;
+          navigate(routes.dashboard.workersTasks + "/" + id);
+        },
+      },
       {
         key: "UPDATE_ROLE",
         label: "Cập nhật thông tin",

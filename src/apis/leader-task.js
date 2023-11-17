@@ -27,7 +27,7 @@ const successComposer = (messageId, data) => {
 	return {
 		code: 0,
 		message: ApiCodes[messageId],
-		data: data,
+		data: data?.data || data,
 	}
 }
 
@@ -72,6 +72,28 @@ const deleteLeaderTasks = async (leaderTasksId) => {
 		return successComposer(deleteSuccessCode);
 	} catch (error) {
 		console.log("Error delete manager task: ", error);
+		return errorComposer(error);
+	}
+};
+
+const getAll = async (searchName, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAll`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get leader tasks by order id: ", error);
 		return errorComposer(error);
 	}
 };
@@ -121,6 +143,7 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 };
 
 const LeaderTasksApi = {
+	getAll,
 	getLeaderTaskByOrderId,
 	getLeaderTaskById,
 	getLeaderTaskByLeaderId,

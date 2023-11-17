@@ -7,9 +7,7 @@ import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOve
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import OrderDetailApi from "../../../../apis/order-detail";
 import { Space, message } from "antd";
-import MaterialApi from "../../../../apis/material";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -37,7 +35,7 @@ export const LeaderTaskDetailsPage = () => {
 
     setOrderInfo(dataOrder);
 
-    setMaterialInfo(dataMaterials)
+    setMaterialInfo(dataMaterials);
 
     setLoading(false);
   };

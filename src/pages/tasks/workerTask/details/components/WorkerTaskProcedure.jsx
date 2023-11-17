@@ -46,9 +46,9 @@ export const WorkerTaskProcedure = ({
     //   return 0; // no change in order
     // });
     // setTaskList(data);
-    console.log("keyword ", keyword)
+    // console.log("keyword ", keyword)
     const data = mockMaterials.filter(x => x.name.indexOf(keyword) > -1);
-    console.log("search: ", data)
+    // console.log("search: ", data)
     setMaterial(data);
     setLoading(false);
   };
