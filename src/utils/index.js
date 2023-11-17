@@ -1,6 +1,7 @@
 import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
+import dayjs from "dayjs";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -61,4 +62,16 @@ export const reduceNumber = (num) => {
 		// }
 	}
 	return num;
+}
+
+export const formatNum = (value) => {
+	return (value || 0) * 1;
+}
+
+export const dateSort = (dateA, dateB) => {
+	return dayjs(dateA).isAfter(dayjs(dateB)) ? 1 : dayjs(dateA).isBefore(dayjs(dateB)) ? -1 : 0;
+}
+
+export const formatMoney = (money) => {
+	return money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
 }

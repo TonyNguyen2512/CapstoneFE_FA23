@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
+import { formatMoney, formatNum } from "../../../../../utils";
 
 export const LeaderTaskMaterials = ({
   title,
@@ -53,8 +54,8 @@ export const LeaderTaskMaterials = ({
       key: "price",
       align: "center",
       render: (price) => {
-        const number = formatNum(price);
-        return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
+        const money = formatNum(price);
+        return `${formatMoney(money)}`;
       },
       sorter: (a, b) => a.price - b.price,
     },
@@ -64,16 +65,12 @@ export const LeaderTaskMaterials = ({
       key: "totalPrice",
       align: "center",
       render: (totalPrice) => {
-        const number = formatNum(totalPrice);
-        return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
+        const money = formatNum(totalPrice);
+        return `${formatMoney(money)}`;
       },
       sorter: (a, b) => a.totalPrice - b.totalPrice,
     },
   ];
-
-  const formatNum = (value) => {
-    return (value || 0) * 1;
-  }
 
   const handleSearch = (value) => {
     getData(value);

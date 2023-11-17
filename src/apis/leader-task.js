@@ -4,10 +4,10 @@ import ApiCodes from "../constants/apiCode";
 const resource = "LeaderTask";
 
 const retrieveDataSuccessCode = 300;
-const createSuccessCode = 41;
-const udpateSuccessCode = 99;
-const updateStatusSuccessCode = 100;
-const deleteSuccessCode = 101;
+const createSuccessCode = 302;
+const udpateSuccessCode = 303;
+const deleteSuccessCode = 304;
+const updateStatusSuccessCode = 305;
 
 const errorComposer = (error) => {
 	if (error.response.data) {

@@ -5,6 +5,7 @@ import { enumTaskStatuses } from "../../../../../__mocks__/jama/tasks";
 import OrderApi from "../../../../../apis/order";
 import { UserContext } from "../../../../../providers/user";
 import UserApi from "../../../../../apis/user";
+import { orderColors, orderLabels } from "../../../../../constants/enum";
 
 export const LeaderTaskInfo = ({
 	dataSource,
@@ -16,14 +17,6 @@ export const LeaderTaskInfo = ({
 	const { Title } = Typography;
   
 	const { user } = useContext(UserContext);
-
-	const getTaskStatus = (status) => {
-		return enumTaskStatuses[status]?.name || "Không Xác Định";
-	};
-
-	const getTaskStatusColor = (status) => {
-		return enumTaskStatuses[status]?.color || "#FF0000";
-	};
 
 	const getAssignTo = async (assignToId) => {
 		const assignTo = await UserApi.getUserById(assignToId);
@@ -58,8 +51,8 @@ export const LeaderTaskInfo = ({
 							</Col>
 							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(orderInfo?.endTime, " DD/MM/YYYY")}</strong></Col>
 							<Col className="gutter-row" span={8}>
-								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(orderInfo?.status) }}>
-									{getTaskStatus(orderInfo?.status)}</strong></span>
+								<span>Tình trạng: <strong style={{ color: orderColors[orderInfo?.status] }}>
+									{orderLabels[orderInfo?.status]}</strong></span>
 							</Col>
 						</Row>
 					</Card>

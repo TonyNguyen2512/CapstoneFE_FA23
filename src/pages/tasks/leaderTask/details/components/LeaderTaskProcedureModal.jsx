@@ -1,14 +1,11 @@
-import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message } from "antd";
+import { useEffect, useState } from "react";
 import BaseModal from "../../../../../components/BaseModal";
 import { RichTextEditor } from "../../../../../components/RichTextEditor";
 import { eTaskLabels, eTaskStatus, modalModes } from "../../../../../constants/enum";
 import dayjs from "dayjs";
 import UserApi from "../../../../../apis/user";
-import { roles } from "../../../../../constants/app";
 import ItemApi from "../../../../../apis/item";
-import moment from "moment";
-import { formatDate } from "../../../../../utils";
 import LeaderTasksApi from "../../../../../apis/leader-task";
 
 const { Text } = Typography;
@@ -25,47 +22,19 @@ export const LeaderTaskProcedureModal = ({
 	// const { team } = useContext(TeamContext);
 
 	// const isLeader = user?.userId === team?.leader?.id;
-
-	const [loading, setLoading] = useState(false);
 	const [title, setTitle] = useState(false);
 
-	const [initialValues, setInitialValues] = useState();
-	const [leadTaskProcedureform] = Form.useForm();
+	const [initialValues, setInitialValues] = useState([]);
 	const [leadersData, setLeadersData] = useState([]);
 	const [itemsData, setItemsData] = useState([]);
 	const [statusList, setStatusList] = useState([]);
 
+	const [leadTaskform] = Form.useForm();
+
 	const isCreate = mode === modalModes.CREATE;
 
 	const onFinish = async (values) => {
-		const dates = values.dates;
-		console.log("values", values)
-		let data = {};
-		if (isCreate) {
-			data = {
-				name: values?.name,
-				leaderId: values?.leaderId,
-				orderId: dataSource?.orderId,
-				itemId: values?.itemId,
-				priority: values?.priority,
-				itemQuantity: values?.itemQuantity,
-				startTime: '2023-11-01',
-				endTime: '2023-11-02',
-				description: values?.description,
-			}
-		} else {
-			data = {
-				id: values?.id,
-				name: values?.name,
-				priority: values?.priority,
-				itemQuantity: values?.itemQuantity,
-				startTime: dates?.[0],
-				endTime: dates?.[1],
-				description: values?.description,
-				status: values?.status,
-			}
-		}
-		await onSubmit(data);
+		await onSubmit({ ...values });
 	};
 
 	const handleTitle = (values) => {
@@ -80,22 +49,19 @@ export const LeaderTaskProcedureModal = ({
 		}
 	}
 
-	const getLeaderInfo = async () => {
-		setLoading(true);
-		const data = await UserApi.getAllUser();
-		// const leadersData = await UserApi.getUserByRole(roles.LEADER)?.data;
-		setLeadersData(data?.data);
-		setLoading(false);
+	const initLeaderInfo = async () => {
+		// const data = await UserApi.getAllUser();
+		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
+		const leadersData = await UserApi.getUserByRoleId(roleId);
+		setLeadersData(leadersData?.data);
 	}
 
-	const getItemInfo = async () => {
-		setLoading(true);
+	const initItemInfo = async () => {
 		const data = await ItemApi.getAllItem();
 		setItemsData(data?.data);
-		setLoading(false);
 	}
 
-	const getETaskStatus = () => {
+	const initETaskStatus = () => {
 		let data = [];
 		for (const status in eTaskStatus) {
 			data.push({
@@ -106,57 +72,56 @@ export const LeaderTaskProcedureModal = ({
 		setStatusList(data);
 	}
 
-	const initialData = (dataSource) => {
-		const isStartTime = dataSource?.startTime ? true : false;
-		const isEndTime = dataSource?.endTime ? true : false;
-		setInitialValues({
-			id: dataSource?.id || "",
-			name: dataSource?.name || "",
-			leaderId: dataSource?.leaderId || "",
-			itemId: dataSource?.itemId || "",
-			priority: dataSource?.priority || "",
-			description: dataSource?.description || "",
-			itemQuantity: dataSource?.itemQuantity || "",
-			dates: [isStartTime ? dayjs(dataSource?.startTime) : "", isEndTime ? dayjs(dataSource?.endTime) : ""],
-			status: dataSource?.status || "",
-		});
-		
-		handleTitle(dataSource?.name);
+	const initLeaderTaskModal = async (eTaskId) => {
+		if (!eTaskId) return;
+		const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
+		if (data.code === 0) {
+			return data.data;
+		} else {
+			message.error = data.message;
+		}
+	}
+
+	const initialData = async (dataSource) => {
+		let data = {};
+		if (!isCreate) {
+			const leaderTaskData = await initLeaderTaskModal(dataSource?.id);
+			if (leaderTaskData) {
+				const isStartTime = leaderTaskData?.startTime ? true : false;
+				const isEndTime = leaderTaskData?.endTime ? true : false;
+				data = {
+					...leaderTaskData,
+					dates: [isStartTime ? dayjs(leaderTaskData?.startTime) : "", isEndTime ? dayjs(leaderTaskData?.endTime) : ""],
+				}
+			}
+		}
+		leadTaskform.setFieldsValue(data);
+		setInitialValues(data);
+		handleTitle(data?.name);
+		initLeaderInfo();
+		initItemInfo();
+		initETaskStatus();
 	}
 
 	useEffect(() => {
-		const isStartTime = dataSource?.startTime ? true : false;
-		const isEndTime = dataSource?.endTime ? true : false;
-		setInitialValues({
-			id: dataSource?.id || "",
-			name: dataSource?.name || "",
-			leaderId: dataSource?.leaderId || "",
-			itemId: dataSource?.itemId || "",
-			priority: dataSource?.priority || "",
-			description: dataSource?.description || "",
-			itemQuantity: dataSource?.itemQuantity || "",
-			dates: [isStartTime ? dayjs(dataSource?.startTime) : "", isEndTime ? dayjs(dataSource?.endTime) : ""],
-			status: dataSource?.status || "",
-		});
-		
-		handleTitle(dataSource?.name);
-		getLeaderInfo();
-		getItemInfo();
-		getETaskStatus();
+		initialData(dataSource);
 	}, [dataSource]);
 
 	return (
 		<BaseModal
 			open={open}
-			onCancel={onCancel}
+			onCancel={() => {
+				onCancel();
+				leadTaskform.resetFields();
+			}}
 			title={title}
-			onOk={() => leadTaskProcedureform.submit()}
+			onOk={() => leadTaskform.submit()}
 			confirmLoading={confirmLoading}
 			width="40%"
 			okText="Gửi"
 		>
 			<Form
-				form={leadTaskProcedureform}
+				form={leadTaskform}
 				layout="vertical"
 				onFinish={onFinish}
 				initialValues={initialValues}
@@ -239,7 +204,6 @@ export const LeaderTaskProcedureModal = ({
 							<InputNumber
 								min={1}
 								max={10}
-								defaultValue=""
 								placeholder="Độ ưu tiên"
 							/>
 						</Form.Item>
@@ -260,7 +224,6 @@ export const LeaderTaskProcedureModal = ({
 							<InputNumber
 								min={1}
 								max={10}
-								defaultValue=""
 								placeholder="Số lượng sản phẩm"
 							/>
 						</Form.Item>
