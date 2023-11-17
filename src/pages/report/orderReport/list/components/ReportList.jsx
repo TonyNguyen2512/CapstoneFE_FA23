@@ -13,7 +13,7 @@ export const ReportList = () => {
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
   const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const getReports = async (search) => {
     setLoading(true);
