@@ -23,13 +23,14 @@ import ProjectReportDetailPage from "../pages/report/detail";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
-import { ItemTypeListPage } from "../pages/item-types/list";
 import { ItemListPage } from "../pages/items/list";
 import { WorkerTaskListPage } from "../pages/tasks/workerTask/list";
 import { LeaderTaskListPage } from "../pages/tasks/leaderTask/list";
 import { LeaderTaskDetailsPage } from "../pages/tasks/leaderTask/details";
 import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
+import OrderDetailPage from "../pages/orders/detail";
+import { ItemCategoryListPage } from "../pages/item-categories/list";
 
 export const router = createBrowserRouter([
 	{
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
 						element: <OrderListPage />,
 					},
 					{
+						path: `${routes.dashboard.orders}/:id`,
+						element: <OrderDetailPage />,
+					},
+					{
 						path: routes.dashboard.quotes,
 						element: <AccountListPage />,
 					},
@@ -78,8 +83,8 @@ export const router = createBrowserRouter([
 						element: <ItemListPage />,
 					},
 					{
-						path: routes.dashboard.itemTypes,
-						element: <ItemTypeListPage />,
+						path: routes.dashboard.itemCategories,
+						element: <ItemCategoryListPage />,
 					},
 					//
 					{
@@ -100,7 +105,7 @@ export const router = createBrowserRouter([
 					},
 					{
 						path: routes.dashboard.reports,
-						element: <ItemTypeListPage />,
+						element: <AccountListPage />,
 					},
 
 					//

@@ -2,7 +2,6 @@ import BaseApi from ".";
 
 const resource = "Order";
 
-
 const getAllOrders = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
@@ -28,7 +27,7 @@ const getAllOrders = async (search, pageIndex, pageSize) => {
   }
 };
 
-const searchOrders = async (search, pageIndex, pageSize) => {
+const searchOrders = async (search, pageIndex, pageSize = 1000) => {
   try {
     var params = {};
     if (search) {
@@ -82,9 +81,9 @@ const createOrder = async (data) => {
   }
 };
 
-const updateOrder = async (data) => {
+const updateOrder = async (id, status) => {
   try {
-    const response = await BaseApi.put(`/${resource}/UpdateOrder`, data);
+    const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);
@@ -92,13 +91,32 @@ const updateOrder = async (data) => {
   }
 };
 
+const updateStatus = async (id, status) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error update item: ", error);
+    return false;
+  }
+};
 const deleteOrder = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/DeleteOrder/${id}`);
-    return response.status === 200;
+    const success = await updateOrder(id, 5);
+    return success;
   } catch (error) {
     console.log("Error delete item: ", error);
     return false;
+  }
+};
+
+const exportOrder = async (id) => {
+  try {
+    const response = await BaseApi.get(`/${resource}/ExportQuoteAsPDF/${id}`, { responseType: 'blob' });
+    return response.data;
+  } catch (error) {
+    console.log("Error export order: ", error);
+    return undefined;
   }
 };
 
@@ -108,6 +126,7 @@ const OrderApi = {
   getOrderById,
   createOrder,
   updateOrder,
+  updateStatus,
   deleteOrder,
   getQuoteMaterialByOrderId,
 };

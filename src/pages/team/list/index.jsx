@@ -2,7 +2,7 @@ import { Row, Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { ClassSelect } from "../../project/components/ClassSelect";
 import { useSearchParams } from "react-router-dom";
-import TeamApi from "../../../apis/team";
+import TeamApi from "../../../apis/group";
 import { ProjectTeamList } from "./components/ProjectTeamList";
 
 const { Title } = Typography;

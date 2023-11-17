@@ -10,7 +10,7 @@ import {
 	message,
 } from "antd";
 import React from "react";
-import TeamApi from "../../../../apis/team";
+import TeamApi from "../../../../apis/group";
 import { roles } from "../../../../constants/app";
 import { TeamRequestStatus } from "../../../../constants/enum";
 import { useRole } from "../../../../hooks/role";

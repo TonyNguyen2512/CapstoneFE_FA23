@@ -10,6 +10,7 @@ import AuthApi from "../../apis/auth";
 import { UserContext } from "../../providers/user";
 import { getRoleName } from "../../utils";
 import { roles } from "../../constants/app";
+import { SignalRProvider } from "../../providers/signalr";
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -30,9 +31,12 @@ export const Dashboard = () => {
         document.title = `${getRoleName(user.role.name)} | Dashboard`;
         setUser(user);
         var path = routes.dashboard.home;
-
-        if (user.role.name === roles.WORKER) {
-          path = routes.dashboard.tasks;
+        if (!location) {
+          if (user.role.name === roles.WORKER) {
+            path = routes.dashboard.tasks;
+          }
+        } else {
+          path = location;
         }
         navigate(path);
       })
@@ -44,42 +48,47 @@ export const Dashboard = () => {
 
   return (
     <UserContext.Provider value={{ user: user, setUser: setUser }}>
-      <Layout hasSider>
-        <AppSider />
-        <Layout>
-          <AppHeader />
+      <SignalRProvider
+        url={`${process.env.REACT_APP_API_URL}${process.env.REACT_APP_SIGNALR_HUB}`}
+        actionName={"notify"}
+      >
+        <Layout hasSider>
+          <AppSider />
           <Layout>
-            <Content
-              style={{
-                padding: 16,
-                paddingRight: 32,
-                overflow: "initial",
-                backgroundColor: "white",
-              }}
-            >
-              {location.pathname === routes.dashboard.root && (
-                <div className="w-full h-[60vh] flex-center" style={{ flexDirection: "column" }}>
-                  {/* <Title level={3}>JAMA Decor</Title> */}
-                  <Lottie
-                    width="30%"
-                    options={{
-                      animationData: animationData,
-                      autoplay: true,
-                      loop: true,
-                      rendererSettings: {
-                        preserveAspectRatio: "xMidYMid slice",
-                      },
-                    }}
-                  />
-                  <Title level={4}>Coming Soon</Title>
-                </div>
-              )}
-              <Outlet />
-            </Content>
-            {/* <ActivitySider /> */}
+            <AppHeader />
+            <Layout>
+              <Content
+                style={{
+                  padding: 16,
+                  paddingRight: 32,
+                  overflow: "initial",
+                  backgroundColor: "white",
+                }}
+              >
+                {location.pathname === routes.dashboard.root && (
+                  <div className="w-full h-[60vh] flex-center" style={{ flexDirection: "column" }}>
+                    {/* <Title level={3}>JAMA Decor</Title> */}
+                    <Lottie
+                      width="30%"
+                      options={{
+                        animationData: animationData,
+                        autoplay: true,
+                        loop: true,
+                        rendererSettings: {
+                          preserveAspectRatio: "xMidYMid slice",
+                        },
+                      }}
+                    />
+                    <Title level={4}>Coming Soon</Title>
+                  </div>
+                )}
+                <Outlet />
+              </Content>
+              {/* <ActivitySider /> */}
+            </Layout>
           </Layout>
         </Layout>
-      </Layout>
+      </SignalRProvider>
     </UserContext.Provider>
   );
 };
