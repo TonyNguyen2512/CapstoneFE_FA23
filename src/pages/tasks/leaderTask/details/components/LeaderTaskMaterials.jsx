@@ -9,22 +9,7 @@ export const LeaderTaskMaterials = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("test detail order view")
-    console.log(dataSource)
-    const dataDetails = [];
-    if(dataSource?.data) {
-      dataSource.data?.forEach((data) => {
-        // console.log(data)
-        dataDetails.push({
-          id: data.id,
-          name: data.item.name,
-          quantity: data.quantity,
-          price: data.price,
-          totalPrice: data.totalPrice,
-        });
-      });
-    }
-    setMaterialsInfo(dataDetails);
+    setMaterialsInfo(dataSource?.listFromOrder);
   }, [dataSource]);
 
   const getData = (keyword) => {
@@ -57,10 +42,10 @@ export const LeaderTaskMaterials = ({
     },
     {
       title: "Số lượng",
-      dataIndex: "itemQuantity",
-      key: "itemQuantity",
+      dataIndex: "quantity",
+      key: "quantity",
       align: "center",
-      sorter: (a, b) => a.itemQuantity.localeCompare(b.itemQuantity),
+      sorter: (a, b) => a.quantity.localeCompare(b.quantity),
     },
     {
       title: "Đơn giá",
@@ -72,17 +57,6 @@ export const LeaderTaskMaterials = ({
         return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
       },
       sorter: (a, b) => a.price - b.price,
-    },
-    {
-      title: "thiệt hại",
-      dataIndex: "amount",
-      key: "amount",
-      align: "center",
-      render: (totalPrice) => {
-        const number = formatNum(totalPrice);
-        return `${number.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})}`;
-      },
-      sorter: (a, b) => a.amount - b.amount,
     },
     {
       title: "Thành tiền",

@@ -47,7 +47,6 @@ const LeaderTaskList = () => {
   };
 
   useEffect(() => {
-    console.log("user.id", user.id)
     getData(user.id);
   }, [user]);
 
@@ -106,8 +105,6 @@ const LeaderTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
-          console.log("record.id")
-          console.log(record.id)
           navigate(record?.id)
         },
       },
