@@ -40,7 +40,6 @@ const getUserByRole = async (role) => {
 const getAllUser = async () => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetAll`);
-		console.log("getAllUser", response.data)
 		return response.data;
 	} catch (error) {
 		console.log("Error get user by role: ", error);

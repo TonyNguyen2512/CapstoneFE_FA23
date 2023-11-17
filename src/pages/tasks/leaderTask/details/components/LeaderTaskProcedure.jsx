@@ -1,7 +1,7 @@
 import { Edit, Forbid, More, PreviewOpen, Unlock, Plus } from "@icon-park/react";
-import { Typography, Row } from "antd";
+import { Typography, Row, message } from "antd";
 import dayjs from "dayjs";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { mockMaterials } from "../../../../../__mocks__/jama/materials";
@@ -10,12 +10,20 @@ import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
 import { enumProcedureStatus } from "../../../../../__mocks__/jama/procedures";
 import { LeaderTaskProcedureModal } from "./LeaderTaskProcedureModal";
-import { modalModes } from "../../../../../constants/enum";
+import { eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
+import LeaderTasksApi from "../../../../../apis/leader-task";
+import { TeamContext } from "../../../../../providers/team";
+import ApiCodes from "../../../../../constants/apiCode";
 
 export const LeaderTaskProcedure = ({
   title,
-  dataSource
+  orderId,
+  dataSource,
+  reloadData,
 }) => {
+  
+	const { reload } = useContext(TeamContext);
+
   const { Title } = Typography;
   const [taskList, setTaskList] = useState([]);
   const [titleInfo, setTitleInfo] = useState([]);
@@ -38,9 +46,7 @@ export const LeaderTaskProcedure = ({
 
   const getData = async (keyword) => {
     setLoading(true);
-    console.log("keyword ", keyword)
     const data = mockMaterials.filter(x => x.name.indexOf(keyword) > -1);
-    console.log("search: ", data)
     setTaskList(data);
     setLoading(false);
   };
@@ -87,24 +93,14 @@ export const LeaderTaskProcedure = ({
     ];
   };
 
-  const deleteTaskProcedure = async (value) => {
-    setLoading(true);
-    // const success = await LeaderTaskApi.deleteTaskCategory(value);
-    // if (success) {
-    //   message.success("Xoá thành công");
-    // } else {
-    //   message.error("Xoá thất bại");
-    // }
-    getData();
-    setLoading(false);
-  };
-
   const getProcedureStatus = (status) => {
-    return enumProcedureStatus.find(x => x.id === status)?.name || "Không Xác Định";
+    console.log("getProcedureStatus",eTaskLabels[status])
+    return eTaskLabels[status] || "Không Xác Định";
   };
 
   const getProcedureStatusColor = (status) => {
-    return enumProcedureStatus.find(x => x.id === status)?.color || "#FF0000";
+    console.log("getProcedureStatusColor",eTaskColors[status])
+    return eTaskColors[status] || "#FF0000";
   };
 
   const columns = [
@@ -123,12 +119,14 @@ export const LeaderTaskProcedure = ({
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
+      fixed: 'left',
     },
     {
       title: "Quy trình",
       dataIndex: "procedureName",
       key: "procedureName",
       sorter: (a, b) => a.procedureName.localeCompare(b.procedureName),
+      fixed: 'left',
     },
     {
       title: "Nhóm trưởng",
@@ -142,13 +140,17 @@ export const LeaderTaskProcedure = ({
       key: "itemName",
       sorter: (a, b) => a.itemName.localeCompare(b.itemName),
     },
-    {
-      title: "Mô tả",
-      dataIndex: "description",
-      key: "description",
-      align: "center",
-      sorter: (a, b) => a.description.localeCompare(b.description),
-    },
+    // {
+    //   title: "Mô tả",
+    //   dataIndex: "description",
+    //   key: "description",
+    //   align: "center",
+    //   render: (_, record) => {
+    //     return <span>{record.description}</span>;
+    //   },
+    //   sorter: (a, b) => a.description.localeCompare(b.description),
+    //   width: 300,
+    // },
     {
       title: "Ngày bắt đầu",
       dataIndex: "startTime",
@@ -205,43 +207,48 @@ export const LeaderTaskProcedure = ({
   };
 
   const handleSubmitCreate = async (values) => {
+    setLoading(true);
+    values.orderId = orderId;
+    values.procedureId= "65ee66cd-cb02-4304-f7e8-08dbdf5c2e53";
     console.log("create task: ", values);
-    // const projectId = team?.project?.id;
-    // const request = {
-    // 	projectId: projectId,
-    // 	taskName: values?.taskName,
-    // 	startTime: values?.startTime,
-    // 	endTime: values?.endTime,
-    // 	taskDescription: values?.taskDescription,
-    // 	status: values?.status,
-    // 	assignees: values?.assignees,
-    // };
-    // setTaskCreating(true);
-    // const success = await TaskApi.createTask(request);
-    // if (success) {
-    // 	message.success("Đã tạo công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    setTaskList(values);
-    console.log(taskList);
-    setProcedureCreating(false);
+    const create = await LeaderTasksApi.createLeaderTasks(values);
+    if (create.code === 0) {
+			message.success(create.message);
+		} else {
+			message.error(create.message);
+		}
     setShowCreateModal(false);
+    reloadData();
+    setLoading(false);
+    procedureRef.current = null;
   };
 
   const handleSubmitUpdate = async (values) => {
     console.log("update task: ", values);
-    setProcedureUpdating(true);
-    // const success = await TaskApi.updateTask(values);
-    // if (success) {
-    // 	message.success("Đã cập nhật công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    setProcedureUpdating(false);
-    setShowDetailModal(false);
+    setLoading(true);
+    const update = await LeaderTasksApi.updateLeaderTasks(values);
+    if (update.code === 0) {
+			message.success(update.message);
+		} else {
+			message.error(update.message);
+		}
+    setShowUpdateModal(false);
+    reloadData();
+    setLoading(false);
+    procedureRef.current = null;
+  };
+
+  const deleteTaskProcedure = async (value) => {
+    setLoading(true);
+    const success = await LeaderTasksApi.deleteLeaderTasks(value);
+    if (success) {
+      message.success(success.message);
+    } else {
+      message.error(success.message);
+    }
+    reloadData();
+    setLoading(false);
+    procedureRef.current = null;
   };
 
   return (
@@ -280,6 +287,7 @@ export const LeaderTaskProcedure = ({
         }}
         onSubmit={handleSubmitCreate}
         confirmLoading={procedureCreating}
+        dataSource={[]}
         mode={modalModes.CREATE}
       />
       <LeaderTaskProcedureModal
@@ -292,16 +300,6 @@ export const LeaderTaskProcedure = ({
         confirmLoading={procedureUpdating}
         dataSource={procedureRef.current}
         mode={modalModes.UPDATE}
-      />
-      <LeaderTaskProcedureModal
-        open={showDetailModal}
-        onCancel={() => {
-          setShowDetailModal(false);
-          procedureRef.current = null;
-        }}
-        confirmLoading={procedureDetail}
-        dataSource={procedureRef.current}
-        mode={modalModes.DETAIL}
       />
     </>
   );
