@@ -28,11 +28,8 @@ export const LeaderTaskDetailsPage = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    console.log("test detail")
     // retrieve order data by id
     const dataOrder = await OrderApi.getOrderById(id);
-    
-    console.log("dataOrder", dataOrder)
       // retrieve order detail by order id
     const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
 
@@ -49,7 +46,10 @@ export const LeaderTaskDetailsPage = () => {
     setLoading(true);
     // // retrieve leader task by order id
     const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
-    setTaskInfo(dataLeaderTasks);
+    if (dataLeaderTasks.code === 0) {
+      setTaskInfo(dataLeaderTasks.data);
+    }
+    console.log(taskInfo)
 
     setLoading(false);
   }
