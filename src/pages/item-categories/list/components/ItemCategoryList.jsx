@@ -2,33 +2,22 @@ import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Modal, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { UpdateMaterialTypeModal } from "../../components/UpdateItemTypeModal";
-import { mockItemTypes } from "../../../../__mocks__/jama/items";
+import { ItemCategoryModal } from "../../components/ItemCategoryModal";
+import ItemCategoryApi from "../../../../apis/item-category";
 
-const ItemTypeList = () => {
+const ItemCategoryList = () => {
   const [loading, setLoading] = useState(false);
-  const [showUpdateItemTypeModal, setShowUpdateItemTypeModal] = useState(false);
-  const [itemTypeList, setItemTypeList] = useState([]);
+  const [showItemCategoryModal, setShowItemCategoryModal] = useState(false);
+  const [itemCategoryList, setItemCategoryList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
 
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const categoryRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setItemTypeList(data);
-    setItemTypeList([]);
+    const response = await ItemCategoryApi.getAllItem();
+    setItemCategoryList(response.data);
     setLoading(false);
   };
 
@@ -43,12 +32,9 @@ const ItemTypeList = () => {
     setPreviewUrl("");
     setIsModalOpen(false);
   };
-  useEffect(() => {
-    getData();
-  }, []);
 
   const getActionItems = (record) => {
-    const { isActive } = record;
+    const { isActive, id } = record;
 
     return [
       {
@@ -56,8 +42,8 @@ const ItemTypeList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          userRef.current = record;
-          setShowUpdateItemTypeModal(true);
+          categoryRef.current = record;
+          setShowItemCategoryModal(true);
         },
       },
       {
@@ -75,53 +61,36 @@ const ItemTypeList = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: "20%",
       align: "center",
+      width: "30%",
       sorter: (a, b) => a.id.localeCompare(b.id),
     },
     {
-      title: "Tên loại sản phẩm",
+      title: "Tên loại  sản phẩm",
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
         return <span onClick={() => showModal(record)}>{record.name}</span>;
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
     {
       title: "Tình trạng",
-      dataIndex: "isActive",
-      key: "isActive",
-      width: "30%",
+      dataIndex: "itemCategoryId",
+      key: "itemCategoryId",
+      width: "15%",
       align: "center",
-      render: (_, { isActive }) => {
+      render: (_, record) => {
         return (
-          <span style={{ color: isActive ? "#29CB00" : "#FF0000" }}>
-            {isActive ? "Đang hoạt động" : "Không hoạt động"}
-          </span>
+          <span>{itemCategoryList?.find((e) => e.id === record.itemCategoryId)?.name || "-"}</span>
         );
       },
-      sorter: (a, b) => a.isActive - b.isActive,
-      // filter: {
-      //   placeholder: "Chọn trạng thái",
-      //   label: "Trạng thái",
-      //   filterOptions: [
-      //     {
-      //       label: "Đang hoạt động",
-      //       value: false,
-      //     },
-      //     {
-      //       label: "Khóa",
-      //       value: true,
-      //     },
-      //   ],
-      // },
+      sorter: (a, b) => a?.status.localeCompare(b?.status),
     },
     {
       title: "Thao tác",
       dataIndex: "action",
       key: "action",
-      width: "10%",
       align: "center",
       render: (_, record) => {
         return (
@@ -137,20 +106,30 @@ const ItemTypeList = () => {
     getData(value);
   };
 
+  useEffect(() => {
+    getData();
+  }, []);
+
   return (
     <>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
-        <Button className="btn-primary app-bg-primary font-semibold text-white" type="primay">
+        <Button
+          type="primay"
+          className="btn-primary app-bg-primary font-semibold text-white"
+          onClick={() => setShowItemCategoryModal(true)}
+        >
           Thêm loại sản phẩm
         </Button>
       </Space>
       <BaseTable
         title="Danh sách loại sản phẩm"
-        dataSource={itemTypeList}
+        dataSource={itemCategoryList}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={{
+          pageSize: 5,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm loại sản phẩm...",
@@ -158,13 +137,12 @@ const ItemTypeList = () => {
           width: 300,
         }}
       />
-      {/* <UpdateMaterialTypeModal
-        user={userRef.current}
-        open={showUpdateMaterialTypeModal}
-        onCancel={() => setShowUpdateMaterialTypeModal(false)}
-        allRoles={rolesRef.current}
+      <ItemCategoryModal
+        data={categoryRef.current}
+        open={showItemCategoryModal}
+        onCancel={() => setShowItemCategoryModal(false)}
         onSuccess={() => getData()}
-      /> */}
+      />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />
       </Modal>
@@ -172,4 +150,4 @@ const ItemTypeList = () => {
   );
 };
 
-export default ItemTypeList;
+export default ItemCategoryList;

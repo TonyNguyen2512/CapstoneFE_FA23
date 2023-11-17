@@ -2,25 +2,27 @@ import { Edit, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Modal, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { UpdateItemModal } from "../../components/UpdateItemModal";
+import { ItemModal } from "../../components/ItemModal";
 import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
 import ItemApi from "../../../../apis/item";
+import ItemCategoryApi from "../../../../apis/item-category";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
-  const [showUpdateItemModal, setShowUpdateItemModal] = useState(false);
+  const [showItemModal, setShowItemModal] = useState(false);
   const [itemList, setItemList] = useState([]);
+  const [itemCategoryList, setItemCategoryList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
 
-  const userRef = useRef();
+  const itemRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
-    const response = await ItemApi.getAllItem(keyword);
-    console.log(response.data);
+    let response = await ItemCategoryApi.getAllItem();
+    setItemCategoryList(response.data);
+    response = await ItemApi.getAllItem(keyword);
     setItemList(response.data);
-    // setItemList(mockItems);
     setLoading(false);
   };
 
@@ -45,8 +47,8 @@ const ItemList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          userRef.current = record;
-          setShowUpdateItemModal(true);
+          itemRef.current = record;
+          setShowItemModal(true);
         },
       },
       {
@@ -60,14 +62,14 @@ const ItemList = () => {
   };
 
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-      width: "10%",
-      sorter: (a, b) => a.id.localeCompare(b.id),
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    //   key: "id",
+    //   align: "center",
+    //   width: "10%",
+    //   sorter: (a, b) => a.id.localeCompare(b.id),
+    // },
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
@@ -75,36 +77,38 @@ const ItemList = () => {
       render: (_, record) => {
         return <span onClick={() => showModal(record)}>{record.name}</span>;
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
     {
       title: "Màu sắc",
       dataIndex: "color",
       key: "color",
       align: "center",
-      sorter: (a, b) => a.color.localeCompare(b.color),
+      sorter: (a, b) => a?.color.localeCompare(b?.color),
     },
     {
       title: "Loại sản phẩm",
-      dataIndex: "typeId",
-      key: "typeId",
+      dataIndex: "itemCategoryId",
+      key: "itemCategoryId",
       width: "15%",
       align: "center",
       render: (_, record) => {
-        return <span>{mockItemTypes.find((e) => e.id === record.typeId)?.name}</span>;
+        return (
+          <span>{itemCategoryList?.find((e) => e.id === record.itemCategoryId)?.name || "-"}</span>
+        );
       },
-      sorter: (a, b) => a.typeId.localeCompare(b.typeId),
+      sorter: (a, b) => a?.itemCategoryId.localeCompare(b?.itemCategoryId),
     },
     {
       title: "Đơn giá",
-      dataIndex: "amount",
-      key: "amount",
+      dataIndex: "price",
+      key: "price",
       align: "center",
       width: "12%",
-      render: (_, { amount }) => {
-        return <span>{amount} VND</span>;
+      render: (_, { price }) => {
+        return <span>{price} VND</span>;
       },
-      sorter: (a, b) => a.amount.localeCompare(b.amount),
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
     {
       title: "Thao tác",
@@ -133,7 +137,11 @@ const ItemList = () => {
     <>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
-        <Button className="btn-primary app-bg-primary font-semibold text-white" type="primay">
+        <Button
+          type="primay"
+          className="btn-primary app-bg-primary font-semibold text-white"
+          onClick={() => setShowItemModal(true)}
+        >
           Thêm sản phẩm
         </Button>
       </Space>
@@ -142,7 +150,9 @@ const ItemList = () => {
         dataSource={itemList}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={{
+          pageSize: 5,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm sản phẩm...",
@@ -150,13 +160,18 @@ const ItemList = () => {
           width: 300,
         }}
       />
-      {/* <UpdateItemModal
-        user={userRef.current}
-        open={showUpdateItemModal}
-        onCancel={() => setShowUpdateItemModal(false)}
-        allRoles={rolesRef.current}
+      <ItemModal
+        data={itemRef.current}
+        listCategories={itemCategoryList.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        open={showItemModal}
+        onCancel={() => setShowItemModal(false)}
         onSuccess={() => getData()}
-      /> */}
+      />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />
       </Modal>

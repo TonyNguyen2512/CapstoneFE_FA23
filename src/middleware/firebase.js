@@ -24,6 +24,8 @@ const analytics = getAnalytics(app);
 const storage = getStorage(app);
 
 // Create a child reference
+export const imagesRef = ref(storage, 'Items/Images');
+export const drawingsRef = ref(storage, 'Items/Drawings');
 export const quotesRef = ref(storage, 'Orders/Quotes');
 export const contractsRef = ref(storage, 'Orders/Contracts');
 

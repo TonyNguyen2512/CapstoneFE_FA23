@@ -4,8 +4,6 @@ import { Button, Form, Input, Select, Space, Upload, message } from "antd";
 import OrderApi from "../../../apis/order";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-import UserApi from "../../../apis/user";
-import { roles } from "../../../constants/app";
 import { getRoleName } from "../../../utils";
 import storage, { contractsRef, quotesRef } from "../../../middleware/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -88,7 +86,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
       message.error(`${typeMessage} thất bại`);
     }
     setLoading(false);
-    onCancel();
+    success && onCancel();
   };
 
   return (

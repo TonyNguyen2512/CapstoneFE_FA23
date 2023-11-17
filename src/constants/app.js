@@ -52,12 +52,12 @@ export const ALL_PERMISSIONS = {
 		update: "items.update",
 		sider: "items.sider",
 	},
-	// itemTypes: {
-	// 	view: "itemTypes.view",
-	// 	create: "itemTypes.create",
-	// 	update: "itemTypes.update",
-	// 	sider: "itemTypes.sider",
-	// },
+	itemCategories: {
+		view: "itemCategories.view",
+		create: "itemCategories.create",
+		update: "itemCategories.update",
+		sider: "itemCategories.sider",
+	},
 	employees: {
 		view: "employees.view",
 		create: "employees.create",
@@ -141,6 +141,11 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.quotes.update,
 	],
 	[roles.FOREMAN]: [
+		// ACCOUNTS
+		ALL_PERMISSIONS.accounts.sider,
+		ALL_PERMISSIONS.accounts.view,
+		ALL_PERMISSIONS.accounts.create,
+		ALL_PERMISSIONS.accounts.update,
 		// QUOTES
 		ALL_PERMISSIONS.quotes.sider,
 		ALL_PERMISSIONS.quotes.view,
@@ -161,6 +166,11 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.items.view,
 		ALL_PERMISSIONS.items.create,
 		ALL_PERMISSIONS.items.update,
+		// item categories
+		ALL_PERMISSIONS.itemCategories.sider,
+		ALL_PERMISSIONS.itemCategories.view,
+		ALL_PERMISSIONS.itemCategories.create,
+		ALL_PERMISSIONS.itemCategories.update,
 		// employees
 		ALL_PERMISSIONS.employees.sider,
 		ALL_PERMISSIONS.employees.view,
@@ -181,60 +191,13 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.leadersTasks.view,
 		ALL_PERMISSIONS.leadersTasks.create,
 		ALL_PERMISSIONS.leadersTasks.update,
-		// managersReports
+		// leadersReports
 		ALL_PERMISSIONS.leadersReports.sider,
 		ALL_PERMISSIONS.leadersReports.view,
 		ALL_PERMISSIONS.leadersReports.create,
 		ALL_PERMISSIONS.leadersReports.update,
 	],
-	// [roles.FACTORY]: [
-	// 	// QUOTES
-	// 	ALL_PERMISSIONS.quotes.sider,
-	// 	ALL_PERMISSIONS.quotes.view,
-	// 	ALL_PERMISSIONS.quotes.create,
-	// 	ALL_PERMISSIONS.quotes.update,
-	// 	// materials
-	// 	ALL_PERMISSIONS.materials.sider,
-	// 	ALL_PERMISSIONS.materials.view,
-	// 	ALL_PERMISSIONS.materials.create,
-	// 	ALL_PERMISSIONS.materials.update,
-	// 	// materialTypes
-	// 	ALL_PERMISSIONS.materialTypes.sider,
-	// 	ALL_PERMISSIONS.materialTypes.view,
-	// 	ALL_PERMISSIONS.materialTypes.create,
-	// 	ALL_PERMISSIONS.materialTypes.update,
-	// 	// items
-	// 	ALL_PERMISSIONS.items.sider,
-	// 	ALL_PERMISSIONS.items.view,
-	// 	ALL_PERMISSIONS.items.create,
-	// 	ALL_PERMISSIONS.items.update,
-	// 	// employees
-	// 	ALL_PERMISSIONS.employees.sider,
-	// 	ALL_PERMISSIONS.employees.view,
-	// 	ALL_PERMISSIONS.employees.create,
-	// 	ALL_PERMISSIONS.employees.update,
-	// 	// groups
-	// 	ALL_PERMISSIONS.groups.sider,
-	// 	ALL_PERMISSIONS.groups.view,
-	// 	ALL_PERMISSIONS.groups.create,
-	// 	ALL_PERMISSIONS.groups.update,
-	// 	// workers squad
-	// 	ALL_PERMISSIONS.squads.sider,
-	// 	ALL_PERMISSIONS.squads.view,
-	// 	ALL_PERMISSIONS.squads.create,
-	// 	ALL_PERMISSIONS.squads.update,
-	// 	// leadersTasks
-	// 	ALL_PERMISSIONS.leadersTasks.sider,
-	// 	ALL_PERMISSIONS.leadersTasks.view,
-	// 	ALL_PERMISSIONS.leadersTasks.create,
-	// 	ALL_PERMISSIONS.leadersTasks.update,
-	// 	// leadersReports
-	// 	ALL_PERMISSIONS.leadersReports.sider,
-	// 	ALL_PERMISSIONS.leadersReports.view,
-	// 	ALL_PERMISSIONS.leadersReports.create,
-	// 	ALL_PERMISSIONS.leadersReports.update,
-	// ],
-	[roles.LEADER]: [
+	[roles.MANAGER]: [
 		// workers squad
 		ALL_PERMISSIONS.squads.sider,
 		ALL_PERMISSIONS.squads.view,

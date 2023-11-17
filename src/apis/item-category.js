@@ -1,6 +1,6 @@
 import BaseApi from ".";
 
-const resource = "Item";
+const resource = "ItemCategory";
 
 const getAllItem = async (search, pageIndex, pageSize = 1000) => {
   try {
@@ -64,7 +64,7 @@ const deleteItem = async (id) => {
   }
 };
 
-const ItemApi = {
+const ItemCategoryApi = {
   getAllItem,
   getItemById,
   createItem,
@@ -72,4 +72,4 @@ const ItemApi = {
   deleteItem,
 };
 
-export default ItemApi;
+export default ItemCategoryApi;

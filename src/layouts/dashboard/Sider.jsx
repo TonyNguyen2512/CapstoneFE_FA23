@@ -42,7 +42,7 @@ export const AppSider = () => {
   const canViewMaterials = permissions?.includes(ALL_PERMISSIONS.materials?.sider);
   const canViewMaterialTypes = permissions?.includes(ALL_PERMISSIONS.materialTypes?.sider);
   const canViewItems = permissions?.includes(ALL_PERMISSIONS.items?.sider);
-  const canViewItemTypes = permissions?.includes(ALL_PERMISSIONS.itemTypes?.sider);
+  const canViewItemCategories = permissions?.includes(ALL_PERMISSIONS.itemCategories?.sider);
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
   const canViewSquads = permissions?.includes(ALL_PERMISSIONS.squads?.sider);
@@ -66,7 +66,7 @@ export const AppSider = () => {
     MATERIAL_TYPES: "MANAGE_MATERIAL_TYPES",
     P_ITEMS: "P_ITEMS",
     ITEMS: "MANAGE_ITEMS",
-    ITEM_TYPES: "MANAGE_ITEM_TYPES",
+    ITEM_CATEGORIES: "MANAGE_ITEM_CATEGORIES",
     P_EMPLOYEES: "P_EMPLOYEES",
     EMPLOYEES: "MANAGE_EMPLOYEES",
     GROUPS: "MANAGE_GROUPS",
@@ -120,15 +120,15 @@ export const AppSider = () => {
         },
       ],
     },
-    (canViewItemTypes || canViewItems) && {
+    (canViewItemCategories || canViewItems) && {
       key: itemKeys.P_ITEMS,
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
       children: [
-        canViewItemTypes && {
-          key: itemKeys.ITEM_TYPES,
+        canViewItemCategories && {
+          key: itemKeys.ITEM_CATEGORIES,
           icon: <CategoryManagement size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.itemTypes}>Loại sản phẩm</Link>,
+          label: <Link to={routes.dashboard.itemCategories}>Loại sản phẩm</Link>,
         },
         canViewItems && {
           key: itemKeys.ITEMS,
@@ -180,7 +180,7 @@ export const AppSider = () => {
       label: <Link to={routes.dashboard.root}>Báo cáo tiến độ</Link>,
     },
     //
-   
+
     // canViewWorkersTasks && {
     //   key: itemKeys.WORKERS_TASKS,
     //   icon: <FileDoneOutlined size={iconSize} />,

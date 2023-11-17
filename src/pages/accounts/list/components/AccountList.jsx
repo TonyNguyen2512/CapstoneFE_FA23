@@ -216,8 +216,8 @@ const AccountList = () => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
-          className="btn-primary app-bg-primary font-semibold text-white"
           type="primary"
+          className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowUserModal(true)}
         >
           Tạo tài khoản
