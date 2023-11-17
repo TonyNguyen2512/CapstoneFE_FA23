@@ -9,29 +9,9 @@ import { roles } from "../../../../../constants/app";
 import ItemApi from "../../../../../apis/item";
 import moment from "moment";
 import { formatDate } from "../../../../../utils";
+import LeaderTasksApi from "../../../../../apis/leader-task";
 
 const { Text } = Typography;
-
-const ProcedureStatus = {
-	notCompleted: 2,
-	completed: 1,
-	new: 0,
-};
-
-const taskStatusOptions = [
-	{
-		value: ProcedureStatus.new,
-		label: "Đang tiến hành",
-	},
-	{
-		value: ProcedureStatus.notCompleted,
-		label: "Không đạt",
-	},
-	{
-		value: ProcedureStatus.completed,
-		label: "Đạt",
-	},
-];
 
 export const LeaderTaskProcedureModal = ({
 	open,
@@ -54,8 +34,6 @@ export const LeaderTaskProcedureModal = ({
 	const [leadersData, setLeadersData] = useState([]);
 	const [itemsData, setItemsData] = useState([]);
 	const [statusList, setStatusList] = useState([]);
-	const isStartTime = dataSource?.startTime ? true : false;
-	const isEndTime = dataSource?.endTime ? true : false;
 
 	const isCreate = mode === modalModes.CREATE;
 
@@ -128,7 +106,9 @@ export const LeaderTaskProcedureModal = ({
 		setStatusList(data);
 	}
 
-	useEffect(() => {
+	const initialData = (dataSource) => {
+		const isStartTime = dataSource?.startTime ? true : false;
+		const isEndTime = dataSource?.endTime ? true : false;
 		setInitialValues({
 			id: dataSource?.id || "",
 			name: dataSource?.name || "",
@@ -140,6 +120,25 @@ export const LeaderTaskProcedureModal = ({
 			dates: [isStartTime ? dayjs(dataSource?.startTime) : "", isEndTime ? dayjs(dataSource?.endTime) : ""],
 			status: dataSource?.status || "",
 		});
+		
+		handleTitle(dataSource?.name);
+	}
+
+	useEffect(() => {
+		const isStartTime = dataSource?.startTime ? true : false;
+		const isEndTime = dataSource?.endTime ? true : false;
+		setInitialValues({
+			id: dataSource?.id || "",
+			name: dataSource?.name || "",
+			leaderId: dataSource?.leaderId || "",
+			itemId: dataSource?.itemId || "",
+			priority: dataSource?.priority || "",
+			description: dataSource?.description || "",
+			itemQuantity: dataSource?.itemQuantity || "",
+			dates: [isStartTime ? dayjs(dataSource?.startTime) : "", isEndTime ? dayjs(dataSource?.endTime) : ""],
+			status: dataSource?.status || "",
+		});
+		
 		handleTitle(dataSource?.name);
 		getLeaderInfo();
 		getItemInfo();

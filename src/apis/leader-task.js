@@ -3,6 +3,7 @@ import ApiCodes from "../constants/apiCode";
 
 const resource = "LeaderTask";
 
+const retrieveDataSuccessCode = 300;
 const createSuccessCode = 41;
 const udpateSuccessCode = 99;
 const updateStatusSuccessCode = 100;
@@ -22,10 +23,11 @@ const errorComposer = (error) => {
 	};
 }
 
-const successComposer = (messageId) => {
+const successComposer = (messageId, data) => {
 	return {
 		code: 0,
-		message: ApiCodes[messageId]
+		message: ApiCodes[messageId],
+		data: data,
 	}
 }
 
@@ -89,8 +91,7 @@ const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) 
 		const response = await BaseApi.get(`/${resource}/GetByOrderId/${orderId}`, {
 			params: params,
 		});
-		console.log(response.data)
-		return response.data;
+		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader tasks by order id: ", error);
 		return errorComposer(error);
@@ -100,7 +101,7 @@ const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) 
 const getLeaderTaskById = async (id) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
-		return response.data;
+		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader task by id: ", error);
 		return errorComposer(error);
@@ -112,7 +113,7 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
 			searchName, pageIndex, pageSize
 		});
-		return response.data;
+		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader tasks by leader id: ", error);
 		return errorComposer(error);

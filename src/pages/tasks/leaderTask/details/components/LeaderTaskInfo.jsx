@@ -26,16 +26,12 @@ export const LeaderTaskInfo = ({
 	};
 
 	const getAssignTo = async (assignToId) => {
-		console.log("getAssignTo")
-		console.log(assignToId)
 		const assignTo = await UserApi.getUserById(assignToId);
 		setAssignTo(assignTo.fullName);
 	}
 
 	useEffect(() => {
 		all.current = dataSource;
-		console.log("info")
-		console.log(dataSource)
 		setOrderInfo(dataSource);
 		if (dataSource?.assignToId) {
 			getAssignTo(dataSource?.assignToId)

@@ -31,46 +31,36 @@ export const LeaderTaskProcedure = ({
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [procedureCreating, setProcedureCreating] = useState(false);
-  const [procedureUpdating, setProcedureUpdating] = useState(false);
-  const [procedureDetail, setProcedureDetail] = useState(false);
+  const [eTaskCreateLoading, setETaskCreateLoading] = useState(false);
+  const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
 
-  const procedureRef = useRef();
+  const leaderTaskInfo = useRef();
 
   useEffect(() => {
     setTaskList(dataSource?.data);
     setTitleInfo(title + ` (${taskList?.length})`)
   });
 
-
-  const getData = async (keyword) => {
-    setLoading(true);
-    const data = mockMaterials.filter(x => x.name.indexOf(keyword) > -1);
-    setTaskList(data);
-    setLoading(false);
-  };
-
   const getActionItems = (record) => {
     const { isActive, id } = record;
 
     return [
-      {
-        key: "VIEW_DETAIL",
-        label: "Xem thông tin chi tiết",
-        icon: <PreviewOpen />,
-        onClick: () => {
-          procedureRef.current = record;
-          setShowDetailModal(true);
-        },
-      },
+      // {
+      //   key: "VIEW_DETAIL",
+      //   label: "Xem thông tin chi tiết",
+      //   icon: <PreviewOpen />,
+      //   onClick: () => {
+      //     procedureRef.current = record;
+      //   },
+      // },
       {
         key: "UPDATE_ROLE",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          procedureRef.current = record;
-          setShowUpdateModal(true);
+          // procedureRef.current = record;
+          console.log("record id: ", record?.id);
+          handleLeaderTaskModal(record?.id);
         },
       },
       {
@@ -94,12 +84,10 @@ export const LeaderTaskProcedure = ({
   };
 
   const getProcedureStatus = (status) => {
-    console.log("getProcedureStatus",eTaskLabels[status])
     return eTaskLabels[status] || "Không Xác Định";
   };
 
   const getProcedureStatusColor = (status) => {
-    console.log("getProcedureStatusColor",eTaskColors[status])
     return eTaskColors[status] || "#FF0000";
   };
 
@@ -121,13 +109,13 @@ export const LeaderTaskProcedure = ({
       sorter: (a, b) => a.name.localeCompare(b.name),
       fixed: 'left',
     },
-    {
-      title: "Quy trình",
-      dataIndex: "procedureName",
-      key: "procedureName",
-      sorter: (a, b) => a.procedureName.localeCompare(b.procedureName),
-      fixed: 'left',
-    },
+    // {
+    //   title: "Quy trình",
+    //   dataIndex: "procedureName",
+    //   key: "procedureName",
+    //   sorter: (a, b) => a.procedureName.localeCompare(b.procedureName),
+    //   fixed: 'left',
+    // },
     {
       title: "Nhóm trưởng",
       dataIndex: "leaderName",
@@ -203,29 +191,38 @@ export const LeaderTaskProcedure = ({
   ];
 
   const handleSearch = (value) => {
-    getData(value);
   };
 
+  const handleLeaderTaskModal = async (eTaskId) => {
+		console.log("call eTaskId", eTaskId)
+		const leaderTaskData = await LeaderTasksApi.getLeaderTaskById(eTaskId);
+    if (leaderTaskData.code === 0) {
+      leaderTaskInfo.current = leaderTaskData.data;
+      setShowUpdateModal(true);
+    } else {
+      setShowUpdateModal(false);
+      message.error(leaderTaskData.message);
+    }
+  }
+
   const handleSubmitCreate = async (values) => {
-    setLoading(true);
+    setETaskCreateLoading(true);
     values.orderId = orderId;
-    values.procedureId= "65ee66cd-cb02-4304-f7e8-08dbdf5c2e53";
     console.log("create task: ", values);
     const create = await LeaderTasksApi.createLeaderTasks(values);
     if (create.code === 0) {
 			message.success(create.message);
+      setShowCreateModal(false);
+      reloadData();
 		} else {
 			message.error(create.message);
 		}
-    setShowCreateModal(false);
-    reloadData();
-    setLoading(false);
-    procedureRef.current = null;
+    setETaskCreateLoading(false);
   };
 
   const handleSubmitUpdate = async (values) => {
+    setETaskUpdateLoading(true);
     console.log("update task: ", values);
-    setLoading(true);
     const update = await LeaderTasksApi.updateLeaderTasks(values);
     if (update.code === 0) {
 			message.success(update.message);
@@ -234,8 +231,7 @@ export const LeaderTaskProcedure = ({
 		}
     setShowUpdateModal(false);
     reloadData();
-    setLoading(false);
-    procedureRef.current = null;
+    setETaskUpdateLoading(false);
   };
 
   const deleteTaskProcedure = async (value) => {
@@ -248,7 +244,6 @@ export const LeaderTaskProcedure = ({
     }
     reloadData();
     setLoading(false);
-    procedureRef.current = null;
   };
 
   return (
@@ -283,10 +278,9 @@ export const LeaderTaskProcedure = ({
         open={showCreateModal}
         onCancel={() => {
           setShowCreateModal(false);
-          procedureRef.current = null;
         }}
         onSubmit={handleSubmitCreate}
-        confirmLoading={procedureCreating}
+        confirmLoading={eTaskCreateLoading}
         dataSource={[]}
         mode={modalModes.CREATE}
       />
@@ -294,11 +288,10 @@ export const LeaderTaskProcedure = ({
         open={showUpdateModal}
         onCancel={() => {
           setShowUpdateModal(false);
-          procedureRef.current = null;
         }}
         onSubmit={handleSubmitUpdate}
-        confirmLoading={procedureUpdating}
-        dataSource={procedureRef.current}
+        confirmLoading={eTaskUpdateLoading}
+        dataSource={leaderTaskInfo.current}
         mode={modalModes.UPDATE}
       />
     </>
