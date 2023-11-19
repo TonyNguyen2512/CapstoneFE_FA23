@@ -7,9 +7,7 @@ import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOve
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import OrderDetailApi from "../../../../apis/order-detail";
-import { Space } from "antd";
-import MaterialApi from "../../../../apis/material";
+import { Space, message } from "antd";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -28,11 +26,8 @@ export const LeaderTaskDetailsPage = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    console.log("test detail")
     // retrieve order data by id
     const dataOrder = await OrderApi.getOrderById(id);
-    
-    console.log("dataOrder", dataOrder)
       // retrieve order detail by order id
     const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
 
@@ -40,7 +35,7 @@ export const LeaderTaskDetailsPage = () => {
 
     setOrderInfo(dataOrder);
 
-    setMaterialInfo(dataMaterials)
+    setMaterialInfo(dataMaterials);
 
     setLoading(false);
   };
@@ -49,7 +44,11 @@ export const LeaderTaskDetailsPage = () => {
     setLoading(true);
     // // retrieve leader task by order id
     const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
-    setTaskInfo(dataLeaderTasks);
+    if (dataLeaderTasks.code === 0) {
+      setTaskInfo(dataLeaderTasks.data);
+    } else {
+      message.error = dataLeaderTasks.message;
+    }
 
     setLoading(false);
   }
@@ -77,7 +76,7 @@ export const LeaderTaskDetailsPage = () => {
       <LeaderTaskProcedure
         title="Danh sách quy trình"
         dataSource={taskInfo}
-        orderId={id}
+        orderInfo={orderInfo}
         reloadData={getLeaderData}
       />
     </Space>

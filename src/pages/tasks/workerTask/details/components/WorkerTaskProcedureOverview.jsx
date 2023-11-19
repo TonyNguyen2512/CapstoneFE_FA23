@@ -3,6 +3,7 @@ import { Col, Descriptions, Row } from "antd/lib";
 import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
+import { TaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
 
@@ -17,10 +18,19 @@ export const WorkerTaskProcedureOverview = ({
   dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource?.tasks;
+  const allTasks = dataSource;
   const completedTasks = allTasks?.filter(
-    (e) => e.status === ProcedureStatus.completed
+    (e) => e.status === TaskStatus.completed
   );
+
+  const inProgressTasks = allTasks?.filter(
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.inProgress
+  )
+
+  const expireTasks = allTasks?.filter(
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
+  )
+
 
   return (
     <Space direction="vertical" className="w-full gap-6">
@@ -43,27 +53,21 @@ export const WorkerTaskProcedureOverview = ({
           },
           {
             label: "Công việc đạt",
-            children: allTasks?.filter(
-              (e) => e.status === ProcedureStatus.completed
-            )?.length,
+            children: completedTasks?.length,
           },
           {
             label: "Công việc không đạt",
             children: allTasks?.filter(
-              (e) => e.status === ProcedureStatus.notCompleted
+              (e) => e.status === TaskStatus.inProgress
             )?.length,
           },
           {
             label: "Công việc trong tiến độ",
-            children: allTasks?.filter(
-              (e) => e.status === ProcedureStatus.new
-            )?.length,
+            children: inProgressTasks?.length,
           },
           {
             label: "Công việc đã quá hạn",
-            children: allTasks?.filter((e) =>
-              moment(e.timeReport).isBefore(now()) && e.status !== ProcedureStatus.completed
-            )?.length,
+            children: expireTasks?.length,
           },
         ]}
       />

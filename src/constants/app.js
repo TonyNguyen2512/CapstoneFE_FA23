@@ -192,7 +192,7 @@ export const USER_PERMISSIONS = {
 		ALL_PERMISSIONS.leadersReports.create,
 		ALL_PERMISSIONS.leadersReports.update,
 	],
-	[roles.MANAGER]: [
+	[roles.LEADER]: [
 		// workers squad
 		ALL_PERMISSIONS.squads.sider,
 		ALL_PERMISSIONS.squads.view,
@@ -246,6 +246,8 @@ export const taskStatusOptions = [
 export const TaskColumnId = {
 	TODO: "TODO",
 	IN_PROGRESS: "IN_PROGRESS",
+	IN_APPROVE: "IN_APPROVE",
+	IN_EVALUATE: "IN_EVALUATE",
 	COMPLETED: "COMPLETED",
 };
 

@@ -2,14 +2,9 @@ import { Typography, Space } from "antd";
 import { Col, Descriptions, Row } from "antd/lib";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
+import { eTaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
-
-const ProcedureStatus = {
-  notCompleted: 2,
-  completed: 1,
-  new: 0,
-};
 
 export const LeaderTaskProcedureOverview = ({
   title,
@@ -18,19 +13,27 @@ export const LeaderTaskProcedureOverview = ({
   // const isLeader = user?.userId === team?.leader?.id;
   const allTasks = dataSource.data;
   const completedTasks = allTasks?.filter(
-    (e) => e.status === ProcedureStatus.completed
+    (e) => e.status === eTaskStatus.Completed
   );
 
-  const notCompletedTasks = allTasks?.filter(
-    (e) => e.status === ProcedureStatus.notCompleted
+  const notAchivedTasks = allTasks?.filter(
+    (e) => e.status === eTaskStatus.NotAchived
   );
 
-  const inprocess = allTasks?.filter(
-    (e) => e.status !== ProcedureStatus.inprocessing
+  const newTasks = allTasks?.filter(
+    (e) => e.status === eTaskStatus.New
+  );
+
+  const pendingTasks = allTasks?.filter(
+    (e) => e.status === eTaskStatus.Pending
+  );
+
+  const inprocessTasks = allTasks?.filter(
+    (e) => e.status === eTaskStatus.Inprocessing
   );
 
   const expireTasks = allTasks?.filter((e) =>
-    moment(e.timeReport).isBefore(now()) && e.status !== ProcedureStatus.completed
+    moment(e.timeReport).isBefore(now()) && e.status !== eTaskStatus.Completed
   );
 
   return (
@@ -53,16 +56,24 @@ export const LeaderTaskProcedureOverview = ({
             children: allTasks?.length,
           },
           {
-            label: "Quy trình đạt",
+            label: "Quy trình mới tạo",
+            children: newTasks?.length,
+          },
+          {
+            label: "Quy trình đã hoàn thành",
             children: completedTasks?.length,
           },
           {
-            label: "Quy trình không đạt",
-            children: notCompletedTasks?.length,
+            label: "Quy trình không hoàn thành",
+            children: notAchivedTasks?.length,
           },
           {
             label: "Quy trình đang tiến hành",
-            children: inprocess?.length,
+            children: inprocessTasks?.length,
+          },
+          {
+            label: "Quy trình đang chờ duyệt hành",
+            children: pendingTasks?.length,
           },
           {
             label: "Quy trình đã quá hạn",

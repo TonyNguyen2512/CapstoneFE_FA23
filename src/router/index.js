@@ -90,7 +90,7 @@ export const router = createBrowserRouter([
 						element: <WorkerTaskListPage />,
 					},
 					{
-						path: `${routes.dashboard.workersTasks}/:id`,
+						path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
 						element: <WorkerTaskDetailsPage />,
 					},
 					{
@@ -102,12 +102,8 @@ export const router = createBrowserRouter([
 						element: <LeaderTaskDetailsPage />,
 					},
 					{
-						path: routes.dashboard.groups,
-						element: <GroupListPage />,
-					},
-					{
-						path: `${routes.dashboard.groups}/:id`,
-						element: <GroupListPage />,
+						path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,
+						element: <WorkerTaskDetailsPage />,
 					},
 					{
 						path: routes.dashboard.reports,

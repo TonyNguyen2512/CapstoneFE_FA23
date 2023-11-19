@@ -7,35 +7,33 @@ import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import GroupApi from "../../../../../apis/group";
+import UserApi from "../../../../../apis/user";
+import LeaderTasksApi from "../../../../../apis/leader-task";
+import WorkerTasksApi from "../../../../../apis/worker-task";
 
 const WorkerTaskList = () => {
   const [loading, setLoading] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [taskCreateLoading, setTaskCreateLoading] = useState(false);
-  const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
-  const [taskList, setTaskList] = useState([]);
+  const { id } = useParams();
+
+  const [leaderTasksInfo, setLeaderTasksInfo] = useState([]);
+
   const navigate = useNavigate();
 
   const taskRef = useRef();
   const userRef = useRef();
   // const rolesRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
-    setTaskList(mockTasks);
+  const getData = async (taskId, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    // retrieve leader task data by id
+    const dataLeaderTasks = await LeaderTasksApi.getAll();
+
+    setLeaderTasksInfo(dataLeaderTasks);
+
     setLoading(false);
   };
 
@@ -79,8 +77,8 @@ const WorkerTaskList = () => {
     // }
     // setMaterial(values);
     // console.log(material);
-    setTaskCreateLoading(false);
-    setShowCreateModal(false);
+    // setTaskCreateLoading(false);
+    // setShowCreateModal(false);
     // setShowCreateModal(false);
   };
 
@@ -96,8 +94,8 @@ const WorkerTaskList = () => {
     // }
     // setProcedureUpdating(false);
     // setShowDetailModal(false);
-    setTaskUpdateLoading(false);
-    setShowUpdateModal(false);
+    // setTaskUpdateLoading(false);
+    // setShowUpdateModal(false);
   };
 
   const getActionItems = (record) => {
@@ -109,8 +107,8 @@ const WorkerTaskList = () => {
         label: "Xem thông tin chi tiết",
         icon: <PreviewOpen />,
         onClick: () => {
-          userRef.current = record;
-          navigate(record?.id)
+          // userRef.current = record;
+          navigate(id);
         },
       },
       // {
@@ -242,14 +240,14 @@ const WorkerTaskList = () => {
         <Button
           className="btn-primary app-bg-primary font-semibold text-white"
           type="primary"
-          onClick={() => setShowCreateModal(true)}
+          // onClick={() => setShowCreateModal(true)}
         >
           Thêm vật liệu
       </Button>
       </Space>
       <BaseTable
         title="Danh sách công việc"
-        dataSource={taskList}
+        dataSource={leaderTasksInfo}
         columns={columns}
         loading={loading}
         pagination={true}

@@ -7,15 +7,16 @@ import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { useNavigate } from "react-router-dom";
-import { LeaderTaskModal } from "./LeaderTaskModal";
+import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../../../../providers/user";
-import LeaderTasksApi from "../../../../../apis/leader-task";
 import OrderApi from "../../../../../apis/order";
+import { orderColors, orderLabels } from "../../../../../constants/enum";
+import { dateSort, formatMoney, formatNum } from "../../../../../utils";
 
 const LeaderTaskList = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
+  const { id } = useParams();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [taskCreateLoading, setTaskCreateLoading] = useState(false);
@@ -50,50 +51,6 @@ const LeaderTaskList = () => {
     getData(user.id);
   }, [user]);
 
-  
-
-  const handleSubmitCreate = async (values) => {
-    console.log("create task: ", values);
-    // const projectId = team?.project?.id;
-    // const request = {
-    // 	projectId: projectId,
-    // 	taskName: values?.taskName,
-    // 	startTime: values?.startTime,
-    // 	endTime: values?.endTime,
-    // 	taskDescription: values?.taskDescription,
-    // 	status: values?.status,
-    // 	assignees: values?.assignees,
-    // };
-    // setTaskCreating(true);
-    // const success = await TaskApi.createTask(request);
-    // if (success) {
-    // 	message.success("Đã tạo công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    // setMaterial(values);
-    // console.log(material);
-    setTaskCreateLoading(false);
-    setShowCreateModal(false);
-    // setShowCreateModal(false);
-  };
-
-  const handleSubmitUpdate = async (values) => {
-    console.log("update task: ", values);
-    // setProcedureUpdating(true);
-    // const success = await TaskApi.updateTask(values);
-    // if (success) {
-    // 	message.success("Đã cập nhật công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    // setProcedureUpdating(false);
-    // setShowDetailModal(false);
-    setTaskUpdateLoading(false);
-    setShowUpdateModal(false);
-  };
 
   const getActionItems = (record) => {
     const { isActive, id } = record;
@@ -106,33 +63,6 @@ const LeaderTaskList = () => {
         onClick: () => {
           userRef.current = record;
           navigate(record?.id)
-        },
-      },
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          taskRef.current = record;
-          setShowUpdateModal(true);
-        },
-      },
-      {
-        key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {
-          confirm({
-            title: "Xoá công việc",
-            content: `Chắc chắn xoá "${record.name}"?`,
-            type: "confirm",
-
-            cancelText: "Hủy",
-            onOk: () => deleteTaskCategory(record.id),
-            onCancel: () => { },
-            closable: true,
-          });
         },
       },
     ];
@@ -156,45 +86,45 @@ const LeaderTaskList = () => {
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Tên công việc",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      title: "Khách hàng",
+      dataIndex: "customerName",
+      key: "customerName",
+      sorter: (a, b) => a.customerName.localeCompare(b.customerName),
     },
     {
-      title: "Thời gian bắt đầu",
-      dataIndex: "startTime",
-      key: "startTime",
-      align: "center",
-      render: (_, record) => {
-        const formattedDate = record.startTime ? dayjs(record.startTime).format("DD/MM/YYYY") : "";
-        return <span>{formattedDate}</span>;
+      title: "Báo giá xưởng",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
       },
-      sorter: (a, b) => dateSort(a.startTime, b.startTime),
     },
     {
-      title: "Thời gian kết thúc",
-      dataIndex: "endTime",
-      key: "endTime",
-      align: "center",
-      render: (_, record) => {
-        const formattedDate = record.endTime ? dayjs(record.endTime).format("DD/MM/YYYY") : "";
-        return <span>{formattedDate}</span>;
-      },
-      sorter: (a, b) => dateSort(a.endTime, b.endTime),
+      title: "Ngày tạo đơn",
+      dataIndex: "orderDate",
+      key: "orderDate",
+      render: (_, { orderDate }) => <span>{dayjs(orderDate).format("DD/MM/YYYY")}</span>,
+      sorter: (a, b) => dateSort(a.orderDate, b.orderDate),
     },
     {
-      title: "Trạng thái",
+      title: "Ngày nghiệm thu",
+      dataIndex: "acceptanceDate",
+      key: "acceptanceDate",
+      render: (_, { acceptanceDate }) =>
+        acceptanceDate ? <span>{dayjs(acceptanceDate).format("DD/MM/YYYY")}</span> : <></>,
+      sorter: (a, b) => dateSort(a?.acceptanceDate, b?.acceptanceDate),
+    },
+    {
+      title: "Tình trạng",
       dataIndex: "status",
       key: "status",
-      align: "center",
-      render: (_, record) => {
-        return (
-          <span style={{ color: getTaskStatusColor(record.status) }}>
-            {getTaskStatus(record.status)}
-          </span>
-        );
-      },
+      render: (_, { status }) => (
+        <span style={{ color: orderColors[status], fontWeight: "bold" }}>
+          {orderLabels[status]}
+        </span>
+      ),
       sorter: (a, b) => a.status - b.status,
     },
     {
@@ -211,18 +141,6 @@ const LeaderTaskList = () => {
       },
     },
   ];
-
-  const dateSort = (dateA, dateB) => {
-    return dayjs(dateA).isAfter(dayjs(dateB)) ? 1 : dayjs(dateA).isBefore(dayjs(dateB)) ? -1 : 0;
-  }
-
-  const getTaskStatus = (status) => {
-    return enumTaskStatuses[status]?.name || "Không Xác Định";
-  };
-
-  const getTaskStatusColor = (status) => {
-    return enumTaskStatuses[status]?.color || "#FF0000";
-  };
 
   const handleSearch = (value) => {
     getData(value);
@@ -252,28 +170,6 @@ const LeaderTaskList = () => {
           onSearch: handleSearch,
           width: 300,
         }}
-      />
-      
-      <LeaderTaskModal
-        open={showCreateModal}
-        onCancel={() => {
-          setShowCreateModal(false);
-          taskRef.current = null;
-        }}
-        onSubmit={handleSubmitCreate}
-        confirmLoading={taskCreateLoading}
-        mode="1"
-      />
-      <LeaderTaskModal
-        open={showUpdateModal}
-        onCancel={() => {
-          setShowUpdateModal(false);
-          taskRef.current = null;
-        }}
-        onSubmit={handleSubmitUpdate}
-        confirmLoading={taskUpdateLoading}
-        dataSource={taskRef.current}
-        mode="2"
       />
     </>
   );
