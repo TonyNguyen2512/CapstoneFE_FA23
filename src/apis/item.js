@@ -2,12 +2,8 @@ import BaseApi from ".";
 
 const resource = "Item";
 
-<<<<<<< HEAD
-const getAllItem = async (search, pageIndex, pageSize = 1000) => {
-=======
 const getAllItem = async (search, pageIndex, pageSize) => {
   try {
-
     if (search) {
       return await searchItem(search, pageIndex, pageSize);
     }
@@ -32,7 +28,6 @@ const getAllItem = async (search, pageIndex, pageSize) => {
 };
 
 const searchItem = async (search, pageIndex, pageSize) => {
->>>>>>> 458d4f5ed0aa2e7429b4256368b9e538b6291533
   try {
     var params = {};
     if (search) {

@@ -145,12 +145,7 @@ export const AppSider = () => {
         canViewGroups && {
           key: itemKeys.GROUPS,
           icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Tổ</Link>,
-        },
-        canViewSquads && {
-          key: itemKeys.SQUADS,
-          icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Nhóm</Link>,
+          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
         },
         canViewEmployees && {
           key: itemKeys.EMPLOYEES,

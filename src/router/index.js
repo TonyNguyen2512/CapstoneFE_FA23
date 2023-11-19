@@ -13,12 +13,9 @@ import ProjectDetailPage from "../pages/project/detail";
 import ProfilePage from "../pages/profile";
 import ClassListPage from "../pages/class/list";
 import ClassDetailPage from "../pages/class/detail";
-import { TeamListPage } from "../pages/team/list";
 import ProjectReportListPage from "../pages/report/list";
 import SemesterListPage from "../pages/semester/list";
 import SemesterDetailPage from "../pages/semester/detail";
-import TeamDetailPage from "../pages/team/detail";
-import StudentTeamReportPage from "../pages/report/student";
 import ProjectReportDetailPage from "../pages/report/detail";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
@@ -31,6 +28,7 @@ import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
 import OrderDetailPage from "../pages/orders/detail";
 import { ItemCategoryListPage } from "../pages/item-categories/list";
+import { GroupListPage } from "../pages/group/list";
 
 export const router = createBrowserRouter([
 	{
@@ -104,6 +102,14 @@ export const router = createBrowserRouter([
 						element: <LeaderTaskDetailsPage />,
 					},
 					{
+						path: routes.dashboard.groups,
+						element: <GroupListPage />,
+					},
+					{
+						path: `${routes.dashboard.groups}/:id`,
+						element: <GroupListPage />,
+					},
+					{
 						path: routes.dashboard.reports,
 						element: <AccountListPage />,
 					},
@@ -140,10 +146,6 @@ export const router = createBrowserRouter([
 						element: <ClassDetailPage />,
 					},
 					{
-						path: routes.dashboard.teamRequest,
-						element: <TeamListPage />,
-					},
-					{
 						path: routes.dashboard.report,
 						element: <ProjectReportListPage />,
 					},
@@ -158,18 +160,6 @@ export const router = createBrowserRouter([
 					{
 						path: `${routes.dashboard.semester}/:id`,
 						element: <SemesterDetailPage />,
-					},
-					{
-						path: routes.dashboard.teams,
-						element: <TeamListPage />,
-					},
-					{
-						path: `${routes.dashboard.teams}/:id`,
-						element: <TeamDetailPage />,
-					},
-					{
-						path: `${routes.dashboard.studentReport}/:id`,
-						element: <StudentTeamReportPage />,
 					},
 				],
 			},

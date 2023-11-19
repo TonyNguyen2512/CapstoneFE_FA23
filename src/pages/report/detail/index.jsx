@@ -7,7 +7,6 @@ import { TeamProvider } from "../../../providers/team";
 import { TeacherTeamProgressOverview } from "./components/TeacherTeamProgressOverview";
 import ReportApi from "../../../apis/report";
 import { ReportSection } from "../components/ReportSection";
-import { TeamBasicInfo } from "../../team/detail/components/TeamBasicInfo";
 import { ReportDetailDrawer } from "../student/components/ReportDetailDrawer";
 
 const {  Title } = Typography;
@@ -71,7 +70,6 @@ const ProjectReportDetailPage = () => {
 			<Spin spinning={loading}>
 				<TeamProvider team={team}>
 					<div className="mt-4">
-						<TeamBasicInfo />
 					</div>
 					<div className="mt-4">
 						<TeacherTeamProgressOverview />
