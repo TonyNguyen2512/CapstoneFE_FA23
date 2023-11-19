@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { formatDate } from "../../../../../utils";
 import { enumTaskStatuses } from "../../../../../__mocks__/jama/tasks";
 import { UserContext } from "../../../../../providers/user";
+import { eTaskColors, eTaskLabels } from "../../../../../constants/enum";
 
 export const WorkerTaskInfo = ({
 	dataLeaderTasks,
@@ -13,14 +14,12 @@ export const WorkerTaskInfo = ({
 	const { user } = useContext(UserContext);
 
 	const getTaskStatus = (status) => {
-		return enumTaskStatuses[status]?.name || "Không Xác Định";
+		return eTaskLabels[status] || "Không Xác Định";
 	};
 
 	const getTaskStatusColor = (status) => {
-		return enumTaskStatuses[status]?.color || "#FF0000";
+		return eTaskColors[status] || "#FF0000";
 	};
-
-	console.log("dataGroupMembers", dataGroupMembers)
 
 	return (
 		<Space direction="vertical" className="w-full gap-6">

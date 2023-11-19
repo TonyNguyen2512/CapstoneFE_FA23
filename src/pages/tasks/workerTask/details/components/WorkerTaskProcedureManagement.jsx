@@ -3,73 +3,82 @@ import { Button, Row, Select, Typography, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
 import { TaskBoard } from "./TaskBoard";
+import { TaskCreateModal } from "../../../../../components/modals/task/create";
+import TaskApi from "../../../../../apis/task";
+import WorkerTasksApi from "../../../../../apis/worker-task";
+import { TeamContext } from "../../../../../providers/team";
+import { roles } from "../../../../../constants/app";
+import { TaskContext } from "../../../../../providers/task";
+import TaskDetailModal from "../../../../../components/modals/task/detail";
+import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
 
 const { Title } = Typography;
 
 export const WorkerTaskProcedureManagement = ({
+	dataLeaderTasks,
 	dataWorkerTasks,
 	dataGroupMembers,
 }) => {
 
 	const { user } = useContext(UserContext);
+	const { filterTask, reload } = useContext(TaskContext);
+
+	const isLeader = user?.role?.name === roles.LEADER;
 	
-	const [filterTask, setFilterTask] = useState([]); 
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [taskCreating, setTaskCreating] = useState(false);
 	const [taskUpdating, setTaskUpdating] = useState(false);
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-	// console.log("Manager")
-	// console.log(dataSource)
-
 	const taskRef = useRef();
 
 	const handleSubmitCreate = async (values) => {
-		const projectId = dataWorkerTasks?.project?.id;
 		const request = {
-			projectId: projectId,
-			taskName: values?.taskName,
+			leaderTaskId: dataLeaderTasks?.id,
+			// stepId: '',
+			name: values?.taskName,
+			priority: values?.priority,
 			startTime: values?.startTime,
 			endTime: values?.endTime,
-			taskDescription: values?.taskDescription,
 			status: values?.status,
+			description: values?.taskDescription,
 			assignees: values?.assignees,
 		};
 		setTaskCreating(true);
-		// const success = await TaskApi.createTask(request);
-		// if (success) {
-		// 	message.success("Đã tạo công việc");
-		// 	reload(false);
-		// } else {
-		// 	message.error("Có lỗi xảy ra");
-		// }
+		const resp = await WorkerTasksApi.createWorkerTask(request);
+		if (resp.code === 0) {
+			message.success(resp.message);
+			setShowCreateModal(false);
+			reload(false);
+		} else {
+			message.error(resp.message);
+		}
 		setTaskCreating(false);
-		setShowCreateModal(false);
 	};
 
 	const handleDeleteTask = async () => {
 		const currentTask = taskRef.current;
-		// const success = await TaskApi.deleteTask(currentTask.id);
-		// if (success) {
-		// 	message.success("Đã xóa công việc");
-		// 	reload(false);
-		// } else {
-		// 	message.error("Có lỗi xảy ra");
-		// }
+		const resp = await WorkerTasksApi.deleteWorkerTask(currentTask.id);
+		if (resp.code === 0) {
+			message.success(resp.message);
+			reload(false);
+		} else {
+			message.error(resp.message);
+		}
 		setShowDeleteModal(false);
 	};
 
 	const handleSubmitUpdate = async (values) => {
 		console.log("update task: ", values);
 		setTaskUpdating(true);
-		// const success = await TaskApi.updateTask(values);
-		// if (success) {
-		// 	message.success("Đã cập nhật công việc");
-		// 	reload(false);
-		// } else {
-		// 	message.error("Có lỗi xảy ra");
-		// }
+		const resp = await WorkerTasksApi.updateWorkerTask(values);
+		if (resp.code === 0) {
+			message.success(resp.message);
+			reload(false);
+		} else {
+			message.error(resp.message);
+		}
 		setTaskUpdating(false);
 		setShowDetailModal(false);
 	};
@@ -79,9 +88,9 @@ export const WorkerTaskProcedureManagement = ({
 			<Row align="middle" className="mb-3" justify="space-between">
 				<Row align="middle">
 					<Title level={5} style={{ margin: 0 }}>
-						Công việc ({dataWorkerTasks?.length})
+						Công việc ({dataWorkerTasks?.length || 0})
 					</Title>
-					{/* {isLeader && ( */}
+					{isLeader && (
 						<Button
 							icon={<Plus />}
 							className="flex-center ml-3"
@@ -89,7 +98,7 @@ export const WorkerTaskProcedureManagement = ({
 							type="primary"
 							onClick={() => setShowCreateModal(true)}
 						/>
-					{/* )} */}
+					)}
 					<span className="ml-10 mr-2">Thành viên: </span>
 					<Select
 						allowClear
@@ -100,9 +109,9 @@ export const WorkerTaskProcedureManagement = ({
 								value: e.id,
 							};
 						})}
-						// onChange={(value) => {
-						// 	filterTask && filterTask(value);
-						// }}
+						onChange={(value) => {
+							filterTask && filterTask(value);
+						}}
 						style={{ width: 250 }}
 					/>
 				</Row>
@@ -118,25 +127,25 @@ export const WorkerTaskProcedureManagement = ({
 				}}
 				dataSource={dataWorkerTasks}
 			/>
-			{/* <TaskCreateModal
+			<TaskCreateModal
 				open={showCreateModal}
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
 				confirmLoading={taskCreating}
+				dataGroupMembers={dataGroupMembers}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
 				onCancel={() => setShowDetailModal(false)}
-				task={taskRef.current}
 				onSubmit={handleSubmitUpdate}
 				confirmLoading={taskUpdating}
 			/>
 			<ConfirmDeleteModal
-				title="Bạn muốn xóa công việc này?"
+				title={`Bạn muốn xóa công việc ${taskRef?.current?.name} ?`}
 				open={showDeleteModal}
 				onCancel={() => setShowDeleteModal(false)}
 				onOk={() => handleDeleteTask()}
-			/> */}
+			/>
 		</div>
 	);
 };

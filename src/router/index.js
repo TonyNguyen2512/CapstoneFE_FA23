@@ -92,7 +92,7 @@ export const router = createBrowserRouter([
 						element: <WorkerTaskListPage />,
 					},
 					{
-						path: `${routes.dashboard.workersTasks}/:id`,
+						path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
 						element: <WorkerTaskDetailsPage />,
 					},
 					{

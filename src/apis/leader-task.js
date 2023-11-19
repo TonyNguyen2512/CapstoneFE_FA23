@@ -10,8 +10,8 @@ const deleteSuccessCode = 304;
 const updateStatusSuccessCode = 305;
 
 const errorComposer = (error) => {
-	if (error.response.data) {
-		const { code } = error.response.data
+	if (error?.response?.data) {
+		const { code } = error?.response?.data
 		return {
 			code,
 			message: ApiCodes[code],

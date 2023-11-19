@@ -3,13 +3,13 @@ import BaseModal from "../../../BaseModal";
 import { EditableInput } from "../../../EditableInput";
 import { Card, Col, DatePicker, Form, Row, Select, Typography } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
-import { TeamContext } from "../../../../providers/team";
 import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { taskStatusOptions } from "../../../../constants/app";
 import { TaskStatus } from "../../../../constants/enum";
+import { TaskContext } from "../../../../providers/task";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -19,7 +19,6 @@ const { Text } = Typography;
 const TaskDetailModal = ({
 	open,
 	onCancel,
-	task,
 	onSubmit,
 	confirmLoading,
 }) => {
@@ -27,10 +26,10 @@ const TaskDetailModal = ({
 	const nameRef = useRef();
 	const descRef = useRef();
 
-	const { team } = useContext(TeamContext);
+	const { task } = useContext(TaskContext);
 	const { user } = useContext(UserContext);
 
-	const isLeader = user?.userId === team?.leader?.id;
+	const isLeader = user?.userId === task?.leader?.id;
 	const ownedTask =
 		task?.members.find((e) => e.id === user?.userId) !== undefined;
 
@@ -152,7 +151,7 @@ const TaskDetailModal = ({
 									mode="multiple"
 									className="w-full"
 									placeholder="Chọn thành viên"
-									options={team?.members?.map((e) => {
+									options={task?.members?.map((e) => {
 										return {
 											label: e.fullName,
 											value: e.id,

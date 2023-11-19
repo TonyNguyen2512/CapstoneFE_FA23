@@ -7,7 +7,9 @@ export const TeamRequestStatus = {
 export const TaskStatus = {
 	new: 0,
 	inProgress: 1,
-	completed: 2,
+	inApprove: 2,
+	inEvaluete: 3,
+	completed: 4,
 };
 
 export const ReportFeedbackStatus = {

@@ -10,8 +10,8 @@ const deleteSuccessCode = 304;
 const updateStatusSuccessCode = 305;
 
 const errorComposer = (error) => {
-	if (error.response.data) {
-		const { code } = error.response.data
+	if (error?.response?.data) {
+		const { code } = error?.response?.data
 		return {
 			code,
 			message: ApiCodes[code],
@@ -31,7 +31,7 @@ const successComposer = (messageId, data) => {
 	}
 }
 
-const createWorkerTasks = async (data) => {
+const createWorkerTask = async (data) => {
 	try {
 		const response = await BaseApi.post(`/${resource}/Create`, data);
 		return successComposer(createSuccessCode);
@@ -41,7 +41,7 @@ const createWorkerTasks = async (data) => {
 	}
 };
 
-const updateWorkerTasks = async (data) => {
+const updateWorkerTask = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/Update`, data);
 		return successComposer(udpateSuccessCode);
@@ -51,17 +51,17 @@ const updateWorkerTasks = async (data) => {
 	}
 };
 
-const updateWorkerTasksStatus = async (WorkerTasksId, status) => {
+const updateWorkerTasksStatus = async (workerTasksId, status) => {
 	try {
-		const response = await BaseApi.put(`/${resource}/UpdateStatus/${WorkerTasksId}/{status}`);
-		return successComposer(updateStatusSuccessCode);
+		const response = await BaseApi.put(`/${resource}/UpdateStatus/${workerTasksId}/${status}`);
+		return response.status === 200 && successComposer(updateStatusSuccessCode);
 	} catch (error) {
 		console.log("Error update Worker task status: ", error);
 		return errorComposer(error);
 	}
 };
 
-const deleteWorkerTasks = async (WorkerTasksId) => {
+const deleteWorkerTask = async (WorkerTasksId) => {
 	try {
 		const response = await BaseApi.delete(`/${resource}/Delete/${WorkerTasksId}`);
 		return successComposer(deleteSuccessCode);
@@ -93,7 +93,29 @@ const getWorkerTaskByLeaderTaskId = async (leaderTaskId, searchName, pageIndex, 
 		if (pageSize) {
 		  params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetAll/${leaderTaskId}`, {
+		const response = await BaseApi.get(`/${resource}/GetByLeaderTaskId/${leaderTaskId}`, {
+			params:params
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get Worker tasks by Worker id: ", error);
+		return errorComposer(error);
+	}
+};
+
+const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize = 1000) => {
+	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}`, {
 			params:params
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
@@ -104,12 +126,13 @@ const getWorkerTaskByLeaderTaskId = async (leaderTaskId, searchName, pageIndex, 
 };
 
 const WorkerTasksApi = {
-	createWorkerTasks,
-	updateWorkerTasks,
+	createWorkerTask,
+	updateWorkerTask,
 	updateWorkerTasksStatus,
-	deleteWorkerTasks,
+	deleteWorkerTask,
 	getWorkerTaskById,
 	getWorkerTaskByLeaderTaskId,
+	getWorkerTaskByUserId,
 };
 
 export default WorkerTasksApi;
