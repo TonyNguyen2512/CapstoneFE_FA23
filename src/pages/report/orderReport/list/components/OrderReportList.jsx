@@ -24,8 +24,8 @@ export const OrderReportList = () => {
 
   const getReports = async () => {
     setLoading(true);
-    const data = await OrderReportApi.getAll(pageIndex, pageSize, search);
-    // const data = await OrderReportApi.getByForemanId(user?.id, pageIndex, pageSize, search);
+    // const data = await OrderReportApi.getAll(pageIndex, pageSize, search);
+    const data = await OrderReportApi.getByForemanId(user?.id, pageIndex, pageSize, search);
     setReports(data);
     setLoading(false);
   };
