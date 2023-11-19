@@ -29,6 +29,7 @@ import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
 import OrderDetailPage from "../pages/orders/detail";
 import { ItemCategoryListPage } from "../pages/item-categories/list";
+import OrderReportDetailPage from "../pages/report/orderReport/detail";
 
 export const router = createBrowserRouter([
   {
@@ -102,73 +103,77 @@ export const router = createBrowserRouter([
             element: <LeaderTaskDetailsPage />,
           },
           {
-            path: routes.dashboard.reports,
-            element: <AccountListPage />,
-          },
-          {
             path: routes.dashboard.orderReports,
             element: <OrderReportListPage />,
           },
+          {
+            path: `${routes.dashboard.orderReports}/:id`,
+            element: <OrderReportDetailPage />,
+          },
+          // {
+          //   path: routes.dashboard.reports,
+          //   element: <AccountListPage />,
+          // },
 
           //
           // old routes
           //
-          {
-            path: routes.dashboard.courses,
-            element: <CourseListPage />,
-          },
-          {
-            path: `${routes.dashboard.courses}/:id`,
-            element: <CourseDetailPage />,
-          },
-          {
-            path: routes.dashboard.projects,
-            element: <ProjectListPage />,
-          },
-          {
-            path: `${routes.dashboard.projects}/:id`,
-            element: <ProjectDetailPage />,
-          },
-          {
-            path: routes.dashboard.profile,
-            element: <ProfilePage />,
-          },
-          {
-            path: routes.dashboard.classes,
-            element: <ClassListPage />,
-          },
-          {
-            path: `${routes.dashboard.classes}/:id`,
-            element: <ClassDetailPage />,
-          },
-          {
-            path: routes.dashboard.teamRequest,
-            element: <TeamListPage />,
-          },
-          {
-            path: routes.dashboard.report,
-            element: <OrderReportListPage />,
-          },
+          // {
+          //   path: routes.dashboard.courses,
+          //   element: <CourseListPage />,
+          // },
+          // {
+          //   path: `${routes.dashboard.courses}/:id`,
+          //   element: <CourseDetailPage />,
+          // },
+          // {
+          //   path: routes.dashboard.projects,
+          //   element: <ProjectListPage />,
+          // },
+          // {
+          //   path: `${routes.dashboard.projects}/:id`,
+          //   element: <ProjectDetailPage />,
+          // },
+          // {
+          //   path: routes.dashboard.profile,
+          //   element: <ProfilePage />,
+          // },
+          // {
+          //   path: routes.dashboard.classes,
+          //   element: <ClassListPage />,
+          // },
+          // {
+          //   path: `${routes.dashboard.classes}/:id`,
+          //   element: <ClassDetailPage />,
+          // },
+          // {
+          //   path: routes.dashboard.teamRequest,
+          //   element: <TeamListPage />,
+          // },
+          // {
+          //   path: routes.dashboard.report,
+          //   element: <OrderReportListPage />,
+          // },
           //   {
           //     path: `${routes.dashboard.report}/:id`,
           //     element: <ProjectReportDetailPage />,
           //   },
-          {
-            path: routes.dashboard.semester,
-            element: <SemesterListPage />,
-          },
-          {
-            path: `${routes.dashboard.semester}/:id`,
-            element: <SemesterDetailPage />,
-          },
-          {
-            path: routes.dashboard.teams,
-            element: <TeamListPage />,
-          },
-          {
-            path: `${routes.dashboard.teams}/:id`,
-            element: <TeamDetailPage />,
-          },
+          // {
+          //   path: routes.dashboard.semester,
+          //   element: <SemesterListPage />,
+          // },
+          // {
+          //   path: `${routes.dashboard.semester}/:id`,
+          //   element: <SemesterDetailPage />,
+          // },
+          // {
+          //   path: routes.dashboard.teams,
+          //   element: <TeamListPage />,
+          // },
+          // {
+          //   path: `${routes.dashboard.teams}/:id`,
+          //   element: <TeamDetailPage />,
+          // },
           //   {
           //     path: `${routes.dashboard.studentReport}/:id`,
           //     element: <StudentTeamReportPage />,

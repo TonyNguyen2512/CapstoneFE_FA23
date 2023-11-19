@@ -10,7 +10,7 @@ const routes = {
     accounts: "accounts",
     orders: "orders",
     quotes: "quotes", // factory
-    // factory
+    // factory / foreman
     materials: "materials",
     materialTypes: "material-types",
     items: "items",
@@ -24,7 +24,6 @@ const routes = {
     workers: "workers",
     workersTasks: "workers-tasks",
     workersReports: "workers-reports",
-    taskReports: "task-reports",
     // worker
     tasks: "tasks",
     // old //

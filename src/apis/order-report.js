@@ -1,3 +1,4 @@
+import { message } from "antd";
 import BaseApi from ".";
 
 const resoure = "OrderReport";
@@ -13,7 +14,8 @@ const getAll = async (pageIndex, pageSize = 5, search = undefined) => {
     });
     return response.data;
   } catch (error) {
-    console.log("Error get reports: ", error);
+    console.log("Error get order reports: ", error);
+    message.error("Lấy danh sách báo cáo thất bại");
   }
 };
 
@@ -28,26 +30,36 @@ const getByForemanId = async (foremanId, pageIndex = 1, pageSize = 1, search = u
     });
     return response.data;
   } catch (error) {
-    console.log("Error get report by id: ", error);
+    console.log("Error get order report by foreman id: ", error);
+    message.error("Lấy danh sách báo cáo thất bại");
   }
 };
-const getReportById = async (id) => {
+
+const getOrderReportById = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resoure}`, {
-      params: {
-        id,
-      },
-    });
+    const response = await BaseApi.get(`/${resoure}/GetById/${id}`);
     return response.data;
   } catch (error) {
-    console.log("Error get report by id: ", error);
+    console.log("Error get order report by id: ", error);
+    message.error("Lấy thông tin báo cáo thất bại");
+  }
+};
+
+const updateOrderReport = async (data) => {
+  try {
+    const response = await BaseApi.put(`/${resoure}/Update`, data);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error update order report: ", error);
+    return false;
   }
 };
 
 const OrderReportApi = {
   getAll,
   getByForemanId,
-  getReportById,
+  getOrderReportById,
+  updateOrderReport,
 };
 
 export default OrderReportApi;

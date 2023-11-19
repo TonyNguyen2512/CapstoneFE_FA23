@@ -52,7 +52,7 @@ export const AppSider = () => {
   const canViewWorkersTasks = permissions?.includes(ALL_PERMISSIONS.workersTasks?.sider);
   const canViewWorkersReports = permissions?.includes(ALL_PERMISSIONS.workersReports?.sider);
   const canViewTasks = permissions?.includes(ALL_PERMISSIONS.tasks?.sider);
-  const canViewForemanReports = permissions?.includes(ALL_PERMISSIONS.foremanReports?.sider);
+  const canViewOrderReports = permissions?.includes(ALL_PERMISSIONS.orderReports?.sider);
 
   const itemKeys = {
     DASHBOARD: "DASHBOARD",
@@ -73,7 +73,7 @@ export const AppSider = () => {
     SQUADS: "MANAGE_SQUADS",
     MANAGERS_TASKS: "MANAGE_MANAGERS_TASKS",
     MANAGERS_REPORTS: "MANAGE_MANAGERS_REPORTS",
-    FOREMAN_REPORTS: "MANAGE_FOREMAN_REPORTS",
+    ORDER_REPORTS: "MANAGE_ORDER_REPORTS",
     //
     WORKERS: "MANAGE_WORKERS",
     WORKERS_TASKS: "MANAGE_WORKERS_TASKS",
@@ -176,8 +176,8 @@ export const AppSider = () => {
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.workersTasks}>Quản lý công việc</Link>,
     },
-    canViewForemanReports && {
-      key: itemKeys.FOREMAN_REPORTS,
+    canViewOrderReports && {
+      key: itemKeys.ORDER_REPORTS,
       icon: <HourglassNull size={iconSize - 4} />,
       label: <Link to={routes.dashboard.orderReports}>Báo cáo tiến độ</Link>,
     },
@@ -237,6 +237,8 @@ export const AppSider = () => {
         return itemKeys.SQUADS;
       case routes.dashboard.workers:
         return itemKeys.WORKERS;
+      case routes.dashboard.orderReports:
+        return itemKeys.ORDER_REPORTS;
     }
 
     return undefined;

@@ -1,12 +1,12 @@
 import React from "react";
-import { ReportList } from "./components/ReportList";
+import { OrderReportList } from "./components/OrderReportList";
 import { usePermissions } from "../../../../hooks/permission";
 import { ALL_PERMISSIONS } from "../../../../constants/app";
 
 const OrderReportListPage = () => {
   const permissions = usePermissions();
-  const canView = permissions?.includes(ALL_PERMISSIONS.foremanReports.view);
-  return <ReportList />;
+  const canView = permissions?.includes(ALL_PERMISSIONS.orderReports.view);
+  return canView && <OrderReportList />;
 };
 
 export default OrderReportListPage;

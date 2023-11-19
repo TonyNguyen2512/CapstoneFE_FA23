@@ -69,23 +69,26 @@ export const eTaskLabels = [
 
 export const eTaskColors = ["#BEBB6D", "#FBD305", "#FF0000", "#FF0000", "#29CB00"];
 
-export const Report = {
+export const EReport = {
   Uncomplete: 0,
   Complete: 1,
   NotAchieved: 2,
 };
 
 export const ReportMap = {
-  [Report.Uncomplete]: {
+  [EReport.Uncomplete]: {
     color: "text-red-500",
     label: "Chưa hoàn thành",
   },
-  [Report.Complete]: {
+  [EReport.Complete]: {
     color: "text-green-500",
     label: "Hoàn thành",
   },
-  [Report.NotAchieved]: {
+  [EReport.NotAchieved]: {
     color: "text-red-500",
     label: "Không đạt",
   },
 };
+
+export const ErrorImage =
+  "https://firebasestorage.googleapis.com/v0/b/capstonebwm.appspot.com/o/Picture%2Fno_photo.jpg?alt=media&token=3dee5e48-234a-44a1-affa-92c8cc4de565&_gl=1*bxxcv*_ga*NzMzMjUwODQ2LjE2OTY2NTU2NjA.*_ga_CW55HF8NVT*MTY5ODIyMjgyNC40LjEuMTY5ODIyMzIzNy41Ny4wLjA&fbclid=IwAR0aZK4I3ay2MwA-5AyI-cqz5cGAMFcbwoAiMBHYe8TEim-UTtlbREbrCS0";
