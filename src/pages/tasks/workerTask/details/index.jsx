@@ -100,7 +100,7 @@ export const WorkerTaskDetailsPage = () => {
   };
 
   return (
-    <BasePageContent onBack={() => navigate(-2)}>
+    <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.workersTasks}`)}>
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
