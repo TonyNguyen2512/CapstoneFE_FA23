@@ -132,8 +132,18 @@ const getLeaderTaskById = async (id) => {
 
 const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize) => {
 	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
-			searchName, pageIndex, pageSize
+			params: params,
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {

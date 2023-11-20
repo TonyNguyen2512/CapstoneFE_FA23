@@ -14,10 +14,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 	const { user } = useContext(UserContext);
 	const { reload } = useContext(TaskContext);
 
-	const [avatarList, setAvatarList] = useState([]);
-	const avatar = useRef();
-
-	const isLeader = user?.role?.name === roles.LEADER;
+	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 
 	const [columns, setColumns] = useState([
 		{
@@ -81,6 +78,26 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		}
 
 		const finish = columns.find((e) => e.id === destination.droppableId);
+
+		if (!isLeader) {
+			if (finish.id === TaskColumnId.IN_APPROVE
+				|| finish.id === TaskColumnId.IN_EVALUATE
+				|| finish.id === TaskColumnId.COMPLETED) {
+					message.info(
+						"Chỉ trưởng nhóm mới được chuyển trạng thái công việc này"
+					);
+					return;
+				}
+		}
+
+		// const sourceTask = columns.find((e) => e.id === source.droppableId);
+		// if (sourceTask.id === TaskColumnId.COMPLETED) {
+		// 	message.error(
+		// 		"Không thể chuyển trạng thái công việc đã hoàn thành"
+		// 	);
+		// 	return;
+		// }
+
 		let taskStatus;
 		switch (finish.id) {
 			case TaskColumnId.TODO:
@@ -156,35 +173,9 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		setColumns(newColumns);
 	}
 
-	const randomBackgroundColor = () => {
-		const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-		return "#" + randomColor;
-	}
-
-	const getBackgroundColor = (tasks) => {
-		let avatarList = [];
-		tasks?.forEach((task) => {
-			if (task?.members) {
-				task?.members?.forEach((e) => {
-					let avatarInfo = avatarList?.filter((x) => x.id === e.memberId);
-					if (!avatarInfo?.id) {
-						avatarInfo = {
-							color: randomBackgroundColor(),
-							id: e?.memberId,
-						}
-						avatarList.push(avatarInfo);
-					}
-				});
-			}
-		})
-		avatar.current = avatarList;
-	}
-
-
 	useEffect(() => {
 		const tasks = dataSource;
 		loadColumn(tasks);
-		// getBackgroundColor(tasks);
 	}, [dataSource]);
 
 	return (
@@ -196,7 +187,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 							column={column}
 							onViewTask={onViewTask}
 							onDeleteTask={onDeleteTask}
-							avatar={avatar.current}
 						/>
 					</Col>
 				))}

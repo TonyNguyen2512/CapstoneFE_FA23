@@ -5,7 +5,7 @@ import { TaskItem } from "./TaskItem";
 
 const { Text } = Typography;
 
-export const TaskColumn = ({ column, onViewTask, onDeleteTask, avatar }) => {
+export const TaskColumn = ({ column, onViewTask, onDeleteTask }) => {
 	const { id, title, tasks } = column;
 	return (
 		<Card title={title}>
@@ -19,7 +19,6 @@ export const TaskColumn = ({ column, onViewTask, onDeleteTask, avatar }) => {
 								index={index}
 								onDelete={onDeleteTask}
 								onView={onViewTask}
-								avatar={avatar}
 							/>
 						))}
 						{tasks?.length <= 0 && (

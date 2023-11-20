@@ -10,7 +10,6 @@ export const TaskStatus = {
 	inApprove: 2,
 	inEvaluete: 3,
 	completed: 4,
-
 };
 
 export const ReportFeedbackStatus = {

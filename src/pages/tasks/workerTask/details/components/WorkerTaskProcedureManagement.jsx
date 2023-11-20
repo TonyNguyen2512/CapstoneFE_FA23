@@ -23,7 +23,7 @@ export const WorkerTaskProcedureManagement = ({
 	const { user } = useContext(UserContext);
 	const { filterTask, reload } = useContext(TaskContext);
 
-	const isLeader = user?.role?.name === roles.LEADER;
+	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 	
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [taskCreating, setTaskCreating] = useState(false);
@@ -119,6 +119,7 @@ export const WorkerTaskProcedureManagement = ({
 			<TaskBoard
 				onViewTask={(task) => {
 					taskRef.current = task;
+					console.log("taskRef.current ", taskRef.current )
 					setShowDetailModal(true);
 				}}
 				onDeleteTask={(task) => {
@@ -139,6 +140,8 @@ export const WorkerTaskProcedureManagement = ({
 				onCancel={() => setShowDetailModal(false)}
 				onSubmit={handleSubmitUpdate}
 				confirmLoading={taskUpdating}
+				task={taskRef.current}
+				dataGroupMembers={dataGroupMembers}
 			/>
 			<ConfirmDeleteModal
 				title={`Bạn muốn xóa công việc ${taskRef?.current?.name} ?`}
