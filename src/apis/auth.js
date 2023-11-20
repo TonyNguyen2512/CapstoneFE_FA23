@@ -3,12 +3,12 @@ import { mockAccounts } from "../__mocks__/accounts";
 
 const login = async (username, password) => {
 	try {
-		// // local
-		// let user = mockAccounts.find((item) => (item.email === username || item.username === username) && item.password === password)
-		// if (!!user) {
-		// 	localStorage.setItem("user", JSON.stringify(user));
-		// 	return true
-		// }
+		// local
+		let user = mockAccounts.find((item) => (item.email === username || item.username === username) && item.password === password)
+		if (!!user) {
+			localStorage.setItem("user", JSON.stringify(user));
+			return true
+		}
 
 		const response = await BaseApi.post("/User/Login", {
 			phoneNumber: username,
