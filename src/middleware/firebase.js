@@ -14,7 +14,7 @@ const firebaseConfig = {
   storageBucket: "capstonebwm.appspot.com",
   messagingSenderId: "686635558120",
   appId: "1:686635558120:web:c9ddccfc88fee93ca3955d",
-  measurementId: "G-B62G6N92SB"
+  measurementId: "G-B62G6N92SB",
 };
 
 // Initialize Firebase
@@ -24,9 +24,12 @@ const analytics = getAnalytics(app);
 const storage = getStorage(app);
 
 // Create a child reference
-export const imagesRef = ref(storage, 'Items/Images');
-export const drawingsRef = ref(storage, 'Items/Drawings');
-export const quotesRef = ref(storage, 'Orders/Quotes');
-export const contractsRef = ref(storage, 'Orders/Contracts');
+export const imagesItemRef = ref(storage, "Items/Images");
+export const drawingsRef = ref(storage, "Items/Drawings");
+export const imagesMaterialRef = ref(storage, "Materials/Images");
+export const imagesReportRef = ref(storage, "Reports/Images");
+export const imagesProfileRef = ref(storage, "Profiles/Images");
+export const quotesRef = ref(storage, "Orders/Quotes");
+export const contractsRef = ref(storage, "Orders/Contracts");
 
 export default storage;
