@@ -31,7 +31,7 @@ const login = async (username, password) => {
 const authorize = async () => {
 	try {
 		const id = localStorage.getItem("userId");
-		const response = await BaseApi.get("/User/GetById/" + userId);
+		const response = await BaseApi.get("/User/GetById/" + id);
 		return response.data;
 		// const user = JSON.parse(localStorage.getItem("user")) || {};
 		// return user
