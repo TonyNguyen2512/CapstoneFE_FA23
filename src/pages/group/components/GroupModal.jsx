@@ -1,9 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Form, Input, message } from "antd";
-import BaseModal from "../../../../components/BaseModal";
-import GroupApi from "../../../../apis/group";
+import { Form, Input, Select, message } from "antd";
+import BaseModal from "../../../components/BaseModal";
+import { LeaderSelect } from "./LeaderSelect";
+import { useSearchParams } from "react-router-dom";
+import GroupApi from "../../../apis/group";
 
 export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
@@ -25,6 +28,19 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
     onCancel();
   };
 
+  const handleChangeLeader = (id) => {
+    setSearchParams({
+      leaderId: id,
+    });
+  };
+
+  const onLeadersLoaded = (data) => {
+    if (data && data.length > 0) {
+      searchParams.set("group", data[0].id);
+      setSearchParams(searchParams);
+    }
+  };
+
   useEffect(() => {
     console.log(isCreate, data);
   }, []);
@@ -39,9 +55,11 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
     >
       <Form
         ref={formRef}
+        layout="vertical"
         initialValues={{
           id: data?.id,
-          name: data?.name,
+          name: data?.name, 
+          leaderId: data?.leaderName,
           isDeleted: data?.isDeleted,
         }}
         onFinish={handleUpdateRole}
@@ -53,14 +71,31 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
         )}
         <Form.Item
           name="name"
+          label="Tên nhóm"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
+              message: "Vui lòng nhập tên nhóm",
             },
           ]}
         >
-          <Input showCount maxLength={255} placeholder="Tên loại vật liệu..." />
+          <Input showCount maxLength={255} placeholder="Tên nhóm..." />
+        </Form.Item>
+        <Form.Item
+          name="leaderId"
+          label="Nhóm trưởng"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn nhóm trưởng",
+            }, 
+          ]}
+        >
+          <LeaderSelect
+            value={searchParams.get("group")}
+            onChange={handleChangeLeader}
+            onLoaded={onLeadersLoaded}
+          />
         </Form.Item>
       </Form>
     </BaseModal>

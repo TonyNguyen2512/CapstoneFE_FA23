@@ -7,7 +7,7 @@ import { UserContext } from "../../../../providers/user";
 
 const { Text } = Typography;
 
-export const TeamRegistrationModal = ({
+export const AddWorkerToGroupModal = ({
 	title,
 	open,
 	onCancel,
@@ -31,7 +31,7 @@ export const TeamRegistrationModal = ({
 		const allOptions = students.map((item) => {
 			return {
 				value: item.id,
-				label: `${item.fullName} (${item.email})`,
+				label: `${item.fullName}`,
 			};
 		});
 

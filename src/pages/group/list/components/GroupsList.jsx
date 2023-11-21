@@ -4,13 +4,16 @@ import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import GroupApi from "../../../../apis/group";
-import { GroupModal } from "../../detail/components/GroupModal";
+import { GroupModal } from "../../components/GroupModal";
+import { Navigate, useNavigate } from "react-router-dom";
+import routes from "../../../../constants/routes";
 
 const GroupList = () => {
   const [loading, setLoading] = useState(false);
   const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
   const [groupList, setGroupTypeList] = useState([]);
   const groupRef = useRef();
+  const navigate = useNavigate();
 
   const getData = async (keyword) => {
     setLoading(true);
@@ -25,7 +28,7 @@ const GroupList = () => {
   }, []);
 
   const getActionItems = (record) => {
-    const { isDeleted } = record;
+    const { isDeleted, id } = record;
     return [
       {
         key: "VIEW_DETAIL",
@@ -33,7 +36,7 @@ const GroupList = () => {
         icon: <PreviewOpen/>,
         onClick: () => {
           groupRef.current = record;
-          // setShowUpdateMaterialTypeModal(true);
+          navigate(routes.dashboard.groups + "/" + id);
         },
       },
       {
@@ -52,7 +55,7 @@ const GroupList = () => {
         icon: !isDeleted ? <Forbid /> : <Unlock />,
         onClick: () => {
           confirm({
-            title: "Xoá loại vật liệu",
+            title: "Xoá nhóm",
             content: `Chắc chắn xoá "${record.name}"?`,
             type: "confirm",
             
@@ -96,8 +99,8 @@ const GroupList = () => {
     },
     {
       title: "Nhóm trưởng",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "leaderName",
+      key: "leaderName",
       render: (_, record) => {
         return (
           <span
@@ -105,11 +108,11 @@ const GroupList = () => {
               /*showModal(record) */
             }}
           >
-            {/* {record.name} */}
+            {record.leaderName}
           </span>
         );
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
     },
     {
       title: "Số công nhân",
@@ -173,14 +176,14 @@ const GroupList = () => {
         </Button>
       </Space>
       <BaseTable
-        title="Danh sách loại vật liệu"
+        title="Danh sách nhóm"
         dataSource={groupList}
         columns={columns}
         loading={loading}
         pagination={true}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm loại vật liệu...",
+          placeholder: "Tìm kiếm nhóm...",
           onSearch: handleSearch,
           width: 300,
         }}

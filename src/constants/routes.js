@@ -9,8 +9,8 @@ const routes = {
 		// admin
 		accounts: "accounts",
 		orders: "orders",
-		quotes: "quotes", // factory
-		// factory
+		quotes: "quotes", // foreman
+		// foreman
 		materials: "materials",
 		materialTypes: "material-types",
 		items: "items",
