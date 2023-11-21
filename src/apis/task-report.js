@@ -1,6 +1,29 @@
 import BaseApi from ".";
+import ApiCodes from "../constants/apiCode";
 
 const resource = "TaskReport";
+
+const errorComposer = (error) => {
+	if (error?.response?.data) {
+		const { code } = error?.response?.data
+		return {
+			code,
+			message: ApiCodes[code],
+		}
+	}
+	return {
+		code: -1,
+		message: "Có lỗi xảy ra",
+	};
+}
+
+const successComposer = (messageId, data) => {
+	return {
+		code: 0,
+		message: ApiCodes[messageId],
+		data: data?.data || data,
+	}
+}
 
 // not implement
 const getAllReport = async (search, pageIndex, pageSize) => {
@@ -114,6 +137,26 @@ const getProblemReportsByManagerId = async (id) => {
   }
 };
 
+const sendAcceptanceReport = async (data) => {
+  try {
+    const response = await BaseApi.post(`/${resource}/CreateAcceptanceReport`, data);
+    return successComposer(response);
+  } catch (error) {
+    console.log("Error send acceptance report: ", error);
+    return errorComposer(error);;
+  }
+};
+
+const sendProblemReport = async (data) => {
+  try {
+    const response = await BaseApi.post(`/${resource}/CreateProblemReport`, data);
+    return successComposer(response);
+  } catch (error) {
+    console.log("Error send problem report: ", error);
+    return errorComposer(error);;
+  }
+};
+
 const ReportApi = {
   getAllReport,
   searchReport,
@@ -121,7 +164,9 @@ const ReportApi = {
   getReportByReportId,
   responseReport,
   getProgressReportsByManagerId,
-  getProblemReportsByManagerId
+  getProblemReportsByManagerId,
+  sendAcceptanceReport,
+  sendProblemReport,
 };
 
 export default ReportApi;

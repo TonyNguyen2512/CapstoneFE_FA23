@@ -14,12 +14,12 @@ const errorComposer = (error) => {
 		const { code } = error?.response?.data
 		return {
 			code,
-			message: ApiCodes[code],
+			message: ApiCodes[code] || "Có lỗi xảy ra",
 		}
 	}
 	return {
+		code: -1,
 		message: "Có lỗi xảy ra",
-		code: -1
 	};
 }
 

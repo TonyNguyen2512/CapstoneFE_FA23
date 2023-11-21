@@ -1,21 +1,27 @@
 import { createContext } from "react";
 
 const TaskContext = createContext({
-	team: undefined,
+	task: undefined,
+	order: undefined,
+	material: undefined,
 	reload: () => {},
 	filterTask: (memberId) => {},
 });
 
 const TaskProvider = ({
 	children,
-	team,
+	task,
+	order,
+	material,
 	onReload,
 	onFilterTask,
 }) => {
 	return (
 		<TaskContext.Provider
 			value={{
-				team: team,
+				task: task,
+				order: order,
+				material: material,
 				reload: onReload,
 				filterTask: onFilterTask,
 			}}

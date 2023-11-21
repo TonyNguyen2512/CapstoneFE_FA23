@@ -1,12 +1,12 @@
 
-import { Button, Card, Col, Dropdown, Empty, Input, Row, Space, Spin, Typography } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { Col, Empty, Input, Row, Space, Spin, Typography } from "antd";
+import React, { useContext, useEffect, useState } from "react";
 import { message } from "antd/lib";
-import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LeaderTasksApi from "../../../../../apis/leader-task";
 import WorkerTaskItem from "./WorkerTaskItem";
 import { UserContext } from "../../../../../providers/user";
-import routes from "../../../../../constants/routes";
+import { useSearchParams } from 'react-router-dom';
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -17,6 +17,7 @@ const WorkerTaskList = () => {
 
   const [leaderTasksInfo, setLeaderTasksInfo] = useState([]);
   const [searchName, setSearchName] = useState([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
 
@@ -29,26 +30,26 @@ const WorkerTaskList = () => {
     const dataLeaderTasks = await LeaderTasksApi.getAll();
     if (dataLeaderTasks.code === 0) {
       setLeaderTasksInfo(dataLeaderTasks);
-
       if (taskName) {
-        navigate({
-          search: createSearchParams({
-            taskName
-          }).toString()
-        });
+        setSearchParams({["taskName"]: taskName});
       }
     } else {
       message.error(dataLeaderTasks.message);
     }
+    setSearchName(taskName)
     setLoading(false);
   };
 
   useEffect(() => {
-    getData(true);
+    getData(true, searchParams.get("taskName"));
   }, []);
 
   const onView = (task) => {
-    navigate(task?.id);
+    navigate(task.id, {
+      state: {
+        taskName: searchName
+      }
+    }, {replace: true});
   }
 
   const handleSearch = (value) => {

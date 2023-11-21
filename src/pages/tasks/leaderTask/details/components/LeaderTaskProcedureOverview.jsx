@@ -3,15 +3,18 @@ import { Col, Descriptions, Row } from "antd/lib";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
 import { eTaskStatus } from "../../../../../constants/enum";
+import { useContext } from "react";
+import { TaskContext } from "../../../../../providers/task";
 
 const { Title } = Typography;
 
 export const LeaderTaskProcedureOverview = ({
   title,
-  dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource.data;
+  const { task } = useContext(TaskContext);
+  const allTasks = task;
+  console.log("allTasks", allTasks)
   const completedTasks = allTasks?.filter(
     (e) => e.status === eTaskStatus.Completed
   );

@@ -33,11 +33,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 			tasks: [],
 		},
 		{
-			id: TaskColumnId.IN_EVALUATE,
-			title: "Đánh giá",
-			tasks: [],
-		},
-		{
 			id: TaskColumnId.COMPLETED,
 			title: "Đã hoàn thành",
 			tasks: [],
@@ -81,7 +76,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 
 		if (!isLeader) {
 			if (finish.id === TaskColumnId.IN_APPROVE
-				|| finish.id === TaskColumnId.IN_EVALUATE
 				|| finish.id === TaskColumnId.COMPLETED) {
 					message.info(
 						"Chỉ trưởng nhóm mới được chuyển trạng thái công việc này"
@@ -107,10 +101,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 				taskStatus = TaskStatus.inProgress;
 				break;
 			case TaskColumnId.IN_APPROVE:
-				taskStatus = TaskStatus.inApprove;
-				break;
-			case TaskColumnId.IN_EVALUATE:
-				taskStatus = TaskStatus.inEvaluete;
+				taskStatus = TaskStatus.pending;
 				break;
 			case TaskColumnId.COMPLETED:
 				taskStatus = TaskStatus.completed;
@@ -135,7 +126,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 
 	function loadColumn(tasks) {
 
-		console.log("task", tasks);
 		const todoTasks = tasks?.filter(
 			(e) => e.status === TaskStatus.new
 		);
@@ -143,10 +133,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 			(e) => e.status === TaskStatus.inProgress
 		);
 		const inApproveTasks = tasks?.filter(
-			(e) => e.status === TaskStatus.inApprove
-		);
-		const inEvaluateTasks = tasks?.filter(
-			(e) => e.status === TaskStatus.inEvaluete
+			(e) => e.status === TaskStatus.pending
 		);
 		const completedTasks = tasks?.filter(
 			(e) => e.status === TaskStatus.completed
@@ -162,9 +149,6 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 			}
 			if (column.id === TaskColumnId.IN_APPROVE) {
 				column.tasks = inApproveTasks;
-			}
-			if (column.id === TaskColumnId.IN_EVALUATE) {
-				column.tasks = inEvaluateTasks;
 			}
 			if (column.id === TaskColumnId.COMPLETED) {
 				column.tasks = completedTasks;
@@ -182,7 +166,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		<DragDropContext onDragEnd={onDragEnd}>
 			<Row gutter={16}>
 				{columns.map((column) => (
-					<Col key={column.id} span={4}>
+					<Col key={column.id} span={6}>
 						<TaskColumn
 							column={column}
 							onViewTask={onViewTask}

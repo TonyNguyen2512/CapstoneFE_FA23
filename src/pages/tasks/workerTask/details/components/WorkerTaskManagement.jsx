@@ -4,17 +4,16 @@ import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
 import { TaskBoard } from "./TaskBoard";
 import { TaskCreateModal } from "../../../../../components/modals/task/create";
-import TaskApi from "../../../../../apis/task";
 import WorkerTasksApi from "../../../../../apis/worker-task";
-import { TeamContext } from "../../../../../providers/team";
 import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
+import ReportApi from "../../../../../apis/task-report";
 
 const { Title } = Typography;
 
-export const WorkerTaskProcedureManagement = ({
+export const WorkerTaskManagement = ({
 	dataLeaderTasks,
 	dataWorkerTasks,
 	dataGroupMembers,
@@ -72,7 +71,12 @@ export const WorkerTaskProcedureManagement = ({
 	const handleSubmitUpdate = async (values) => {
 		console.log("update task: ", values);
 		setTaskUpdating(true);
-		const resp = await WorkerTasksApi.updateWorkerTask(values);
+		let resp = null;
+		if (values.status) {
+			resp = await WorkerTasksApi.updateWorkerTask(values);
+		} else {
+			resp = await ReportApi.sendAcceptanceReport(values);
+		}
 		if (resp.code === 0) {
 			message.success(resp.message);
 			reload(false);

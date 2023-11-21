@@ -25,6 +25,7 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 	const { user } = useContext(UserContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
+	const isCompleted = status === TaskStatus.completed;
 
 	const evaluete = {
 		qualityTask: 4,
@@ -33,14 +34,13 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 	const qualityTaskInfo = qualityTaskOptions?.find((e) => e.value === evaluete?.qualityTask);
 	const attitudeTaskInfo = attitudeTaskOptions?.find((e) => e.value === evaluete?.attitudeTask);
 
-
 	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
 
 	return (
-		<Draggable key={id} draggableId={id} index={index}>
+		<Draggable key={id} draggableId={id} index={index} isDragDisabled={isCompleted}>
 			{(provided) => (
 				<Card
-					hoverable
+					hoverable={isCompleted ? false : true}
 					className="mb-2"
 					{...provided.draggableProps}
 					{...provided.dragHandleProps}
@@ -117,25 +117,8 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 					</Row>
 					{overdue && (
 						<div>
-							<Text strong>Thời hạn: </Text>
 							<Tag color="red-inverse">
 								Đã quá hạn
-							</Tag>
-						</div>
-					)}
-					{qualityTaskInfo && (
-						<div>
-							<Text strong>Chất lượng: </Text>
-							<Tag color={qualityTaskInfo?.color}>
-								{qualityTaskInfo?.label}
-							</Tag>
-						</div>
-					)}
-					{attitudeTaskInfo && (
-						<div>
-							<Text strong>Thái độ: </Text>
-							<Tag color={attitudeTaskInfo?.color}>
-								{attitudeTaskInfo?.label}
 							</Tag>
 						</div>
 					)}

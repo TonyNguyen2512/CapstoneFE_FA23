@@ -265,7 +265,7 @@ export const taskStatusOptions = [
     label: "Đang làm",
   },
   {
-    value: TaskStatus.inApprove,
+    value: TaskStatus.pending,
     label: "Chờ duyệt",
   },
   {

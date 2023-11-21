@@ -1,17 +1,11 @@
-import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
-import { Typography, Modal, Row, Space, message, Spin } from "antd";
+import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
-import { mockTasks } from "../../../../__mocks__/jama/tasks";
-import { mockMaterials } from "../../../../__mocks__/jama/materials";
-import { mockWorkerProcedure } from "../../../../__mocks__/jama/procedures";
 
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
-import { WorkerTaskProcedureOverview } from "./components/WorkerTaskProcedureOverview";
-import { WorkerTaskProcedureManagement } from "./components/WorkerTaskProcedureManagement";
-import OrderApi from "../../../../apis/order";
+import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
+import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
 import LeaderTasksApi from "../../../../apis/leader-task";
-import GroupApi from "../../../../apis/group";
 import UserApi from "../../../../apis/user";
 import WorkerTasksApi from "../../../../apis/worker-task";
 import routes from "../../../../constants/routes";
@@ -25,6 +19,7 @@ export const WorkerTaskDetailsPage = () => {
 
   const { user } = useContext(UserContext);
   const isLeader = user?.role?.name === roles.LEADER;
+  const isForman = user?.role?.name === roles.FOREMAN;
 
   const [loading, setLoading] = useState(false);
   const { leaderTaskId } = useParams();
@@ -33,6 +28,7 @@ export const WorkerTaskDetailsPage = () => {
   const [leaderUserInfo, setLeaderUserInfo] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [workderTaskList, setWorkerTaskList] = useState([]);
+  const [state, setState] = useState([]);
 
   const allTasks = useRef();
 
@@ -93,14 +89,34 @@ export const WorkerTaskDetailsPage = () => {
 
   useEffect(() => {
     getData(leaderTaskId, true);
+    if (location?.state) {
+      setState(location?.state);
+    }
   }, [leaderTaskId]);
 
   const handleSearch = (value) => {
     getData(value);
   };
 
+  const handleBack = () => {
+    let path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`
+    if (state?.taskName) {
+      path += `?taskName=${state?.taskName}`;
+    }
+    if (isForman) {
+      path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`
+      if (state?.orderId) {
+        path += `/${state?.orderId}`;
+      }
+    }
+    console.log("path", path)
+    navigate(path, {
+      state: state
+    }, {replace: true});
+  }
+
   return (
-    <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.workersTasks}`)}>
+    <BasePageContent onBack={() => handleBack()}>
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
@@ -109,7 +125,6 @@ export const WorkerTaskDetailsPage = () => {
               getWorkerTaskList(leaderTaskId, handleLoading);
             }}
             onFilterTask={(memberId) => {
-              console.log("filter task: ", memberId);
               if (memberId) {
                 const newTasks = allTasks.current.filter(
                   (e) => e?.members?.find((x) => x.memberId === memberId) !== undefined
@@ -129,14 +144,14 @@ export const WorkerTaskDetailsPage = () => {
             </div>
             {isLeader && (
               <div className="mt-4">
-                <WorkerTaskProcedureOverview
+                <WorkerTaskOverview
                   title="Tiến độ công việc"
                   dataSource={workderTaskList}
                 />
               </div>
             )}
             <div className="mt-4">
-              <WorkerTaskProcedureManagement
+              <WorkerTaskManagement
                 dataLeaderTasks={leaderTaskInfo}
                 dataWorkerTasks={workderTaskList}
                 dataGroupMembers={groupMemberList}
