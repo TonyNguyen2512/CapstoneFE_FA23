@@ -4,12 +4,45 @@ import TextArea from "antd/lib/input/TextArea";
 import OrderReportApi from "../../../../apis/order-report";
 import { EReport, ReportMap } from "../../../../constants/enum";
 import BaseModal from "../../../../components/BaseModal";
+import { imagesReportRef } from "../../../../middleware/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
-const OrderReportUpdateModal = ({ idOrderReport, open, onCancel }) => {
+const OrderReportUpdateModal = ({ data, idOrderReport, open, onCancel }) => {
+  const isUpdate = !data;
   const formRef = useRef();
 
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [report, setReport] = useState();
+  const [reportImage, setReportImage] = useState(data?.image ?? "");
+
+  const handleUploadReportImage = (event) => {
+    setLoading(true);
+    const file = event.file;
+    const fileName = event.file?.name;
+    const uploadTask = uploadBytesResumable(ref(imagesReportRef, fileName), file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        // update progress
+        setProgress(percent);
+      },
+      (err) => {
+        console.log(err);
+        setLoading(false);
+      },
+      () => {
+        setProgress(0);
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          formRef.current.setFieldValue("image", url);
+          setReportImage(url);
+        });
+      }
+    );
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (open) {

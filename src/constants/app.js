@@ -52,6 +52,18 @@ export const ALL_PERMISSIONS = {
     update: "items.update",
     sider: "items.sider",
   },
+  procedures: {
+    view: "procedures.view",
+    create: "procedures.create",
+    update: "procedures.update",
+    sider: "procedures.sider",
+  },
+  steps: {
+    view: "steps.view",
+    create: "steps.create",
+    update: "steps.update",
+    sider: "steps.sider",
+  },
   itemCategories: {
     view: "itemCategories.view",
     create: "itemCategories.create",
@@ -166,6 +178,16 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.items.view,
     ALL_PERMISSIONS.items.create,
     ALL_PERMISSIONS.items.update,
+    // procedures
+    ALL_PERMISSIONS.procedures.sider,
+    ALL_PERMISSIONS.procedures.view,
+    ALL_PERMISSIONS.procedures.create,
+    ALL_PERMISSIONS.procedures.update,
+    // steps
+    ALL_PERMISSIONS.steps.sider,
+    ALL_PERMISSIONS.steps.view,
+    ALL_PERMISSIONS.steps.create,
+    ALL_PERMISSIONS.steps.update,
     // item categories
     ALL_PERMISSIONS.itemCategories.sider,
     ALL_PERMISSIONS.itemCategories.view,

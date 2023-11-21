@@ -11,6 +11,8 @@ import {
   CategoryManagement,
   AdjacentItem,
   FileEditing,
+  ProcessLine,
+  ListOne,
 } from "@icon-park/react";
 import { Menu, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -42,6 +44,8 @@ export const AppSider = () => {
   const canViewMaterials = permissions?.includes(ALL_PERMISSIONS.materials?.sider);
   const canViewMaterialTypes = permissions?.includes(ALL_PERMISSIONS.materialTypes?.sider);
   const canViewItems = permissions?.includes(ALL_PERMISSIONS.items?.sider);
+  const canViewProcedures = permissions?.includes(ALL_PERMISSIONS.procedures?.sider);
+  const canViewSteps = permissions?.includes(ALL_PERMISSIONS.procedures?.sider);
   const canViewItemCategories = permissions?.includes(ALL_PERMISSIONS.itemCategories?.sider);
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
@@ -66,6 +70,8 @@ export const AppSider = () => {
     MATERIAL_TYPES: "MANAGE_MATERIAL_TYPES",
     P_ITEMS: "P_ITEMS",
     ITEMS: "MANAGE_ITEMS",
+    PROCEDURES: "MANAGE_PROCEDURES",
+    STEPS: "MANAGE_STEPS",
     ITEM_CATEGORIES: "MANAGE_ITEM_CATEGORIES",
     P_EMPLOYEES: "P_EMPLOYEES",
     EMPLOYEES: "MANAGE_EMPLOYEES",
@@ -122,7 +128,7 @@ export const AppSider = () => {
         },
       ],
     },
-    (canViewItemCategories || canViewItems) && {
+    (canViewItemCategories || canViewItems || canViewProcedures || canViewSteps) && {
       key: itemKeys.P_ITEMS,
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
@@ -136,6 +142,16 @@ export const AppSider = () => {
           key: itemKeys.ITEMS,
           icon: <AdjacentItem size={iconSize - 4} />,
           label: <Link to={routes.dashboard.items}>Danh sách sản phẩm</Link>,
+        },
+        canViewProcedures && {
+          key: itemKeys.PROCEDURES,
+          icon: <ProcessLine size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.procedures}>Danh sách thủ tục</Link>,
+        },
+        canViewSteps && {
+          key: itemKeys.STEPS,
+          icon: <ListOne size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.steps}>Danh sách bước</Link>,
         },
       ],
     },

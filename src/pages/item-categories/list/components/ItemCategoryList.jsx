@@ -66,7 +66,7 @@ const ItemCategoryList = () => {
       sorter: (a, b) => a.id.localeCompare(b.id),
     },
     {
-      title: "Tên loại  sản phẩm",
+      title: "Tên loại sản phẩm",
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
