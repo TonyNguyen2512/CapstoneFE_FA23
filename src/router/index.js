@@ -4,20 +4,9 @@ import { LoginPage } from "../pages/login";
 import { RegisterAccountPage } from "../pages/register";
 import { Dashboard } from "../layouts/dashboard";
 import { AccountListPage } from "../pages/accounts/list";
-import { CourseListPage } from "../pages/course/list";
-import { CourseDetailPage } from "../pages/course/detail";
 import RootRoute from "./RootRoute";
 import PageNotFound from "../pages/error/404";
-import ProjectListPage from "../pages/project/list";
-import ProjectDetailPage from "../pages/project/detail";
-import ProfilePage from "../pages/profile";
-import ClassListPage from "../pages/class/list";
-import ClassDetailPage from "../pages/class/detail";
-import { TeamListPage } from "../pages/team/list";
 import OrderReportListPage from "../pages/report/orderReport/list";
-import SemesterListPage from "../pages/semester/list";
-import SemesterDetailPage from "../pages/semester/detail";
-import TeamDetailPage from "../pages/team/detail";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
@@ -30,6 +19,8 @@ import { OrderListPage } from "../pages/orders/list";
 import OrderDetailPage from "../pages/orders/detail";
 import { ItemCategoryListPage } from "../pages/item-categories/list";
 import OrderReportDetailPage from "../pages/report/orderReport/detail";
+import { ProcedureListPage } from "../pages/procedures/list";
+import { StepListPage } from "../pages/steps/list";
 
 export const router = createBrowserRouter([
   {
@@ -80,6 +71,14 @@ export const router = createBrowserRouter([
           {
             path: routes.dashboard.items,
             element: <ItemListPage />,
+          },
+          {
+            path: routes.dashboard.procedures,
+            element: <ProcedureListPage />,
+          },
+          {
+            path: routes.dashboard.steps,
+            element: <StepListPage />,
           },
           {
             path: routes.dashboard.itemCategories,
