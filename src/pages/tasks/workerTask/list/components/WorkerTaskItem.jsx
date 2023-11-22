@@ -1,36 +1,27 @@
-import { Delete, More, PreviewOpen } from "@icon-park/react";
 import {
-	Avatar,
-	Button,
 	Card,
 	Col,
-	Dropdown,
 	Row,
-	Tag,
-	Tooltip,
 	Typography,
 } from "antd";
-import React, { useContext } from "react";
-import { Draggable } from "react-beautiful-dnd";
-import moment, { now } from "moment";
-import { useNavigate } from "react-router-dom";
-import { enumTaskStatuses } from "../../../../../__mocks__/jama/tasks";
+import React from "react";
 import { TextTile } from "../../../../../components/TextTile";
 import { formatDate } from "../../../../../utils";
-import { SearchOutlined, StarTwoTone } from "@ant-design/icons";
+import { SearchOutlined } from "@ant-design/icons";
+import { eTaskColors, eTaskLabels } from "../../../../../constants/enum";
 
 const { Text } = Typography;
 
 const WorkerTaskItem = ({ task, onView }) => {
 
-	const { id, name, members, startTime, endTime, status } = task;
+	const { id, name, startTime, endTime, status } = task;
 
 	const getTaskStatus = (status) => {
-		return enumTaskStatuses[status]?.name || "Không Xác Định";
+		return eTaskLabels[status] || "Không Xác Định";
 	};
 
 	const getTaskStatusColor = (status) => {
-		return enumTaskStatuses[status]?.color || "#FF0000";
+		return eTaskColors[status] || "#FF0000";
 	};
 
 	return (
@@ -38,8 +29,8 @@ const WorkerTaskItem = ({ task, onView }) => {
 			<Card
 				className="mb-2"
 				title={`Công việc ${name}`}
-				// style={{ width: 500 }}
 				extra={<SearchOutlined className="mt-1" style={{ fontSize: '20px', color: '#08c' }} onClick={() => onView && onView(task)} />}
+				key={id}
 			>
 				<Row gutter={[16, 16]}>
 					<Col className="gutter-row" span={8}>

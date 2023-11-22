@@ -16,23 +16,18 @@ import { TextTile } from "../../../../../../components/TextTile";
 import { formatDate } from "../../../../../../utils";
 import moment, { now } from "moment";
 import { UserContext } from "../../../../../../providers/user";
-import { TaskStatus } from "../../../../../../constants/enum";
+import { TaskStatus, eTaskStatus } from "../../../../../../constants/enum";
 import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
+import { TaskContext } from "../../../../../../providers/task";
 
 const { Text } = Typography;
 
 export const TaskItem = ({ task, index, onView, onDelete }) => {
 	const { user } = useContext(UserContext);
+	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
 	const isCompleted = status === TaskStatus.completed;
-
-	const evaluete = {
-		qualityTask: 4,
-		attitudeTask: 3,
-	}
-	const qualityTaskInfo = qualityTaskOptions?.find((e) => e.value === evaluete?.qualityTask);
-	const attitudeTaskInfo = attitudeTaskOptions?.find((e) => e.value === evaluete?.attitudeTask);
 
 	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
 
@@ -89,7 +84,7 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 								{members?.map((item) => {
 									const names = item.memberFullName.split(" ");
 									const lastName = names[names.length - 1];
-									const isCurrentUser = user?.userId === item?.memberId;
+									const isCurrentUser = user?.id === item?.memberId;
 									return (
 										<Tooltip
 											key={id}

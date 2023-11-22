@@ -38,6 +38,27 @@ export const LeaderTaskModal = ({
 		await onSubmit({ ...values });
 	};
 
+	const toDataURL = async (url) => {
+		const xhr = new XMLHttpRequest();
+		xhr.responseType = 'blob';
+		xhr.onload = (event) => {
+		const blob = xhr.response;
+		};
+		xhr.open('GET', url);
+		xhr.send();
+		console.log(url)
+		
+	}
+
+	const download = async () => {
+		const a = document.createElement("a");
+		a.href = toDataURL("https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Ftamnt-sj.appspot.com%2Fo%2FTestExcel2.xlsx%3Falt%3Dmedia%26token%3Dbeaa9410-7c47-45ba-956c-8646f23c613e%26_gl%3D1*en1r41*_ga*MTEwMDcxMTY0Mi4xNjk2MjUxNDAx*_ga_CW55HF8NVT*MTY5ODQ5NjQ3Ny4yMC4xLjE2OTg0OTY2NzQuNjAuMC4w&wdOrigin=BROWSELINK");
+		a.download = "myImage.png";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+	}
+
 	const handleTitle = () => {
 		switch (mode) {
 			case modalModes.UPDATE:
@@ -290,7 +311,7 @@ export const LeaderTaskModal = ({
 								name="drawings2D"
 								label="Bản vẽ 2D"
 							>
-								<a href={drawings2D} download="image.png">test</a>
+								<a onClick={(e) => download()}>test</a>
 							</Form.Item>
 						</Card>
 					</Col>

@@ -1,6 +1,6 @@
 import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { createSearchParams, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
 import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
@@ -13,6 +13,8 @@ import { TaskProvider } from "../../../../providers/task";
 import { UserContext } from "../../../../providers/user";
 import { roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import GroupApi from "../../../../apis/group";
+import OrderApi from "../../../../apis/order";
 
 
 export const WorkerTaskDetailsPage = () => {
@@ -25,9 +27,9 @@ export const WorkerTaskDetailsPage = () => {
   const { leaderTaskId } = useParams();
 
   const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
-  const [leaderUserInfo, setLeaderUserInfo] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [workderTaskList, setWorkerTaskList] = useState([]);
+  const [materialList, setMaterialList] = useState([]);
   const [state, setState] = useState([]);
 
   const allTasks = useRef();
@@ -35,48 +37,13 @@ export const WorkerTaskDetailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getData = async (leaderTaskId, handleLoading) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
-
-    if (!leaderTaskId) return;
-
-    // retrieve leader task data by id
-    const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
-    if (dataLeaderTask.code !== 0) {
-      message.error = dataLeaderTask.message;
-      return;
-    }
-
-    // retrieve order detail by order id
-    const dataLeaderUser = await UserApi.getUserById(dataLeaderTask?.data?.leaderId);
-    // if (dataLeaderUser.code !== 0) {
-    //   message.error = dataLeaderUser.message;
-    //   return;
-    // }
-
-    // const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
-    const dataGroupMembers = await UserApi.getAll();
-    // if (dataGroupMembers.code !== 0) {
-    //   message.error = dataGroupMembers.message;
-    //   return;
-    // }
-    setLeaderTaskInfo(dataLeaderTask?.data);
-    setLeaderUserInfo(dataLeaderUser);
-    setGroupMemberList(dataGroupMembers);
-
-    getWorkerTaskList(leaderTaskId);
-
-    setLoading(false);
-  };
-
   const getWorkerTaskList = async (leaderTaskId, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
 
     const dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
+    console.log("dataWorkerTasks", dataWorkerTasks)
     if (dataWorkerTasks.code !== 0) {
       message.error = dataWorkerTasks.message;
       return;
@@ -88,14 +55,58 @@ export const WorkerTaskDetailsPage = () => {
   }
 
   useEffect(() => {
+    const getData = async (leaderTaskId, handleLoading) => {
+      if (handleLoading) {
+        setLoading(true);
+      }
+  
+      if (!leaderTaskId) return;
+  
+      // retrieve leader task data by id
+      const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
+      if (dataLeaderTask.code !== 0) {
+        message.error = dataLeaderTask?.message;
+        return;
+      }
+      console.log("dataLeaderTask", dataLeaderTask)
+  
+      // retrieve order detail by order id
+      const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataLeaderTask?.data?.orderId);
+  
+      // retrieve order detail by order id
+      let dataLeaderUser = [];
+      if (dataLeaderTask?.data?.leaderId) {
+        dataLeaderUser = await UserApi.getUserById(dataLeaderTask?.data?.leaderId);
+      }
+      // if (dataLeaderUser.code !== 0) {
+      //   message.error = dataLeaderUser.message;
+      //   return;
+      // }
+  
+      // const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+      const dataGroupMembers = await UserApi.getAll();
+      // if (dataGroupMembers.code !== 0) {
+      //   message.error = dataGroupMembers.message;
+      //   return;
+      // }
+      console.log("dataGroupMembers", dataGroupMembers)
+      setLeaderTaskInfo(dataLeaderTask?.data);
+      setGroupMemberList(dataGroupMembers);
+      setMaterialList(dataMaterials);
+  
+      getWorkerTaskList(leaderTaskId);
+  
+      setLoading(false);
+    }
+
     getData(leaderTaskId, true);
     if (location?.state) {
       setState(location?.state);
     }
-  }, [leaderTaskId]);
+  }, [location, leaderTaskId]);
 
   const handleSearch = (value) => {
-    getData(value);
+    // getData(value);
   };
 
   const handleBack = () => {
@@ -120,7 +131,10 @@ export const WorkerTaskDetailsPage = () => {
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
-            task={workderTaskList}
+            tasks={workderTaskList}
+            info={leaderTaskInfo}
+            team={groupMemberList}
+            material={materialList}
             onReload={(handleLoading) => {
               getWorkerTaskList(leaderTaskId, handleLoading);
             }}
@@ -137,8 +151,6 @@ export const WorkerTaskDetailsPage = () => {
           >
             <div className="mt-4">
               <WorkerTaskInfo
-                dataLeaderTasks={leaderTaskInfo}
-                dataGroupMembers={groupMemberList}
                 loading={loading}
               />
             </div>
@@ -146,16 +158,11 @@ export const WorkerTaskDetailsPage = () => {
               <div className="mt-4">
                 <WorkerTaskOverview
                   title="Tiến độ công việc"
-                  dataSource={workderTaskList}
                 />
               </div>
             )}
             <div className="mt-4">
-              <WorkerTaskManagement
-                dataLeaderTasks={leaderTaskInfo}
-                dataWorkerTasks={workderTaskList}
-                dataGroupMembers={groupMemberList}
-              />
+              <WorkerTaskManagement />
             </div>
           </TaskProvider>
         </Space>

@@ -13,7 +13,7 @@ import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { imagesRef } from "../../../../middleware/firebase";
+import { imagesItemRef } from "../../../../middleware/firebase";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -26,16 +26,15 @@ const TaskDetailModal = ({
 	onSubmit,
 	confirmLoading,
 	task,
-	dataGroupMembers,
 }) => {
 	const taskFormRef = useRef();
 	const nameRef = useRef();
 	const descRef = useRef();
-	const titleRef = useRef();
 	const contentRef = useRef();
 
-	// const { task } = useContext(TaskContext);
 	const { user } = useContext(UserContext);
+	const { team } = useContext(TaskContext);
+	
 	const [loading, setLoading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [resourceImage, setResourceImage] = useState(task?.report?.resource ?? "");
@@ -86,7 +85,7 @@ const TaskDetailModal = ({
 		setLoading(true);
 		const file = event.file;
 		const fileName = event.file?.name;
-		const uploadTask = uploadBytesResumable(ref(imagesRef, fileName), file);
+		const uploadTask = uploadBytesResumable(ref(imagesItemRef, fileName), file);
 		uploadTask.on(
 			"state_changed",
 			(snapshot) => {
@@ -218,7 +217,7 @@ const TaskDetailModal = ({
 											mode="multiple"
 											className="w-full"
 											placeholder="Chọn thành viên"
-											options={dataGroupMembers?.map((e) => {
+											options={team?.map((e) => {
 												return {
 													label: `${e.fullName}`,
 													value: e.id,

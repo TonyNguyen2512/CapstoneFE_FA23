@@ -15,12 +15,10 @@ import { LeaderTaskModal } from "../../components/LeaderTaskModal";
 
 export const LeaderTaskProcedure = ({
   title,
-  orderInfo,
-  dataSource,
   reloadData,
 }) => {
 
-  const { task, order, reload } = useContext(TaskContext);
+  const { tasks, info, reload } = useContext(TaskContext);
 
   const { Title } = Typography;
   const [titleInfo, setTitleInfo] = useState([]);
@@ -34,7 +32,7 @@ export const LeaderTaskProcedure = ({
   const leaderTaskInfo = useRef();
 
   useEffect(() => {
-    setTitleInfo(title + ` (${task ? task?.length : 0})`)
+    setTitleInfo(title + ` (${tasks ? tasks?.length : 0})`)
   });
 
   const getActionItems = (record) => {
@@ -49,7 +47,7 @@ export const LeaderTaskProcedure = ({
           leaderTaskInfo.current = record;
           navigate(routes.dashboard.workersTasks + "/" + id, {
             state: {
-              orderId: order.id
+              orderId: info.id
             }
           }, {replace: true});
         },
@@ -109,6 +107,7 @@ export const LeaderTaskProcedure = ({
       key: "priority",
       defaultSortOrder: 'ascend',
       // align: "center",
+      width: "10%",
       render: (_, record) => {
         return <span>{record.priority}</span>;
       },
@@ -135,17 +134,6 @@ export const LeaderTaskProcedure = ({
         return <span>{record?.item?.name}</span>;
       },
     },
-    // {
-    //   title: "Mô tả",
-    //   dataIndex: "description",
-    //   key: "description",
-    //   align: "center",
-    //   render: (_, record) => {
-    //     return <span>{record.description}</span>;
-    //   },
-    //   sorter: (a, b) => a.description.localeCompare(b.description),
-    //   width: 300,
-    // },
     {
       title: "Ngày bắt đầu",
       dataIndex: "startTime",
@@ -210,7 +198,7 @@ export const LeaderTaskProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: orderInfo?.id,
+      orderId: info.id,
     }
     console.log("create", data)
     const create = await LeaderTasksApi.createLeaderTasks(data);
@@ -267,7 +255,7 @@ export const LeaderTaskProcedure = ({
           <Title level={4} style={{ margin: 0 }}>
             {titleInfo}
           </Title>
-          {orderInfo?.status === OrderStatus.InProgress &&
+          {info?.status === OrderStatus.InProgress &&
             <Button
               icon={<Plus />}
               className="flex-center ml-3"
@@ -279,7 +267,7 @@ export const LeaderTaskProcedure = ({
         </Row>
       </Row>
       <BaseTable
-        dataSource={task}
+        dataSource={tasks}
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}

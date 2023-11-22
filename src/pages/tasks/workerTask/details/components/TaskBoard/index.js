@@ -8,11 +8,10 @@ import { UserContext } from "../../../../../../providers/user";
 import WorkerTasksApi from "../../../../../../apis/worker-task";
 import { TaskContext } from "../../../../../../providers/task";
 
-export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
+export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 
-	// const [user, setUser] = useState([]);
 	const { user } = useContext(UserContext);
-	const { reload } = useContext(TaskContext);
+	const { tasks, reload } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 
@@ -57,9 +56,9 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		}
 		var canDrop = true;
 		const taskId = draggableId;
-		const task = dataSource?.find((e) => e.id === taskId);
+		const task = tasks?.find((e) => e.id === taskId);
 		const ownedTask =
-			task?.members.find((e) => e.id === user?.userId) !== undefined;
+			task?.members.find((e) => e.id === user?.id) !== undefined;
 
 		if (!isLeader && !ownedTask) {
 			canDrop = false;
@@ -84,6 +83,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 				}
 		}
 
+		// TODO
 		// const sourceTask = columns.find((e) => e.id === source.droppableId);
 		// if (sourceTask.id === TaskColumnId.COMPLETED) {
 		// 	message.error(
@@ -114,17 +114,17 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		if (taskId !== undefined && taskStatus !== undefined) {
 			console.log("drag drop", taskId, taskStatus)
 			WorkerTasksApi.updateWorkerTasksStatus(taskId, taskStatus).then((success) => {
-				if (success.code === 0) {
+				if (success?.code === 0) {
 					console.log("success")
 					reload(false);
 				} else {
-					message.error(success.message);
+					message?.error(success?.message);
 				}
 			});
 		}
 	};
 
-	function loadColumn(tasks) {
+	function loadColumn() {
 
 		const todoTasks = tasks?.filter(
 			(e) => e.status === TaskStatus.new
@@ -142,25 +142,24 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		for (let i = 0; i < newColumns.length; i++) {
 			const column = newColumns[i];
 			if (column.id === TaskColumnId.TODO) {
-				column.tasks = todoTasks;
+				column.tasks = todoTasks || [];
 			}
 			if (column.id === TaskColumnId.IN_PROGRESS) {
-				column.tasks = inProgressTasks;
+				column.tasks = inProgressTasks || [];
 			}
 			if (column.id === TaskColumnId.IN_APPROVE) {
-				column.tasks = inApproveTasks;
+				column.tasks = inApproveTasks || [];
 			}
 			if (column.id === TaskColumnId.COMPLETED) {
-				column.tasks = completedTasks;
+				column.tasks = completedTasks || [];
 			}
 		}
 		setColumns(newColumns);
 	}
 
 	useEffect(() => {
-		const tasks = dataSource;
-		loadColumn(tasks);
-	}, [dataSource]);
+		loadColumn();
+	}, []);
 
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>

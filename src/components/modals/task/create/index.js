@@ -7,6 +7,7 @@ import BaseModal from "../../../BaseModal";
 import { RichTextEditor } from "../../../RichTextEditor";
 import locale from "antd/es/date-picker/locale/vi_VN";
 import { taskStatusOptions } from "../../../../constants/app";
+import { TaskContext } from "../../../../providers/task";
 
 export const TaskCreateModal = ({
 	open,
@@ -16,9 +17,7 @@ export const TaskCreateModal = ({
 	dataGroupMembers,
 }) => {
 	const { user } = useContext(UserContext);
-	const { team } = useContext(TeamContext);
-
-	const isLeader = user?.userId === team?.leader?.id;
+	const { team } = useContext(TaskContext);
 
 	const formRef = useRef();
 	const descRef = useRef();
@@ -107,8 +106,8 @@ export const TaskCreateModal = ({
 							]}
 						>
 							<Select
-								options={dataGroupMembers?.map((e) => {
-									const isLeader = team?.leader?.id === e.id;
+								options={team?.map((e) => {
+									const isLeader = user?.id === e.id;
 									return {
 										label: `${e.fullName}${isLeader ? " (Trưởng nhóm)" : ""}`,
 										value: e.id,

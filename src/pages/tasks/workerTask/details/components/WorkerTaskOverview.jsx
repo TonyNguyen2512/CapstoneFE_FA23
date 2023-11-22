@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
 import { TaskStatus } from "../../../../../constants/enum";
+import { useContext } from "react";
+import { TaskContext } from "../../../../../providers/task";
 
 const { Title } = Typography;
 
@@ -15,10 +17,10 @@ const ProcedureStatus = {
 
 export const WorkerTaskOverview = ({
   title,
-  dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource;
+  const { tasks } = useContext(TaskContext);
+  const allTasks = tasks;
   const completedTasks = allTasks?.filter(
     (e) => e.status === TaskStatus.completed
   );

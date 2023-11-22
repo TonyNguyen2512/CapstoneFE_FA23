@@ -16,17 +16,10 @@ import { dateSort, formatMoney, formatNum } from "../../../../../utils";
 const LeaderTaskList = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-  const { id } = useParams();
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [taskCreateLoading, setTaskCreateLoading] = useState(false);
-  const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
   const [orderList, setOrderList] = useState([]);
   const navigate = useNavigate();
 
-  const taskRef = useRef();
   const userRef = useRef();
-  // const rolesRef = useRef();
 
   const getData = async () => {
     setLoading(true);
@@ -148,16 +141,6 @@ const LeaderTaskList = () => {
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          className="btn-primary app-bg-primary font-semibold text-white"
-          type="primary"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Thêm vật liệu
-      </Button>
-      </Space>
       <BaseTable
         title="Danh sách công việc"
         dataSource={orderList}

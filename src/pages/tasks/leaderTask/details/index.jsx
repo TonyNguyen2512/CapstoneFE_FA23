@@ -66,8 +66,8 @@ export const LeaderTaskDetailsPage = () => {
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
-            task={taskInfo}
-            order={orderInfo}
+            tasks={taskInfo}
+            info={orderInfo}
             material={materialInfo}
           // onReload={(handleLoading) => {
           //   getWorkerTaskList(leaderTaskId, handleLoading);

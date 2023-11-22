@@ -10,19 +10,18 @@ import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
 import ReportApi from "../../../../../apis/task-report";
+import { eTaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
 
 export const WorkerTaskManagement = ({
-	dataLeaderTasks,
-	dataWorkerTasks,
-	dataGroupMembers,
 }) => {
 
 	const { user } = useContext(UserContext);
-	const { filterTask, reload } = useContext(TaskContext);
+	const { filterTask, reload, tasks, info, team } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+	const isInProgress = info.status === eTaskStatus.InProgress;
 	
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [taskCreating, setTaskCreating] = useState(false);
@@ -34,8 +33,7 @@ export const WorkerTaskManagement = ({
 
 	const handleSubmitCreate = async (values) => {
 		const request = {
-			leaderTaskId: dataLeaderTasks?.id,
-			// stepId: '',
+			leaderTaskId: info?.id,
 			name: values?.taskName,
 			priority: values?.priority,
 			startTime: values?.startTime,
@@ -46,12 +44,12 @@ export const WorkerTaskManagement = ({
 		};
 		setTaskCreating(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
-		if (resp.code === 0) {
-			message.success(resp.message);
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			setShowCreateModal(false);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setTaskCreating(false);
 	};
@@ -59,11 +57,11 @@ export const WorkerTaskManagement = ({
 	const handleDeleteTask = async () => {
 		const currentTask = taskRef.current;
 		const resp = await WorkerTasksApi.deleteWorkerTask(currentTask.id);
-		if (resp.code === 0) {
-			message.success(resp.message);
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setShowDeleteModal(false);
 	};
@@ -77,11 +75,11 @@ export const WorkerTaskManagement = ({
 		} else {
 			resp = await ReportApi.sendAcceptanceReport(values);
 		}
-		if (resp.code === 0) {
-			message.success(resp.message);
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setTaskUpdating(false);
 		setShowDetailModal(false);
@@ -92,9 +90,9 @@ export const WorkerTaskManagement = ({
 			<Row align="middle" className="mb-3" justify="space-between">
 				<Row align="middle">
 					<Title level={5} style={{ margin: 0 }}>
-						Công việc ({dataWorkerTasks?.length || 0})
+						Công việc ({tasks?.length || 0})
 					</Title>
-					{isLeader && (
+					{isLeader && isInProgress && (
 						<Button
 							icon={<Plus />}
 							className="flex-center ml-3"
@@ -107,9 +105,9 @@ export const WorkerTaskManagement = ({
 					<Select
 						allowClear
 						placeholder="Chọn thành viên"
-						options={dataGroupMembers?.map((e) => {
+						options={team?.map((e) => {
 							return {
-								label: `${e.fullName}${e.id === user?.userId ? " (Tôi)" : ""}`,
+								label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
 								value: e.id,
 							};
 						})}
@@ -130,14 +128,12 @@ export const WorkerTaskManagement = ({
 					taskRef.current = task;
 					setShowDeleteModal(true);
 				}}
-				dataSource={dataWorkerTasks}
 			/>
 			<TaskCreateModal
 				open={showCreateModal}
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
 				confirmLoading={taskCreating}
-				dataGroupMembers={dataGroupMembers}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
@@ -145,7 +141,6 @@ export const WorkerTaskManagement = ({
 				onSubmit={handleSubmitUpdate}
 				confirmLoading={taskUpdating}
 				task={taskRef.current}
-				dataGroupMembers={dataGroupMembers}
 			/>
 			<ConfirmDeleteModal
 				title={`Bạn muốn xóa công việc ${taskRef?.current?.name} ?`}

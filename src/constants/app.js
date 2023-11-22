@@ -1,4 +1,4 @@
-import { TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, TaskStatus } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -404,3 +404,22 @@ export const attitudeTaskOptions = [
     color: "#CB7A00",
   },
 ];
+
+export const SupplyOptions = [
+  {
+    value: SupplyStatus.Fail,
+    label: SupplyLabel[0],
+  },
+  {
+    value: SupplyStatus.Missing,
+    label: SupplyLabel[1],
+  },
+  {
+    value: SupplyStatus.AcceptByCustomer,
+    label: SupplyLabel[2],
+  },
+  {
+    value: SupplyStatus.RejectByCustomer,
+    label: SupplyLabel[3],
+  },
+]
