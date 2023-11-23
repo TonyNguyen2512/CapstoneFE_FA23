@@ -13,7 +13,7 @@ import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { imagesItemRef } from "../../../../middleware/firebase";
+import { workerTaskReportsRef } from "../../../../middleware/firebase";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -34,10 +34,11 @@ const TaskDetailModal = ({
 
 	const { user } = useContext(UserContext);
 	const { team } = useContext(TaskContext);
-	
+
 	const [loading, setLoading] = useState(false);
 	const [progress, setProgress] = useState(0);
 	const [resourceImage, setResourceImage] = useState(task?.report?.resource ?? "");
+	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 
 	const isLeader = user?.userId === task?.leader?.id;
 	const ownedTask =
@@ -47,66 +48,123 @@ const TaskDetailModal = ({
 	const isCompleted = task?.status === TaskStatus.completed;
 
 	const onFinish = async (values) => {
-		const dates = values.dates;
-		const id = task?.id;
-		const startTime = dates?.[0];
-		const endTime = dates?.[1];
-		const name = nameRef.current;
-		const description = descRef.current;
-		const status = values.status;
-		const assignees = values.assignees;
-		const title = values.title;
-		const content = values.content;
-		const resource = [values.resource];
 
-		const data = {
-			id,
-			name,
-			startTime,
-			endTime,
-			description,
-			status,
-			assignees,
-		};
+		const resourceImg = taskFormRef.current.getFieldValue('resource');
+		if (!resourceImg || resourceImg?.length === 0) {
+			handleValidateUpload();
+		} else {
+			const dates = values.dates;
+			const id = task?.id;
+			const startTime = dates?.[0];
+			const endTime = dates?.[1];
+			const name = nameRef.current;
+			const description = descRef.current;
+			const status = values.status;
+			const assignees = values.assignees;
+			const title = values.title;
+			const content = values.content;
+			const resource = [resourceImg];
 
-		if (isPending) {
-			data = {
-				title,
-				content,
-				resource,
-				acceptanceTaskId: id
+			const data = {
+				id,
+				name,
+				startTime,
+				endTime,
+				description,
+				status,
+				assignees,
+			};
+
+			if (isPending) {
+				data = {
+					title,
+					content,
+					resource,
+					acceptanceTaskId: id
+				}
 			}
-		}
 
-		await onSubmit(data);
+			await onSubmit(data);
+		}
 	};
 
-	const handleUploadImage = (event) => {
+	const handleUploadImage = ({
+		file,
+		onSuccess,
+		onError,
+		onProgress,
+	}) => {
+		console.log("handleUploadImage");
 		setLoading(true);
-		const file = event.file;
-		const fileName = event.file?.name;
-		const uploadTask = uploadBytesResumable(ref(imagesItemRef, fileName), file);
+		// const file = event.file;
+		const fileName = file?.name;
+		const uploadTask = uploadBytesResumable(ref(workerTaskReportsRef, fileName), file);
 		uploadTask.on(
 			"state_changed",
 			(snapshot) => {
 				const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
 				// update progress
-				setProgress(percent);
+				onProgress(percent);
+
+				switch (snapshot.state) {
+					case 'paused': // or 'paused'
+						console.log("Upload is p aused");
+						break;
+					case 'running': // or 'running'
+						console.log("Upload is running");
+						break;
+				}
 			},
 			(err) => {
 				console.log(err);
 				setLoading(false);
+				onError(err);
 			},
 			() => {
-				setProgress(0);
 				// download url
 				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
 					taskFormRef.current.setFieldValue("resource", url);
 					setResourceImage(url);
+					console.log("handleUploadImage success", url);
+
+					onSuccess(url);
 				});
 			}
 		);
 		setLoading(false);
+	};
+
+	const handleValidateUpload = () => {
+		setResourceErrorMsg("Vui lòng thêm ảnh đánh giá");
+	}
+
+	const handleChangeUploadImage = (info) => {
+		// setFileList(newFileList);
+		console.log('handleChange', info);
+		if (info.file.status === 'uploading') {
+			console.log('setting loading to true');
+			// this.setState({ loading: true });
+			setLoading(true);
+			// return;
+		}
+		if (info.file.status === 'done') {
+			console.log('setting loading to false');
+			setLoading(false);
+		}
+		setResourceErrorMsg("");
+	};
+
+	const handleRemoveUploadImage = (info) => {
+		info.fileList = [];
+		setResourceImage([]);
+		taskFormRef.current.setFieldValue("resource", "");
+	}
+
+	const normFile = (e) => {
+		if (Array.isArray(e)) {
+			return e;
+		}
+		return e?.fileList;
 	};
 
 	useEffect(() => {
@@ -120,9 +178,15 @@ const TaskDetailModal = ({
 			width={(isPending || isCompleted) ? "90%" : "50%"}
 			title="Thông tin công việc"
 			open={open}
-			onCancel={onCancel}
+			onCancel={() => {
+				setResourceErrorMsg("");
+				onCancel();
+			}}
 			okText="Lưu"
-			onOk={() => taskFormRef.current?.submit()}
+			onOk={() => {
+				handleValidateUpload(taskFormRef.current?.getFieldValue('resource'));
+				taskFormRef.current?.submit();
+			}}
 			confirmLoading={confirmLoading}
 			okButtonProps={{ style: { display: isCompleted ? 'none' : '' } }}
 		>
@@ -309,22 +373,35 @@ const TaskDetailModal = ({
 										/>
 									}
 								</Form.Item>
+								<Form.Item name="resource" hidden>
+									<Input />
+								</Form.Item>
+
 								<Form.Item
-									name="resource"
-									label={<Text strong>Tải ảnh</Text>}
+									label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
+									valuePropName="fileList"
+									getValueFromEvent={normFile}
+									validateStatus="error"
+									help={resourceErrorMsg}
 								>
 									<Upload
 										listType="picture"
-										beforeUpload={() => false}
+										// beforeUpload={() => false}
 										accept=".jpg,.jepg,.png,.svg,.bmp"
-										onChange={handleUploadImage}
+										onChange={handleChangeUploadImage}
 										maxCount={1}
+										customRequest={handleUploadImage}
+										onRemove={handleRemoveUploadImage}
 									>
-										<Button
-											disabled={isCompleted}
-											icon={<UploadOutlined />}>
-											Upload
-										</Button>
+										{isCompleted ? (
+											<img alt="avatar" style={{ width: '100%' }} />
+										) :
+											(<Button
+												disabled={isCompleted}
+												icon={<UploadOutlined />}>
+												Upload
+											</Button>)
+										}
 									</Upload>
 								</Form.Item>
 							</Card>

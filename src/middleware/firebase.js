@@ -31,5 +31,7 @@ export const imagesReportRef = ref(storage, "Reports/Images");
 export const imagesProfileRef = ref(storage, "Profiles/Images");
 export const quotesRef = ref(storage, "Orders/Quotes");
 export const contractsRef = ref(storage, "Orders/Contracts");
+export const leaderTaskReportsRef = ref(storage, "Report/LeaderTask/Images");
+export const workerTaskReportsRef = ref(storage, "Report/WorkerTask/Images");
 
 export default storage;

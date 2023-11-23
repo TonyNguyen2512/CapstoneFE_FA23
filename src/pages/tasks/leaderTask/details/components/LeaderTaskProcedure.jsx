@@ -12,10 +12,11 @@ import LeaderTasksApi from "../../../../../apis/leader-task";
 import routes from "../../../../../constants/routes";
 import { TaskContext } from "../../../../../providers/task";
 import { LeaderTaskModal } from "../../components/LeaderTaskModal";
+import ReportApi from "../../../../../apis/task-report";
+import { LeaderTaskReportModal } from "../../components/LeaderTaskReportModal";
 
 export const LeaderTaskProcedure = ({
   title,
-  reloadData,
 }) => {
 
   const { tasks, info, reload } = useContext(TaskContext);
@@ -26,8 +27,10 @@ export const LeaderTaskProcedure = ({
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [eTaskCreateLoading, setETaskCreateLoading] = useState(false);
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
+  const [eTaskReportLoading, setETaskReportLoading] = useState(false);
 
   const leaderTaskInfo = useRef();
 
@@ -49,7 +52,7 @@ export const LeaderTaskProcedure = ({
             state: {
               orderId: info.id
             }
-          }, {replace: true});
+          }, { replace: true });
         },
       },
       {
@@ -58,6 +61,14 @@ export const LeaderTaskProcedure = ({
         icon: <Edit />,
         onClick: () => {
           handleShowModal(record?.id);
+        },
+      },
+      {
+        key: "REPORT_ROLE",
+        label: "Báo cáo công việc",
+        icon: <Edit />,
+        onClick: () => {
+          handleShowReportModal(record?.id);
         },
       },
       {
@@ -88,16 +99,21 @@ export const LeaderTaskProcedure = ({
     return eTaskColors[status] || "#FF0000";
   };
 
+  const handleShowReportModal = async (eTaskId) => {
+    if (!eTaskId) return;
+    setShowReportModal(true);
+  }
+
   const handleShowModal = async (eTaskId) => {
-		if (!eTaskId) return;
-		const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
-		if (data.code === 0) {
+    if (!eTaskId) return;
+    const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
+    if (data.code === 0) {
       console.log("data detail", data.data)
       leaderTaskInfo.current = data.data;
       setShowUpdateModal(true);
-		} else {
-			message.error = data.message;
-		}
+    } else {
+      message.error = data.message;
+    }
   }
 
   const columns = [
@@ -201,15 +217,22 @@ export const LeaderTaskProcedure = ({
       orderId: info.id,
     }
     console.log("create", data)
-    const create = await LeaderTasksApi.createLeaderTasks(data);
-    if (create.code === 0) {
-      message.success(create.message);
-      setShowCreateModal(false);
-      reloadData();
-    } else {
-      message.error(create.message);
+    try {
+      const create = await LeaderTasksApi.createLeaderTasks(data);
+      if (create.code === 0) {
+        message.destroy();
+        message.success(create.message);
+        setShowCreateModal(false);
+        reload(false);
+      } else {
+        message.destroy();
+        message.error(create.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setETaskCreateLoading(false);
     }
-    setETaskCreateLoading(false);
   };
 
   const handleSubmitUpdate = async (values) => {
@@ -224,28 +247,57 @@ export const LeaderTaskProcedure = ({
       description: values?.description,
       status: values?.status,
     }
-    console.log("update task: ", data);
-    const update = await LeaderTasksApi.updateLeaderTasks(data);
-    if (update.code === 0) {
-      message.success(update.message);
-      setShowUpdateModal(false);
-      reloadData();
-    } else {
-      message.error(update.message);
+    try {
+      console.log("update task: ", data);
+      const update = await LeaderTasksApi.updateLeaderTasks(data);
+      if (update.code === 0) {
+        message.success(update.message);
+        setShowUpdateModal(false);
+        reload(false);
+      } else {
+        message.warning(update.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setETaskUpdateLoading(false);
     }
-    setETaskUpdateLoading(false);
+  };
+
+  const handleSubmitReport = async (values) => {
+    setETaskReportLoading(true);
+    console.log("update task: ", values);
+    try {
+      const report = await ReportApi.sendAcceptanceReport(values);
+      if (report.code === 0) {
+        message.success(report.message);
+        setShowReportModal(false);
+        reload(false);
+      } else {
+        message.warning(report.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setETaskReportLoading(false);
+    }
   };
 
   const deleteTaskProcedure = async (value) => {
     setLoading(true);
-    const success = await LeaderTasksApi.deleteLeaderTasks(value);
-    if (success) {
-      message.success(success.message);
-    } else {
-      message.error(success.message);
+    try {
+      const success = await LeaderTasksApi.deleteLeaderTasks(value);
+      if (success) {
+        message.success(success.message);
+        reload(false);
+      } else {
+        message.warning(success.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
-    reloadData();
-    setLoading(false);
   };
 
   return (
@@ -271,6 +323,7 @@ export const LeaderTaskProcedure = ({
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}
+        rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm vật liệu...",
@@ -300,6 +353,17 @@ export const LeaderTaskProcedure = ({
         dataSource={leaderTaskInfo.current}
         mode={modalModes.UPDATE}
         message={message}
+      />
+      <LeaderTaskReportModal
+        open={showReportModal}
+        onCancel={() => {
+          leaderTaskInfo.current = null;
+          setShowReportModal(false);
+        }}
+        onSubmit={handleSubmitReport}
+        confirmLoading={eTaskReportLoading}
+        message={message}
+        title="Báo cáo công việc"
       />
     </>
   );

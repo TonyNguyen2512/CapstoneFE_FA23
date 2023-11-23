@@ -45,11 +45,11 @@ export const WorkerTaskManagement = ({
 		setTaskCreating(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			setShowCreateModal(false);
 			reload(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setTaskCreating(false);
 	};
@@ -58,10 +58,10 @@ export const WorkerTaskManagement = ({
 		const currentTask = taskRef.current;
 		const resp = await WorkerTasksApi.deleteWorkerTask(currentTask.id);
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			reload(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setShowDeleteModal(false);
 	};
@@ -76,10 +76,10 @@ export const WorkerTaskManagement = ({
 			resp = await ReportApi.sendAcceptanceReport(values);
 		}
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			reload(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setTaskUpdating(false);
 		setShowDetailModal(false);

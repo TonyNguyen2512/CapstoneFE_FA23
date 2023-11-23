@@ -43,7 +43,6 @@ export const WorkerTaskDetailsPage = () => {
     }
 
     const dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
-    console.log("dataWorkerTasks", dataWorkerTasks)
     if (dataWorkerTasks.code !== 0) {
       message.error = dataWorkerTasks.message;
       return;
@@ -68,7 +67,6 @@ export const WorkerTaskDetailsPage = () => {
         message.error = dataLeaderTask?.message;
         return;
       }
-      console.log("dataLeaderTask", dataLeaderTask)
   
       // retrieve order detail by order id
       const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataLeaderTask?.data?.orderId);
@@ -89,7 +87,6 @@ export const WorkerTaskDetailsPage = () => {
       //   message.error = dataGroupMembers.message;
       //   return;
       // }
-      console.log("dataGroupMembers", dataGroupMembers)
       setLeaderTaskInfo(dataLeaderTask?.data);
       setGroupMemberList(dataGroupMembers);
       setMaterialList(dataMaterials);
@@ -120,7 +117,6 @@ export const WorkerTaskDetailsPage = () => {
         path += `/${state?.orderId}`;
       }
     }
-    console.log("path", path)
     navigate(path, {
       state: state
     }, {replace: true});
