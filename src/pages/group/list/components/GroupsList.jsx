@@ -36,7 +36,7 @@ const GroupList = () => {
         icon: <PreviewOpen/>,
         onClick: () => {
           groupRef.current = record;
-          navigate(routes.dashboard.groups + "/" + id);
+          navigate(record?.id)
         },
       },
       {
@@ -116,8 +116,8 @@ const GroupList = () => {
     },
     {
       title: "Số công nhân",
-      dataIndex: "member",
-      key: "member",
+      dataIndex: "amountWorker",
+      key: "amountWorker",
       render: (_, record) => {
         return (
           <span
@@ -125,11 +125,11 @@ const GroupList = () => {
               /*showModal(record) */
             }}
           >
-            {record.member}
+            {record.amountWorker}
           </span>
         );
       },
-      sorter: (a, b) => a.member - b.member,
+      sorter: (a, b) => a.amountWorker - b.amountWorker,
     },
     {
       title: "Thao tác",

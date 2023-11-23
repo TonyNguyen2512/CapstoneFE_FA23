@@ -21,6 +21,23 @@ const getAllUserByGroupId = async (id) => {
 	}
 };
 
+const getWorkersByGroupId = async (id) => {
+	try {
+		const response = await BaseApi.get(
+			`/${resource}/GetWorkersByGroupId/${id}`,
+			{
+				params: {
+					groupId: id,
+				},
+			}
+		);
+		return response.data;
+	} catch (error) {
+		console.log("Error search class: ", error);
+		return [];
+	}
+};
+
 const getAllUserNotInGroupId = async (id) => {
 	try {
 		const response = await BaseApi.post(
@@ -146,6 +163,7 @@ const deleteGroup = async (id) => {
 const GroupApi = {
 	getAllUserByGroupId,
 	getAllUserNotInGroupId,
+	getWorkersByGroupId,
 	getAll,
 	createGroup,
 	updateGroup,
