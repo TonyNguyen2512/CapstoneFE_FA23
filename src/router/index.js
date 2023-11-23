@@ -4,17 +4,16 @@ import { LoginPage } from "../pages/login";
 import { RegisterAccountPage } from "../pages/register";
 import { Dashboard } from "../layouts/dashboard";
 import { AccountListPage } from "../pages/accounts/list";
-import { CourseListPage } from "../pages/course/list";
-import { CourseDetailPage } from "../pages/course/detail";
 import RootRoute from "./RootRoute";
 import PageNotFound from "../pages/error/404";
-import ProjectListPage from "../pages/project/list";
-import ProjectDetailPage from "../pages/project/detail";
-import ProfilePage from "../pages/profile";
-import ProjectReportListPage from "../pages/report/list";
-import SemesterListPage from "../pages/semester/list";
-import SemesterDetailPage from "../pages/semester/detail";
-import ProjectReportDetailPage from "../pages/report/detail";
+// import ProjectListPage from "../pages/project/list";
+// import ProjectDetailPage from "../pages/project/detail";
+// import ProfilePage from "../pages/profile";
+// import ProjectReportListPage from "../pages/report/list";
+// import SemesterListPage from "../pages/semester/list";
+// import SemesterDetailPage from "../pages/semester/detail";
+// import ProjectReportDetailPage from "../pages/report/detail";
+// import OrderReportListPage from "../pages/report/orderReport/list";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
@@ -28,67 +27,78 @@ import OrderDetailPage from "../pages/orders/detail";
 import { ItemCategoryListPage } from "../pages/item-categories/list";
 import { GroupListPage } from "../pages/group/list";
 import GroupDetailPage from "../pages/group/detail";
+import OrderReportDetailPage from "../pages/report/orderReport/detail";
+import { ProcedureListPage } from "../pages/procedures/list";
+import { StepListPage } from "../pages/steps/list";
 
 export const router = createBrowserRouter([
-	{
-		path: routes.root,
-		element: <RootRoute />,
-		errorElement: <PageNotFound />,
-		children: [
-			{
-				path: routes.login,
-				element: <LoginPage />,
-			},
-			{
-				path: routes.register,
-				element: <RegisterAccountPage />,
-			},
-			{
-				path: routes.dashboard.root,
-				element: <Dashboard />,
-				children: [
-					{
-						path: routes.dashboard.home,
-						element: <HomePage />,
-					},
-					{
-						path: routes.dashboard.accounts,
-						element: <AccountListPage />,
-					},
-					{
-						path: routes.dashboard.orders,
-						element: <OrderListPage />,
-					},
-					{
-						path: `${routes.dashboard.orders}/:id`,
-						element: <OrderDetailPage />,
-					},
-					{
-						path: routes.dashboard.quotes,
-						element: <AccountListPage />,
-					},
-					{
-						path: routes.dashboard.materials,
-						element: <MaterialListPage />,
-					},
-					{
-						path: routes.dashboard.materialTypes,
-						element: <MaterialTypeListPage />,
-					},
-					{
-						path: routes.dashboard.items,
-						element: <ItemListPage />,
-					},
-					{
-						path: routes.dashboard.itemCategories,
-						element: <ItemCategoryListPage />,
-					},
-					//
-					{
-						path: routes.dashboard.workersTasks,
-						element: <WorkerTaskListPage />,
-					},
-					{
+  {
+    path: routes.root,
+    element: <RootRoute />,
+    errorElement: <PageNotFound />,
+    children: [
+      {
+        path: routes.login,
+        element: <LoginPage />,
+      },
+      {
+        path: routes.register,
+        element: <RegisterAccountPage />,
+      },
+      {
+        path: routes.dashboard.root,
+        element: <Dashboard />,
+        children: [
+          {
+            path: routes.dashboard.home,
+            element: <HomePage />,
+          },
+          {
+            path: routes.dashboard.accounts,
+            element: <AccountListPage />,
+          },
+          {
+            path: routes.dashboard.orders,
+            element: <OrderListPage />,
+          },
+          {
+            path: `${routes.dashboard.orders}/:id`,
+            element: <OrderDetailPage />,
+          },
+          {
+            path: routes.dashboard.quotes,
+            element: <AccountListPage />,
+          },
+          {
+            path: routes.dashboard.materials,
+            element: <MaterialListPage />,
+          },
+          {
+            path: routes.dashboard.materialTypes,
+            element: <MaterialTypeListPage />,
+          },
+          {
+            path: routes.dashboard.items,
+            element: <ItemListPage />,
+          },
+          {
+            path: routes.dashboard.procedures,
+            element: <ProcedureListPage />,
+          },
+          {
+            path: routes.dashboard.steps,
+            element: <StepListPage />,
+          },
+          {
+            path: routes.dashboard.itemCategories,
+            element: <ItemCategoryListPage />,
+          },
+          //
+          {
+            path: routes.dashboard.workersTasks,
+            element: <WorkerTaskListPage />,
+          },
+          {
 						path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
 						element: <WorkerTaskDetailsPage />,
 					},

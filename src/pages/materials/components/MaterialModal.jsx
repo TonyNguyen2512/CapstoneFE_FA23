@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   ColorPicker,
@@ -16,6 +16,8 @@ import { MaterialSelect } from "./MaterialSelect";
 import { useSearchParams } from "react-router-dom";
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import storage, { imagesMaterialRef } from "../../../middleware/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 // const initValues = {
 //   id: "",
@@ -41,6 +43,9 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [materialImage, setMaterialImage] = useState(data?.image ?? "");
+  const formRef = useRef();
 
   console.log({ ...data, importDate: dayjs(data?.importDate, "DD/MM/YYYY") });
   console.log("Data: ", data);
@@ -56,9 +61,37 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
     margin: "center",
   };
 
+  const handleUploadImage = (event) => {
+    setLoading(true);
+    const file = event.file;
+    const fileName = event.file?.name;
+    const uploadTask = uploadBytesResumable(ref(imagesMaterialRef, fileName), file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        // update progress
+        setProgress(percent);
+      },
+      (err) => {
+        console.log(err);
+        setLoading(false);
+      },
+      () => {
+        setProgress(0);
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          formRef.current.setFieldValue("image", url);
+          setMaterialImage(url);
+        });
+      }
+    );
+    setLoading(false);
+  };
+
   const handleMaterial = async (values) => {
     setLoading(true);
-    console.log('asdsdgafhgdjf', values);
+    console.log("asdsdgafhgdjf", values);
     const body = { ...values, color: typeof color === "string" ? color : color.toHexString() };
     const success = isCreate
       ? await MaterialApi.createMaterial(body)

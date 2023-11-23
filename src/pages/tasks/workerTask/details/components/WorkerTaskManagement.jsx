@@ -4,26 +4,24 @@ import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
 import { TaskBoard } from "./TaskBoard";
 import { TaskCreateModal } from "../../../../../components/modals/task/create";
-import TaskApi from "../../../../../apis/task";
 import WorkerTasksApi from "../../../../../apis/worker-task";
-import { TeamContext } from "../../../../../providers/team";
 import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
+import ReportApi from "../../../../../apis/task-report";
+import { eTaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
 
-export const WorkerTaskProcedureManagement = ({
-	dataLeaderTasks,
-	dataWorkerTasks,
-	dataGroupMembers,
+export const WorkerTaskManagement = ({
 }) => {
 
 	const { user } = useContext(UserContext);
-	const { filterTask, reload } = useContext(TaskContext);
+	const { filterTask, reload, tasks, info, team } = useContext(TaskContext);
 
-	const isLeader = user?.role?.name === roles.LEADER;
+	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+	const isInProgress = info.status === eTaskStatus.InProgress;
 	
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [taskCreating, setTaskCreating] = useState(false);
@@ -35,8 +33,7 @@ export const WorkerTaskProcedureManagement = ({
 
 	const handleSubmitCreate = async (values) => {
 		const request = {
-			leaderTaskId: dataLeaderTasks?.id,
-			// stepId: '',
+			leaderTaskId: info?.id,
 			name: values?.taskName,
 			priority: values?.priority,
 			startTime: values?.startTime,
@@ -47,12 +44,12 @@ export const WorkerTaskProcedureManagement = ({
 		};
 		setTaskCreating(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
-		if (resp.code === 0) {
-			message.success(resp.message);
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			setShowCreateModal(false);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setTaskCreating(false);
 	};
@@ -60,11 +57,11 @@ export const WorkerTaskProcedureManagement = ({
 	const handleDeleteTask = async () => {
 		const currentTask = taskRef.current;
 		const resp = await WorkerTasksApi.deleteWorkerTask(currentTask.id);
-		if (resp.code === 0) {
-			message.success(resp.message);
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setShowDeleteModal(false);
 	};
@@ -72,12 +69,17 @@ export const WorkerTaskProcedureManagement = ({
 	const handleSubmitUpdate = async (values) => {
 		console.log("update task: ", values);
 		setTaskUpdating(true);
-		const resp = await WorkerTasksApi.updateWorkerTask(values);
-		if (resp.code === 0) {
-			message.success(resp.message);
+		let resp = null;
+		if (values.status) {
+			resp = await WorkerTasksApi.updateWorkerTask(values);
+		} else {
+			resp = await ReportApi.sendAcceptanceReport(values);
+		}
+		if (resp?.code === 0) {
+			message?.success(resp?.message);
 			reload(false);
 		} else {
-			message.error(resp.message);
+			message?.error(resp?.message);
 		}
 		setTaskUpdating(false);
 		setShowDetailModal(false);
@@ -88,9 +90,9 @@ export const WorkerTaskProcedureManagement = ({
 			<Row align="middle" className="mb-3" justify="space-between">
 				<Row align="middle">
 					<Title level={5} style={{ margin: 0 }}>
-						Công việc ({dataWorkerTasks?.length || 0})
+						Công việc ({tasks?.length || 0})
 					</Title>
-					{isLeader && (
+					{isLeader && isInProgress && (
 						<Button
 							icon={<Plus />}
 							className="flex-center ml-3"
@@ -103,9 +105,9 @@ export const WorkerTaskProcedureManagement = ({
 					<Select
 						allowClear
 						placeholder="Chọn thành viên"
-						options={dataGroupMembers?.map((e) => {
+						options={team?.map((e) => {
 							return {
-								label: `${e.fullName}${e.id === user?.userId ? " (Tôi)" : ""}`,
+								label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
 								value: e.id,
 							};
 						})}
@@ -119,26 +121,26 @@ export const WorkerTaskProcedureManagement = ({
 			<TaskBoard
 				onViewTask={(task) => {
 					taskRef.current = task;
+					console.log("taskRef.current ", taskRef.current )
 					setShowDetailModal(true);
 				}}
 				onDeleteTask={(task) => {
 					taskRef.current = task;
 					setShowDeleteModal(true);
 				}}
-				dataSource={dataWorkerTasks}
 			/>
 			<TaskCreateModal
 				open={showCreateModal}
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
 				confirmLoading={taskCreating}
-				dataGroupMembers={dataGroupMembers}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
 				onCancel={() => setShowDetailModal(false)}
 				onSubmit={handleSubmitUpdate}
 				confirmLoading={taskUpdating}
+				task={taskRef.current}
 			/>
 			<ConfirmDeleteModal
 				title={`Bạn muốn xóa công việc ${taskRef?.current?.name} ?`}

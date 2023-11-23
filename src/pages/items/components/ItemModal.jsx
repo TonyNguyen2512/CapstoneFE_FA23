@@ -3,7 +3,7 @@ import BaseModal from "../../../components/BaseModal";
 import { Button, Form, Input, Select, Space, Upload, message } from "antd";
 import ItemApi from "../../../apis/item";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { drawingsRef, imagesRef } from "../../../middleware/firebase";
+import { drawingsRef, imagesItemRef } from "../../../middleware/firebase";
 import { UploadOutlined } from "@ant-design/icons";
 
 export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) => {
@@ -22,7 +22,7 @@ export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) =
     setLoading(true);
     const file = event.file;
     const fileName = event.file?.name;
-    const uploadTask = uploadBytesResumable(ref(imagesRef, fileName), file);
+    const uploadTask = uploadBytesResumable(ref(imagesItemRef, fileName), file);
     uploadTask.on(
       "state_changed",
       (snapshot) => {

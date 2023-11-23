@@ -12,7 +12,7 @@ const initialize = () => {
     //     return `${localStorage.getItem("jwt")}`
     //   }
     // })
-    .withUrl(`${process.env.REACT_APP_API_URL}${process.env.REACT_APP_SIGNALR_HUB}`, {headers:{}})
+    .withUrl(`${process.env.REACT_APP_API_URL}${process.env.REACT_APP_SIGNALR_HUB}`, { headers: {} })
     .withAutomaticReconnect()
     .build();
   console.log(_connection);

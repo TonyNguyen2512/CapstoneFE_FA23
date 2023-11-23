@@ -11,6 +11,8 @@ import {
   CategoryManagement,
   AdjacentItem,
   FileEditing,
+  ProcessLine,
+  ListOne,
 } from "@icon-park/react";
 import { Menu, Typography } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -42,6 +44,8 @@ export const AppSider = () => {
   const canViewMaterials = permissions?.includes(ALL_PERMISSIONS.materials?.sider);
   const canViewMaterialTypes = permissions?.includes(ALL_PERMISSIONS.materialTypes?.sider);
   const canViewItems = permissions?.includes(ALL_PERMISSIONS.items?.sider);
+  const canViewProcedures = permissions?.includes(ALL_PERMISSIONS.procedures?.sider);
+  const canViewSteps = permissions?.includes(ALL_PERMISSIONS.procedures?.sider);
   const canViewItemCategories = permissions?.includes(ALL_PERMISSIONS.itemCategories?.sider);
   const canViewEmployees = permissions?.includes(ALL_PERMISSIONS.employees?.sider);
   const canViewGroups = permissions?.includes(ALL_PERMISSIONS.groups?.sider);
@@ -52,7 +56,7 @@ export const AppSider = () => {
   const canViewWorkersTasks = permissions?.includes(ALL_PERMISSIONS.workersTasks?.sider);
   const canViewWorkersReports = permissions?.includes(ALL_PERMISSIONS.workersReports?.sider);
   const canViewTasks = permissions?.includes(ALL_PERMISSIONS.tasks?.sider);
-  const canViewReports = permissions?.includes(ALL_PERMISSIONS.reports?.sider);
+  const canViewOrderReports = permissions?.includes(ALL_PERMISSIONS.orderReports?.sider);
 
   const itemKeys = {
     DASHBOARD: "DASHBOARD",
@@ -66,6 +70,8 @@ export const AppSider = () => {
     MATERIAL_TYPES: "MANAGE_MATERIAL_TYPES",
     P_ITEMS: "P_ITEMS",
     ITEMS: "MANAGE_ITEMS",
+    PROCEDURES: "MANAGE_PROCEDURES",
+    STEPS: "MANAGE_STEPS",
     ITEM_CATEGORIES: "MANAGE_ITEM_CATEGORIES",
     P_EMPLOYEES: "P_EMPLOYEES",
     EMPLOYEES: "MANAGE_EMPLOYEES",
@@ -73,10 +79,12 @@ export const AppSider = () => {
     SQUADS: "MANAGE_SQUADS",
     MANAGERS_TASKS: "MANAGE_MANAGERS_TASKS",
     MANAGERS_REPORTS: "MANAGE_MANAGERS_REPORTS",
+    ORDER_REPORTS: "MANAGE_ORDER_REPORTS",
     //
     WORKERS: "MANAGE_WORKERS",
     WORKERS_TASKS: "MANAGE_WORKERS_TASKS",
     WORKERS_REPORTS: "MANAGE_WORKERS_REPORTS",
+    LEADER_REPORTS: "MANAGE_LEADER_REPORTS",
     //
     TASKS: "MANAGE_TASKS",
     REPORTS: "MANAGE_REPORTS",
@@ -120,7 +128,7 @@ export const AppSider = () => {
         },
       ],
     },
-    (canViewItemCategories || canViewItems) && {
+    (canViewItemCategories || canViewItems || canViewProcedures || canViewSteps) && {
       key: itemKeys.P_ITEMS,
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
@@ -134,6 +142,16 @@ export const AppSider = () => {
           key: itemKeys.ITEMS,
           icon: <AdjacentItem size={iconSize - 4} />,
           label: <Link to={routes.dashboard.items}>Danh sách sản phẩm</Link>,
+        },
+        canViewProcedures && {
+          key: itemKeys.PROCEDURES,
+          icon: <ProcessLine size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.procedures}>Danh sách thủ tục</Link>,
+        },
+        canViewSteps && {
+          key: itemKeys.STEPS,
+          icon: <ListOne size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.steps}>Danh sách bước</Link>,
         },
       ],
     },
@@ -169,10 +187,10 @@ export const AppSider = () => {
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.workersTasks}>Quản lý công việc</Link>,
     },
-    canViewLeadersReports && {
-      key: itemKeys.MANAGERS_REPORTS,
+    canViewOrderReports && {
+      key: itemKeys.ORDER_REPORTS,
       icon: <HourglassNull size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.root}>Báo cáo tiến độ</Link>,
+      label: <Link to={routes.dashboard.orderReports}>Báo cáo tiến độ</Link>,
     },
     //
 
@@ -191,11 +209,6 @@ export const AppSider = () => {
       key: itemKeys.TASKS,
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.tasks}>Công việc</Link>,
-    },
-    canViewReports && {
-      key: itemKeys.REPORTS,
-      icon: <FileEditing size={iconSize - 4} />,
-      label: <Link to={routes.dashboard.reports}>Danh sách đánh giá</Link>,
     },
   ];
 
@@ -235,6 +248,8 @@ export const AppSider = () => {
         return itemKeys.SQUADS;
       case routes.dashboard.workers:
         return itemKeys.WORKERS;
+      case routes.dashboard.orderReports:
+        return itemKeys.ORDER_REPORTS;
     }
 
     return undefined;

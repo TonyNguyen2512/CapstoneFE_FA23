@@ -4,21 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
 import { TaskStatus } from "../../../../../constants/enum";
+import { useContext } from "react";
+import { TaskContext } from "../../../../../providers/task";
 
 const { Title } = Typography;
 
 const ProcedureStatus = {
   notCompleted: 2,
   completed: 1,
-	new: 0,
+  new: 0,
 };
 
-export const WorkerTaskProcedureOverview = ({
+export const WorkerTaskOverview = ({
   title,
-  dataSource
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const allTasks = dataSource;
+  const { tasks } = useContext(TaskContext);
+  const allTasks = tasks;
   const completedTasks = allTasks?.filter(
     (e) => e.status === TaskStatus.completed
   );
@@ -31,14 +33,13 @@ export const WorkerTaskProcedureOverview = ({
     (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
   )
 
-
   return (
     <Space direction="vertical" className="w-full gap-6">
       <Row justify="middle">
         <Col span={12}>
           <Title level={4} style={{ margin: 0 }} ellipsis>
             {title} ({completedTasks?.length ?? 0}/{allTasks?.length ?? 0})
-					</Title>
+          </Title>
         </Col>
       </Row>
       <ProgressIndicator

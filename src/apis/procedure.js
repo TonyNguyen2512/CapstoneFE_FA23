@@ -1,31 +1,8 @@
 import BaseApi from ".";
 
-const resource = "Item";
+const resource = "Procedure";
 
-const getAllItem = async (search, pageIndex, pageSize) => {
-  try {
-    if (search) {
-      return await searchItem(search, pageIndex, pageSize);
-    } else {
-      var params = {};
-      if (pageIndex) {
-        params = { ...params, pageIndex };
-      }
-      if (pageSize) {
-        params = { ...params, pageSize };
-      }
-      const response = await BaseApi.get(`/${resource}/GetAll`, {
-        params: params,
-      });
-      return response.data;
-    }
-  } catch (error) {
-    console.log("Error enroll item: ", error);
-    return false;
-  }
-};
-
-const searchItem = async (search, pageIndex, pageSize) => {
+const getAllItem = async (search, pageIndex, pageSize = 1000) => {
   try {
     var params = {};
     if (search) {
@@ -87,7 +64,7 @@ const deleteItem = async (id) => {
   }
 };
 
-const ItemApi = {
+const ProcedureApi = {
   getAllItem,
   getItemById,
   createItem,
@@ -95,4 +72,4 @@ const ItemApi = {
   deleteItem,
 };
 
-export default ItemApi;
+export default ProcedureApi;

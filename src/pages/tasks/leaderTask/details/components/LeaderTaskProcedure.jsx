@@ -7,23 +7,20 @@ import { BaseTable } from "../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
-import { LeaderTaskProcedureModal } from "./LeaderTaskProcedureModal";
-import { OrderStatus, eTaskColors, eTaskLabels, eTaskStatus, modalModes } from "../../../../../constants/enum";
+import { OrderStatus, eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
 import LeaderTasksApi from "../../../../../apis/leader-task";
-import { TeamContext } from "../../../../../providers/team";
 import routes from "../../../../../constants/routes";
+import { TaskContext } from "../../../../../providers/task";
+import { LeaderTaskModal } from "../../components/LeaderTaskModal";
 
 export const LeaderTaskProcedure = ({
   title,
-  orderInfo,
-  dataSource,
   reloadData,
 }) => {
 
-  const { reload } = useContext(TeamContext);
+  const { tasks, info, reload } = useContext(TaskContext);
 
   const { Title } = Typography;
-  const [taskList, setTaskList] = useState([]);
   const [titleInfo, setTitleInfo] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -35,8 +32,7 @@ export const LeaderTaskProcedure = ({
   const leaderTaskInfo = useRef();
 
   useEffect(() => {
-    setTaskList(dataSource);
-    setTitleInfo(title + ` (${taskList ? taskList?.length : 0})`)
+    setTitleInfo(title + ` (${tasks ? tasks?.length : 0})`)
   });
 
   const getActionItems = (record) => {
@@ -49,7 +45,11 @@ export const LeaderTaskProcedure = ({
         icon: <PreviewOpen />,
         onClick: () => {
           leaderTaskInfo.current = record;
-          navigate(routes.dashboard.workersTasks + "/" + id);
+          navigate(routes.dashboard.workersTasks + "/" + id, {
+            state: {
+              orderId: info.id
+            }
+          }, {replace: true});
         },
       },
       {
@@ -57,8 +57,7 @@ export const LeaderTaskProcedure = ({
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          leaderTaskInfo.current = record;
-          setShowUpdateModal(true);
+          handleShowModal(record?.id);
         },
       },
       {
@@ -89,6 +88,18 @@ export const LeaderTaskProcedure = ({
     return eTaskColors[status] || "#FF0000";
   };
 
+  const handleShowModal = async (eTaskId) => {
+		if (!eTaskId) return;
+		const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
+		if (data.code === 0) {
+      console.log("data detail", data.data)
+      leaderTaskInfo.current = data.data;
+      setShowUpdateModal(true);
+		} else {
+			message.error = data.message;
+		}
+  }
+
   const columns = [
     {
       title: "Độ ưu tiên",
@@ -96,6 +107,7 @@ export const LeaderTaskProcedure = ({
       key: "priority",
       defaultSortOrder: 'ascend',
       // align: "center",
+      width: "10%",
       render: (_, record) => {
         return <span>{record.priority}</span>;
       },
@@ -118,18 +130,10 @@ export const LeaderTaskProcedure = ({
       dataIndex: "itemName",
       key: "itemName",
       sorter: (a, b) => a.itemName.localeCompare(b.itemName),
+      render: (_, record) => {
+        return <span>{record?.item?.name}</span>;
+      },
     },
-    // {
-    //   title: "Mô tả",
-    //   dataIndex: "description",
-    //   key: "description",
-    //   align: "center",
-    //   render: (_, record) => {
-    //     return <span>{record.description}</span>;
-    //   },
-    //   sorter: (a, b) => a.description.localeCompare(b.description),
-    //   width: 300,
-    // },
     {
       title: "Ngày bắt đầu",
       dataIndex: "startTime",
@@ -194,15 +198,15 @@ export const LeaderTaskProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: orderInfo?.id,
+      orderId: info.id,
     }
+    console.log("create", data)
     const create = await LeaderTasksApi.createLeaderTasks(data);
     if (create.code === 0) {
       message.success(create.message);
       setShowCreateModal(false);
       reloadData();
     } else {
-      console.log("create", create)
       message.error(create.message);
     }
     setETaskCreateLoading(false);
@@ -251,7 +255,7 @@ export const LeaderTaskProcedure = ({
           <Title level={4} style={{ margin: 0 }}>
             {titleInfo}
           </Title>
-          {orderInfo?.status === OrderStatus.InProgress &&
+          {info?.status === OrderStatus.InProgress &&
             <Button
               icon={<Plus />}
               className="flex-center ml-3"
@@ -263,7 +267,7 @@ export const LeaderTaskProcedure = ({
         </Row>
       </Row>
       <BaseTable
-        dataSource={taskList}
+        dataSource={tasks}
         columns={columns}
         loading={loading}
         pagination={{ pageSize: 3 }}
@@ -274,7 +278,7 @@ export const LeaderTaskProcedure = ({
           width: 300,
         }}
       />
-      <LeaderTaskProcedureModal
+      <LeaderTaskModal
         open={showCreateModal}
         onCancel={() => {
           leaderTaskInfo.current = null;
@@ -285,7 +289,7 @@ export const LeaderTaskProcedure = ({
         dataSource={[]}
         mode={modalModes.CREATE}
       />
-      <LeaderTaskProcedureModal
+      <LeaderTaskModal
         open={showUpdateModal}
         onCancel={() => {
           leaderTaskInfo.current = null;

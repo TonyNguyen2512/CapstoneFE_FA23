@@ -10,35 +10,38 @@ import {
 	Tooltip,
 	Typography,
 } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext } from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { TextTile } from "../../../../../../components/TextTile";
-// import { TeamContext } from "../../../../../providers/team";
 import { formatDate } from "../../../../../../utils";
 import moment, { now } from "moment";
 import { UserContext } from "../../../../../../providers/user";
-import { TaskStatus } from "../../../../../../constants/enum";
+import { TaskStatus, eTaskStatus } from "../../../../../../constants/enum";
+import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
+import { TaskContext } from "../../../../../../providers/task";
 
 const { Text } = Typography;
 
-export const TaskItem = ({ task, index, onView, onDelete, avatar }) => {
+export const TaskItem = ({ task, index, onView, onDelete }) => {
 	const { user } = useContext(UserContext);
+	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
+	const isCompleted = status === TaskStatus.completed;
 
 	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
 
 	return (
-		<Draggable key={id} draggableId={id} index={index}>
+		<Draggable key={id} draggableId={id} index={index} isDragDisabled={isCompleted}>
 			{(provided) => (
 				<Card
-					hoverable
+					hoverable={isCompleted ? false : true}
 					className="mb-2"
 					{...provided.draggableProps}
 					{...provided.dragHandleProps}
 					ref={provided.innerRef}
 					title={name}
-					headStyle={{fontSize: "small"}}
+					headStyle={{ fontSize: "small" }}
 					extra={
 						<Dropdown
 							menu={{
@@ -81,21 +84,19 @@ export const TaskItem = ({ task, index, onView, onDelete, avatar }) => {
 								{members?.map((item) => {
 									const names = item.memberFullName.split(" ");
 									const lastName = names[names.length - 1];
-									const isCurrentUser = user?.userId === item?.memberId;
-									const backgroundColor = avatar?.find((e) => e.id === item?.memberId);
-									console.log("item?.memberId", item?.memberId)
-									console.log("avatar", avatar)
-									console.log("backgroundColor", backgroundColor);
+									const isCurrentUser = user?.id === item?.memberId;
 									return (
 										<Tooltip
-											key={item.id}
+											key={id}
 											title={`${item.memberFullName}${isCurrentUser ? " (Bạn)" : ""}`}
 										>
 											<Avatar
-												key={item.memberId}
+												key={id}
 												style={{
 													cursor: "text",
-													backgroundColor: backgroundColor?.color,
+													backgroundColor: isCurrentUser
+														? "#f56a00"
+														: undefined,
 													border: isCurrentUser
 														? "solid 2px lightblue"
 														: undefined,
@@ -110,9 +111,11 @@ export const TaskItem = ({ task, index, onView, onDelete, avatar }) => {
 						</Col>
 					</Row>
 					{overdue && (
-						<Tag className="mt-4" color="red-inverse">
-							Đã quá hạn
-						</Tag>
+						<div>
+							<Tag color="red-inverse">
+								Đã quá hạn
+							</Tag>
+						</div>
 					)}
 				</Card>
 			)}

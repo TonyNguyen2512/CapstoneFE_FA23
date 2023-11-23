@@ -7,7 +7,6 @@ const { Title } = Typography;
 
 export const BasePageContent = ({ children, onBack, title, action }) => {
 	const navigate = useNavigate();
-
 	return (
 		<div>
 			<Row align="middle" justify="space-between">

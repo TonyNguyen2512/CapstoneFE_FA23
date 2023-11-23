@@ -14,12 +14,12 @@ const errorComposer = (error) => {
 		const { code } = error?.response?.data
 		return {
 			code,
-			message: ApiCodes[code],
+			message: ApiCodes[code] || "Có lỗi xảy ra",
 		}
 	}
 	return {
+		code: -1,
 		message: "Có lỗi xảy ra",
-		code: -1
 	};
 }
 
@@ -132,8 +132,18 @@ const getLeaderTaskById = async (id) => {
 
 const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize) => {
 	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
-			searchName, pageIndex, pageSize
+			params: params,
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
