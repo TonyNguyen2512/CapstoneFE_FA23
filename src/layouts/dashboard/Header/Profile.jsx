@@ -5,9 +5,8 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../providers/user";
 import routes from "../../../constants/routes";
-import { roles } from "../../../constants/app";
 import styled from "styled-components";
-import SignalR from "../../../middleware/signalr";
+import useMicrosoftSignalR from "../../../hooks/microsoftSignalr";
 
 const Container = styled.div`
   color: white;
@@ -15,8 +14,27 @@ const Container = styled.div`
 
 export const ProfileBar = () => {
   const navigate = useNavigate();
+  const { createMicrosoftSignalrConnection, ENotificationHub } = useMicrosoftSignalR();
+
   const { user, setUser } = useContext(UserContext);
-  const [notificationsCount, setCount] = useState(0);
+  const [notificationCount, setNotificationCount] = useState(0);
+
+  useEffect(() => {
+    initNotificationSignalR();
+  }, []);
+
+  const initNotificationSignalR = () => {
+    // connect to hub
+    const connection = createMicrosoftSignalrConnection(ENotificationHub.EndPoint);
+
+    const method = ENotificationHub.Method;
+
+    // listen to method name
+    connection?.on(method.NewNotify, (res) => {
+      console.log("Received a message from the server:", res);
+      setNotificationCount(res?.countUnseen || 0);
+    });
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
@@ -40,16 +58,11 @@ export const ProfileBar = () => {
     },
   ];
 
-  // useEffect(() => {
-  //   SignalR.initialize();
-  //   console.log(SignalR.connection);
-  // });
-
   return (
     <Container theme="light">
       <Space size={24} style={{ margin: "0 0.5rem" }}>
-        {notificationsCount > 0 ? (
-          <Badge count={notificationsCount}>
+        {notificationCount > 0 ? (
+          <Badge count={notificationCount}>
             <BellFilled className="text-[#666] text-2xl relative top-1" />
           </Badge>
         ) : (
@@ -63,7 +76,7 @@ export const ProfileBar = () => {
           items,
         }}
       >
-        <span className="cursor-pointer text-[#666] font-semibold" style={{ marginRight: "0px"}}>
+        <span className="cursor-pointer text-[#666] font-semibold" style={{ marginRight: "0px" }}>
           {user?.fullName}
           <Down className="ml-1 absolute top-[0.2rem] bottom-0" />
         </span>
