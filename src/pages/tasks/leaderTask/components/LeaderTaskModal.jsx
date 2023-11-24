@@ -7,7 +7,6 @@ import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum
 import ItemApi from "../../../../apis/item";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
-import { Down } from "@icon-park/react";
 import { formatDate } from "../../../../utils";
 
 const { Text } = Typography;

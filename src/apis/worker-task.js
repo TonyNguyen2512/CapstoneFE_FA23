@@ -125,6 +125,16 @@ const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize =
 	}
 };
 
+const sendFeedback = async (data) => {
+	try {
+		const response = await BaseApi.put(`/${resource}/SendFeedback`, data);
+		return response.status === 200 && successComposer(udpateSuccessCode);
+	} catch (error) {
+		console.log("Error send feedback task: ", error);
+		return errorComposer(error);
+	}
+};
+
 const WorkerTasksApi = {
 	createWorkerTask,
 	updateWorkerTask,
@@ -133,6 +143,7 @@ const WorkerTasksApi = {
 	getWorkerTaskById,
 	getWorkerTaskByLeaderTaskId,
 	getWorkerTaskByUserId,
+	sendFeedback,
 };
 
 export default WorkerTasksApi;

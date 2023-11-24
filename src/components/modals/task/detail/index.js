@@ -1,19 +1,19 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import BaseModal from "../../../BaseModal";
 import { EditableInput } from "../../../EditableInput";
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography, Upload } from "antd";
+import { Button, Card, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
 import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { attitudeTaskOptions, qualityTaskOptions, taskStatusOptions } from "../../../../constants/app";
+import { taskStatusOptions } from "../../../../constants/app";
 import { TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { UploadOutlined } from "@ant-design/icons";
 import { workerTaskReportsRef } from "../../../../middleware/firebase";
+import { UploadFile } from "../../../UploadFile";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -37,8 +37,9 @@ const TaskDetailModal = ({
 
 	const [loading, setLoading] = useState(false);
 	const [progress, setProgress] = useState(0);
-	const [resourceImage, setResourceImage] = useState(task?.report?.resource ?? "");
+	const [resourceImage, setResourceImage] = useState(task?.resource?.[0] ?? "");
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
+	// const [fileListUrl, setFileListUrl] = useState([]);
 
 	const isLeader = user?.userId === task?.leader?.id;
 	const ownedTask =
@@ -50,9 +51,7 @@ const TaskDetailModal = ({
 	const onFinish = async (values) => {
 
 		const resourceImg = taskFormRef.current.getFieldValue('resource');
-		if (!resourceImg || resourceImg?.length === 0) {
-			handleValidateUpload();
-		} else {
+		if (handleValidateUpload()) {
 			const dates = values.dates;
 			const id = task?.id;
 			const startTime = dates?.[0];
@@ -61,11 +60,11 @@ const TaskDetailModal = ({
 			const description = descRef.current;
 			const status = values.status;
 			const assignees = values.assignees;
-			const title = values.title;
-			const content = values.content;
+			const feedbackTitle = values.feedbackTitle;
+			const feedbackContent = values.feedbackContent;
 			const resource = [resourceImg];
 
-			const data = {
+			let data = {
 				id,
 				name,
 				startTime,
@@ -77,10 +76,11 @@ const TaskDetailModal = ({
 
 			if (isPending) {
 				data = {
-					title,
-					content,
+					workerTaskId: id,
+					status,
+					feedbackTitle,
+					feedbackContent,
 					resource,
-					acceptanceTaskId: id
 				}
 			}
 
@@ -88,89 +88,36 @@ const TaskDetailModal = ({
 		}
 	};
 
-	const handleUploadImage = ({
-		file,
-		onSuccess,
-		onError,
-		onProgress,
-	}) => {
-		console.log("handleUploadImage");
-		setLoading(true);
-		// const file = event.file;
-		const fileName = file?.name;
-		const uploadTask = uploadBytesResumable(ref(workerTaskReportsRef, fileName), file);
-		uploadTask.on(
-			"state_changed",
-			(snapshot) => {
-				const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-				// update progress
-				onProgress(percent);
-
-				switch (snapshot.state) {
-					case 'paused': // or 'paused'
-						console.log("Upload is p aused");
-						break;
-					case 'running': // or 'running'
-						console.log("Upload is running");
-						break;
-				}
-			},
-			(err) => {
-				console.log(err);
-				setLoading(false);
-				onError(err);
-			},
-			() => {
-				// download url
-				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-					taskFormRef.current.setFieldValue("resource", url);
-					setResourceImage(url);
-					console.log("handleUploadImage success", url);
-
-					onSuccess(url);
-				});
-			}
-		);
-		setLoading(false);
-	};
-
 	const handleValidateUpload = () => {
-		setResourceErrorMsg("Vui lòng thêm ảnh đánh giá");
+		const resource = taskFormRef.current?.getFieldValue('resource');
+		if (!resource || resource.length === 0) {
+			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+			return false;
+		} else {
+			setResourceErrorMsg("");
+			return true;
+		}
 	}
 
 	const handleChangeUploadImage = (info) => {
-		// setFileList(newFileList);
-		console.log('handleChange', info);
-		if (info.file.status === 'uploading') {
-			console.log('setting loading to true');
-			// this.setState({ loading: true });
-			setLoading(true);
-			// return;
-		}
-		if (info.file.status === 'done') {
-			console.log('setting loading to false');
-			setLoading(false);
-		}
+		// console.log('handleChange', info);
+		// if (info.file.status === 'uploading') {
+		// 	console.log('setting loading to true');
+		// 	// this.setState({ loading: true });
+		// 	setLoading(true);
+		// 	// return;
+		// }
+		// if (info.file.status === 'done') {
+		// 	console.log('setting loading to false');
+		// 	setLoading(false);
+		// }
 		setResourceErrorMsg("");
-	};
-
-	const handleRemoveUploadImage = (info) => {
-		info.fileList = [];
-		setResourceImage([]);
-		taskFormRef.current.setFieldValue("resource", "");
-	}
-
-	const normFile = (e) => {
-		if (Array.isArray(e)) {
-			return e;
-		}
-		return e?.fileList;
 	};
 
 	useEffect(() => {
 		nameRef.current = task?.name;
 		descRef.current = task?.description;
-		contentRef.current = task?.report?.content;
+		contentRef.current = task?.feedbackContent;
 	}, []);
 
 	return (
@@ -184,7 +131,7 @@ const TaskDetailModal = ({
 			}}
 			okText="Lưu"
 			onOk={() => {
-				handleValidateUpload(taskFormRef.current?.getFieldValue('resource'));
+				handleValidateUpload();
 				taskFormRef.current?.submit();
 			}}
 			confirmLoading={confirmLoading}
@@ -193,15 +140,12 @@ const TaskDetailModal = ({
 			<Form
 				ref={taskFormRef}
 				initialValues={{
-					taskName: task?.name,
 					description: task?.description,
 					dates: [dayjs(task?.startTime), dayjs(task?.endTime)],
 					assignees: task?.members?.map((e) => e.memberId),
-					status: task?.status,
-					priority: task?.priority,
-					title: task?.report?.title,
-					content: task?.report?.content,
-					resource: task?.report?.resource,
+					status: task?.status || TaskStatus.new,
+					...task,
+					resource: task?.resource?.[0],
 				}}
 				onFinish={onFinish}
 				layout="vertical"
@@ -259,7 +203,6 @@ const TaskDetailModal = ({
 											className="w-full"
 											placeholder="Chọn trạng thái"
 											options={taskStatusOptions}
-											defaultValue={TaskStatus.new}
 											disabled={!isLeader || isCompleted}
 										/>
 									</Form.Item>
@@ -326,7 +269,7 @@ const TaskDetailModal = ({
 								title="Đánh giá công việc"
 							>
 								<Form.Item
-									name="title"
+									name="feedbackTitle"
 									rules={[
 										{
 											required: true,
@@ -337,7 +280,7 @@ const TaskDetailModal = ({
 								>
 									{isCompleted &&
 										<EditableRichText
-											value={task?.reports?.title}
+											value={task?.feedbackTitle}
 											editable={false}
 										/>
 									}
@@ -351,7 +294,7 @@ const TaskDetailModal = ({
 									}
 								</Form.Item>
 								<Form.Item
-									name="content"
+									name="feedbackContent"
 									label={<Text strong>Nội dung đánh giá</Text>}
 									rules={[
 										{
@@ -362,7 +305,7 @@ const TaskDetailModal = ({
 								>
 									{isCompleted &&
 										<EditableRichText
-											value={task?.reports?.content}
+											value={task?.feedbackContent}
 											editable={false}
 										/>
 									}
@@ -373,37 +316,24 @@ const TaskDetailModal = ({
 										/>
 									}
 								</Form.Item>
-								<Form.Item name="resource" hidden>
-									<Input />
-								</Form.Item>
-
-								<Form.Item
-									label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
-									valuePropName="fileList"
-									getValueFromEvent={normFile}
-									validateStatus="error"
-									help={resourceErrorMsg}
+								<UploadFile
+									formRef={taskFormRef}
+									imageRef={workerTaskReportsRef}
+									itemName="resource"
+									onChange={handleChangeUploadImage}
+									fileAccept=".jpg,.jepg,.png,.svg,.bmp"
+									errorMessage={resourceErrorMsg}
 								>
-									<Upload
-										listType="picture"
-										// beforeUpload={() => false}
-										accept=".jpg,.jepg,.png,.svg,.bmp"
-										onChange={handleChangeUploadImage}
-										maxCount={1}
-										customRequest={handleUploadImage}
-										onRemove={handleRemoveUploadImage}
-									>
-										{isCompleted ? (
-											<img alt="avatar" style={{ width: '100%' }} />
-										) :
-											(<Button
+									{resourceImage ? <img src={resourceImage} alt="avatar" style={{ width: '100%' }} /> : <></>}
+									{isPending ? (
+											<Button
 												disabled={isCompleted}
 												icon={<UploadOutlined />}>
 												Upload
-											</Button>)
+											</Button>
+											) : <></>
 										}
-									</Upload>
-								</Form.Item>
+								</UploadFile>
 							</Card>
 						</Col>
 					}

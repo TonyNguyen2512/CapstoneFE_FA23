@@ -1,13 +1,11 @@
-import { Row, Col, Form, Input, Select, Typography, InputNumber, message, Card, Button, Upload } from "antd";
+import { Row, Col, Form, Input, Typography, Card } from "antd";
 import { useContext, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import { modalModes } from "../../../../constants/enum";
-import { SupplyOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
-import { LoadingOutlined, MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { imagesItemRef, leaderTaskReportsRef } from "../../../../middleware/firebase";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { leaderTaskReportsRef } from "../../../../middleware/firebase";
+import { UploadFile } from "../../../../components/UploadFile";
 
 const { Text } = Typography;
 
@@ -32,59 +30,11 @@ export const LeaderTaskReportModal = ({
 
 	const onFinish = async (values) => {
 		const resource = leadReportFormRef.current?.getFieldValue('resource');
-		if (!resource || resource?.length === 0) {
-			handleValidateUpload();
-		} else {
+		if (handleValidateUpload()) {
 			setResourceErrorMsg("");
 			values.resource = [resource];
 			await onSubmit({ ...values });
 		}
-	};
-
-	const handleUploadImage = ({
-		file,
-		onSuccess,
-		onError,
-		onProgress,
-	}) => {
-		console.log("handleUploadImage");
-		setLoading(true);
-		// const file = event.file;
-		const fileName = file?.name;
-		const uploadTask = uploadBytesResumable(ref(leaderTaskReportsRef, fileName), file);
-		uploadTask.on(
-			"state_changed",
-			(snapshot) => {
-				const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-				// update progress
-				onProgress(percent);
-
-				switch (snapshot.state) {
-					case 'paused': // or 'paused'
-						console.log("Upload is p aused");
-						break;
-					case 'running': // or 'running'
-						console.log("Upload is running");
-						break;
-				}
-			},
-			(err) => {
-				console.log(err);
-				setLoading(false);
-				onError(err);
-			},
-			() => {
-				// download url
-				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-					leadReportFormRef.current.setFieldValue("resource", url);
-					// setResourceImage(url);
-					console.log("handleUploadImage success", url);
-
-					onSuccess(url);
-				});
-			}
-		);
-		setLoading(false);
 	};
 
 	const handleChangeUploadImage = (info) => {
@@ -103,21 +53,14 @@ export const LeaderTaskReportModal = ({
 		setResourceErrorMsg("");
 	};
 
-	const handleRemoveUploadImage = (info) => {
-		info.fileList = [];
-		// setResourceImage([]);
-		leadReportFormRef.current.setFieldValue("resource", "");
-	}
-
-	const normFile = (e) => {
-		if (Array.isArray(e)) {
-			return e;
-		}
-		return e?.fileList;
-	};
-
 	const handleValidateUpload = () => {
-		setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+		if (!leadReportFormRef.current?.getFieldValue('resource')) {
+			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+			return false;
+		} else {
+			setResourceErrorMsg("");
+			return true;
+		}
 	}
 
 	return (
@@ -129,9 +72,7 @@ export const LeaderTaskReportModal = ({
 			}}
 			title={title}
 			onOk={() => {
-				if (!leadReportFormRef.current?.getFieldValue('resource')) {
-					handleValidateUpload();
-				}
+				handleValidateUpload();
 				leadReportFormRef.current?.submit();
 			}}
 			confirmLoading={confirmLoading}
@@ -144,6 +85,7 @@ export const LeaderTaskReportModal = ({
 				onFinish={onFinish}
 				initialValues={{
 					acceptanceTaskId: info.id,
+					resource: ""
 				}}
 			>
 				<Row gutter={16}>
@@ -190,31 +132,14 @@ export const LeaderTaskReportModal = ({
 									placeholder="Mô tả báo cáo..."
 								/>
 							</Form.Item>
-							<Form.Item name="resource" hidden>
-								<Input />
-							</Form.Item>
-							<Form.Item
-								label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
-								valuePropName="fileList"
-								getValueFromEvent={normFile}
-								validateStatus="error"
-								help={resourceErrorMsg}
-							>
-								<Upload
-									listType="picture"
-									// beforeUpload={() => false}
-									accept=".jpg,.jepg,.png,.svg,.bmp"
-									onChange={handleChangeUploadImage}
-									maxCount={1}
-									customRequest={handleUploadImage}
-									onRemove={handleRemoveUploadImage}
-								>
-									<Button
-										icon={<UploadOutlined />}>
-										Upload
-									</Button>
-								</Upload>
-							</Form.Item>
+							<UploadFile 
+								formRef={leadReportFormRef}
+								imageRef={leaderTaskReportsRef}
+								itemName="resource"
+								onChange={handleChangeUploadImage}
+								fileAccept=".jpg,.jepg,.png,.svg,.bmp"
+								errorMessage={resourceErrorMsg}
+							/>
 						</Card>
 					</Col>
 				</Row>
