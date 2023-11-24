@@ -26,8 +26,8 @@ const WorkerTaskList = () => {
       setLoading(true);
     }
     // retrieve leader task data by id
-    // const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName);
-    const dataLeaderTasks = await LeaderTasksApi.getAll();
+    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName);
+    // const dataLeaderTasks = await LeaderTasksApi.getAll();
     if (dataLeaderTasks.code === 0) {
       setLeaderTasksInfo(dataLeaderTasks);
       if (taskName) {

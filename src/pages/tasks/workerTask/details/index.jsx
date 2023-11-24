@@ -81,12 +81,12 @@ export const WorkerTaskDetailsPage = () => {
       //   return;
       // }
   
-      // const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
-      const dataGroupMembers = await UserApi.getAll();
-      // if (dataGroupMembers.code !== 0) {
-      //   message.error = dataGroupMembers.message;
-      //   return;
-      // }
+      const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+      // const dataGroupMembers = await UserApi.getAll();
+      if (dataGroupMembers.code !== 0) {
+        message.error = dataGroupMembers.message;
+        return;
+      }
       setLeaderTaskInfo(dataLeaderTask?.data);
       setGroupMemberList(dataGroupMembers);
       setMaterialList(dataMaterials);
