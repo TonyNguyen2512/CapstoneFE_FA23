@@ -43,7 +43,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
     <BaseModal
       open={open}
       onCancel={onCancel}
-      title={`${typeMessage} thủ tục`}
+      title={`${typeMessage} quy trình`}
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
@@ -55,23 +55,23 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         )}
         <Form.Item
           name="name"
-          label="Tên thủ tục"
+          label="Tên quy trình"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên thủ tục",
+              message: "Vui lòng nhập tên quy trình",
             },
           ]}
         >
-          <Input placeholder="Nhập tên thủ tục..." />
+          <Input placeholder="Nhập tên quy trình..." />
         </Form.Item>
         <Form.Item
           name="listStep"
-          label="Tên thủ tục"
+          label="Tên quy trình"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên thủ tục",
+              message: "Vui lòng nhập tên quy trình",
             },
           ]}
         >
