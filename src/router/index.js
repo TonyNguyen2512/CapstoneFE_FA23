@@ -13,7 +13,7 @@ import PageNotFound from "../pages/error/404";
 // import SemesterListPage from "../pages/semester/list";
 // import SemesterDetailPage from "../pages/semester/detail";
 // import ProjectReportDetailPage from "../pages/report/detail";
-// import OrderReportListPage from "../pages/report/orderReport/list";
+import OrderReportListPage from "../pages/report/orderReport/list";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
 import { MaterialTypeListPage } from "../pages/material-types/list";
@@ -126,6 +126,14 @@ export const router = createBrowserRouter([
 						path: `${routes.dashboard.groups}/:id`,
 						element: <GroupDetailPage />,
 					},
+          {
+            path: routes.dashboard.orderReports,
+            element: <OrderReportListPage />,
+          },
+          {
+            path: `${routes.dashboard.orderReports}/:id`,
+            element: <OrderReportDetailPage />,
+          },
 
 					//
 					// old routes

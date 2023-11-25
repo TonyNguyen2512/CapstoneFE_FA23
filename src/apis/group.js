@@ -6,51 +6,76 @@ const resource = "Group";
 
 const getAllUserByGroupId = async (id) => {
 	try {
-		const response = await BaseApi.get(
-			`/${resource}/GetAllUserByGroupId/${id}`,
-			{
-				params: {
-					groupId: id,
-				},
-			}
-		);
+		const response = await BaseApi.get(`/${resource}/GetAllUserByGroupId/${id}`);
 		return response.data;
 	} catch (error) {
-		console.log("Error search class: ", error);
+		console.log("Error GetAllUserByGroupId class: ", error);
 		return [];
 	}
 };
 
-const getWorkersByGroupId = async (id) => {
+// const getWorkersByGroupId = async (id) => {
+// 	try {
+// 		const response = await BaseApi.get(`/${resource}/GetWorkersByGroupId/${id}`);
+// 		return response.data;
+// 	} catch (error) {
+// 		console.log("Error GetWorkersByGroupId class: ", error);
+// 		return [];
+// 	}
+// };
+
+const getWorkersByGroupId = async (id, search, pageIndex, pageSize) => {
 	try {
-		const response = await BaseApi.get(
-			`/${resource}/GetWorkersByGroupId/${id}`,
-			{
-				params: {
-					groupId: id,
-				},
+		if (search) {
+			return await searchGetWorkersByGroupId(id, search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
 			}
-		);
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetWorkersByGroupId/${id}`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetWorkersByGroupId = async (id, search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetWorkersByGroupId/${id}`, {
+			params: params,
+		});
 		return response.data;
 	} catch (error) {
-		console.log("Error search class: ", error);
-		return [];
+		console.log("Error get group: ", error);
+		return false;
 	}
 };
 
 const getAllUserNotInGroupId = async (id) => {
 	try {
-		const response = await BaseApi.post(
-			`/${resource}/GetAllUserNotInGroupId/${id}`,
-			{
-				params: {
-					groupId: id,
-				},
-			}
-		);
+		const response = await BaseApi.get(`/${resource}/GetAllUserNotInGroupId/${id}`);
 		return response.data;
 	} catch (error) {
-		console.log("Error search class: ", error);
+		console.log("Error GetAllUserNotInGroupId class: ", error);
 		return [];
 	}
 };
@@ -102,6 +127,53 @@ const searchGroup = async (search, pageIndex, pageSize) => {
 	}
 };
 
+const getAllWorkerNoYetGroup = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetAllWorkerNoYetGroup(search, pageIndex, pageSize);
+		}
+		else {
+
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetAllWorkerNoYetGroup`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetAllWorkerNoYetGroup = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAllWorkerNoYetGroup`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return false;
+	}
+};
+
 const createGroup = async (data) => {
 	try {
 		const response = await BaseApi.post(`/${resource}/Create`, data);
@@ -143,6 +215,16 @@ const addWorkerToGroup = async (data) => {
 const removeWorkerFromGroup = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/RemoveWorkerFromGroup`, data);
+		
+		return response.data;
+	} catch (error) {
+		console.log("Error update item: ", error);
+		return false;
+	}
+}
+const addWorkersToGroup = async (data) => {
+	try {
+		const response = await BaseApi.put(`/${resource}/AddWorkersToGroup`, data);
 		return response.status === 200;
 	} catch (error) {
 		console.log("Error update item: ", error);
@@ -165,11 +247,13 @@ const GroupApi = {
 	getAllUserNotInGroupId,
 	getWorkersByGroupId,
 	getAll,
+	getAllWorkerNoYetGroup,
 	createGroup,
 	updateGroup,
 	addLeaderToGroup,
 	addWorkerToGroup,
 	removeWorkerFromGroup,
+	addWorkersToGroup,
 	deleteGroup,
 };
 

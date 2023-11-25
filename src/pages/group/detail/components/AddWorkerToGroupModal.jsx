@@ -1,9 +1,10 @@
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { User } from "@icon-park/react";
 import { Button, Col, Form, Row, Select, Typography, message } from "antd";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import BaseModal from "../../../../components/BaseModal";
 import { UserContext } from "../../../../providers/user";
+import GroupApi from "../../../../apis/group";
 
 const { Text } = Typography;
 
@@ -13,37 +14,36 @@ export const AddWorkerToGroupModal = ({
   onCancel,
   onSubmit,
   confirmLoading,
-  students,
-  project,
+  group,
+  workers
 }) => {
-  const STUDENTS_KEY = "listStudent";
+  const WORKERS_KEY = "listWorker";
   const { user } = useContext(UserContext);
-
-  const [selectedMemberIds, setSelectedMemberIds] = useState([user?.userId]);
+  const [loading, setLoading] = useState(false);
+  const [workerNotInGroupList, setWorkerNotInGroupList] = useState([]);
+  const [selectedWorkerIds, setSelectedWorkerIds] = useState([user?.id]);
 
   const formRef = useRef();
 
   const onFinish = async (values) => {
-    await onSubmit({ ...values, projectId: project?.id });
+    await onSubmit({ ...values, groupId: group });
   };
 
-  const getStudentOptions = (memberId) => {
-    const allOptions = students.map((item) => {
+  const getWorkerOptions = (workerId) => {
+    const workerNotInGroupOptions = workers?.map((e) => {
       return {
-        value: item.id,
-        label: `${item.fullName}`,
+        value: e.id,
+        label: e.fullName,
       };
     });
 
-    const filteredOptions = allOptions.filter((item) => {
-      const { value } = item;
-      if (selectedMemberIds.includes(value) && value !== memberId) {
+    const filteredOptions = workerNotInGroupOptions.filter((e) => {
+      const { value } = e;
+      if (selectedWorkerIds.includes(value) && value !== workerId) {
         return false;
       }
-
       return true;
     });
-
     return filteredOptions;
   };
 
@@ -59,33 +59,34 @@ export const AddWorkerToGroupModal = ({
         ref={formRef}
         layout="vertical"
         onFinish={onFinish}
-        initialValues={{
-          listStudent: [user?.userId],
-        }}
+        initialValues={
+          {
+            // listWorker: [user?.id],
+          }
+        }
         onValuesChange={(_, values) => {
-          const selectedStudents = values.listStudent.filter((e) => e);
-          setSelectedMemberIds(selectedStudents);
+          const selectedWorkers = values.listWorker.filter((e) => e);
+          setSelectedWorkerIds(selectedWorkers);
         }}
       >
-        <div>
+        {/* <div>
           <Text strong style={{ fontSize: 16 }}>
             Dự án mong muốn làm:
           </Text>
         </div>
         <div className="mb-4 mt-2">
-          <Text>{project?.projectName}</Text>
-        </div>
+          {/* <Text>{project?.projectName}</Text> */}
+        {/* </div> */}
         <Text strong style={{ fontSize: 16 }}>
-          Thành viên nhóm (Tối đa 5)
+          Thêm công nhân
         </Text>
         <div className="mb-2"></div>
-        <Form.List name={STUDENTS_KEY}>
+        <Form.List name={WORKERS_KEY}>
           {(fields, { add, remove }) => (
             <>
               {fields.map((field, index) => {
-                const memberId =
-                  index === 0 ? user?.userId : formRef.current?.getFieldValue(STUDENTS_KEY)[index];
-
+                const workerId =
+                  index === -1 ? user?.id : formRef.current?.getFieldValue(WORKERS_KEY)[index];
                 return (
                   <Row key={field.key} align="middle" gutter={4}>
                     <Col span={22}>
@@ -94,28 +95,28 @@ export const AddWorkerToGroupModal = ({
                         label={
                           <div>
                             <span>Thành viên {index + 1}</span>
-                            {index === 0 && <strong className="ml-2">(Nhóm trưởng)</strong>}
                           </div>
                         }
+                        className="fullName"
                         key={`member-${index}`}
                         rules={[
                           {
                             required: true,
-                            message: "Vui lòng chọn thành viên nhóm",
+                            message: "Vui lòng chọn công nhân",
                           },
                         ]}
                       >
                         <Select
-                          placeholder="Chọn thành viên"
-                          options={getStudentOptions(memberId)}
+                          placeholder="Chọn công nhân"
+                          options={getWorkerOptions(workerId)}
+                          optionFilterProp="children"
                           allowClear
                           suffixIcon={<User />}
-                          disabled={index === 0}
                         />
                       </Form.Item>
                     </Col>
                     <Col>
-                      {fields.length > 1 && index > 0 && (
+                      {fields.length >= 0 && index >= 0 && (
                         <Button
                           className="flex-center mt-1"
                           type="text"
@@ -128,15 +129,11 @@ export const AddWorkerToGroupModal = ({
                   </Row>
                 );
               })}
-              {fields.length < 5 && (
+              {
                 <Form.Item>
                   <Button
                     type="dashed"
                     onClick={() => {
-                      if (fields.length >= 5) {
-                        message.error("Đã vượt quá số lượng thành viên");
-                        return;
-                      }
                       add();
                     }}
                     block
@@ -145,7 +142,7 @@ export const AddWorkerToGroupModal = ({
                     Thêm thành viên
                   </Button>
                 </Form.Item>
-              )}
+              }
             </>
           )}
         </Form.List>

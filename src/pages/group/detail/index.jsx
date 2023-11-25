@@ -1,40 +1,100 @@
 import { Button, Dropdown, Space, Spin, message } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import TeamApi from "../../../apis/group";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { UserContext } from "../../../providers/user";
 import GroupApi from "../../../apis/group";
 import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
 import { BaseTable } from "../../../components/BaseTable";
-import { GroupModal } from "../components/GroupModal";
 import confirm from "antd/lib/modal/confirm";
 import { AddWorkerToGroupModal } from "./components/AddWorkerToGroupModal";
+import routes from "../../../constants/routes";
+import { GroupContext } from "../../../providers/group";
 
 const GroupDetailPage = () => {
   const [loading, setLoading] = useState(false);
-  const [addWorkerToGroupModal, setAddWorkerToGroupModalModal] = useState(false);
+
+  const [addWorkerToGroupModal, setAddWorkerToGroupModal] = useState(false);
+  const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
+  const [workerNotInGroupList, setWorkerNotInGroupList] = useState([]);
+
   const [workerList, setGroupWorkerList] = useState([]);
+  const [groupCreating, setGroupCreating] = useState(false);
+
+  const { user } = useContext(UserContext);
   const groupRef = useRef();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const getData = async (id) => {
+  const getData = async (id, keyword) => {
     setLoading(true);
-    const response = await GroupApi.getWorkersByGroupId(id);
-
+    const response = await GroupApi.getWorkersByGroupId(id, keyword);
     setGroupWorkerList(response.data);
     setLoading(false);
   };
 
+  const handleCreateGroup = async (request) => {
+    setGroupCreating(true);
+    const { groupId, listWorker } = request;
+    const data = {
+      listUserId: listWorker.filter((item) => item !== user?.id),
+      groupId: groupId,
+    };
+    const response = await GroupApi.addWorkersToGroup(data);
+    if (response) {
+      message.success("Đăng ký nhóm thành công");
+      getData(id);
+    } else {
+      message.error("ABC");
+      // message.error(response.message);
+    }
+    handleWorkerNotInGroup();
+    setGroupCreating(false);
+    setAddWorkerToGroupModal(false);
+  };
+
+  const handleSearch = (value) => {
+    getData(id, value);
+  };
+
+  const handleWorkerNotInGroup = async () => {
+    setLoading(true);
+    const response = await GroupApi.getAllWorkerNoYetGroup();
+    setWorkerNotInGroupList(response.data);
+    setLoading(false);
+  };
+
+  const removeWorkerInGroup = async (userId, groupId) => {
+    setLoading(true);
+    const data = {
+      userId: userId,
+      groupId: groupId,
+    };
+    const success = await GroupApi.removeWorkerFromGroup(data);
+    if (success) {
+      message.success("Loại thành công");
+    } else {
+      message.error("Loại thất bại");
+    }
+    getData(id);
+    handleWorkerNotInGroup();
+    setLoading(false);
+  };
+
+  const handleCloseCreateTeamRequestModal = () => {
+    setAddWorkerToGroupModal(false);
+    setGroupCreating(false);
+  };
+
   useEffect(() => {
     if (id) {
-      getData(id, true);
+      getData(id);
     }
+    handleWorkerNotInGroup();
   }, [id]);
 
   const getActionItems = (record) => {
-    const { isDeleted, id } = record;
+    const { isDeleted } = record;
     return [
       {
         key: "VIEW_DETAIL",
@@ -51,7 +111,7 @@ const GroupDetailPage = () => {
         icon: <Edit />,
         onClick: () => {
           groupRef.current = record;
-          setAddWorkerToGroupModalModal(true);
+          setAddWorkerToGroupModal(true);
         },
       },
       {
@@ -61,12 +121,14 @@ const GroupDetailPage = () => {
         icon: !isDeleted ? <Forbid /> : <Unlock />,
         onClick: () => {
           confirm({
-            title: "Xoá nhóm",
-            content: `Chắc chắn xoá "${record.name}"?`,
+            title: "Loại công nhân",
+            content: `Chắc chắn loại công nhân "${record.fullName}"?`,
             type: "confirm",
-
             cancelText: "Hủy",
-            onOk: () => deleteGroup(record.id),
+            onOk: () => {
+              groupRef.current = record;
+              removeWorkerInGroup(record.id, record.groupId);
+            },
             onCancel: () => {},
             closable: true,
           });
@@ -94,7 +156,7 @@ const GroupDetailPage = () => {
         return (
           <span
             onClick={() => {
-            //   showModal(record)
+              //   showModal(record)
             }}
           >
             {record.fullName}
@@ -170,36 +232,21 @@ const GroupDetailPage = () => {
     },
   ];
 
-  const handleSearch = (value) => {
-    getData(value);
-  };
-
-  const deleteGroup = async (value) => {
-    setLoading(true);
-    const success = await GroupApi.deleteGroup(value);
-    if (success) {
-      message.success("Xoá thành công");
-    } else {
-      message.error("Xoá thất bại");
-    }
-    getData();
-    setLoading(false);
-  };
-
   return (
-    <>
+    <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.groups}`)}>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
           type="primary"
           className="btn-primary app-bg-primary font-semibold text-white"
-          onClick={() => setAddWorkerToGroupModalModal(true)}
+          onClick={() => setAddWorkerToGroupModal(true)}
         >
           Thêm công nhân
         </Button>
       </Space>
       <BaseTable
         title="Danh sách công nhân"
+        open={addWorkerToGroupModal}
         dataSource={workerList}
         columns={columns}
         loading={loading}
@@ -212,15 +259,14 @@ const GroupDetailPage = () => {
         }}
       />
       <AddWorkerToGroupModal
-        data={groupRef.current}
         open={addWorkerToGroupModal}
-        onCancel={() => {
-          setAddWorkerToGroupModalModal(false);
-          groupRef.current = null;
-        }}
-        onSuccess={() => getData()}
+        onSubmit={handleCreateGroup}
+        confirmLoading={groupCreating}
+        onCancel={handleCloseCreateTeamRequestModal}
+        group={id}
+        workers={workerNotInGroupList}
       />
-    </>
+    </BasePageContent>
   );
 };
 

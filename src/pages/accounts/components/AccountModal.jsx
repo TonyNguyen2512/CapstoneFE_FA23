@@ -77,7 +77,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
         </Form.Item>
         <Form.Item name="roleId" label="Vai trò">
           <Select
-            defaultValue={"e0acdcdf-704a-49c6-6aad-08dbe2a052a2"}
+            // defaultValue={"e0acdcdf-704a-49c6-6aad-08dbe2a052a2"}
             options={roleOptions}
             placeholder="Chọn cai trò..."
             onChange={(val) => {
