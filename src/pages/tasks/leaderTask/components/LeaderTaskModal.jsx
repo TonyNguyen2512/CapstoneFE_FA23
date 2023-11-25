@@ -290,7 +290,7 @@ export const LeaderTaskModal = ({
 									>
 										<InputNumber
 											min={1}
-											max={10}
+											// max={10}
 											placeholder="Số lượng sản phẩm"
 										/>
 									</Form.Item>
