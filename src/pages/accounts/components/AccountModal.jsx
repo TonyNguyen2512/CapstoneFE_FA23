@@ -6,12 +6,11 @@ import { roles } from "../../../constants/app";
 import UserApi from "../../../apis/user";
 
 export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
-  const defaultRoleId = "9d6bc81a-65e6-4952-0f98-08dbe279bce0";
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
 
-  const [roleName, setRoleName] = useState(roleOptions.find((r) => r.value === defaultRoleId)?.key);
+  const [roleName, setRoleName] = useState();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (val) => {
@@ -75,14 +74,17 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
         >
           <Input placeholder="Nhập địa chỉ..." />
         </Form.Item>
-        <Form.Item name="roleId" label="Vai trò">
+        <Form.Item
+          name="roleId"
+          label="Vai trò"
+          rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+        >
           <Select
-            defaultValue={"e0acdcdf-704a-49c6-6aad-08dbe2a052a2"}
             options={roleOptions}
-            placeholder="Chọn cai trò..."
+            placeholder="Chọn vai trò..."
             onChange={(val) => {
               formRef.current.roleId = val;
-              setRoleName(roleOptions.find((role) => role.id === val)?.name || roles.WORKER);
+              setRoleName(roleOptions.find((role) => role.id === val)?.name);
             }}
           />
         </Form.Item>

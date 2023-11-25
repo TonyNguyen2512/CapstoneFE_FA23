@@ -224,28 +224,6 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.orderReports.create,
     ALL_PERMISSIONS.orderReports.update,
   ],
-  [roles.MANAGER]: [
-    // workers squad
-    ALL_PERMISSIONS.squads.sider,
-    ALL_PERMISSIONS.squads.view,
-    ALL_PERMISSIONS.squads.create,
-    ALL_PERMISSIONS.squads.update,
-    // workers
-    ALL_PERMISSIONS.workers.sider,
-    ALL_PERMISSIONS.workers.view,
-    ALL_PERMISSIONS.workers.create,
-    ALL_PERMISSIONS.workers.update,
-    // workersTasks
-    ALL_PERMISSIONS.workersTasks.sider,
-    ALL_PERMISSIONS.workersTasks.view,
-    ALL_PERMISSIONS.workersTasks.create,
-    ALL_PERMISSIONS.workersTasks.update,
-    // workersReports
-    ALL_PERMISSIONS.workersReports.sider,
-    ALL_PERMISSIONS.workersReports.view,
-    ALL_PERMISSIONS.workersReports.create,
-    ALL_PERMISSIONS.workersReports.update,
-  ],
   [roles.LEADER]: [
     // workers squad
     ALL_PERMISSIONS.squads.sider,

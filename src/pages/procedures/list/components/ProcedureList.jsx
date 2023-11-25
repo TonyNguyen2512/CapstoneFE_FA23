@@ -54,7 +54,7 @@ const ProcedureList = () => {
       sorter: (a, b) => a.id.localeCompare(b.id),
     },
     {
-      title: "Tên thủ tục",
+      title: "Tên quy trình",
       dataIndex: "name",
       key: "name",
       sorter: (a, b) => a?.name.localeCompare(b?.name),
@@ -106,11 +106,11 @@ const ProcedureList = () => {
           className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowStepModal(true)}
         >
-          Thêm thủ tục
+          Thêm quy trình
         </Button>
       </Space>
       <BaseTable
-        title="Danh sách thủ tục"
+        title="Danh sách quy trình"
         dataSource={procedureList}
         columns={columns}
         loading={loading}
@@ -119,7 +119,7 @@ const ProcedureList = () => {
         }}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm thủ tục...",
+          placeholder: "Tìm kiếm quy trình...",
           onSearch: handleSearch,
           width: 300,
         }}

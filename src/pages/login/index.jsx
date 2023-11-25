@@ -94,7 +94,7 @@ export const LoginPage = () => {
                     },
                   ]}
                 >
-                  <Input placeholder="Nhập số điện thoại bạn..." size="large" />
+                  <Input placeholder="Nhập số điện thoại của bạn..." size="large" />
                 </Form.Item>
                 <Form.Item
                   name="password"

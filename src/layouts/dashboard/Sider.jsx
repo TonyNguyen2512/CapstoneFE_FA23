@@ -106,11 +106,11 @@ export const AppSider = () => {
       icon: <FormOutlined size={iconSize} />,
       label: <Link to={routes.dashboard.orders}>Đơn đặt hàng</Link>,
     },
-    // canViewQuotes && {
-    //   key: itemKeys.QUOTES,
-    //   icon: <FileDoneOutlined size={iconSize} />,
-    //   label: <Link to={routes.dashboard.quotes}>Duyệt báo giá</Link>,
-    // },
+    canViewQuotes && {
+      key: itemKeys.QUOTES,
+      icon: <FileDoneOutlined size={iconSize} />,
+      label: <Link to={routes.dashboard.quotes}>Duyệt báo giá</Link>,
+    },
     (canViewMaterialTypes || canViewMaterials) && {
       key: itemKeys.P_MATERIALS,
       icon: <BuildOutlined size={iconSize} />,
@@ -146,7 +146,7 @@ export const AppSider = () => {
         canViewProcedures && {
           key: itemKeys.PROCEDURES,
           icon: <ProcessLine size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.procedures}>Danh sách thủ tục</Link>,
+          label: <Link to={routes.dashboard.procedures}>Danh sách quy trình</Link>,
         },
         canViewSteps && {
           key: itemKeys.STEPS,
@@ -163,12 +163,7 @@ export const AppSider = () => {
         canViewGroups && {
           key: itemKeys.GROUPS,
           icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Tổ</Link>,
-        },
-        canViewSquads && {
-          key: itemKeys.SQUADS,
-          icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Nhóm</Link>,
+          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
         },
         canViewEmployees && {
           key: itemKeys.EMPLOYEES,
