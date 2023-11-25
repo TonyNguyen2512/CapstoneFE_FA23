@@ -41,17 +41,6 @@ export const LeaderTaskModal = ({
 		await onSubmit({ ...values });
 	};
 
-	const toDataURL = async (url) => {
-		const xhr = new XMLHttpRequest();
-		xhr.responseType = 'blob';
-		xhr.onload = (event) => {
-			const blob = xhr.response;
-		};
-		xhr.open('GET', url);
-		xhr.send();
-
-	}
-
 	const handleDownloadFile = async (url, filename) => {
 		if (!url) message.warning("Không có bản vẽ");
 		try {

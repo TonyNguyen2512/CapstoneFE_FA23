@@ -21,22 +21,12 @@ const LeaderTaskList = () => {
 
   const userRef = useRef();
 
-  const getData = async () => {
+  const getData = async (search, pageIndex, pageSize) => {
     setLoading(true);
-    const data = await OrderApi.getAllOrders();
-    setOrderList(data.data);
-    setLoading(false);
-  };
-
-  const deleteTaskCategory = async (value) => {
-    setLoading(true);
-    const success = await ManagerTaskApi.deleteTaskCategory(value);
-    if (success) {
-      message.success("Xoá thành công");
-    } else {
-      message.error("Xoá thất bại");
-    }
-    getData();
+    const data = await OrderApi.getAllOrders(search, pageIndex, pageSize);
+    setOrderList(data);
+    
+    console.log(orderList)
     setLoading(false);
   };
 
@@ -139,14 +129,22 @@ const LeaderTaskList = () => {
     getData(value);
   };
 
+  const onShowSizeChange = (current, pageSize) => {
+    console.log(current, pageSize);
+  };
+
   return (
     <>
       <BaseTable
         title="Danh sách công việc"
-        dataSource={orderList}
+        dataSource={orderList?.data}
         columns={columns}
         loading={loading}
-        pagination={true}
+        pagination={{
+          onChange: onShowSizeChange,
+          pageSize: 5,
+          total: orderList?.total,
+        }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
