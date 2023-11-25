@@ -1,43 +1,37 @@
 import { Typography, Space } from "antd";
 import { Col, Descriptions, Row } from "antd/lib";
+import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { eTaskStatus } from "../../../../../constants/enum";
+import { TaskStatus } from "../../../../../constants/enum";
 import { useContext } from "react";
 import { TaskContext } from "../../../../../providers/task";
 
 const { Title } = Typography;
 
-export const LeaderTaskProcedureOverview = ({
+const ProcedureStatus = {
+  notCompleted: 2,
+  completed: 1,
+  new: 0,
+};
+
+export const WorkerTaskOverview = ({
   title,
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { tasks } = useContext(TaskContext);
   const allTasks = tasks;
-
   const completedTasks = allTasks?.filter(
-    (e) => e.status === eTaskStatus.Completed
+    (e) => e.status === TaskStatus.completed
   );
 
-  const notAchivedTasks = allTasks?.filter(
-    (e) => e.status === eTaskStatus.NotAchived
-  );
+  const inProgressTasks = allTasks?.filter(
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.inProgress
+  )
 
-  const newTasks = allTasks?.filter(
-    (e) => e.status === eTaskStatus.New
-  );
-
-  const pendingTasks = allTasks?.filter(
-    (e) => e.status === eTaskStatus.Pending
-  );
-
-  const inprocessTasks = allTasks?.filter(
-    (e) => e.status === eTaskStatus.Inprocessing
-  );
-
-  const expireTasks = allTasks?.filter((e) =>
-    moment(e.timeReport).isBefore(now()) && e.status !== eTaskStatus.Completed
-  );
+  const expireTasks = allTasks?.filter(
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
+  )
 
   return (
     <Space direction="vertical" className="w-full gap-6">
@@ -55,31 +49,25 @@ export const LeaderTaskProcedureOverview = ({
       <Descriptions
         items={[
           {
-            label: "Tổng số quy trình",
+            label: "Tổng số công việc",
             children: allTasks?.length,
           },
           {
-            label: "Quy trình mới tạo",
-            children: newTasks?.length,
-          },
-          {
-            label: "Quy trình đã hoàn thành",
+            label: "Công việc đạt",
             children: completedTasks?.length,
           },
           {
-            label: "Quy trình không hoàn thành",
-            children: notAchivedTasks?.length,
+            label: "Công việc không đạt",
+            children: allTasks?.filter(
+              (e) => e.status === TaskStatus.inProgress
+            )?.length,
           },
           {
-            label: "Quy trình đang tiến hành",
-            children: inprocessTasks?.length,
+            label: "Công việc trong tiến độ",
+            children: inProgressTasks?.length,
           },
           {
-            label: "Quy trình đang chờ duyệt hành",
-            children: pendingTasks?.length,
-          },
-          {
-            label: "Quy trình đã quá hạn",
+            label: "Công việc đã quá hạn",
             children: expireTasks?.length,
           },
         ]}

@@ -16,7 +16,7 @@ const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
     if (pageSize) {
       params = { ...params, pageSize };
     }
-    const response = await BaseApi.get(`/${resource}/GetAllMaterialCategory`, {
+    const response = await BaseApi.get(`/${resource}/GetAll`, {
       params: params,
     });
     return response.data;

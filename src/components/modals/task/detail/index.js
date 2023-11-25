@@ -1,15 +1,19 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import BaseModal from "../../../BaseModal";
 import { EditableInput } from "../../../EditableInput";
-import { Card, Col, DatePicker, Form, Row, Select, Typography } from "antd";
+import { Button, Card, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography, Upload } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
-import { TeamContext } from "../../../../providers/team";
 import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { taskStatusOptions } from "../../../../constants/app";
+import { attitudeTaskOptions, qualityTaskOptions, taskStatusOptions } from "../../../../constants/app";
 import { TaskStatus } from "../../../../constants/enum";
+import { TaskContext } from "../../../../providers/task";
+import { RichTextEditor } from "../../../RichTextEditor";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { imagesItemRef } from "../../../../middleware/firebase";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -19,72 +23,127 @@ const { Text } = Typography;
 const TaskDetailModal = ({
 	open,
 	onCancel,
-	task,
 	onSubmit,
 	confirmLoading,
+	task,
 }) => {
-	const formRef = useRef();
+	const taskFormRef = useRef();
 	const nameRef = useRef();
 	const descRef = useRef();
+	const contentRef = useRef();
 
-	const { team } = useContext(TeamContext);
 	const { user } = useContext(UserContext);
+	const { team } = useContext(TaskContext);
+	
+	const [loading, setLoading] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const [resourceImage, setResourceImage] = useState(task?.report?.resource ?? "");
 
-	const isLeader = user?.userId === team?.leader?.id;
+	const isLeader = user?.userId === task?.leader?.id;
 	const ownedTask =
 		task?.members.find((e) => e.id === user?.userId) !== undefined;
 
+	const isPending = task?.status === TaskStatus.pending;
+	const isCompleted = task?.status === TaskStatus.completed;
+
 	const onFinish = async (values) => {
 		const dates = values.dates;
-		const taskId = task?.id;
+		const id = task?.id;
 		const startTime = dates?.[0];
 		const endTime = dates?.[1];
-		const taskName = nameRef.current;
+		const name = nameRef.current;
 		const description = descRef.current;
 		const status = values.status;
 		const assignees = values.assignees;
+		const title = values.title;
+		const content = values.content;
+		const resource = [values.resource];
 
 		const data = {
-			taskId,
+			id,
+			name,
 			startTime,
 			endTime,
-			taskName,
 			description,
 			status,
 			assignees,
 		};
 
+		if (isPending) {
+			data = {
+				title,
+				content,
+				resource,
+				acceptanceTaskId: id
+			}
+		}
+
 		await onSubmit(data);
+	};
+
+	const handleUploadImage = (event) => {
+		setLoading(true);
+		const file = event.file;
+		const fileName = event.file?.name;
+		const uploadTask = uploadBytesResumable(ref(imagesItemRef, fileName), file);
+		uploadTask.on(
+			"state_changed",
+			(snapshot) => {
+				const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+				// update progress
+				setProgress(percent);
+			},
+			(err) => {
+				console.log(err);
+				setLoading(false);
+			},
+			() => {
+				setProgress(0);
+				// download url
+				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+					taskFormRef.current.setFieldValue("resource", url);
+					setResourceImage(url);
+				});
+			}
+		);
+		setLoading(false);
 	};
 
 	useEffect(() => {
 		nameRef.current = task?.name;
 		descRef.current = task?.description;
-	}, [task]);
+		contentRef.current = task?.report?.content;
+	}, []);
 
 	return (
 		<BaseModal
-			width="70%"
+			width={(isPending || isCompleted) ? "90%" : "50%"}
 			title="Thông tin công việc"
 			open={open}
 			onCancel={onCancel}
 			okText="Lưu"
-			onOk={() => formRef.current?.submit()}
+			onOk={() => taskFormRef.current?.submit()}
 			confirmLoading={confirmLoading}
+			okButtonProps={{ style: { display: isCompleted ? 'none' : '' } }}
 		>
 			<Form
-				ref={formRef}
+				ref={taskFormRef}
 				initialValues={{
 					taskName: task?.name,
 					description: task?.description,
 					dates: [dayjs(task?.startTime), dayjs(task?.endTime)],
-					assignees: task?.members?.map((e) => e.id),
+					assignees: task?.members?.map((e) => e.memberId),
 					status: task?.status,
+					priority: task?.priority,
+					title: task?.report?.title,
+					content: task?.report?.content,
+					resource: task?.report?.resource,
 				}}
 				onFinish={onFinish}
+				layout="vertical"
 			>
 				<Row gutter={16}>
-					<Col span={15}>
+					<Col span={(isPending || isCompleted) ? 12 : 24}>
 						<Card
 							bodyStyle={{
 								padding: 0,
@@ -101,7 +160,7 @@ const TaskDetailModal = ({
 								placeholder="Tên công việc"
 								value={task?.name}
 								onChange={(value) => (nameRef.current = value)}
-								editable={isLeader}
+								editable={isLeader && !isCompleted}
 							/>
 							<div className="mt-4 ml-1 mb-1">
 								<Text strong>Mô tả</Text>
@@ -109,75 +168,171 @@ const TaskDetailModal = ({
 							<EditableRichText
 								onChange={(v) => (descRef.current = v)}
 								value={task?.description}
-								editable={isLeader}
+								editable={isLeader && !isCompleted}
 							/>
-							<div className="mt-4 ml-1 mb-1">
-								<Text strong>Thời hạn</Text>
-							</div>
-							<Form.Item name="dates">
-								<DatePicker.RangePicker
-									showNow
-									showTime
-									placeholder={["Bắt đầu", "Kết thúc"]}
-									disabled={!isLeader}
-									className="w-full"
-									format="HH:mm DD/MM/YYYY"
-								/>
-							</Form.Item>
+							<Row gutter={16}>
+								<Col span={12}>
+									<Form.Item
+										name="dates"
+										label={<Text strong>Thời hạn công việc</Text>}
+									>
+										<DatePicker.RangePicker
+											showNow
+											showTime
+											placeholder={["Bắt đầu", "Kết thúc"]}
+											className="w-full"
+											format="HH:mm DD/MM/YYYY"
+											disabled={!isLeader || isCompleted}
+										/>
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item
+										name="status"
+										label={<Text strong>Trạng thái</Text>}
+									>
+										<Select
+											className="w-full"
+											placeholder="Chọn trạng thái"
+											options={taskStatusOptions}
+											defaultValue={TaskStatus.new}
+											disabled={!isLeader || isCompleted}
+										/>
+									</Form.Item>
+								</Col>
+							</Row>
+							<Row gutter={16}>
+								<Col span={12}>
+									<Form.Item
+										name="assignees"
+										rules={[
+											{
+												required: true,
+												message: "Vui lòng chọn ít nhất 1 thành viên cho công việc",
+											},
+										]}
+										label={<Text strong>Thành viên được phân công</Text>}
+									>
+										<Select
+											mode="multiple"
+											className="w-full"
+											placeholder="Chọn thành viên"
+											options={team?.map((e) => {
+												return {
+													label: `${e.fullName}`,
+													value: e.id,
+												};
+											})}
+											disabled={!isLeader || isCompleted}
+										/>
+									</Form.Item>
+								</Col>
+								<Col span={12}>
+									<Form.Item
+										name="priority"
+										label={<Text strong>Độ ưu tiên</Text>}
+										rules={[
+											{
+												required: true,
+												message: "Vui lòng thêm độ ưu tiên",
+											},
+										]}
+									>
+										<InputNumber
+											min={0}
+											max={10}
+											placeholder="Độ ưu tiên"
+											disabled={!isLeader || isCompleted}
+										/>
+									</Form.Item>
+								</Col>
+							</Row>
 						</Card>
 					</Col>
-					<Col span={9}>
-						<Card
-							bodyStyle={{
-								padding: 0,
-								paddingTop: 12,
-								paddingLeft: 12,
-								paddingRight: 12,
-								paddingBottom: 12,
-							}}
-						>
-							<div className="mb-2">
-								<Text strong>Thành viên đang làm</Text>
-							</div>
-							<Form.Item
-								name="assignees"
-								rules={[
-									{
-										required: true,
-										message: "Vui lòng chọn ít nhất 1 thành viên cho công việc",
-									},
-								]}
+					{(isPending || isCompleted) &&
+						<Col span={12} >
+							<Card
+								bodyStyle={{
+									padding: 0,
+									paddingTop: 12,
+									paddingLeft: 12,
+									paddingRight: 12,
+									paddingBottom: 12,
+								}}
+								title="Đánh giá công việc"
 							>
-								<Select
-									mode="multiple"
-									className="w-full"
-									placeholder="Chọn thành viên"
-									options={team?.members?.map((e) => {
-										return {
-											label: e.fullName,
-											value: e.id,
-										};
-									})}
-									disabled={!isLeader}
-								/>
-							</Form.Item>
-							<div className="mb-2">
-								<Text strong>Trạng thái</Text>
-							</div>
-							<Form.Item name="status">
-								<Select
-									className="w-full"
-									placeholder="Chọn trạng thái"
-									options={taskStatusOptions}
-									defaultValue={TaskStatus.new}
-									disabled={isLeader ? false : ownedTask ? false : true}
-								/>
-							</Form.Item>
-						</Card>
-					</Col>
+								<Form.Item
+									name="title"
+									rules={[
+										{
+											required: true,
+											message: "Vui lòng thêm tên đánh giá",
+										},
+									]}
+									label={<Text strong>Tên đánh giá</Text>}
+								>
+									{isCompleted &&
+										<EditableRichText
+											value={task?.reports?.title}
+											editable={false}
+										/>
+									}
+									{isPending &&
+										<Input
+											showCount
+											maxLength={255}
+											placeholder="Nhập tên đánh giá..."
+											disabled={isCompleted}
+										/>
+									}
+								</Form.Item>
+								<Form.Item
+									name="content"
+									label={<Text strong>Nội dung đánh giá</Text>}
+									rules={[
+										{
+											required: true,
+											message: "Vui lòng thêm nội dung đánh giá",
+										},
+									]}
+								>
+									{isCompleted &&
+										<EditableRichText
+											value={task?.reports?.content}
+											editable={false}
+										/>
+									}
+									{isPending &&
+										<RichTextEditor
+											onChange={(value) => (contentRef.current = value)}
+											placeholder="Nhập nội dung đánh giá..."
+										/>
+									}
+								</Form.Item>
+								<Form.Item
+									name="resource"
+									label={<Text strong>Tải ảnh</Text>}
+								>
+									<Upload
+										listType="picture"
+										beforeUpload={() => false}
+										accept=".jpg,.jepg,.png,.svg,.bmp"
+										onChange={handleUploadImage}
+										maxCount={1}
+									>
+										<Button
+											disabled={isCompleted}
+											icon={<UploadOutlined />}>
+											Upload
+										</Button>
+									</Upload>
+								</Form.Item>
+							</Card>
+						</Col>
+					}
 				</Row>
 			</Form>
-		</BaseModal>
+		</BaseModal >
 	);
 };
 

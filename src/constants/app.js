@@ -1,4 +1,4 @@
-import { TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, TaskStatus } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -224,7 +224,7 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.orderReports.create,
     ALL_PERMISSIONS.orderReports.update,
   ],
-  [roles.MANAGER]: [
+  [roles.LEADER]: [
     // workers squad
     ALL_PERMISSIONS.squads.sider,
     ALL_PERMISSIONS.squads.view,
@@ -265,6 +265,14 @@ export const taskStatusOptions = [
     label: "Đang làm",
   },
   {
+    value: TaskStatus.pending,
+    label: "Chờ duyệt",
+  },
+  {
+    value: TaskStatus.inEvaluete,
+    label: "Đánh giá",
+  },
+  {
     value: TaskStatus.completed,
     label: "Đã hoàn thành",
   },
@@ -273,6 +281,8 @@ export const taskStatusOptions = [
 export const TaskColumnId = {
   TODO: "TODO",
   IN_PROGRESS: "IN_PROGRESS",
+  IN_APPROVE: "IN_APPROVE",
+  IN_EVALUATE: "IN_EVALUATE",
   COMPLETED: "COMPLETED",
 };
 
@@ -321,3 +331,73 @@ export const SemesterTypeRanges = {
     endDay: 31,
   }, // October 1st to December 31th
 };
+
+export const qualityTaskOptions = [
+  {
+    value: 0,
+    label: "Tốt",
+    color: "#29CB00",
+  },
+  {
+    value: 1,
+    label: "Khá Tốt",
+    color: "#BEBB6D",
+  },
+  {
+    value: 2,
+    label: "Khá",
+    color: "#FBD305",
+  },
+  {
+    value: 3,
+    label: "Trung bình khá",
+    color: "#CB7A00",
+  },
+  {
+    value: 4,
+    label: "Trung bình",
+    color: "#FF0000",
+  },
+];
+
+export const attitudeTaskOptions = [
+  {
+    value: 0,
+    label: "Chuyên nghiệp",
+    color: "#29CB00",
+  },
+  {
+    value: 1,
+    label: "Tích cực",
+    color: "#BEBB6D",
+  },
+  {
+    value: 2,
+    label: "Hợp tác",
+    color: "#CB7A00",
+  },
+  {
+    value: 3,
+    label: "Học hỏi",
+    color: "#CB7A00",
+  },
+];
+
+export const SupplyOptions = [
+  {
+    value: SupplyStatus.Fail,
+    label: SupplyLabel[0],
+  },
+  {
+    value: SupplyStatus.Missing,
+    label: SupplyLabel[1],
+  },
+  {
+    value: SupplyStatus.AcceptByCustomer,
+    label: SupplyLabel[2],
+  },
+  {
+    value: SupplyStatus.RejectByCustomer,
+    label: SupplyLabel[3],
+  },
+]

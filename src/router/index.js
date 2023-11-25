@@ -6,6 +6,13 @@ import { Dashboard } from "../layouts/dashboard";
 import { AccountListPage } from "../pages/accounts/list";
 import RootRoute from "./RootRoute";
 import PageNotFound from "../pages/error/404";
+// import ProjectListPage from "../pages/project/list";
+// import ProjectDetailPage from "../pages/project/detail";
+// import ProfilePage from "../pages/profile";
+// import ProjectReportListPage from "../pages/report/list";
+// import SemesterListPage from "../pages/semester/list";
+// import SemesterDetailPage from "../pages/semester/detail";
+// import ProjectReportDetailPage from "../pages/report/detail";
 import OrderReportListPage from "../pages/report/orderReport/list";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
@@ -18,6 +25,8 @@ import { WorkerTaskDetailsPage } from "../pages/tasks/workerTask/details";
 import { OrderListPage } from "../pages/orders/list";
 import OrderDetailPage from "../pages/orders/detail";
 import { ItemCategoryListPage } from "../pages/item-categories/list";
+import { GroupListPage } from "../pages/group/list";
+import GroupDetailPage from "../pages/group/detail";
 import OrderReportDetailPage from "../pages/report/orderReport/detail";
 import { ProcedureListPage } from "../pages/procedures/list";
 import { StepListPage } from "../pages/steps/list";
@@ -90,17 +99,33 @@ export const router = createBrowserRouter([
             element: <WorkerTaskListPage />,
           },
           {
-            path: `${routes.dashboard.workersTasks}/:id`,
-            element: <WorkerTaskDetailsPage />,
-          },
-          {
-            path: routes.dashboard.managersTasks,
-            element: <LeaderTaskListPage />,
-          },
-          {
-            path: `${routes.dashboard.managersTasks}/:id`,
-            element: <LeaderTaskDetailsPage />,
-          },
+						path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
+						element: <WorkerTaskDetailsPage />,
+					},
+					{
+						path: routes.dashboard.managersTasks,
+						element: <LeaderTaskListPage />,
+					},
+					{
+						path: `${routes.dashboard.managersTasks}/:id`,
+						element: <LeaderTaskDetailsPage />,
+					},
+					{
+						path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,
+						element: <WorkerTaskDetailsPage />,
+					},
+					{
+						path: routes.dashboard.reports,
+						element: <AccountListPage />,
+					},
+					{
+						path: routes.dashboard.groups,
+						element: <GroupListPage />,
+					},
+					{
+						path: `${routes.dashboard.groups}/:id`,
+						element: <GroupDetailPage />,
+					},
           {
             path: routes.dashboard.orderReports,
             element: <OrderReportListPage />,
@@ -109,76 +134,56 @@ export const router = createBrowserRouter([
             path: `${routes.dashboard.orderReports}/:id`,
             element: <OrderReportDetailPage />,
           },
-          // {
-          //   path: routes.dashboard.reports,
-          //   element: <AccountListPage />,
-          // },
 
-          //
-          // old routes
-          //
-          // {
-          //   path: routes.dashboard.courses,
-          //   element: <CourseListPage />,
-          // },
-          // {
-          //   path: `${routes.dashboard.courses}/:id`,
-          //   element: <CourseDetailPage />,
-          // },
-          // {
-          //   path: routes.dashboard.projects,
-          //   element: <ProjectListPage />,
-          // },
-          // {
-          //   path: `${routes.dashboard.projects}/:id`,
-          //   element: <ProjectDetailPage />,
-          // },
-          // {
-          //   path: routes.dashboard.profile,
-          //   element: <ProfilePage />,
-          // },
-          // {
-          //   path: routes.dashboard.classes,
-          //   element: <ClassListPage />,
-          // },
-          // {
-          //   path: `${routes.dashboard.classes}/:id`,
-          //   element: <ClassDetailPage />,
-          // },
-          // {
-          //   path: routes.dashboard.teamRequest,
-          //   element: <TeamListPage />,
-          // },
-          // {
-          //   path: routes.dashboard.report,
-          //   element: <OrderReportListPage />,
-          // },
-          //   {
-          //     path: `${routes.dashboard.report}/:id`,
-          //     element: <ProjectReportDetailPage />,
-          //   },
-          // {
-          //   path: routes.dashboard.semester,
-          //   element: <SemesterListPage />,
-          // },
-          // {
-          //   path: `${routes.dashboard.semester}/:id`,
-          //   element: <SemesterDetailPage />,
-          // },
-          // {
-          //   path: routes.dashboard.teams,
-          //   element: <TeamListPage />,
-          // },
-          // {
-          //   path: `${routes.dashboard.teams}/:id`,
-          //   element: <TeamDetailPage />,
-          // },
-          //   {
-          //     path: `${routes.dashboard.studentReport}/:id`,
-          //     element: <StudentTeamReportPage />,
-          //   },
-        ],
-      },
-    ],
-  },
+					//
+					// old routes
+					//
+					// {
+					// 	path: routes.dashboard.courses,
+					// 	element: <CourseListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.courses}/:id`,
+					// 	element: <CourseDetailPage />,
+					// },
+					// {
+					// 	path: routes.dashboard.projects,
+					// 	element: <ProjectListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.projects}/:id`,
+					// 	element: <ProjectDetailPage />,
+					// },
+					// {
+					// 	path: routes.dashboard.profile,
+					// 	element: <ProfilePage />,
+					// },
+					// {
+					// 	path: routes.dashboard.classes,
+					// 	element: <ClassListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.classes}/:id`,
+					// 	element: <ClassDetailPage />,
+					// },
+					// {
+					// 	path: routes.dashboard.report,
+					// 	element: <ProjectReportListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.report}/:id`,
+					// 	element: <ProjectReportDetailPage />,
+					// },
+					// {
+					// 	path: routes.dashboard.semester,
+					// 	element: <SemesterListPage />,
+					// },
+					// {
+					// 	path: `${routes.dashboard.semester}/:id`,
+					// 	element: <SemesterDetailPage />,
+					// },
+				],
+			},
+		],
+	},
 ]);

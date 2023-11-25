@@ -27,9 +27,10 @@ const getUserById = async (id) => {
 	}
 };
 
-const getUserByRole = async (role) => {
+const getUserByRoleId = async (role) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/GetByRole/${role}`);
+		const response = await BaseApi.get(`/${resource}/GetByRoleId/${role}`);
+		console.log(response)
 		return response.data;
 	} catch (error) {
 		console.log("Error get user by role: ", error);
@@ -133,7 +134,7 @@ const UserApi = {
 	createUser,
 	updateUserRole,
 	getUserById,
-	getUserByRole,
+	getUserByRoleId,
 	getAllUser,
 	getUserByEmail,
 	getUserRole,

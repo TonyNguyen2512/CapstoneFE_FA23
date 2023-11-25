@@ -4,22 +4,22 @@ import ApiCodes from "../constants/apiCode";
 const resource = "LeaderTask";
 
 const retrieveDataSuccessCode = 300;
-const createSuccessCode = 41;
-const udpateSuccessCode = 99;
-const updateStatusSuccessCode = 100;
-const deleteSuccessCode = 101;
+const createSuccessCode = 302;
+const udpateSuccessCode = 303;
+const deleteSuccessCode = 304;
+const updateStatusSuccessCode = 305;
 
 const errorComposer = (error) => {
-	if (error.response.data) {
-		const { code } = error.response.data
+	if (error?.response?.data) {
+		const { code } = error?.response?.data
 		return {
 			code,
-			message: ApiCodes[code],
+			message: ApiCodes[code] || "Có lỗi xảy ra",
 		}
 	}
 	return {
+		code: -1,
 		message: "Có lỗi xảy ra",
-		code: -1
 	};
 }
 
@@ -27,7 +27,7 @@ const successComposer = (messageId, data) => {
 	return {
 		code: 0,
 		message: ApiCodes[messageId],
-		data: data,
+		data: data?.data || data,
 	}
 }
 
@@ -76,6 +76,28 @@ const deleteLeaderTasks = async (leaderTasksId) => {
 	}
 };
 
+const getAll = async (searchName, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAll`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get leader tasks by order id: ", error);
+		return errorComposer(error);
+	}
+};
+
 const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) => {
 	try {
 		var params = {};
@@ -110,8 +132,18 @@ const getLeaderTaskById = async (id) => {
 
 const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize) => {
 	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
-			searchName, pageIndex, pageSize
+			params: params,
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
@@ -121,6 +153,7 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 };
 
 const LeaderTasksApi = {
+	getAll,
 	getLeaderTaskByOrderId,
 	getLeaderTaskById,
 	getLeaderTaskByLeaderId,

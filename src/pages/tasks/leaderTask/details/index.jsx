@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
 import { LeaderTaskMaterials } from "./components/LeaderTaskMaterials";
 import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
@@ -7,9 +7,10 @@ import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOve
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import OrderDetailApi from "../../../../apis/order-detail";
-import { Space } from "antd";
-import MaterialApi from "../../../../apis/material";
+import { Space, Spin, message } from "antd";
+import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import routes from "../../../../constants/routes";
+import { TaskProvider } from "../../../../providers/task";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -21,8 +22,7 @@ export const LeaderTaskDetailsPage = () => {
   const [taskInfo, setTaskInfo] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
 
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const navigate = useNavigate();
 
   const getData = async (id, handleLoading) => {
     if (handleLoading) {
@@ -30,26 +30,27 @@ export const LeaderTaskDetailsPage = () => {
     }
     // retrieve order data by id
     const dataOrder = await OrderApi.getOrderById(id);
-      // retrieve order detail by order id
+    // retrieve order detail by order id
     const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
 
-    getLeaderData(id);
+    getLeaderTaskData(id);
 
     setOrderInfo(dataOrder);
 
-    setMaterialInfo(dataMaterials)
+    setMaterialInfo(dataMaterials);
 
     setLoading(false);
   };
 
-  const getLeaderData = async() => {
+  const getLeaderTaskData = async () => {
     setLoading(true);
     // // retrieve leader task by order id
     const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
     if (dataLeaderTasks.code === 0) {
       setTaskInfo(dataLeaderTasks.data);
+    } else {
+      message.error = dataLeaderTasks.message;
     }
-    console.log(taskInfo)
 
     setLoading(false);
   }
@@ -61,25 +62,50 @@ export const LeaderTaskDetailsPage = () => {
   }, [id]);
 
   return (
-    <Space direction="vertical" className="w-full gap-6">
-      <LeaderTaskInfo
-        dataSource={orderInfo}
-        loading={loading}
-      />
-      <LeaderTaskMaterials
-        title="Danh sách vật liệu"
-        dataSource={materialInfo}
-      />
-      <LeaderTaskProcedureOverview
-        title="Tiến độ quy trình"
-        dataSource={taskInfo}
-      />
-      <LeaderTaskProcedure
-        title="Danh sách quy trình"
-        dataSource={taskInfo}
-        orderId={id}
-        reloadData={getLeaderData}
-      />
-    </Space>
+    <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.managersTasks}`)}>
+      <Spin spinning={loading}>
+        <Space direction="vertical" className="w-full gap-6">
+          <TaskProvider
+            tasks={taskInfo}
+            info={orderInfo}
+            material={materialInfo}
+          // onReload={(handleLoading) => {
+          //   getWorkerTaskList(leaderTaskId, handleLoading);
+          // }}
+          // onFilterTask={(memberId) => {
+          //   if (memberId) {
+          //     const newTasks = allTasks.current.filter(
+          //       (e) => e?.members?.find((x) => x.memberId === memberId) !== undefined
+          //     );
+          //     setWorkerTaskList(newTasks);
+          //   } else {
+          //     setWorkerTaskList(allTasks.current);
+          //   }
+          // }}
+          >
+            <div className="mt-4">
+              <LeaderTaskInfo
+                loading={loading}
+              /></div>
+            <div className="mt-4">
+              <LeaderTaskMaterials
+                title="Danh sách vật liệu"
+              />
+            </div>
+            <div className="mt-4">
+              <LeaderTaskProcedureOverview
+                title="Tiến độ quy trình"
+              />
+            </div>
+            <div className="mt-4">
+              <LeaderTaskProcedure
+                title="Danh sách quy trình"
+                reloadData={getLeaderTaskData}
+              />
+            </div>
+          </TaskProvider>
+        </Space>
+      </Spin>
+    </BasePageContent>
   );
 };
