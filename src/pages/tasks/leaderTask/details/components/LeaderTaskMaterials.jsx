@@ -9,11 +9,6 @@ export const LeaderTaskMaterials = ({
   const [loading, setLoading] = useState(false);
   const { material } = useContext(TaskContext);
 
-  const getData = (keyword) => {
-    // setLoading(true);
-    // setLoading(false);
-  };
-
   const columns = [
     {
       title: "#",
@@ -69,24 +64,22 @@ export const LeaderTaskMaterials = ({
   ];
 
   const handleSearch = (value) => {
-    getData(value);
   };
 
   return (
-    <>
-      <BaseTable
-        title={title}
-        dataSource={material?.listFromOrder}
-        columns={columns}
-        loading={loading}
-        pagination={{ pageSize: 3 }}
-        searchOptions={{
-          visible: true,
-          placeholder: "Tìm kiếm vật liệu...",
-          onSearch: handleSearch,
-          width: 300,
-        }}
-      />
-    </>
+    <BaseTable
+      title={title}
+      dataSource={material?.listFromOrder}
+      columns={columns}
+      loading={loading}
+      pagination={{ pageSize: 3 }}
+      rowKey={(record) => record.materialId}
+      searchOptions={{
+        visible: true,
+        placeholder: "Tìm kiếm vật liệu...",
+        onSearch: handleSearch,
+        width: 300,
+      }}
+    />
   );
 };

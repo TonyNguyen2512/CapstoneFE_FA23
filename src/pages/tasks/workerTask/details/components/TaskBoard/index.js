@@ -124,18 +124,18 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 		}
 	};
 
-	function loadColumn() {
+	function loadColumn(allTasks) {
 
-		const todoTasks = tasks?.filter(
+		const todoTasks = allTasks?.filter(
 			(e) => e.status === TaskStatus.new
 		);
-		const inProgressTasks = tasks?.filter(
+		const inProgressTasks = allTasks?.filter(
 			(e) => e.status === TaskStatus.inProgress
 		);
-		const inApproveTasks = tasks?.filter(
+		const inApproveTasks = allTasks?.filter(
 			(e) => e.status === TaskStatus.pending
 		);
-		const completedTasks = tasks?.filter(
+		const completedTasks = allTasks?.filter(
 			(e) => e.status === TaskStatus.completed
 		);
 		const newColumns = [...columns];
@@ -158,8 +158,8 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 	}
 
 	useEffect(() => {
-		loadColumn();
-	}, []);
+		loadColumn(tasks);
+	}, [tasks]);
 
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>

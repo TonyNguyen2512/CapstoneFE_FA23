@@ -45,6 +45,13 @@ export const TaskCreateModal = ({
 						endTime: new Date(endTime),
 					});
 				}}
+				initialValues={{
+					taskName: "",
+					status: TaskStatus.new,
+					dates: ["", ""],
+					assignees: [""],
+					priority: "",
+				}}
 			>
 				<Form.Item
 					name="taskName"
@@ -85,7 +92,6 @@ export const TaskCreateModal = ({
 					<Col span={12}>
 						<Form.Item name="status" label="Trạng thái">
 							<Select
-								defaultValue={TaskStatus.new}
 								options={taskStatusOptions}
 								placeholder="Chọn trạng thái"
 							/>

@@ -9,7 +9,6 @@ import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import ReportApi from "../../../../../apis/task-report";
 import { eTaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
@@ -45,11 +44,11 @@ export const WorkerTaskManagement = ({
 		setTaskCreating(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			setShowCreateModal(false);
 			reload(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setTaskCreating(false);
 	};
@@ -58,31 +57,32 @@ export const WorkerTaskManagement = ({
 		const currentTask = taskRef.current;
 		const resp = await WorkerTasksApi.deleteWorkerTask(currentTask.id);
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			reload(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setShowDeleteModal(false);
 	};
 
 	const handleSubmitUpdate = async (values) => {
-		console.log("update task: ", values);
 		setTaskUpdating(true);
 		let resp = null;
-		if (values.status) {
+		if (values.status !== eTaskStatus.Pending) {
+			console.log("update task: ", values);
 			resp = await WorkerTasksApi.updateWorkerTask(values);
 		} else {
-			resp = await ReportApi.sendAcceptanceReport(values);
+			console.log("send feedback task: ", values);
+			resp = await WorkerTasksApi.sendFeedback(values);
 		}
 		if (resp?.code === 0) {
-			message?.success(resp?.message);
+			message.success(resp?.message);
 			reload(false);
+			setShowDetailModal(false);
 		} else {
-			message?.error(resp?.message);
+			message.warning(resp?.message);
 		}
 		setTaskUpdating(false);
-		setShowDetailModal(false);
 	};
 
 	return (
