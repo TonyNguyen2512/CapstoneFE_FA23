@@ -17,7 +17,7 @@ export const TaskCreateModal = ({
 	dataGroupMembers,
 }) => {
 	const { user } = useContext(UserContext);
-	const { team } = useContext(TaskContext);
+	const { team, info } = useContext(TaskContext);
 
 	const formRef = useRef();
 	const descRef = useRef();
@@ -86,6 +86,12 @@ export const TaskCreateModal = ({
 									format: "HH:mm",
 								}}
 								locale={locale}
+								disabledDate={(date) => {
+									return (
+										date.isBefore(info.startTime) ||
+										date.isAfter(info.endTime)
+									);
+								}}
 							/>
 						</Form.Item>
 					</Col>

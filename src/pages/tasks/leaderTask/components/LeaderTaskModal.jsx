@@ -1,5 +1,5 @@
 import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Upload, Image, Button } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import dayjs from "dayjs";
@@ -8,6 +8,7 @@ import ItemApi from "../../../../apis/item";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
 import { formatDate } from "../../../../utils";
+import { TaskContext } from "../../../../providers/task";
 
 const { Text } = Typography;
 
@@ -20,7 +21,7 @@ export const LeaderTaskModal = ({
 	mode,
 }) => {
 	// const { user } = useContext(UserContext);
-	// const { team } = useContext(TeamContext);
+	const { info } = useContext(TaskContext);
 
 	// const isLeader = user?.userId === team?.leader?.id;
 	const [title, setTitle] = useState(false);
@@ -234,6 +235,12 @@ export const LeaderTaskModal = ({
 											placeholder={["Bắt đầu", "Kết thúc"]}
 											className="w-full"
 											format="HH:mm DD/MM/YYYY"
+											disabledDate={(date) => {
+												return (
+													date.isBefore(info.startTime) ||
+													date.isAfter(info.endTime)
+												);
+											}}
 										/>
 									</Form.Item>
 								</Col>

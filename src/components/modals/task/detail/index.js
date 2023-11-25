@@ -33,7 +33,7 @@ const TaskDetailModal = ({
 	const contentRef = useRef();
 
 	const { user } = useContext(UserContext);
-	const { team } = useContext(TaskContext);
+	const { team, info } = useContext(TaskContext);
 
 	const [loading, setLoading] = useState(false);
 	const [progress, setProgress] = useState(0);
@@ -190,7 +190,14 @@ const TaskDetailModal = ({
 											placeholder={["Bắt đầu", "Kết thúc"]}
 											className="w-full"
 											format="HH:mm DD/MM/YYYY"
+											rang
 											disabled={!isLeader || isCompleted}
+											disabledDate={(date) => {
+												return (
+													date.isBefore(info.startTime) ||
+													date.isAfter(info.endTime)
+												);
+											}}
 										/>
 									</Form.Item>
 								</Col>
