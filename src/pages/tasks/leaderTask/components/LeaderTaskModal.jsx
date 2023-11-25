@@ -181,7 +181,6 @@ export const LeaderTaskModal = ({
 											value: e.id,
 										};
 									})}
-									disabled={!isCreate}
 								/>
 							</Form.Item>
 							<Form.Item

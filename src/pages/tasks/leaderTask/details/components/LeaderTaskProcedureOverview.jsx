@@ -13,7 +13,7 @@ export const LeaderTaskProcedureOverview = ({
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { tasks } = useContext(TaskContext);
-  const allTasks = tasks;
+  const allTasks = tasks?.data;
 
   const completedTasks = allTasks?.filter(
     (e) => e.status === eTaskStatus.Completed

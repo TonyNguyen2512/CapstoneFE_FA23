@@ -11,6 +11,7 @@ import { Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
+import { PageSize } from "../../../../constants/enum";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -24,13 +25,15 @@ export const LeaderTaskDetailsPage = () => {
 
   const navigate = useNavigate();
 
-  const getLeaderTaskData = async () => {
-    setLoading(true);
+  const getLeaderTaskData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
     // // retrieve leader task by order id
     try {
-      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id, search, pageIndex, PageSize.LEADER_TASK_PROCEDURE_LIST);
       if (dataLeaderTasks.code === 0) {
-        setTaskInfo(dataLeaderTasks.data);
+        setTaskInfo(dataLeaderTasks?.data);
       } else {
         message.error = dataLeaderTasks.message;
       }
@@ -57,7 +60,7 @@ export const LeaderTaskDetailsPage = () => {
         dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
       }
 
-      getLeaderTaskData(id);
+      getLeaderTaskData(null, 1, true);
 
       setOrderInfo(dataOrder);
 
@@ -78,18 +81,11 @@ export const LeaderTaskDetailsPage = () => {
             info={orderInfo}
             material={materialInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(id, handleLoading);
+              getLeaderTaskData(handleLoading);
             }}
-          // onFilterTask={(memberId) => {
-          //   if (memberId) {
-          //     const newTasks = allTasks.current.filter(
-          //       (e) => e?.members?.find((x) => x.memberId === memberId) !== undefined
-          //     );
-          //     setWorkerTaskList(newTasks);
-          //   } else {
-          //     setWorkerTaskList(allTasks.current);
-          //   }
-          // }}
+            onFilterTask={(search, pageIndex) => {
+              getLeaderTaskData(search, pageIndex, true);
+            }}
           >
             <div className="mt-4">
               <LeaderTaskInfo

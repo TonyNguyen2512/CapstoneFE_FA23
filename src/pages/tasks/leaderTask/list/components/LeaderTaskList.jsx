@@ -1,42 +1,39 @@
-import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Space } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { enumTaskStatuses, mockTasks } from "../../../../../__mocks__/jama/tasks";
-import { message } from "antd/lib";
+import { More, PreviewOpen } from "@icon-park/react";
+import { Button, Dropdown } from "antd";
+import React, { useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
-import confirm from "antd/es/modal/confirm";
-import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { useNavigate, useParams } from "react-router-dom";
-import { UserContext } from "../../../../../providers/user";
+import { useNavigate } from "react-router-dom";
 import OrderApi from "../../../../../apis/order";
-import { orderColors, orderLabels } from "../../../../../constants/enum";
+import { PageSize, orderColors, orderLabels } from "../../../../../constants/enum";
 import { dateSort, formatMoney, formatNum } from "../../../../../utils";
 
 const LeaderTaskList = () => {
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [orderList, setOrderList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   const userRef = useRef();
 
-  const getData = async (search, pageIndex, pageSize) => {
-    setLoading(true);
-    const data = await OrderApi.getAllOrders(search, pageIndex, pageSize);
+  const getData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+
+    const data = await OrderApi.getAllOrders(search, pageIndex, PageSize.LEADER_TASK_ORDER_LIST);
     setOrderList(data);
-    
-    console.log(orderList)
     setLoading(false);
   };
 
   useEffect(() => {
-    getData(user.id);
-  }, [user]);
+    getData(null, 1, true);
+  }, []);
 
 
   const getActionItems = (record) => {
-    const { isActive, id } = record;
+    const { id } = record;
 
     return [
       {
@@ -45,7 +42,7 @@ const LeaderTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
-          navigate(record?.id)
+          navigate(id)
         },
       },
     ];
@@ -59,7 +56,7 @@ const LeaderTaskList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{(index + 1) + ((currentPage - 1) * PageSize.LEADER_TASK_ORDER_LIST)}</span>;
       },
     },
     {
@@ -126,29 +123,30 @@ const LeaderTaskList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
   };
 
-  const onShowSizeChange = (current, pageSize) => {
-    console.log(current, pageSize);
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   return (
     <>
       <BaseTable
-        title="Danh sách công việc"
+        title="Danh sách đơn hàng"
         dataSource={orderList?.data}
         columns={columns}
         loading={loading}
         pagination={{
-          onChange: onShowSizeChange,
-          pageSize: 5,
+          onChange: onPageChange,
+          pageSize: PageSize.LEADER_TASK_ORDER_LIST,
           total: orderList?.total,
         }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm công việc...",
+          placeholder: "Tìm kiếm đơn hàng...",
           onSearch: handleSearch,
           width: 300,
         }}

@@ -109,3 +109,9 @@ export const SupplyLabel = [
   "Yêu cầu từ khách hàng",
   "Khách hàng từ chối",
 ];
+
+export const PageSize = {
+  LEADER_TASK_ORDER_LIST: 10,
+  LEADER_TASK_PROCEDURE_LIST: 3,
+  LEADER_TASK_MATERIAL_LIST: 3,
+}

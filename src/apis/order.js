@@ -40,7 +40,7 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/SearchOrder`, {
+    const response = await BaseApi.post(`/${resource}/GetAllWithPaging`, {
       params: params,
     });
 

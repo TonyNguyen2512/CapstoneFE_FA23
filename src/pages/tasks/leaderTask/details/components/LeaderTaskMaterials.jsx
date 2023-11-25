@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { formatMoney, formatNum } from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
+import { PageSize } from "../../../../../constants/enum";
 
 export const LeaderTaskMaterials = ({
   title,
@@ -72,13 +73,13 @@ export const LeaderTaskMaterials = ({
       dataSource={material?.listFromOrder}
       columns={columns}
       loading={loading}
-      pagination={{ pageSize: 3 }}
+      pagination={{ pageSize: PageSize.LEADER_TASK_MATERIAL_LIST }}
       rowKey={(record) => record.materialId}
       searchOptions={{
-        visible: true,
-        placeholder: "Tìm kiếm vật liệu...",
-        onSearch: handleSearch,
-        width: 300,
+        visible: false,
+        // placeholder: "Tìm kiếm vật liệu...",
+        // onSearch: handleSearch,
+        // width: 300,
       }}
     />
   );
