@@ -45,7 +45,7 @@ const GroupDetailPage = () => {
       message.success("Đăng ký nhóm thành công");
       getData(id);
     } else {
-      message.error("ABC");
+      message.error("Đăng ký nhóm thất bại");
       // message.error(response.message);
     }
     handleWorkerNotInGroup();
