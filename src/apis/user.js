@@ -87,10 +87,10 @@ const getUserRole = async (id) => {
 const createUser = async (role, user) => {
 	try {
 		const response = await BaseApi.post(`/${resource}/Create${role}`, user);
-		return response.status === 200;
+		return response.data;
 	} catch (error) {
 		console.log("Error ban user: ", error);
-		return false;
+		return error?.response?.data || null;
 	}
 };
 
@@ -127,17 +127,39 @@ const updateUserRole = async (userId, roleId) => {
 	}
 };
 
+const updateUserPhone = async (data) => {
+	try {
+		const response = await BaseApi.put(`/${resource}/UpdatePhone`, data);
+		return response.status === 200;
+	} catch (error) {
+		console.log("Error update user phone: ", error);
+		return false;
+	}
+};
+
+const updateUserInfo = async (data) => {
+	try {
+		const response = await BaseApi.put(`/${resource}/Update`, data);
+		return response.data;
+	} catch (error) {
+		console.log("Error update user role: ", error);
+		return error?.response?.data || null;
+	}
+};
+
 const UserApi = {
 	searchUsers,
 	banUser,
 	unbanUser,
 	createUser,
 	updateUserRole,
+	updateUserInfo,
 	getUserById,
 	getUserByRoleId,
 	getAllUser,
 	getUserByEmail,
 	getUserRole,
+	updateUserPhone,
 	getAll,
 };
 

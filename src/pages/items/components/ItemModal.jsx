@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { Button, Form, Input, Select, Space, Upload, message } from "antd";
+import { Button, Form, Input, Select, Upload, message } from "antd";
 import ItemApi from "../../../apis/item";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { drawingsRef, imagesItemRef } from "../../../middleware/firebase";
 import { UploadOutlined } from "@ant-design/icons";
 
-export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) => {
+export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel, onSuccess }) => {
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
@@ -16,6 +16,7 @@ export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) =
   const [drawings2D, setDrawings2D] = useState(data?.drawings2D ?? "");
   const [drawings3D, setDrawings3D] = useState(data?.drawings3D ?? "");
   const [drawingsTechnical, setDrawingsTechnical] = useState(data?.drawingsTechnical ?? "");
+  const [listProcedure, setListProcedure] = useState([]);
   const [progress, setProgress] = useState(0);
 
   const handleUploadImage = (event) => {
@@ -128,6 +129,17 @@ export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) =
       }
     );
     setLoading(false);
+  };
+
+  const handleChangeProcedures = (value) => {
+    setListProcedure(
+      value?.map((e, i) => {
+        return {
+          stepId: e,
+          priority: i,
+        };
+      })
+    );
   };
 
   //
@@ -310,6 +322,26 @@ export const ItemModal = ({ data, listCategories, open, onCancel, onSuccess }) =
           >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
+        </Form.Item>
+        <Form.Item
+          name="listProcedure"
+          label="Danh sách quy trình"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn quy trình cần thực hiện",
+            },
+          ]}
+        >
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            placeholder="Chọn quy trình cần thực hiện..."
+            defaultValue={data?.listProcedure}
+            onChange={handleChangeProcedures}
+            optionLabelProp="label"
+            options={listProcedures}
+          />
         </Form.Item>
         {/* hidden data */}
         <Form.Item name="length" hidden>
