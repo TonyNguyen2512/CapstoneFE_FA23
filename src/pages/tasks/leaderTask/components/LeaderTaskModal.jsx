@@ -137,6 +137,7 @@ export const LeaderTaskModal = ({
 				onFinish={onFinish}
 				initialValues={{
 					...dataSource,
+					leaderId: dataSource?.leaderId,
 					drawings2D: dataSource?.item?.drawings2D,
 					drawings3D: dataSource?.item?.drawings3D,
 					drawingsTechnical: dataSource?.item?.drawingsTechnical,
@@ -192,7 +193,7 @@ export const LeaderTaskModal = ({
 											value: e.id,
 										};
 									})}
-									disabled={!isCreate}
+									// disabled={!isCreate}
 								/>
 							</Form.Item>
 							<Form.Item

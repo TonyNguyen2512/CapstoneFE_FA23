@@ -62,6 +62,51 @@ export const getAll = async (keyword) => {
 	}
 };
 
+const GetAllWithSearchAndPaging = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetAllWithSearchAndPaging(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetAllWithSearchAndPaging = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return false;
+	}
+};
 
 const getUserByEmail = async (email) => {
 	try {
@@ -139,6 +184,7 @@ const UserApi = {
 	getUserByEmail,
 	getUserRole,
 	getAll,
+	GetAllWithSearchAndPaging,
 };
 
 export default UserApi;

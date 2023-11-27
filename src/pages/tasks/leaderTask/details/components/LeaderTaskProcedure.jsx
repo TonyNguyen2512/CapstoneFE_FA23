@@ -241,6 +241,7 @@ export const LeaderTaskProcedure = ({
       id: values?.id,
       name: values?.name,
       priority: values?.priority,
+      leaderId: values?.leaderId,
       itemQuantity: values?.itemQuantity,
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],

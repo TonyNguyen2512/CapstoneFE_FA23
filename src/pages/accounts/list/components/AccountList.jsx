@@ -29,18 +29,18 @@ const AccountList = () => {
 
   const getUsers = async (keyword) => {
     setLoading(true);
-    const data = await UserApi.getAll(keyword);
+    const data = await UserApi.GetAllWithSearchAndPaging(keyword);
     console.log(data);
-    data?.sort((a, b) => {
-      if (a.role?.name === roles.ADMIN) {
-        return -1; // a comes before b
-      }
-      if (b.role?.name === roles.ADMIN) {
-        return 1; // b comes before a
-      }
-      return 0; // no change in order
-    });
-    setUsers(data);
+    // data?.sort((a, b) => {
+    //   if (a.role?.name === roles.ADMIN) {
+    //     return -1; // a comes before b
+    //   }
+    //   if (b.role?.name === roles.ADMIN) {
+    //     return 1; // b comes before a
+    //   }
+    //   return 0; // no change in order
+    // });
+    setUsers(data.data);
     setLoading(false);
   };
 
@@ -160,19 +160,19 @@ const AccountList = () => {
     },
     {
       title: "Trạng thái",
-      dataIndex: "isBan",
-      key: "isBan",
-      render: (_, { isBan }) => {
+      dataIndex: "banStatus",
+      key: "banStatus",
+      render: (_, { banStatus }) => {
         return (
           // <Tag color={!isBan ? "#29CB00" : "#FF0000"}>
           //   {!isBan ? "Đang hoạt động" : "Không hoạt động"}
           // </Tag>
-          <span style={{ color: !isBan ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
-            {!isBan ? "Đang hoạt động" : "Không hoạt động"}
+          <span style={{ color: !banStatus ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
+            {!banStatus ? "Đang hoạt động" : "Không hoạt động"}
           </span>
         );
       },
-      sorter: (a, b) => a.isBan - b.isBan,
+      sorter: (a, b) => a.banStatus - b.banStatus,
       filter: {
         placeholder: "Chọn trạng thái",
         label: "Trạng thái",
