@@ -86,6 +86,15 @@ export const LeaderTaskDetailsPage = () => {
             onFilterTask={(search, pageIndex) => {
               getLeaderTaskData(search, pageIndex, true);
             }}
+            onFilterMaterial={(search) => {
+              let dataMaterialFilter = [];
+              if (search) {
+                dataMaterialFilter = materialInfo.filter(x => x.name.indexOf(search) !== -1);
+              } else {
+                dataMaterialFilter = materialInfo;
+              }
+              setMaterialInfo(dataMaterialFilter);
+            }}
           >
             <div className="mt-4">
               <LeaderTaskInfo

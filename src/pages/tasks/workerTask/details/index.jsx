@@ -1,6 +1,6 @@
 import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { UNSAFE_DataRouterStateContext, useLocation, useNavigate, useParams } from "react-router-dom";
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
 import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
 import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
@@ -104,19 +104,26 @@ export const WorkerTaskDetailsPage = () => {
   }, [location, leaderTaskId]);
 
   const handleBack = () => {
-    let path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`
-    if (state?.taskName) {
-      path += `?taskName=${state?.taskName}`;
-    }
-    if (isForeman) {
-      path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`
-      if (state?.orderId) {
-        path += `/${state?.orderId}`;
+    if (state?.taskName || state?.orderId) {
+      let path = "";
+      if (isLeader) {
+        path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`;
+        if (state?.taskName) {
+          path += `?taskName=${state?.taskName}`;
+        }
       }
+      if (isForeman) {
+        path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
+        if (state?.orderId) {
+          path += `/${state?.orderId}`;
+        }
+      }
+      navigate(path, {
+        state: state
+      }, { replace: true });
+    } else {
+      navigate(-1);
     }
-    navigate(path, {
-      state: state
-    }, { replace: true });
   }
 
   return (

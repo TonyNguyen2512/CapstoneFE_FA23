@@ -8,7 +8,7 @@ export const LeaderTaskMaterials = ({
   title,
 }) => {
   const [loading, setLoading] = useState(false);
-  const { material } = useContext(TaskContext);
+  const { material, filterMaterial } = useContext(TaskContext);
 
   const columns = [
     {
@@ -65,6 +65,7 @@ export const LeaderTaskMaterials = ({
   ];
 
   const handleSearch = (value) => {
+    filterMaterial(value);
   };
 
   return (
@@ -76,10 +77,10 @@ export const LeaderTaskMaterials = ({
       pagination={{ pageSize: PageSize.LEADER_TASK_MATERIAL_LIST }}
       rowKey={(record) => record.materialId}
       searchOptions={{
-        visible: false,
-        // placeholder: "Tìm kiếm vật liệu...",
-        // onSearch: handleSearch,
-        // width: 300,
+        visible: true,
+        placeholder: "Tìm kiếm vật liệu...",
+        onSearch: handleSearch,
+        width: 300,
       }}
     />
   );

@@ -51,9 +51,13 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
   }
 };
 
-const getOrderById = async (id) => {
+const getOrderById = async (orderId) => {
   try {
-    const response = await BaseApi.get(`/${resource}/${id}`);
+    const response = await BaseApi.get(`/${resource}/GetOrderById`, {
+      params: {
+        id: orderId
+      }
+    });
     return response.data;
   } catch (error) {
     console.log("Error get item by id: ", error);
@@ -63,7 +67,7 @@ const getOrderById = async (id) => {
 
 const getQuoteMaterialByOrderId = async (orderId) => {
   try {
-    const response = await BaseApi.get(`/${resource}/GetQuoteMaterialById/${orderId}`);
+    const response = await BaseApi.get(`/${resource}/GetQuoteMaterialByOrderId/${orderId}`);
     return response.data;
   } catch (error) {
     console.log("Error get quote material by order id: ", error);
@@ -73,7 +77,7 @@ const getQuoteMaterialByOrderId = async (orderId) => {
 
 const createOrder = async (data) => {
   try {
-    const response = await BaseApi.post(`/${resource}`, data);
+    const response = await BaseApi.post(`/${resource}/CreateOrder`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error create item: ", error);
