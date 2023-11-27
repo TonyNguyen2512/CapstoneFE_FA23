@@ -133,6 +133,7 @@ const OrderApi = {
   updateStatus,
   deleteOrder,
   getQuoteMaterialByOrderId,
+  exportOrder,
 };
 
 export default OrderApi;

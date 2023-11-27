@@ -2,8 +2,8 @@ import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
 import { DatePicker, Form, Input, Select, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { roles } from "../../../constants/app";
 import UserApi from "../../../apis/user";
+import dayjs from "dayjs";
 
 export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
   const isCreate = !data;
@@ -15,16 +15,17 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
 
   const handleSubmit = async (val) => {
     setLoading(true);
-    const {} = val;
-    console.log(val);
-    const success = await UserApi.createUser(roleName, val);
-    if (success) {
+    console.log(roleName);
+    const response = isCreate
+      ? await UserApi.createUser(roleName, val)
+      : await UserApi.updateUserInfo(val);
+    if (!response || !response.errorMessage) {
       message.success(`${typeMessage} thành công`);
     } else {
-      message.error(`${typeMessage} thất bại`);
+      message.error(`${typeMessage} thất bại. ${response.errorMessage}`);
     }
     setLoading(false);
-    success && onCancel();
+    !response.errorMessage && onCancel();
   };
 
   return (
@@ -35,30 +36,69 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
-      <Form layout="vertical" ref={formRef} initialValues={data} onFinish={handleSubmit}>
-        <Form.Item
-          name="phoneNumber"
-          label="Số điện thoại"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-        >
-          <Input placeholder="Nhập số điện thoại..." />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Mật Khẩu"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-        >
-          <Input.Password
-            placeholder="Nhập mật khẩu..."
-            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-          />
-        </Form.Item>
+      <Form
+        layout="vertical"
+        ref={formRef}
+        initialValues={{ ...data, data, dob: data?.dob ? dayjs(data.dob) : null }}
+        onFinish={handleSubmit}
+      >
+        {isCreate ? (
+          <>
+            <Form.Item
+              name="phoneNumber"
+              label="Số điện thoại"
+              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+            >
+              <Input placeholder="Nhập số điện thoại..." />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Mật Khẩu"
+              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+            >
+              <Input.Password
+                placeholder="Nhập mật khẩu..."
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="roleId"
+              label="Vai trò"
+              rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+            >
+              <Select
+                options={roleOptions}
+                placeholder="Chọn vai trò..."
+                onChange={(val) => {
+                  console.log(roleOptions.find((role) => role.value === val).key);
+                  formRef.current.roleId = val;
+                  setRoleName(roleOptions.find((role) => role.value === val).key);
+                }}
+              />
+            </Form.Item>
+          </>
+        ) : (
+          <>
+            <Form.Item name="id" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="phoneNumber" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="userName" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="roleId" hidden>
+              <Input />
+            </Form.Item>
+          </>
+        )}
         <Form.Item
           name="email"
           label="Email"
           rules={[{ required: true, message: "Vui lòng nhập email" }]}
         >
-          <Input placeholder="Nhập email..." />
+          <Input disabled={!isCreate} placeholder="Nhập email..." />
         </Form.Item>
         <Form.Item
           name="fullName"
@@ -73,20 +113,6 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
           rules={[{ required: true, message: "Vui lòng nhập địa chỉ" }]}
         >
           <Input placeholder="Nhập địa chỉ..." />
-        </Form.Item>
-        <Form.Item
-          name="roleId"
-          label="Vai trò"
-          rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
-        >
-          <Select
-            options={roleOptions}
-            placeholder="Chọn vai trò..."
-            onChange={(val) => {
-              formRef.current.roleId = val;
-              setRoleName(roleOptions.find((role) => role.id === val)?.name);
-            }}
-          />
         </Form.Item>
         <Form.Item name="dob" label="Ngày sinh">
           <DatePicker

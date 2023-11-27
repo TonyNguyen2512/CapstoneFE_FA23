@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
 import { Form, Input, Select, message } from "antd";
-import ItemCategoryApi from "../../../apis/item-category";
+import ProcedureApi from "../../../apis/procedure";
 
 export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => {
   const isCreate = !data;
@@ -12,7 +12,6 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
   const [loading, setLoading] = useState(false);
 
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
     setListStep(
       value?.map((e, i) => {
         return {
@@ -23,20 +22,20 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
     );
   };
 
-  const handleUpdate = async (values) => {
+  const handleSubmit = async (values) => {
     setLoading(true);
     values = { ...values, listStep };
     const success = isCreate
-      ? await ItemCategoryApi.createItem(values)
-      : await ItemCategoryApi.updateItem(values);
+      ? await ProcedureApi.createItem(values)
+      : await ProcedureApi.updateItem(values);
     if (success) {
       message.success(`${typeMessage} thành công`);
       onSuccess();
+      onCancel();
     } else {
       message.error(`${typeMessage} thất bại`);
     }
     setLoading(false);
-    onCancel();
   };
 
   return (
@@ -47,7 +46,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
-      <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleUpdate}>
+      <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleSubmit}>
         {!isCreate && (
           <Form.Item name="id" hidden>
             <Input />
@@ -67,30 +66,22 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         </Form.Item>
         <Form.Item
           name="listStep"
-          label="Tên quy trình"
+          label="Danh sách các bước"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên quy trình",
+              message: "Vui lòng chọn các bước cần thực hiện",
             },
           ]}
         >
           <Select
             mode="multiple"
             style={{ width: "100%" }}
-            placeholder="select one country"
+            placeholder="Chọn các bước cần thực hiện..."
             defaultValue={data?.listStep}
             onChange={handleChange}
             optionLabelProp="label"
             options={options}
-            // optionRender={({option}) => (
-            //   <Space>
-            //     <span role="img" aria-label={option.name}>
-            //       {option.emoji}
-            //     </span>
-            //     {option.desc}
-            //   </Space>
-            // )}
           />
         </Form.Item>
       </Form>

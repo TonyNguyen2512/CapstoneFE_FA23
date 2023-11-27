@@ -6,12 +6,14 @@ import { ItemModal } from "../../components/ItemModal";
 import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
 import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
+import ProcedureApi from "../../../../apis/procedure";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
   const [showItemModal, setShowItemModal] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [itemCategoryList, setItemCategoryList] = useState([]);
+  const [listProcedures, setListProcedures] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
 
@@ -24,6 +26,8 @@ const ItemList = () => {
     response = await ItemApi.getAllItem(keyword);
     setItemList(response.data);
     setLoading(false);
+    response = await ProcedureApi.getAllItem();
+    setListProcedures(response.data);
   };
 
   const showModal = (item) => {
@@ -163,6 +167,12 @@ const ItemList = () => {
       <ItemModal
         data={itemRef.current}
         listCategories={itemCategoryList.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        listProcedures={listProcedures.map((i) => {
           return {
             label: i.name,
             value: i.id,
