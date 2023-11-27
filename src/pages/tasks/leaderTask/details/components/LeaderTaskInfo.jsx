@@ -50,9 +50,9 @@ export const LeaderTaskInfo = ({
 							<Col className="gutter-row" span={8}>Tên đơn hàng: <strong>{name}</strong></Col>
 							<Col className="gutter-row" span={8}>Khách hàng: <strong>{customerName || defaultValue("Không xác định được khách hàng")}</strong></Col>
 							<Col className="gutter-row" span={8}>Tên quản lý: <strong>{assignTo || defaultValue("Không xác định được quản lý")}</strong></Col>
-							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(startTime, "DD/MM/YYYY") || defaultValue("Chưa có ngày bắt đầu")}</strong>
+							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(startTime, "DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong>
 							</Col>
-							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(endTime, " DD/MM/YYYY") || defaultValue("Chưa có ngày kết thúc")}</strong></Col>
+							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(endTime, " DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong></Col>
 							<Col className="gutter-row" span={8}>
 								<span>Tình trạng: <strong style={{ color: orderColors[status] }}>
 									{orderLabels[status]}</strong></span>

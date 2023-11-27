@@ -22,6 +22,7 @@ export const LeaderTaskDetailsPage = () => {
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
+  const allMaterials = useRef();
 
   const navigate = useNavigate();
 
@@ -45,7 +46,7 @@ export const LeaderTaskDetailsPage = () => {
   }
 
   useEffect(() => {
-    const getData = async (id, handleLoading) => {
+    const getData = (id, handleLoading) => {
       if (handleLoading) {
         setLoading(true);
       }
@@ -53,24 +54,22 @@ export const LeaderTaskDetailsPage = () => {
       if (!id) return;
 
       // retrieve order data by id
-      const dataOrder = await OrderApi.getOrderById(id);
-
-      let dataMaterials = [];
-      if (dataOrder) {
-        dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
-      }
-
-      getLeaderTaskData(null, 1, true);
-
-      setOrderInfo(dataOrder);
-
-      setMaterialInfo(dataMaterials);
-
+      OrderApi.getOrderById(id).then((dataOrder) => {
+        setOrderInfo(dataOrder);
+        OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
+          setMaterialInfo(dataMaterials?.listFromOrder);
+          allMaterials.current = dataMaterials?.listFromOrder;
+        });
+      });      
       setLoading(false);
     };
 
     getData(id, true);
   }, [id]);
+
+  useEffect(() => {
+    getLeaderTaskData(null, 1, true);
+  }, []);
 
   return (
     <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.managersTasks}`)}>
@@ -87,11 +86,11 @@ export const LeaderTaskDetailsPage = () => {
               getLeaderTaskData(search, pageIndex, true);
             }}
             onFilterMaterial={(search) => {
-              let dataMaterialFilter = [];
+              let dataMaterialFilter = {};
               if (search) {
-                dataMaterialFilter = materialInfo.filter(x => x.name.indexOf(search) !== -1);
+                dataMaterialFilter = allMaterials.current.filter(x => x.name.indexOf(search) !== -1);
               } else {
-                dataMaterialFilter = materialInfo;
+                dataMaterialFilter = allMaterials.current;
               }
               setMaterialInfo(dataMaterialFilter);
             }}

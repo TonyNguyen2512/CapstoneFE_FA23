@@ -25,7 +25,7 @@ export const LeaderTaskMaterials = ({
       title: "Loại vật liệu",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.item.name.localeCompare(b.item.name),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Mã vật liệu",
@@ -71,7 +71,7 @@ export const LeaderTaskMaterials = ({
   return (
     <BaseTable
       title={title}
-      dataSource={material?.listFromOrder}
+      dataSource={material}
       columns={columns}
       loading={loading}
       pagination={{ pageSize: PageSize.LEADER_TASK_MATERIAL_LIST }}
