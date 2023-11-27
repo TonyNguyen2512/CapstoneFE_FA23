@@ -71,16 +71,6 @@ const GroupList = () => {
 
   const columns = [
     {
-      title: "#",
-      dataIndex: "index",
-      key: "index",
-      width: "5%",
-      // align: "center",
-      render: (_, record, index) => {
-        return <span>{index + 1}</span>;
-      },
-    },
-    {
       title: "Tên nhóm",
       dataIndex: "name",
       key: "name",

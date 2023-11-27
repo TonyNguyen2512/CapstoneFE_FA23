@@ -21,7 +21,7 @@ export const WorkerTaskDetailsPage = () => {
 
   const { user } = useContext(UserContext);
   const isLeader = user?.role?.name === roles.LEADER;
-  const isForman = user?.role?.name === roles.FOREMAN;
+  const isForeman = user?.role?.name === roles.FOREMAN;
 
   const [loading, setLoading] = useState(false);
   const { leaderTaskId } = useParams();
@@ -43,7 +43,6 @@ export const WorkerTaskDetailsPage = () => {
     }
 
     const dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
-    console.log("dataWorkerTasks", dataWorkerTasks)
     if (dataWorkerTasks.code !== 0) {
       message.error = dataWorkerTasks.message;
       return;
@@ -68,7 +67,6 @@ export const WorkerTaskDetailsPage = () => {
         message.error = dataLeaderTask?.message;
         return;
       }
-      console.log("dataLeaderTask", dataLeaderTask)
   
       // retrieve order detail by order id
       const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataLeaderTask?.data?.orderId);
@@ -83,15 +81,11 @@ export const WorkerTaskDetailsPage = () => {
       //   return;
       // }
   
-      // const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
-      const dataGroupMembers = await UserApi.getAll();
-      // if (dataGroupMembers.code !== 0) {
-      //   message.error = dataGroupMembers.message;
-      //   return;
-      // }
-      console.log("dataGroupMembers", dataGroupMembers)
+      const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+      // const dataGroupMembers = await UserApi.getAll();
+
       setLeaderTaskInfo(dataLeaderTask?.data);
-      setGroupMemberList(dataGroupMembers);
+      setGroupMemberList(dataGroupMembers?.data);
       setMaterialList(dataMaterials);
   
       getWorkerTaskList(leaderTaskId);
@@ -114,13 +108,12 @@ export const WorkerTaskDetailsPage = () => {
     if (state?.taskName) {
       path += `?taskName=${state?.taskName}`;
     }
-    if (isForman) {
+    if (isForeman) {
       path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`
       if (state?.orderId) {
         path += `/${state?.orderId}`;
       }
     }
-    console.log("path", path)
     navigate(path, {
       state: state
     }, {replace: true});

@@ -16,6 +16,7 @@ const { Title } = Typography;
 
 const OrderDetailPage = () => {
   const { id } = useParams();
+  console.log("id", id)
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -52,8 +53,8 @@ const OrderDetailPage = () => {
       dataIndex: "itemName",
       key: "itemName",
       width: "25%",
-      render: (_, record) => <span>{record?.item?.name}</span>,
-      sorter: (a, b) => a?.item?.name.localeCompare(b?.item?.name),
+      render: (_, record) => <span>{record?.itemName}</span>,
+      sorter: (a, b) => a?.itemName.localeCompare(b?.itemName),
     },
     {
       title: "Số lượng",

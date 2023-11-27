@@ -1,11 +1,14 @@
-import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Upload, Image } from "antd";
-import { useEffect, useRef, useState } from "react";
+import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Upload, Image, Button } from "antd";
+import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import dayjs from "dayjs";
 import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum";
 import ItemApi from "../../../../apis/item";
 import UserApi from "../../../../apis/user";
+import { DownloadOutlined } from "@ant-design/icons";
+import { formatDate } from "../../../../utils";
+import { TaskContext } from "../../../../providers/task";
 
 const { Text } = Typography;
 
@@ -18,7 +21,7 @@ export const LeaderTaskModal = ({
 	mode,
 }) => {
 	// const { user } = useContext(UserContext);
-	// const { team } = useContext(TeamContext);
+	const { info } = useContext(TaskContext);
 
 	// const isLeader = user?.userId === team?.leader?.id;
 	const [title, setTitle] = useState(false);
@@ -28,9 +31,9 @@ export const LeaderTaskModal = ({
 
 	const leadTaskFormRef = useRef();
 
-	const drawings2D = dataSource?.item?.drawings2D;
-	const drawings3D = dataSource?.item?.drawings3D;
-	const drawingsTechnical = dataSource?.item?.drawingsTechnical;
+	const isDrawings2D = dataSource?.item?.drawings2D;
+	const isDrawings3D = dataSource?.item?.drawings3D;
+	const isDrawingsTechnical = dataSource?.item?.drawingsTechnical;
 
 	const isCreate = mode === modalModes.CREATE;
 
@@ -42,21 +45,26 @@ export const LeaderTaskModal = ({
 		const xhr = new XMLHttpRequest();
 		xhr.responseType = 'blob';
 		xhr.onload = (event) => {
-		const blob = xhr.response;
+			const blob = xhr.response;
 		};
 		xhr.open('GET', url);
 		xhr.send();
-		console.log(url)
-		
+
 	}
 
-	const download = async () => {
-		const a = document.createElement("a");
-		a.href = toDataURL("https://view.officeapps.live.com/op/view.aspx?src=https%3A%2F%2Ffirebasestorage.googleapis.com%2Fv0%2Fb%2Ftamnt-sj.appspot.com%2Fo%2FTestExcel2.xlsx%3Falt%3Dmedia%26token%3Dbeaa9410-7c47-45ba-956c-8646f23c613e%26_gl%3D1*en1r41*_ga*MTEwMDcxMTY0Mi4xNjk2MjUxNDAx*_ga_CW55HF8NVT*MTY5ODQ5NjQ3Ny4yMC4xLjE2OTg0OTY2NzQuNjAuMC4w&wdOrigin=BROWSELINK");
-		a.download = "myImage.png";
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
+	const handleDownloadFile = async (url, filename) => {
+		if (!url) message.warning("Không có bản vẽ");
+		try {
+			var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
+			var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
+			var fileURL = window.URL.createObjectURL(downloadFile);
+			var a = document.createElement("a");
+			a.download = fileName;
+			a.href = fileURL;
+			a.click();
+		} catch (err) {
+		} finally {
+		}
 	}
 
 	const handleTitle = () => {
@@ -74,21 +82,21 @@ export const LeaderTaskModal = ({
 	const initLeaderInfo = async () => {
 		// const data = await UserApi.getAllUser();
 		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		const leadersData = await UserApi.getUserByRoleId(roleId);
-		if (leadersData.code === 0) {
-			setLeadersData(leadersData?.data);
-		} else {
-			message.error = leadersData.message;
-		}
+		const data = await UserApi.getUserByRoleId(roleId);
+		// if (data.code === 0) {
+			setLeadersData(data?.data);
+		// } else {
+		// 	message.error = data.message;
+		// }
 	}
 
 	const initItemInfo = async () => {
 		const data = await ItemApi.getAllItem();
-		if (data.code === 0) {
+		// if (data.code === 0) {
 			setItemsData(data?.data);
-		} else {
-			message.error = leadersData.message;
-		}
+		// } else {
+		// 	message.error = leadersData.message;
+		// }
 	}
 
 	const initETaskStatus = () => {
@@ -104,18 +112,9 @@ export const LeaderTaskModal = ({
 
 	const initialData = async () => {
 		handleTitle();
-		initLeaderInfo();
-		initItemInfo();
 		initETaskStatus();
-	}
-
-	const handleDownloadImage = (url) => {
-		// var fileName = type + "order-export.pdf";
-		var a = document.createElement("a");
-		a.download = "image.png";
-		a.href = url;
-		a.rel = 'noopener';
-		a.click();
+		await initLeaderInfo();
+		await initItemInfo();
 	}
 
 	useEffect(() => {
@@ -138,6 +137,7 @@ export const LeaderTaskModal = ({
 				onFinish={onFinish}
 				initialValues={{
 					...dataSource,
+					leaderId: dataSource?.leaderId,
 					drawings2D: dataSource?.item?.drawings2D,
 					drawings3D: dataSource?.item?.drawings3D,
 					drawingsTechnical: dataSource?.item?.drawingsTechnical,
@@ -160,7 +160,7 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="name"
-								label="Tên công việc"
+								label={<Text strong>Tên công việc</Text>}
 								rules={[
 									{
 										required: true,
@@ -176,7 +176,7 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="leaderId"
-								label="Nhóm trưởng"
+								label={<Text strong>Nhóm trưởng</Text>}
 								rules={[
 									{
 										required: true,
@@ -193,12 +193,12 @@ export const LeaderTaskModal = ({
 											value: e.id,
 										};
 									})}
-									disabled={!isCreate}
+									// disabled={!isCreate}
 								/>
 							</Form.Item>
 							<Form.Item
 								name="itemId"
-								label="Sản phẩm"
+								label={<Text strong>Sản phẩm</Text>}
 								rules={[
 									{
 										required: true,
@@ -222,7 +222,7 @@ export const LeaderTaskModal = ({
 								<Col span={16}>
 									<Form.Item
 										name="dates"
-										label="Thời gian"
+										label={<Text strong>Thời gian</Text>}
 										rules={[
 											{
 												required: true,
@@ -236,13 +236,19 @@ export const LeaderTaskModal = ({
 											placeholder={["Bắt đầu", "Kết thúc"]}
 											className="w-full"
 											format="HH:mm DD/MM/YYYY"
+											disabledDate={(date) => {
+												return (
+													date.isBefore(info.startTime) ||
+													date.isAfter(info.endTime)
+												);
+											}}
 										/>
 									</Form.Item>
 								</Col>
 								<Col span={6}>
 									<Form.Item
 										name="priority"
-										label="Độ ưu tiên"
+										label={<Text strong>Độ ưu tiên</Text>}
 										rules={[
 											{
 												required: true,
@@ -263,7 +269,7 @@ export const LeaderTaskModal = ({
 									{!isCreate &&
 										<Form.Item
 											name="status"
-											label="Trạng thái"
+											label={<Text strong>Trạng thái</Text>}
 											rules={[
 												{
 													required: true,
@@ -282,7 +288,7 @@ export const LeaderTaskModal = ({
 								<Col span={isCreate ? 16 : 8}>
 									<Form.Item
 										name="itemQuantity"
-										label="Số lượng sản phẩm"
+										label={<Text strong>Số lượng sản phẩm</Text>}
 										rules={[
 											{
 												required: true,
@@ -292,27 +298,73 @@ export const LeaderTaskModal = ({
 									>
 										<InputNumber
 											min={1}
-											max={10}
+											// max={10}
 											placeholder="Số lượng sản phẩm"
 										/>
 									</Form.Item>
 								</Col>
 							</Row>
 							<Form.Item
-								label="Mô tả"
+								label={<Text strong>Mô tả</Text>}
 								name="description"
 							>
 								<RichTextEditor
 									placeholder="Mô tả"
 								/>
 							</Form.Item>
-							
-							<Form.Item
-								name="drawings2D"
-								label="Bản vẽ 2D"
-							>
-								<a onClick={(e) => download()}>test</a>
-							</Form.Item>
+
+							{!isCreate &&
+								<Row gutter={16}>
+									<Col span={8}>
+										<Form.Item hidden name="drawings2D">
+											<Input />
+										</Form.Item>
+										<Form.Item
+											label={<Text strong>Bản vẽ 2D</Text>}
+										>
+											<Button
+												disabled={!isDrawings2D}
+												icon={<DownloadOutlined />}
+												onClick={(e) => handleDownloadFile(leadTaskFormRef.current.getFieldValue("drawings2D"), "drawings2D")
+												}>
+												Tải bản vẽ
+											</Button>
+										</Form.Item>
+									</Col>
+									<Col span={8}>
+										<Form.Item hidden name="drawings3D">
+											<Input />
+										</Form.Item>
+										<Form.Item
+											label={<Text strong>Bản vẽ 3D</Text>}
+										>
+											<Button
+												disabled={!isDrawings3D}
+												icon={<DownloadOutlined />}
+												onClick={(e) => handleDownloadFile(leadTaskFormRef.current.getFieldValue("drawings3D"), "drawings3D")
+												}>
+												Tải bản vẽ
+											</Button>
+										</Form.Item>
+									</Col>
+									<Col span={8}>
+										<Form.Item hidden name="drawingsTechnical">
+											<Input />
+										</Form.Item>
+										<Form.Item
+											label={<Text strong>Bản vẽ kĩ thuật</Text>}
+										>
+											<Button
+												disabled={!isDrawingsTechnical}
+												icon={<DownloadOutlined />}
+												onClick={(e) => handleDownloadFile(leadTaskFormRef.current.getFieldValue("drawingsTechnical"), "drawingsTechnical")
+												}>
+												Tải bản vẽ
+											</Button>
+										</Form.Item>
+									</Col>
+								</Row>
+							}
 						</Card>
 					</Col>
 				</Row>

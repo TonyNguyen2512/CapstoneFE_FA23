@@ -1,5 +1,4 @@
 import BaseApi from ".";
-import { mockAccounts } from "../__mocks__/accounts";
 
 const resource = "User";
 
@@ -62,6 +61,51 @@ export const getAll = async (keyword) => {
 	}
 };
 
+const GetAllWithSearchAndPaging = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetAllWithSearchAndPaging(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetAllWithSearchAndPaging = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return false;
+	}
+};
 
 const getUserByEmail = async (email) => {
 	try {
@@ -147,6 +191,98 @@ const updateUserInfo = async (data) => {
 	}
 };
 
+const getByForemanRole = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetByForemanRole(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetByForemanRole`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetByForemanRole = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByForemanRole`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return false;
+	}
+};
+
+const getByLeaderRole = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetByLeaderRole(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
+				params: params,
+			});
+			return response.data;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetByLeaderRole = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return false;
+	}
+};
+
 const UserApi = {
 	searchUsers,
 	banUser,
@@ -161,6 +297,9 @@ const UserApi = {
 	getUserRole,
 	updateUserPhone,
 	getAll,
+	GetAllWithSearchAndPaging,
+	getByForemanRole,
+	getByLeaderRole,
 };
 
 export default UserApi;

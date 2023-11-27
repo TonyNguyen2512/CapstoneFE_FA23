@@ -17,7 +17,7 @@ export const TaskCreateModal = ({
 	dataGroupMembers,
 }) => {
 	const { user } = useContext(UserContext);
-	const { team } = useContext(TaskContext);
+	const { team, info } = useContext(TaskContext);
 
 	const formRef = useRef();
 	const descRef = useRef();
@@ -44,6 +44,13 @@ export const TaskCreateModal = ({
 						startTime: new Date(startTime),
 						endTime: new Date(endTime),
 					});
+				}}
+				initialValues={{
+					taskName: "",
+					status: TaskStatus.new,
+					dates: ["", ""],
+					assignees: [""],
+					priority: "",
 				}}
 			>
 				<Form.Item
@@ -79,13 +86,18 @@ export const TaskCreateModal = ({
 									format: "HH:mm",
 								}}
 								locale={locale}
+								disabledDate={(date) => {
+									return (
+										date.isBefore(info.startTime) ||
+										date.isAfter(info.endTime)
+									);
+								}}
 							/>
 						</Form.Item>
 					</Col>
 					<Col span={12}>
 						<Form.Item name="status" label="Trạng thái">
 							<Select
-								defaultValue={TaskStatus.new}
 								options={taskStatusOptions}
 								placeholder="Chọn trạng thái"
 							/>

@@ -5,7 +5,7 @@ const resource = "WorkerTask";
 
 const retrieveDataSuccessCode = 300;
 const createSuccessCode = 302;
-const udpateSuccessCode = 303;
+const updateSuccessCode = 303;
 const deleteSuccessCode = 304;
 const updateStatusSuccessCode = 305;
 
@@ -44,7 +44,7 @@ const createWorkerTask = async (data) => {
 const updateWorkerTask = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/Update`, data);
-		return successComposer(udpateSuccessCode);
+		return successComposer(updateSuccessCode);
 	} catch (error) {
 		console.log("Error update Worker task: ", error);
 		return errorComposer(error);
@@ -125,6 +125,16 @@ const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize =
 	}
 };
 
+const sendFeedback = async (data) => {
+	try {
+		const response = await BaseApi.put(`/${resource}/SendFeedback`, data);
+		return response.status === 200 && successComposer(updateSuccessCode);
+	} catch (error) {
+		console.log("Error send feedback task: ", error);
+		return errorComposer(error);
+	}
+};
+
 const WorkerTasksApi = {
 	createWorkerTask,
 	updateWorkerTask,
@@ -133,6 +143,7 @@ const WorkerTasksApi = {
 	getWorkerTaskById,
 	getWorkerTaskByLeaderTaskId,
 	getWorkerTaskByUserId,
+	sendFeedback,
 };
 
 export default WorkerTasksApi;

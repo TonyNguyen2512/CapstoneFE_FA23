@@ -5,7 +5,7 @@ const resource = "LeaderTask";
 
 const retrieveDataSuccessCode = 300;
 const createSuccessCode = 302;
-const udpateSuccessCode = 303;
+const updateSuccessCode = 303;
 const deleteSuccessCode = 304;
 const updateStatusSuccessCode = 305;
 
@@ -44,7 +44,7 @@ const createLeaderTasks = async (data) => {
 const updateLeaderTasks = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/Update`, data);
-		return successComposer(udpateSuccessCode);
+		return successComposer(updateSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task: ", error);
 		return errorComposer(error);

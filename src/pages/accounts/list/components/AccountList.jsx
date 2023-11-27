@@ -26,6 +26,7 @@ const AccountList = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
+  const [roleCreateOptions, setRoleCreateOptions] = useState([]);
 
   const userRef = useRef();
 
@@ -33,17 +34,23 @@ const AccountList = () => {
     setLoading(true);
     const data = await UserApi.getAll(keyword);
     console.log(data);
-    data?.sort((a, b) => {
-      if (a.role?.name === roles.ADMIN) {
-        return -1; // a comes before b
-      }
-      if (b.role?.name === roles.ADMIN) {
-        return 1; // b comes before a
-      }
-      return 0; // no change in order
-    });
+    // data?.sort((a, b) => {
+    //   if (a.role?.name === roles.ADMIN) {
+    //     return -1; // a comes before b
+    //   }
+    //   if (b.role?.name === roles.ADMIN) {
+    //     return 1; // b comes before a
+    //   }
+    //   return 0; // no change in order
+    // });
     setUsers(data);
     setLoading(false);
+  };
+
+  const getRoleForCreateUsers = async () => {
+    const data = await RoleApi.getRoleForCreateUser();
+    setRoleCreateOptions(data);
+    getUsers();
   };
 
   const getAllRoles = async () => {
@@ -74,10 +81,11 @@ const AccountList = () => {
   useEffect(() => {
     getUsers();
     getAllRoles();
+    getRoleForCreateUsers();
   }, []);
 
   const getActionItems = (record) => {
-    const { isBan, id, role } = record;
+    const { banStatus, id, role } = record;
 
     return [
       {
@@ -111,11 +119,11 @@ const AccountList = () => {
       },
       {
         key: "SET_STATUS",
-        label: isBan ? "Mở khóa tài khoản" : "Khóa tài khoản",
-        danger: !isBan,
-        icon: !isBan ? <Forbid /> : <Unlock />,
+        label: banStatus ? "Mở khóa tài khoản" : "Khóa tài khoản",
+        danger: !banStatus,
+        icon: !banStatus ? <Forbid /> : <Unlock />,
         onClick: () => {
-          if (isBan) {
+          if (banStatus) {
             unbanUser(id);
           } else {
             banUser(id);
@@ -167,7 +175,7 @@ const AccountList = () => {
           </Tag>
         );
       },
-      sorter: (a, b) => a.role.localeCompare(b.role),
+      sorter: (a, b) => a.role?.name.localeCompare(b.role?.name),
       filter: {
         placeholder: "Chọn vai trò",
         label: "Vai trò",
@@ -181,19 +189,19 @@ const AccountList = () => {
     },
     {
       title: "Trạng thái",
-      dataIndex: "isBan",
-      key: "isBan",
-      render: (_, { isBan }) => {
+      dataIndex: "banStatus",
+      key: "banStatus",
+      render: (_, { banStatus }) => {
         return (
           // <Tag color={!isBan ? "#29CB00" : "#FF0000"}>
           //   {!isBan ? "Đang hoạt động" : "Không hoạt động"}
           // </Tag>
-          <span style={{ color: !isBan ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
-            {!isBan ? "Đang hoạt động" : "Không hoạt động"}
+          <span style={{ color: !banStatus ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
+            {!banStatus ? "Đang hoạt động" : "Không hoạt động"}
           </span>
         );
       },
-      sorter: (a, b) => a.isBan - b.isBan,
+      sorter: (a, b) => a.banStatus - b.banStatus,
       filter: {
         placeholder: "Chọn trạng thái",
         label: "Trạng thái",
@@ -249,7 +257,7 @@ const AccountList = () => {
         loading={loading}
         dataSource={users}
         columns={columns}
-        pagination={{ pageSize: 6 }}
+        pagination={{ pageSize: 9 }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",
@@ -259,7 +267,7 @@ const AccountList = () => {
       />
       <AccountModal
         data={userRef.current}
-        roleOptions={roleOptions?.map((e) => {
+        roleOptions={roleCreateOptions?.map((e) => {
           return {
             key: e.name,
             value: e.id,

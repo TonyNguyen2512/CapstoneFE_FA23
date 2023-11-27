@@ -1,16 +1,13 @@
-import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Button, Upload } from "antd";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Row, Col, Form, Input, Select, Typography, InputNumber, message, Card, Button } from "antd";
+import { useContext, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
-import dayjs from "dayjs";
-import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum";
-import ItemApi from "../../../../apis/item";
-import UserApi from "../../../../apis/user";
+import { modalModes } from "../../../../constants/enum";
 import { SupplyOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
-import { MinusCircleOutlined, PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { imagesItemRef } from "../../../../middleware/firebase";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { workerTaskReportsRef } from "../../../../middleware/firebase";
+import { UploadFile } from "../../../../components/UploadFile";
 
 const { Text } = Typography;
 
@@ -23,61 +20,65 @@ export const TaskReportModal = ({
 	title,
 }) => {
 	// const { user } = useContext(UserContext);
-	const { tasks, material, info } = useContext(TaskContext);
+	const { material, info } = useContext(TaskContext);
 
-	const [resourceImage, setResourceImage] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [progress, setProgress] = useState(0);
+	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 
-	const leadReportFormRef = useRef();
+	const worderReportFormRef = useRef();
 
-	const isCreate = mode === modalModes.CREATE;
+	// const isCreate = mode === modalModes.CREATE;
 
 	const onFinish = async (values) => {
-		values.resource = [values.resource]
-		await onSubmit({ ...values });
+		const resource = worderReportFormRef.current?.getFieldValue('resource');
+		if (handleValidateUpload()) {
+			setResourceErrorMsg("");
+			values.resource = [resource];
+			await onSubmit({ ...values });
+		}
 	};
 
-	const handleUploadImage = (event) => {
-		setLoading(true);
-		const file = event.file;
-		const fileName = event.file?.name;
-		const uploadTask = uploadBytesResumable(ref(imagesItemRef, fileName), file);
-		uploadTask.on(
-			"state_changed",
-			(snapshot) => {
-				const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-				// update progress
-				setProgress(percent);
-			},
-			(err) => {
-				console.log(err);
-				setLoading(false);
-			},
-			() => {
-				setProgress(0);
-				// download url
-				getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-					leadReportFormRef.current.setFieldValue("resource", url);
-					setResourceImage(url);
-				});
-			}
-		);
-		setLoading(false);
+	const handleChangeUploadImage = (info) => {
+		// setFileList(newFileList);
+		console.log('handleChange', info);
+		if (info.file.status === 'uploading') {
+			console.log('setting loading to true');
+			// this.setState({ loading: true });
+			setLoading(true);
+			// return;
+		}
+		if (info.file.status === 'done') {
+			console.log('setting loading to false');
+			setLoading(false);
+		}
+		setResourceErrorMsg("");
 	};
+
+	const handleValidateUpload = () => {
+		if (!worderReportFormRef.current?.getFieldValue('resource')) {
+			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+			return false;
+		} else {
+			setResourceErrorMsg("");
+			return true;
+		}
+	}
 
 	return (
 		<BaseModal
 			open={open}
 			onCancel={onCancel}
 			title={title}
-			onOk={() => leadReportFormRef.current?.submit()}
+			onOk={() => {
+				handleValidateUpload();
+				worderReportFormRef.current?.submit();
+			}}
 			confirmLoading={confirmLoading}
 			width="40%"
 			okText="Lưu"
 		>
 			<Form
-				ref={leadReportFormRef}
+				ref={worderReportFormRef}
 				layout="vertical"
 				onFinish={onFinish}
 				initialValues={{
@@ -156,30 +157,14 @@ export const TaskReportModal = ({
 									</Form.Item>
 								</Col>
 								<Col span={8}>
-									<Form.Item
-										name="resource"
-										label={<Text strong>Tải ảnh</Text>}
-										rules={[
-											{
-												required: true,
-												message: "Vui lòng chọn ảnh",
-											},
-										]}
-										valuePropName="fileList"
-									>
-										<Upload
-											listType="picture"
-											beforeUpload={() => false}
-											accept=".jpg,.jepg,.png,.svg,.bmp"
-											onChange={handleUploadImage}
-											maxCount={1}
-										>
-											<Button
-												icon={<UploadOutlined />}>
-												Upload
-											</Button>
-										</Upload>
-									</Form.Item>
+									<UploadFile 
+										formRef={worderReportFormRef}
+										imageRef={workerTaskReportsRef}
+										itemName="resource"
+										onChange={handleChangeUploadImage}
+										fileAccept=".jpg,.jepg,.png,.svg,.bmp"
+										errorMessage={resourceErrorMsg}
+									/>
 								</Col>
 							</Row>
 							<Form.Item

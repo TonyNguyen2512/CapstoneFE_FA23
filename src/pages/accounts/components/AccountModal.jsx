@@ -5,7 +5,7 @@ import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import UserApi from "../../../apis/user";
 import dayjs from "dayjs";
 
-export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
+export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) => {
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
@@ -21,6 +21,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
       : await UserApi.updateUserInfo(val);
     if (!response || !response.errorMessage) {
       message.success(`${typeMessage} thành công`);
+      onSuccess()
     } else {
       message.error(`${typeMessage} thất bại. ${response.errorMessage}`);
     }

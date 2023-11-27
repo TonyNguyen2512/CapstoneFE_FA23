@@ -24,41 +24,49 @@ export const LeaderTaskDetailsPage = () => {
 
   const navigate = useNavigate();
 
-  const getData = async (id, handleLoading) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
-    // retrieve order data by id
-    const dataOrder = await OrderApi.getOrderById(id);
-    // retrieve order detail by order id
-    const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
-
-    getLeaderTaskData(id);
-
-    setOrderInfo(dataOrder);
-
-    setMaterialInfo(dataMaterials);
-
-    setLoading(false);
-  };
-
   const getLeaderTaskData = async () => {
     setLoading(true);
     // // retrieve leader task by order id
-    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
-    if (dataLeaderTasks.code === 0) {
-      setTaskInfo(dataLeaderTasks.data);
-    } else {
-      message.error = dataLeaderTasks.message;
+    try {
+      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+      if (dataLeaderTasks.code === 0) {
+        setTaskInfo(dataLeaderTasks.data);
+      } else {
+        message.error = dataLeaderTasks.message;
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }
 
   useEffect(() => {
-    if (id) {
-      getData(id, true);
-    }
+    const getData = async (id, handleLoading) => {
+      if (handleLoading) {
+        setLoading(true);
+      }
+
+      if (!id) return;
+
+      // retrieve order data by id
+      const dataOrder = await OrderApi.getOrderById(id);
+
+      let dataMaterials = [];
+      if (dataOrder) {
+        dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
+      }
+
+      getLeaderTaskData(id);
+
+      setOrderInfo(dataOrder);
+
+      setMaterialInfo(dataMaterials);
+
+      setLoading(false);
+    };
+
+    getData(id, true);
   }, [id]);
 
   return (
@@ -69,9 +77,9 @@ export const LeaderTaskDetailsPage = () => {
             tasks={taskInfo}
             info={orderInfo}
             material={materialInfo}
-          // onReload={(handleLoading) => {
-          //   getWorkerTaskList(leaderTaskId, handleLoading);
-          // }}
+            onReload={(handleLoading) => {
+              getLeaderTaskData(id, handleLoading);
+            }}
           // onFilterTask={(memberId) => {
           //   if (memberId) {
           //     const newTasks = allTasks.current.filter(
@@ -100,7 +108,6 @@ export const LeaderTaskDetailsPage = () => {
             <div className="mt-4">
               <LeaderTaskProcedure
                 title="Danh sách quy trình"
-                reloadData={getLeaderTaskData}
               />
             </div>
           </TaskProvider>

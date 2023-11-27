@@ -147,6 +147,7 @@ const LeaderTaskList = () => {
         columns={columns}
         loading={loading}
         pagination={true}
+        rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm công việc...",
