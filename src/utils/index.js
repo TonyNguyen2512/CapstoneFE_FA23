@@ -28,11 +28,8 @@ export const getRoleName = (role) => {
 	switch (role) {
 		case roles.ADMIN:
 			return "Quản trị viên";
-		case roles.FACTORY:
 		case roles.FOREMAN:
 			return "Quản đốc";
-		case roles.LEADER:
-			return "Quản lý";
 		case roles.LEADER:
 			return "Trưởng nhóm";
 		case roles.WORKER:

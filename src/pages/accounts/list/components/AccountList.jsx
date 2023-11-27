@@ -26,12 +26,13 @@ const AccountList = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
+  const [roleCreateOptions, setRoleCreateOptions] = useState([]);
 
   const userRef = useRef();
 
   const getUsers = async (keyword) => {
     setLoading(true);
-    const data = await UserApi.GetAllWithSearchAndPaging(keyword);
+    const data = await UserApi.getAll(keyword);
     console.log(data);
     // data?.sort((a, b) => {
     //   if (a.role?.name === roles.ADMIN) {
@@ -42,8 +43,14 @@ const AccountList = () => {
     //   }
     //   return 0; // no change in order
     // });
-    setUsers(data.data);
+    setUsers(data);
     setLoading(false);
+  };
+
+  const getRoleForCreateUsers = async () => {
+    const data = await RoleApi.getRoleForCreateUser();
+    setRoleCreateOptions(data);
+    getUsers();
   };
 
   const getAllRoles = async () => {
@@ -74,10 +81,11 @@ const AccountList = () => {
   useEffect(() => {
     getUsers();
     getAllRoles();
+    getRoleForCreateUsers();
   }, []);
 
   const getActionItems = (record) => {
-    const { isBan, id, role } = record;
+    const { banStatus, id, role } = record;
 
     return [
       {
@@ -111,11 +119,11 @@ const AccountList = () => {
       },
       {
         key: "SET_STATUS",
-        label: isBan ? "Mở khóa tài khoản" : "Khóa tài khoản",
-        danger: !isBan,
-        icon: !isBan ? <Forbid /> : <Unlock />,
+        label: banStatus ? "Mở khóa tài khoản" : "Khóa tài khoản",
+        danger: !banStatus,
+        icon: !banStatus ? <Forbid /> : <Unlock />,
         onClick: () => {
-          if (isBan) {
+          if (banStatus) {
             unbanUser(id);
           } else {
             banUser(id);
@@ -167,7 +175,7 @@ const AccountList = () => {
           </Tag>
         );
       },
-      sorter: (a, b) => a.role.localeCompare(b.role),
+      sorter: (a, b) => a.role?.name.localeCompare(b.role?.name),
       filter: {
         placeholder: "Chọn vai trò",
         label: "Vai trò",
@@ -249,7 +257,7 @@ const AccountList = () => {
         loading={loading}
         dataSource={users}
         columns={columns}
-        pagination={{ pageSize: 6 }}
+        pagination={{ pageSize: 9 }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",
@@ -259,7 +267,7 @@ const AccountList = () => {
       />
       <AccountModal
         data={userRef.current}
-        roleOptions={roleOptions?.map((e) => {
+        roleOptions={roleCreateOptions?.map((e) => {
           return {
             key: e.name,
             value: e.id,

@@ -12,7 +12,16 @@ const getAllRoles = async () => {
 		return [];
 	}
 };
+const getRoleForCreateUser = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetRoleForCreateUser`);
+		return response.data.data;
+	} catch (error) {
+		console.log("Error get member roles: ", error);
+		return [];
+	}
+};
 
-const RoleApi = { getAllRoles };
+const RoleApi = { getAllRoles, getRoleForCreateUser };
 
 export default RoleApi;

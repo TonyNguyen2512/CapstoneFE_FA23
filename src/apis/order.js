@@ -53,7 +53,7 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
 
 const getOrderById = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/${id}`);
+    const response = await BaseApi.get(`/${resource}/GetOrderById?id=${id}`);
     return response.data;
   } catch (error) {
     console.log("Error get item by id: ", error);
@@ -73,7 +73,7 @@ const getQuoteMaterialByOrderId = async (orderId) => {
 
 const createOrder = async (data) => {
   try {
-    const response = await BaseApi.post(`/${resource}`, data);
+    const response = await BaseApi.post(`/${resource}/CreateOrder`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error create item: ", error);
