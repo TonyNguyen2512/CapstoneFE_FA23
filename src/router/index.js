@@ -30,6 +30,8 @@ import GroupDetailPage from "../pages/group/detail";
 import OrderReportDetailPage from "../pages/report/orderReport/detail";
 import { ProcedureListPage } from "../pages/procedures/list";
 import { StepListPage } from "../pages/steps/list";
+import { QuoteListPage } from "../pages/quotes/list";
+import QuoteDetailPage from "../pages/quotes/detail";
 
 export const router = createBrowserRouter([
   {
@@ -67,7 +69,11 @@ export const router = createBrowserRouter([
           },
           {
             path: routes.dashboard.quotes,
-            element: <AccountListPage />,
+            element: <QuoteListPage />,
+          },
+          {
+            path: `${routes.dashboard.quotes}/:id`,
+            element: <QuoteDetailPage />,
           },
           {
             path: routes.dashboard.materials,

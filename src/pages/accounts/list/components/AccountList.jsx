@@ -1,4 +1,4 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
+import { Edit, Forbid, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
 import { Button, Dropdown, Space, Tag, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../../apis/role";
@@ -8,6 +8,7 @@ import { roles } from "../../../../constants/app";
 import { getRoleName } from "../../../../utils";
 import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
+import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
 
 const roleColors = {
   ADMIN: "#FF7777",
@@ -19,7 +20,8 @@ const roleColors = {
 };
 
 const AccountList = () => {
-  const [showUpdateRoleModal, setShowUpdateRoleModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -79,13 +81,32 @@ const AccountList = () => {
 
     return [
       {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật vai trò",
+        key: "UPDATE_USER",
+        label: "Cập nhật thông tin",
         icon: <Edit />,
-        disabled: role === roles.ADMIN,
+        // disabled: role === roles.ADMIN,
         onClick: () => {
           userRef.current = record;
-          setShowUpdateRoleModal(true);
+          setShowUserModal(true);
+        },
+      },
+      {
+        key: "UPDATE_PHONE",
+        label: "Cập nhật số điện thoại",
+        icon: <Phone />,
+        onClick: () => {
+          userRef.current = record;
+          setShowPhoneModal(true);
+        },
+      },
+      {
+        key: "UPDATE_ROLE",
+        label: "Cập nhật vai trò",
+        icon: <UserPositioning />,
+        // disabled: role === roles.ADMIN,
+        onClick: () => {
+          userRef.current = record;
+          setShowModal(true);
         },
       },
       {
@@ -238,7 +259,6 @@ const AccountList = () => {
       />
       <AccountModal
         data={userRef.current}
-        users={users || []}
         roleOptions={roleOptions?.map((e) => {
           return {
             key: e.name,
@@ -247,12 +267,12 @@ const AccountList = () => {
           };
         })}
         open={showUserModal}
+        onSuccess={() => getUsers()}
         onCancel={() => {
           setShowUserModal(false);
           userRef.current = null;
         }}
-        onSuccess={() => getUsers()}
-      ></AccountModal>
+      />
       <UpdateRoleModal
         roleOptions={roleOptions?.map((e) => {
           return {
@@ -262,9 +282,21 @@ const AccountList = () => {
           };
         })}
         user={userRef.current}
-        open={showUpdateRoleModal}
-        onCancel={() => setShowUpdateRoleModal(false)}
+        open={showModal}
         onSuccess={() => getUsers()}
+        onCancel={() => {
+          setShowModal(false);
+          userRef.current = null;
+        }}
+      />
+      <UpdatePhoneModal
+        data={userRef.current}
+        open={showPhoneModal}
+        onSuccess={() => getUsers()}
+        onCancel={() => {
+          setShowPhoneModal(false);
+          userRef.current = null;
+        }}
       />
     </>
   );

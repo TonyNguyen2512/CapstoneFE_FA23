@@ -2,31 +2,31 @@ import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
 import { DatePicker, Form, Input, InputNumber, Select, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { roles } from "../../../constants/app";
 import UserApi from "../../../apis/user";
 import moment from "moment/moment";
+import dayjs from "dayjs";
 
 export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
-  const defaultRoleId = "9d6bc81a-65e6-4952-0f98-08dbe279bce0";
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
 
-  const [roleName, setRoleName] = useState(roleOptions.find((r) => r.value === defaultRoleId)?.key);
+  const [roleName, setRoleName] = useState();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (val) => {
     setLoading(true);
-    const {} = val;
-    console.log(val);
-    const success = await UserApi.createUser(roleName, val);
-    if (success) {
-      message.success(`${typeMessage} thành viên thành công`);
+    console.log(roleName);
+    const response = isCreate
+      ? await UserApi.createUser(roleName, val)
+      : await UserApi.updateUserInfo(val);
+    if (!response || !response.errorMessage) {
+      message.success(`${typeMessage} thành công`);
     } else {
-      message.error(`${typeMessage} thành viên thất bại`);
+      message.error(`${typeMessage} thất bại. ${response.errorMessage}`);
     }
     setLoading(false);
-    success && onCancel();
+    !response.errorMessage && onCancel();
   };
 
   return (
@@ -37,46 +37,69 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
-      <Form layout="vertical" ref={formRef} initialValues={data} onFinish={handleSubmit}>
-        <Form.Item
-          name="phoneNumber"
-          label="Số điện thoại"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập số điện thoại",
-            },
-            {
-              max: 10,
-              message: "Số điện thoại tối đa 10 số",
-            },
-          ]}
-        >
-          <InputNumber
-            keyboard="false"
-            style={{
-              width: "100%",
-            }}
-            type="number"
-            placeholder="Nhập số điện thoại..."
-          />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Mật Khẩu"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-        >
-          <Input.Password
-            placeholder="Nhập mật khẩu..."
-            iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
-          />
-        </Form.Item>
+      <Form
+        layout="vertical"
+        ref={formRef}
+        initialValues={{ ...data, data, dob: data?.dob ? dayjs(data.dob) : null }}
+        onFinish={handleSubmit}
+      >
+        {isCreate ? (
+          <>
+            <Form.Item
+              name="phoneNumber"
+              label="Số điện thoại"
+              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+            >
+              <Input placeholder="Nhập số điện thoại..." />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Mật Khẩu"
+              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+            >
+              <Input.Password
+                placeholder="Nhập mật khẩu..."
+                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+              />
+            </Form.Item>
+            <Form.Item
+              name="roleId"
+              label="Vai trò"
+              rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
+            >
+              <Select
+                options={roleOptions}
+                placeholder="Chọn vai trò..."
+                onChange={(val) => {
+                  console.log(roleOptions.find((role) => role.value === val).key);
+                  formRef.current.roleId = val;
+                  setRoleName(roleOptions.find((role) => role.value === val).key);
+                }}
+              />
+            </Form.Item>
+          </>
+        ) : (
+          <>
+            <Form.Item name="id" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="phoneNumber" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="userName" hidden>
+              <Input />
+            </Form.Item>
+            <Form.Item name="roleId" hidden>
+              <Input />
+            </Form.Item>
+          </>
+        )}
         <Form.Item
           name="email"
           label="Email"
           rules={[{ required: true, message: "Vui lòng nhập email" }]}
         >
-          <Input placeholder="Nhập email..." />
+          <Input disabled={!isCreate} placeholder="Nhập email..." />
         </Form.Item>
         <Form.Item
           name="fullName"
@@ -92,26 +115,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel }) => {
         >
           <Input placeholder="Nhập địa chỉ..." />
         </Form.Item>
-        <Form.Item
-          name="roleId"
-          label="Vai trò"
-          rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
-        >
-          <Select
-            // defaultValue={"e0acdcdf-704a-49c6-6aad-08dbe2a052a2"}
-            options={roleOptions}
-            placeholder="Chọn vai trò..."
-            onChange={(val) => {
-              formRef.current.roleId = val;
-              setRoleName(roleOptions.find((role) => role.id === val)?.name || roles.WORKER);
-            }}
-          />
-        </Form.Item>
-        <Form.Item
-          name="dob"
-          label="Ngày sinh"
-          rules={[{ required: true, message: "Vui lòng nhập ngày sinh" }]}
-        >
+        <Form.Item name="dob" label="Ngày sinh">
           <DatePicker
             className="w-full"
             placeholder="Chọn ngày sinh..."

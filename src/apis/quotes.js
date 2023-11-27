@@ -2,10 +2,10 @@ import BaseApi from ".";
 
 const resource = "Order";
 
-const getAllOrders = async (search, pageIndex, pageSize) => {
+const getAllQuotes = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
-      return await searchOrders(search, pageIndex, pageSize);
+      return await searchQuotes(search, pageIndex, pageSize);
     }
     else {
 
@@ -16,7 +16,7 @@ const getAllOrders = async (search, pageIndex, pageSize) => {
       if (pageSize) {
         params = { ...params, pageSize };
       }
-      const response = await BaseApi.get(`/${resource}/GetAllWithPaging`, {
+      const response = await BaseApi.get(`/${resource}/GetQuotesByUserWithPaging`, {
         params: params,
       });
       return response.data;
@@ -27,7 +27,7 @@ const getAllOrders = async (search, pageIndex, pageSize) => {
   }
 };
 
-const searchOrders = async (search, pageIndex, pageSize = 1000) => {
+const searchQuotes = async (search, pageIndex, pageSize = 1000) => {
   try {
     var params = {};
     if (search) {
@@ -40,7 +40,7 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/SearchOrder`, {
+    const response = await BaseApi.post(`/${resource}/SearchQuote`, {
       params: params,
     });
 
@@ -51,7 +51,7 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
   }
 };
 
-const getOrderById = async (id) => {
+const getQuoteById = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/${id}`);
     return response.data;
@@ -61,33 +61,34 @@ const getOrderById = async (id) => {
   }
 };
 
-const getQuoteMaterialByOrderId = async (orderId) => {
+const getQuoteMaterialByQuoteId = async (quoteId) => {
   try {
-    const response = await BaseApi.get(`/${resource}/GetQuoteMaterialById/${orderId}`);
+    const response = await BaseApi.get(`/${resource}/GetQuoteMaterialById/${quoteId}`);
     return response.data;
   } catch (error) {
-    console.log("Error get quote material by order id: ", error);
+    console.log("Error get quote material by quote id: ", error);
     return undefined;
   }
 }
 
-const createOrder = async (data) => {
+const createQuote = async (data) => {
   try {
     const response = await BaseApi.post(`/${resource}`, data);
-    return response.status === 200;
+    console.log(response.data);
+    return response.data;
   } catch (error) {
     console.log("Error create item: ", error);
-    return false;
+    return error.response.data;
   }
 };
 
-const updateOrder = async (id, status) => {
+const updateQuote = async (id, status) => {
   try {
     const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
-    return response.status === 200;
+    return response.data;
   } catch (error) {
     console.log("Error update item: ", error);
-    return false;
+    return error.response.data;
   }
 };
 
@@ -100,9 +101,9 @@ const updateStatus = async (id, status) => {
     return false;
   }
 };
-const deleteOrder = async (id) => {
+const deleteQuote = async (id) => {
   try {
-    const success = await updateOrder(id, 5);
+    const success = await updateQuote(id, 5);
     return success;
   } catch (error) {
     console.log("Error delete item: ", error);
@@ -110,26 +111,26 @@ const deleteOrder = async (id) => {
   }
 };
 
-const exportOrder = async (id) => {
+const exportQuote = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/ExportQuoteAsPDF/${id}`, { responseType: 'blob' });
     return response.data;
   } catch (error) {
-    console.log("Error export order: ", error);
+    console.log("Error export quote: ", error);
     return undefined;
   }
 };
 
-const OrderApi = {
-  getAllOrders,
-  searchOrders,
-  getOrderById,
-  createOrder,
-  updateOrder,
+const QuoteApi = {
+  getAllQuotes,
+  searchQuotes,
+  getQuoteById,
+  createQuote,
+  updateQuote,
   updateStatus,
-  deleteOrder,
-  getQuoteMaterialByOrderId,
-  exportOrder,
+  deleteQuote,
+  getQuoteMaterialByQuoteId,
+  exportQuote,
 };
 
-export default OrderApi;
+export default QuoteApi;
