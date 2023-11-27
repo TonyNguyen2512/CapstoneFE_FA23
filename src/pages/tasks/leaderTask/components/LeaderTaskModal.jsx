@@ -71,18 +71,22 @@ export const LeaderTaskModal = ({
 	const initLeaderInfo = async () => {
 		// const data = await UserApi.getAllUser();
 		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		const data = await UserApi.getUserByRoleId(roleId);
+		UserApi.getUserByRoleId(roleId).then((resp) => {
+			setLeadersData(resp?.data);
+		});
 		// if (data.code === 0) {
-			setLeadersData(data?.data);
 		// } else {
 		// 	message.error = data.message;
 		// }
 	}
 
 	const initItemInfo = async () => {
-		const data = await ItemApi.getAllItem();
+		ItemApi.getAllItem().then((resp) => {
+			setItemsData(resp?.data);
+		});
 		// if (data.code === 0) {
-			setItemsData(data?.data);
+		// 
+		// console.log(data)
 		// } else {
 		// 	message.error = leadersData.message;
 		// }
@@ -99,16 +103,15 @@ export const LeaderTaskModal = ({
 		setStatusList(data);
 	}
 
-	const initialData = async () => {
-		handleTitle();
-		initETaskStatus();
-		await initLeaderInfo();
-		await initItemInfo();
-	}
-
 	useEffect(() => {
+		const initialData = () => {
+			handleTitle();
+			initETaskStatus();
+			initLeaderInfo();
+			initItemInfo();
+		}
 		initialData();
-	}, []);
+	}, [dataSource]);
 
 	return (
 		<BaseModal
