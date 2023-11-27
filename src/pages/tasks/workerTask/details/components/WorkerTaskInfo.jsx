@@ -36,9 +36,9 @@ export const WorkerTaskInfo = ({
 		const report = await ReportApi.sendProblemReport(values);
 		if (report.code === 0) {
 			setShowReportModal(false);
-			message.info = report.message;
+			message.info(report.message);
 		} else {
-			message.error = report.message;
+			message.error(report.message);
 		}
 		setETaskReportLoading(false);
 	}

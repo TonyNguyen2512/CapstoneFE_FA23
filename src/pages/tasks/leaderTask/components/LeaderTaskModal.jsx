@@ -74,22 +74,12 @@ export const LeaderTaskModal = ({
 		UserApi.getUserByRoleId(roleId).then((resp) => {
 			setLeadersData(resp?.data);
 		});
-		// if (data.code === 0) {
-		// } else {
-		// 	message.error = data.message;
-		// }
 	}
 
 	const initItemInfo = async () => {
 		ItemApi.getAllItem().then((resp) => {
 			setItemsData(resp?.data);
 		});
-		// if (data.code === 0) {
-		// 
-		// console.log(data)
-		// } else {
-		// 	message.error = leadersData.message;
-		// }
 	}
 
 	const initETaskStatus = () => {

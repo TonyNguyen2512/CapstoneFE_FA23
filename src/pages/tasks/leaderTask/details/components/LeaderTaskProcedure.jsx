@@ -112,7 +112,7 @@ export const LeaderTaskProcedure = ({
       leaderTaskInfo.current = data.data;
       setShowUpdateModal(true);
     } else {
-      message.error = data.message;
+      message.error(data.message);
     }
   }
 
