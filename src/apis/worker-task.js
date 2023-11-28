@@ -103,7 +103,7 @@ const getWorkerTaskByLeaderTaskId = async (leaderTaskId, searchName, pageIndex, 
 	}
 };
 
-const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize = 1000) => {
+const getWorkerTaskByUserId = async (memberId, leaderTaskId, searchName, pageIndex, pageSize = 1000) => {
 	try {
 		var params = {};
 		if (searchName) {
@@ -115,7 +115,7 @@ const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize =
 		if (pageSize) {
 		  params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}`, {
+		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}/${leaderTaskId}`, {
 			params:params
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);

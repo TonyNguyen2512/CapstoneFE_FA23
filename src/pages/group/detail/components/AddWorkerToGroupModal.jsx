@@ -15,7 +15,7 @@ export const AddWorkerToGroupModal = ({
   onSubmit,
   confirmLoading,
   group,
-  workers
+  workers,
 }) => {
   const WORKERS_KEY = "listWorker";
   const { user } = useContext(UserContext);
@@ -37,14 +37,14 @@ export const AddWorkerToGroupModal = ({
       };
     });
 
-    const filteredOptions = workerNotInGroupOptions.filter((e) => {
-      const { value } = e;
-      if (selectedWorkerIds.includes(value) && value !== workerId) {
-        return false;
-      }
-      return true;
-    });
-    return filteredOptions;
+    // const filteredOptions = workerNotInGroupOptions.filter((e) => {
+    //   const { value } = e;
+    //   if (selectedWorkerIds.includes(value) && value !== workerId) {
+    //     return false;
+    //   }
+    //   return true;
+    // });
+    // return filteredOptions;
   };
 
   return (
@@ -69,14 +69,6 @@ export const AddWorkerToGroupModal = ({
           setSelectedWorkerIds(selectedWorkers);
         }}
       >
-        {/* <div>
-          <Text strong style={{ fontSize: 16 }}>
-            Dự án mong muốn làm:
-          </Text>
-        </div>
-        <div className="mb-4 mt-2">
-          {/* <Text>{project?.projectName}</Text> */}
-        {/* </div> */}
         <Text strong style={{ fontSize: 16 }}>
           Thêm công nhân
         </Text>

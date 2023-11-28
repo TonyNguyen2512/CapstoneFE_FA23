@@ -133,6 +133,16 @@ export const AppSider = () => {
       icon: <CodeSandboxOutlined size={iconSize} />,
       label: "Sản phẩm",
       children: [
+        canViewSteps && {
+          key: itemKeys.STEPS,
+          icon: <ListOne size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.steps}>Danh sách bước</Link>,
+        },
+        canViewProcedures && {
+          key: itemKeys.PROCEDURES,
+          icon: <ProcessLine size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.procedures}>Danh sách quy trình</Link>,
+        },
         canViewItemCategories && {
           key: itemKeys.ITEM_CATEGORIES,
           icon: <CategoryManagement size={iconSize - 4} />,
@@ -142,16 +152,6 @@ export const AppSider = () => {
           key: itemKeys.ITEMS,
           icon: <AdjacentItem size={iconSize - 4} />,
           label: <Link to={routes.dashboard.items}>Danh sách sản phẩm</Link>,
-        },
-        canViewProcedures && {
-          key: itemKeys.PROCEDURES,
-          icon: <ProcessLine size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.procedures}>Danh sách quy trình</Link>,
-        },
-        canViewSteps && {
-          key: itemKeys.STEPS,
-          icon: <ListOne size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.steps}>Danh sách bước</Link>,
         },
       ],
     },
@@ -234,6 +234,12 @@ export const AppSider = () => {
         return itemKeys.MATERIAL_TYPES;
       case routes.dashboard.items:
         return itemKeys.ITEMS;
+      case routes.dashboard.itemCategories:
+        return itemKeys.ITEM_CATEGORIES;
+      case routes.dashboard.steps:
+        return itemKeys.STEPS;
+      case routes.dashboard.procedures:
+        return itemKeys.PROCEDURES;
       case routes.dashboard.workersTasks:
         return itemKeys.WORKERS_TASKS;
       case routes.dashboard.managersTasks:

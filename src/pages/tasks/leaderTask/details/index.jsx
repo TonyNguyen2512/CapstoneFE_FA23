@@ -11,6 +11,7 @@ import { Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
+import { PageSize } from "../../../../constants/enum";
 
 
 export const LeaderTaskDetailsPage = () => {
@@ -21,16 +22,19 @@ export const LeaderTaskDetailsPage = () => {
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
+  const allMaterials = useRef();
 
   const navigate = useNavigate();
 
-  const getLeaderTaskData = async () => {
-    setLoading(true);
+  const getLeaderTaskData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
     // // retrieve leader task by order id
     try {
-      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id, search, pageIndex, PageSize.LEADER_TASK_PROCEDURE_LIST);
       if (dataLeaderTasks.code === 0) {
-        setTaskInfo(dataLeaderTasks.data);
+        setTaskInfo(dataLeaderTasks?.data);
       } else {
         message.error = dataLeaderTasks.message;
       }
@@ -42,7 +46,7 @@ export const LeaderTaskDetailsPage = () => {
   }
 
   useEffect(() => {
-    const getData = async (id, handleLoading) => {
+    const getData = (id, handleLoading) => {
       if (handleLoading) {
         setLoading(true);
       }
@@ -50,24 +54,22 @@ export const LeaderTaskDetailsPage = () => {
       if (!id) return;
 
       // retrieve order data by id
-      const dataOrder = await OrderApi.getOrderById(id);
-
-      let dataMaterials = [];
-      if (dataOrder) {
-        dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataOrder?.id);
-      }
-
-      getLeaderTaskData(id);
-
-      setOrderInfo(dataOrder);
-
-      setMaterialInfo(dataMaterials);
-
+      OrderApi.getOrderById(id).then((dataOrder) => {
+        setOrderInfo(dataOrder);
+        OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
+          setMaterialInfo(dataMaterials?.listFromOrder);
+          allMaterials.current = dataMaterials?.listFromOrder;
+        });
+      });      
       setLoading(false);
     };
 
     getData(id, true);
   }, [id]);
+
+  useEffect(() => {
+    getLeaderTaskData(null, 1, true);
+  }, []);
 
   return (
     <BasePageContent onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.managersTasks}`)}>
@@ -78,18 +80,20 @@ export const LeaderTaskDetailsPage = () => {
             info={orderInfo}
             material={materialInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(id, handleLoading);
+              getLeaderTaskData(handleLoading);
             }}
-          // onFilterTask={(memberId) => {
-          //   if (memberId) {
-          //     const newTasks = allTasks.current.filter(
-          //       (e) => e?.members?.find((x) => x.memberId === memberId) !== undefined
-          //     );
-          //     setWorkerTaskList(newTasks);
-          //   } else {
-          //     setWorkerTaskList(allTasks.current);
-          //   }
-          // }}
+            onFilterTask={(search, pageIndex) => {
+              getLeaderTaskData(search, pageIndex, true);
+            }}
+            onFilterMaterial={(search) => {
+              let dataMaterialFilter = {};
+              if (search) {
+                dataMaterialFilter = allMaterials.current.filter(x => x.name.indexOf(search) !== -1);
+              } else {
+                dataMaterialFilter = allMaterials.current;
+              }
+              setMaterialInfo(dataMaterialFilter);
+            }}
           >
             <div className="mt-4">
               <LeaderTaskInfo

@@ -14,7 +14,6 @@ export const TaskCreateModal = ({
 	onCancel,
 	onSubmit,
 	confirmLoading,
-	dataGroupMembers,
 }) => {
 	const { user } = useContext(UserContext);
 	const { team, info } = useContext(TaskContext);
@@ -49,7 +48,7 @@ export const TaskCreateModal = ({
 					taskName: "",
 					status: TaskStatus.new,
 					dates: ["", ""],
-					assignees: [""],
+					assignees: [],
 					priority: "",
 				}}
 			>

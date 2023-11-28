@@ -8,6 +8,7 @@ const TaskContext = createContext({
 	info: undefined,
 	reload: () => {},
 	filterTask: (memberId) => {},
+	filterMaterial: (value) => {},
 });
 
 const TaskProvider = ({
@@ -19,6 +20,7 @@ const TaskProvider = ({
 	info,
 	onReload,
 	onFilterTask,
+	onFilterMaterial,
 }) => {
 	return (
 		<TaskContext.Provider
@@ -28,6 +30,7 @@ const TaskProvider = ({
 				material: material,
 				reload: onReload,
 				filterTask: onFilterTask,
+				filterMaterial: onFilterMaterial,
 				team: team,
 				info: info,
 			}}

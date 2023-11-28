@@ -8,6 +8,8 @@ import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
 import { roles } from "../../../../../constants/app";
 
+const {Text} = Typography;
+
 export const WorkerTaskInfo = ({
 	loading
 }) => {
@@ -16,7 +18,9 @@ export const WorkerTaskInfo = ({
 	const { info, team } = useContext(TaskContext);
 	const [eTaskReportLoading, setETaskReportLoading] = useState([]);
 	const [showReportModal, setShowReportModal] = useState(false);
-	const isLeader = user?.role?.name === roles.LEADER;
+	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+
+	const { name, leaderName, status, startTime, endTime } = info || [];
 
 	const getTaskStatus = (status) => {
 		return eTaskLabels[status] || "Không Xác Định";
@@ -32,11 +36,15 @@ export const WorkerTaskInfo = ({
 		const report = await ReportApi.sendProblemReport(values);
 		if (report.code === 0) {
 			setShowReportModal(false);
-			message.info = report.message;
+			message.info(report.message);
 		} else {
-			message.error = report.message;
+			message.error(report.message);
 		}
 		setETaskReportLoading(false);
+	}
+
+	const defaultValue = (value) => {
+		return <Text style={{color: "red"}}>{value}</Text>;
 	}
 
 	return (
@@ -44,7 +52,7 @@ export const WorkerTaskInfo = ({
 			<Row justify="middle">
 				<Col span={8}>
 					<Title level={4} style={{ margin: 0 }} ellipsis>
-						Chi tiết việc làm {info?.name}
+						Chi tiết việc làm {name}
 					</Title>
 				</Col>
 				{isLeader &&
@@ -63,15 +71,15 @@ export const WorkerTaskInfo = ({
 				<Col span={24}>
 					<Card style={{ borderRadius: "1rem" }} loading={loading}>
 						<Row gutter={[16, 16]}>
-							<Col className="gutter-row" span={8}>Tên đơn hàng: <strong>{info?.name}</strong></Col>
-							<Col className="gutter-row" span={8}>Tên quản lý: <strong>{info?.leaderName}</strong></Col>
+							<Col className="gutter-row" span={8}>Tên đơn hàng: <strong>{name}</strong></Col>
+							<Col className="gutter-row" span={8}>Tên quản lý: <strong>{leaderName || defaultValue("Không xác định được quản lý")}</strong></Col>
 							<Col></Col>
-							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(info?.startTime, "DD/MM/YYYY")}</strong>
+							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(startTime, "DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong>
 							</Col>
-							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(info?.endTime, " DD/MM/YYYY")}</strong></Col>
+							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(endTime, " DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong></Col>
 							<Col className="gutter-row" span={8}>
-								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(info?.status) }}>
-									{getTaskStatus(info?.status)}</strong></span>
+								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(status) }}>
+									{getTaskStatus(status)}</strong></span>
 							</Col>
 						</Row>
 						<Row gutter={[16, 16]}>
