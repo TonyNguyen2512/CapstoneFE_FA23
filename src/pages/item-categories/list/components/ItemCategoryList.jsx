@@ -4,19 +4,23 @@ import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemCategoryModal } from "../../components/ItemCategoryModal";
 import ItemCategoryApi from "../../../../apis/item-category";
+import { PageSize } from "../../../../constants/enum";
 
 const ItemCategoryList = () => {
   const [loading, setLoading] = useState(false);
   const [showItemCategoryModal, setShowItemCategoryModal] = useState(false);
   const [itemCategoryList, setItemCategoryList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [previewUrl, setPreviewUrl] = useState("");
 
   const categoryRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    const response = await ItemCategoryApi.getAllItem();
+  const getData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const response = await ItemCategoryApi.getAllItem(search, pageIndex, PageSize.ITEM_CATEGORY_LIST);
     setItemCategoryList(response.data);
     setLoading(false);
   };
@@ -57,14 +61,16 @@ const ItemCategoryList = () => {
   };
 
   const columns = [
-    // {
-    //   title: "ID",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   align: "center",
-    //   width: "30%",
-    //   sorter: (a, b) => a.id.localeCompare(b.id),
-    // },
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ITEM_CATEGORY_LIST))}</span>;
+      },
+    },
     {
       title: "Tên loại sản phẩm",
       dataIndex: "name",
@@ -75,7 +81,7 @@ const ItemCategoryList = () => {
       sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
     {
-      title: "Số lượng",
+      title: "Số lượng sản phẩm",
       dataIndex: "quantityItem",
       key: "quantityItem",
       width: "15%",
@@ -107,11 +113,17 @@ const ItemCategoryList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
   };
 
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
+  };
+
+
   useEffect(() => {
-    getData();
+    getData(null, 1, true);
   }, []);
 
   return (
@@ -132,7 +144,9 @@ const ItemCategoryList = () => {
         columns={columns}
         loading={loading}
         pagination={{
-          pageSize: 5,
+          onChange: onPageChange,
+          pageSize: PageSize.ITEM_CATEGORY_LIST,
+          total: itemCategoryList?.total,
         }}
         searchOptions={{
           visible: true,

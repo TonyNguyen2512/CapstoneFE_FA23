@@ -160,7 +160,7 @@ const getAllWorkerNoYetGroup = async (search, pageIndex, pageSize) => {
 			if (pageSize) {
 				params = { ...params, pageSize };
 			}
-			const response = await BaseApi.get(`/${resource}/GetAllWorkerNoYetGroup`, {
+			const response = await BaseApi.get(`/${resource}/GetAllWorkerNotYetGroup`, {
 				params: params,
 			});
 			return successComposer(retrieveDataSuccessCode, response.data);
@@ -183,7 +183,7 @@ const searchGetAllWorkerNoYetGroup = async (search, pageIndex, pageSize) => {
 		if (pageSize) {
 			params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetAllWorkerNoYetGroup`, {
+		const response = await BaseApi.get(`/${resource}/GetAllWorkerNotYetGroup`, {
 			params: params,
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);

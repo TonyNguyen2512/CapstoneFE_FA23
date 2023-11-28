@@ -21,17 +21,18 @@ const ItemList = () => {
 
   const itemRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    let response = await ItemCategoryApi.getAllItem();
+  const getData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    let response = await ItemApi.getAllItem(search, pageIndex, PageSize.ITEM_LIST);
+    setItemList(response);
+    response = await ItemCategoryApi.getAllItem();
     setItemCategoryList(response.data);
-    response = await ItemApi.getAllItem(keyword);
-    setItemList(response.data);
     setLoading(false);
     response = await ProcedureApi.getAllItem();
     setListProcedures(response.data);
 
-    console.log(itemCategoryList)
     console.log(itemList)
     console.log(listProcedures)
   };
@@ -79,8 +80,17 @@ const ItemList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + ((currentPage - 1) * PageSize.ITEM_LIST)}</span>;
+        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ITEM_LIST))}</span>;
       },
+    },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "code",
+      key: "code",
+      render: (_, record) => {
+        return <span onClick={() => showModal(record)}>{record.code}</span>;
+      },
+      sorter: (a, b) => a?.code.localeCompare(b?.code),
     },
     {
       title: "Tên sản phẩm",
@@ -100,16 +110,16 @@ const ItemList = () => {
     // },
     {
       title: "Loại sản phẩm",
-      dataIndex: "itemCategoryId",
-      key: "itemCategoryId",
+      dataIndex: "itemCategoryName",
+      key: "itemCategoryName",
       width: "35%",
       align: "center",
       render: (_, record) => {
         return (
-          <span>{itemCategoryList?.find((e) => e.id === record.itemCategoryId)?.name || "-"}</span>
+          <span>{(record?.itemCategoryName || "-" )}</span>
         );
       },
-      sorter: (a, b) => a?.itemCategoryId.localeCompare(b?.itemCategoryId),
+      sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
     },
     {
       title: "Đơn giá",
@@ -118,7 +128,7 @@ const ItemList = () => {
       align: "center",
       width: "12%",
       render: (_, { price }) => {
-        return <span>{price} VND</span>;
+        return <span>{price} VNĐ</span>;
       },
       sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
@@ -147,8 +157,10 @@ const ItemList = () => {
   };
 
   useEffect(() => {
-    getData();
+    getData(null, 1, true);
   }, []);
+
+  console.log(itemList)
 
   return (
     <>
@@ -164,7 +176,7 @@ const ItemList = () => {
       </Space>
       <BaseTable
         title="Danh sách sản phẩm"
-        dataSource={itemList}
+        dataSource={itemList?.data}
         columns={columns}
         loading={loading}
         pagination={{

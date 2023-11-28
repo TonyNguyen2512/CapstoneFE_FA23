@@ -1,7 +1,9 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
 import { Form, Input, Select, message } from "antd";
 import ProcedureApi from "../../../apis/procedure";
+import { AddWorkerToGroupModal } from "../../group/detail/components/AddWorkerToGroupModal";
+import GroupApi from "../../../apis/group";
 
 export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => {
   const isCreate = !data;
@@ -10,6 +12,14 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
 
   const [listStep, setListStep] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [addWorkerToGroupModal, setAddWorkerToGroupModal] = useState(false);
+
+  const handleWorkerNotInGroup = async () => {
+    setLoading(true);
+    const response = await GroupApi.getAllWorkerNoYetGroup();
+    setAddWorkerToGroupModal(response.data);
+    setLoading(false);
+  };
 
   const handleChange = (value) => {
     setListStep(
@@ -38,6 +48,11 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
     setLoading(false);
   };
 
+  useEffect(() => {
+    handleWorkerNotInGroup();
+  }, []);
+  
+
   return (
     <BaseModal
       open={open}
@@ -46,7 +61,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
-      <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleSubmit}>
+      {/* <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleSubmit}>
         {!isCreate && (
           <Form.Item name="id" hidden>
             <Input />
@@ -63,8 +78,8 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
           ]}
         >
           <Input placeholder="Nhập tên quy trình..." />
-        </Form.Item>
-        <Form.Item
+        </Form.Item> */}
+        {/* <Form.Item
           name="listStep"
           label="Danh sách các bước"
           rules={[
@@ -82,9 +97,18 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
             onChange={handleChange}
             optionLabelProp="label"
             options={options}
+
           />
-        </Form.Item>
-      </Form>
+        </Form.Item> */}
+      {/* </Form> */}
+      <AddWorkerToGroupModal
+        open={addWorkerToGroupModal}
+        // onSubmit={handleCreateGroup}
+        // confirmLoading={groupCreating}
+        onCancel={() => setAddWorkerToGroupModal(false)}
+        // group={id}
+        // workers={workerNotInGroupList}
+      />
     </BaseModal>
   );
 };
