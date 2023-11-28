@@ -67,6 +67,16 @@ const createItem = async (data) => {
   }
 };
 
+const duplicateItem = async (data) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/DuplicateItem`, data);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error duplicate item: ", error);
+    return false;
+  }
+};
+
 const updateItem = async (data) => {
   try {
     const response = await BaseApi.put(`/${resource}/Update`, data);
@@ -91,6 +101,7 @@ const ItemApi = {
   getAllItem,
   getItemById,
   createItem,
+  duplicateItem,
   updateItem,
   deleteItem,
 };
