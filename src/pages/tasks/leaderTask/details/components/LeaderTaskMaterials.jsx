@@ -2,12 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { formatMoney, formatNum } from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
+import { PageSize } from "../../../../../constants/enum";
 
 export const LeaderTaskMaterials = ({
   title,
 }) => {
   const [loading, setLoading] = useState(false);
-  const { material } = useContext(TaskContext);
+  const { material, filterMaterial } = useContext(TaskContext);
 
   const columns = [
     {
@@ -24,7 +25,7 @@ export const LeaderTaskMaterials = ({
       title: "Loại vật liệu",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.item.name.localeCompare(b.item.name),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Mã vật liệu",
@@ -64,15 +65,16 @@ export const LeaderTaskMaterials = ({
   ];
 
   const handleSearch = (value) => {
+    filterMaterial(value);
   };
 
   return (
     <BaseTable
       title={title}
-      dataSource={material?.listFromOrder}
+      dataSource={material}
       columns={columns}
       loading={loading}
-      pagination={{ pageSize: 3 }}
+      pagination={{ pageSize: PageSize.LEADER_TASK_MATERIAL_LIST }}
       rowKey={(record) => record.materialId}
       searchOptions={{
         visible: true,

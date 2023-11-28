@@ -7,6 +7,7 @@ import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
 import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
 import ProcedureApi from "../../../../apis/procedure";
+import { PageSize } from "../../../../constants/enum";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ const ItemList = () => {
   const [listProcedures, setListProcedures] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const itemRef = useRef();
 
@@ -70,14 +72,16 @@ const ItemList = () => {
   };
 
   const columns = [
-    // {
-    //   title: "ID",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   align: "center",
-    //   width: "10%",
-    //   sorter: (a, b) => a.id.localeCompare(b.id),
-    // },
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{(index + 1) + ((currentPage - 1) * PageSize.ITEM_LIST)}</span>;
+      },
+    },
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
@@ -134,7 +138,12 @@ const ItemList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   useEffect(() => {
@@ -159,7 +168,9 @@ const ItemList = () => {
         columns={columns}
         loading={loading}
         pagination={{
-          pageSize: 5,
+          onChange: onPageChange,
+          pageSize: PageSize.ITEM_LIST,
+          total: itemList?.total,
         }}
         searchOptions={{
           visible: true,

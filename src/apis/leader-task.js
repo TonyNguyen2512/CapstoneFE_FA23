@@ -27,7 +27,7 @@ const successComposer = (messageId, data) => {
 	return {
 		code: 0,
 		message: ApiCodes[messageId],
-		data: data?.data || data,
+		data: data,
 	}
 }
 
@@ -98,11 +98,11 @@ const getAll = async (searchName, pageIndex, pageSize) => {
 	}
 };
 
-const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) => {
+const getLeaderTaskByOrderId = async (orderId, search, pageIndex, pageSize) => {
 	try {
 		var params = {};
-		if (searchName) {
-		  params = { ...params, searchName };
+		if (search) {
+		  params = { ...params, search };
 		}
 		if (pageIndex) {
 		  params = { ...params, pageIndex };
@@ -110,6 +110,7 @@ const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) 
 		if (pageSize) {
 		  params = { ...params, pageSize };
 		}
+		console.log("params", params)
 		const response = await BaseApi.get(`/${resource}/GetByOrderId/${orderId}`, {
 			params: params,
 		});

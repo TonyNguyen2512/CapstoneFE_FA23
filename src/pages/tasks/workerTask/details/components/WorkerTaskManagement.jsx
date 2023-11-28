@@ -48,7 +48,7 @@ export const WorkerTaskManagement = ({
 			setShowCreateModal(false);
 			reload(false);
 		} else {
-			message.warning(resp?.message);
+			message.error(resp?.message);
 		}
 		setTaskCreating(false);
 	};
@@ -60,7 +60,7 @@ export const WorkerTaskManagement = ({
 			message.success(resp?.message);
 			reload(false);
 		} else {
-			message.warning(resp?.message);
+			message.error(resp?.message);
 		}
 		setShowDeleteModal(false);
 	};
@@ -80,7 +80,7 @@ export const WorkerTaskManagement = ({
 			reload(false);
 			setShowDetailModal(false);
 		} else {
-			message.warning(resp?.message);
+			message.error(resp?.message);
 		}
 		setTaskUpdating(false);
 	};

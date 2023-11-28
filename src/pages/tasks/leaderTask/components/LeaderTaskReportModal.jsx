@@ -84,7 +84,7 @@ export const LeaderTaskReportModal = ({
 				layout="vertical"
 				onFinish={onFinish}
 				initialValues={{
-					acceptanceTaskId: info.id,
+					acceptanceTaskId: info?.id,
 					resource: ""
 				}}
 			>

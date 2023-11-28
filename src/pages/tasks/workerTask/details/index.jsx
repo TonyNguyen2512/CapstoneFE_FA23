@@ -1,7 +1,6 @@
 import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-
+import { UNSAFE_DataRouterStateContext, useLocation, useNavigate, useParams } from "react-router-dom";
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
 import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
 import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
@@ -29,7 +28,6 @@ export const WorkerTaskDetailsPage = () => {
   const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [workderTaskList, setWorkerTaskList] = useState([]);
-  const [materialList, setMaterialList] = useState([]);
   const [state, setState] = useState([]);
 
   const allTasks = useRef();
@@ -37,12 +35,16 @@ export const WorkerTaskDetailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const getWorkerTaskList = async (leaderTaskId, handleLoading) => {
+  const handleRetrieveWorkerTaskList = async (leaderTaskId, memberId, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
-
-    const dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
+    let dataWorkerTasks = [];
+    if (memberId) {
+      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByUserId(memberId, leaderTaskId)
+    } else {
+      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
+    }
     if (dataWorkerTasks.code !== 0) {
       message.error = dataWorkerTasks.message;
       return;
@@ -58,38 +60,40 @@ export const WorkerTaskDetailsPage = () => {
       if (handleLoading) {
         setLoading(true);
       }
-  
+
       if (!leaderTaskId) return;
-  
+
       // retrieve leader task data by id
       const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
       if (dataLeaderTask.code !== 0) {
-        message.error = dataLeaderTask?.message;
+        message.error(dataLeaderTask?.message);
         return;
+      } else {
+        setLeaderTaskInfo(dataLeaderTask?.data);
       }
-  
-      // retrieve order detail by order id
-      const dataMaterials = await OrderApi.getQuoteMaterialByOrderId(dataLeaderTask?.data?.orderId);
-  
-      // retrieve order detail by order id
+
       let dataLeaderUser = [];
       if (dataLeaderTask?.data?.leaderId) {
         dataLeaderUser = await UserApi.getUserById(dataLeaderTask?.data?.leaderId);
       }
-      // if (dataLeaderUser.code !== 0) {
-      //   message.error = dataLeaderUser.message;
-      //   return;
-      // }
-  
-      const dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
-      // const dataGroupMembers = await UserApi.getAll();
 
-      setLeaderTaskInfo(dataLeaderTask?.data);
+      if (!dataLeaderUser) {
+        message.error("Không tìm thấy thông tin quản lý");
+      }
+
+      let dataGroupMembers = [];
+      if (dataLeaderUser?.groupId) {
+        dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+        if (!dataGroupMembers) {
+          message.error("Không tìm thấy thông tin các thành viên trong tổ");
+        }
+      } else {
+        message.error("Quản lý không có tổ phụ trách");
+      }
       setGroupMemberList(dataGroupMembers?.data);
-      setMaterialList(dataMaterials);
-  
-      getWorkerTaskList(leaderTaskId);
-  
+
+      handleRetrieveWorkerTaskList(leaderTaskId, null, true);
+
       setLoading(false);
     }
 
@@ -99,24 +103,27 @@ export const WorkerTaskDetailsPage = () => {
     }
   }, [location, leaderTaskId]);
 
-  const handleSearch = (value) => {
-    // getData(value);
-  };
-
   const handleBack = () => {
-    let path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`
-    if (state?.taskName) {
-      path += `?taskName=${state?.taskName}`;
-    }
-    if (isForeman) {
-      path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`
-      if (state?.orderId) {
-        path += `/${state?.orderId}`;
+    if (state?.taskName || state?.orderId) {
+      let path = "";
+      if (isLeader) {
+        path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`;
+        if (state?.taskName) {
+          path += `?taskName=${state?.taskName}`;
+        }
       }
+      if (isForeman) {
+        path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
+        if (state?.orderId) {
+          path += `/${state?.orderId}`;
+        }
+      }
+      navigate(path, {
+        state: state
+      }, { replace: true });
+    } else {
+      navigate(-1);
     }
-    navigate(path, {
-      state: state
-    }, {replace: true});
   }
 
   return (
@@ -127,19 +134,11 @@ export const WorkerTaskDetailsPage = () => {
             tasks={workderTaskList}
             info={leaderTaskInfo}
             team={groupMemberList}
-            material={materialList}
             onReload={(handleLoading) => {
-              getWorkerTaskList(leaderTaskId, handleLoading);
+              handleRetrieveWorkerTaskList(leaderTaskId, null, handleLoading);
             }}
             onFilterTask={(memberId) => {
-              if (memberId) {
-                const newTasks = allTasks.current.filter(
-                  (e) => e?.members?.find((x) => x.memberId === memberId) !== undefined
-                );
-                setWorkerTaskList(newTasks);
-              } else {
-                setWorkerTaskList(allTasks.current);
-              }
+              handleRetrieveWorkerTaskList(leaderTaskId, memberId, false);
             }}
           >
             <div className="mt-4">

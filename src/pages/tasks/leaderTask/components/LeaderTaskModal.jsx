@@ -41,17 +41,6 @@ export const LeaderTaskModal = ({
 		await onSubmit({ ...values });
 	};
 
-	const toDataURL = async (url) => {
-		const xhr = new XMLHttpRequest();
-		xhr.responseType = 'blob';
-		xhr.onload = (event) => {
-			const blob = xhr.response;
-		};
-		xhr.open('GET', url);
-		xhr.send();
-
-	}
-
 	const handleDownloadFile = async (url, filename) => {
 		if (!url) message.warning("Không có bản vẽ");
 		try {
@@ -82,21 +71,15 @@ export const LeaderTaskModal = ({
 	const initLeaderInfo = async () => {
 		// const data = await UserApi.getAllUser();
 		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		const data = await UserApi.getUserByRoleId(roleId);
-		// if (data.code === 0) {
-			setLeadersData(data?.data);
-		// } else {
-		// 	message.error = data.message;
-		// }
+		UserApi.getUserByRoleId(roleId).then((resp) => {
+			setLeadersData(resp?.data);
+		});
 	}
 
 	const initItemInfo = async () => {
-		const data = await ItemApi.getAllItem();
-		// if (data.code === 0) {
-			setItemsData(data?.data);
-		// } else {
-		// 	message.error = leadersData.message;
-		// }
+		ItemApi.getAllItem().then((resp) => {
+			setItemsData(resp?.data);
+		});
 	}
 
 	const initETaskStatus = () => {
@@ -110,16 +93,15 @@ export const LeaderTaskModal = ({
 		setStatusList(data);
 	}
 
-	const initialData = async () => {
-		handleTitle();
-		initETaskStatus();
-		await initLeaderInfo();
-		await initItemInfo();
-	}
-
 	useEffect(() => {
+		const initialData = () => {
+			handleTitle();
+			initETaskStatus();
+			initLeaderInfo();
+			initItemInfo();
+		}
 		initialData();
-	}, []);
+	}, [dataSource]);
 
 	return (
 		<BaseModal
@@ -193,7 +175,6 @@ export const LeaderTaskModal = ({
 											value: e.id,
 										};
 									})}
-									// disabled={!isCreate}
 								/>
 							</Form.Item>
 							<Form.Item

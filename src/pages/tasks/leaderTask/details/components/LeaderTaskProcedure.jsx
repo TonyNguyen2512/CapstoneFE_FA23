@@ -7,7 +7,7 @@ import { BaseTable } from "../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
-import { OrderStatus, eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
+import { OrderStatus, PageSize, eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
 import LeaderTasksApi from "../../../../../apis/leader-task";
 import routes from "../../../../../constants/routes";
 import { TaskContext } from "../../../../../providers/task";
@@ -19,7 +19,7 @@ export const LeaderTaskProcedure = ({
   title,
 }) => {
 
-  const { tasks, info, reload } = useContext(TaskContext);
+  const { tasks, info, reload, filterTask } = useContext(TaskContext);
 
   const { Title } = Typography;
   const [titleInfo, setTitleInfo] = useState([]);
@@ -35,7 +35,7 @@ export const LeaderTaskProcedure = ({
   const leaderTaskInfo = useRef();
 
   useEffect(() => {
-    setTitleInfo(title + ` (${tasks ? tasks?.length : 0})`)
+    setTitleInfo(title + ` (${tasks?.total ? tasks.total : 0})`)
   });
 
   const getActionItems = (record) => {
@@ -112,7 +112,7 @@ export const LeaderTaskProcedure = ({
       leaderTaskInfo.current = data.data;
       setShowUpdateModal(true);
     } else {
-      message.error = data.message;
+      message.error(data.message);
     }
   }
 
@@ -201,6 +201,11 @@ export const LeaderTaskProcedure = ({
   ];
 
   const handleSearch = (value) => {
+    filterTask(value, 1);
+  };
+
+  const onPageChange = (current) => {
+    filterTask(null, current);
   };
 
   const handleSubmitCreate = async (values) => {
@@ -220,12 +225,10 @@ export const LeaderTaskProcedure = ({
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
-        message.destroy();
         message.success(create.message);
         setShowCreateModal(false);
         reload(false);
       } else {
-        message.destroy();
         message.error(create.message);
       }
     } catch (e) {
@@ -240,6 +243,7 @@ export const LeaderTaskProcedure = ({
     const data = {
       id: values?.id,
       name: values?.name,
+      leaderId: values?.leaderId,
       priority: values?.priority,
       leaderId: values?.leaderId,
       itemQuantity: values?.itemQuantity,
@@ -256,7 +260,7 @@ export const LeaderTaskProcedure = ({
         setShowUpdateModal(false);
         reload(false);
       } else {
-        message.warning(update.message);
+        message.error(update.message);
       }
     } catch (e) {
       console.log(e);
@@ -275,7 +279,7 @@ export const LeaderTaskProcedure = ({
         setShowReportModal(false);
         reload(false);
       } else {
-        message.warning(report.message);
+        message.error(report.message);
       }
     } catch (e) {
       console.log(e);
@@ -292,7 +296,7 @@ export const LeaderTaskProcedure = ({
         message.success(success.message);
         reload(false);
       } else {
-        message.warning(success.message);
+        message.error(success.message);
       }
     } catch (e) {
       console.log(e);
@@ -320,14 +324,18 @@ export const LeaderTaskProcedure = ({
         </Row>
       </Row>
       <BaseTable
-        dataSource={tasks}
+        dataSource={tasks?.data}
         columns={columns}
         loading={loading}
-        pagination={{ pageSize: 3 }}
+        pagination={{ 
+          onChange: onPageChange,
+          pageSize: PageSize.LEADER_TASK_PROCEDURE_LIST,
+          total: tasks?.total,
+         }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm vật liệu...",
+          placeholder: "Tìm kiếm công việc...",
           onSearch: handleSearch,
           width: 300,
         }}
