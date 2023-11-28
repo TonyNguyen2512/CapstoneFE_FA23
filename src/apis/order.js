@@ -40,7 +40,7 @@ const searchOrders = async (search, pageIndex, pageSize = 1000) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/SearchOrder`, {
+    const response = await BaseApi.get(`/${resource}/GetAllWithPaging`, {
       params: params,
     });
 
@@ -120,6 +120,55 @@ const exportOrder = async (id) => {
   }
 };
 
+const getByForemanId = async (id, search, pageIndex, pageSize) => {
+  try {
+    if (search) {
+      return await searchGetByForemanId(id, search, pageIndex, pageSize);
+    }
+    else {
+
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetByForemanId/${id}`, {
+        params: params,
+      });
+      return response.data;
+    }
+  } catch (error) {
+    console.log("Error get items: ", error);
+    return false;
+  }
+};
+
+const searchGetByForemanId = async (id, search, pageIndex, pageSize = 1000) => {
+  try {
+    var params = {};
+    if (search) {
+      params = { ...params, search };
+    }
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+
+    const response = await BaseApi.get(`/${resource}/GetByForemanId/${id}`, {
+      params: params,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error search item: ", error);
+    return [];
+  }
+};
+
 const OrderApi = {
   getAllOrders,
   searchOrders,
@@ -130,6 +179,7 @@ const OrderApi = {
   deleteOrder,
   getQuoteMaterialByOrderId,
   exportOrder,
+  getByForemanId,
 };
 
 export default OrderApi;

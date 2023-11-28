@@ -18,12 +18,12 @@ const LeaderTaskList = () => {
   const [loading, setLoading] = useState(false);
   const [orderList, setOrderList] = useState([]);
   const navigate = useNavigate();
-
   const userRef = useRef();
 
-  const getData = async () => {
+  const getData = async (keyword) => {
     setLoading(true);
-    const data = await OrderApi.getAllOrders();
+    const data = await OrderApi.getByForemanId(user?.id, keyword);
+    console.log(data)
     setOrderList(data.data);
     setLoading(false);
   };
@@ -41,8 +41,8 @@ const LeaderTaskList = () => {
   };
 
   useEffect(() => {
-    getData(user.id);
-  }, [user]);
+    getData();
+  }, []);
 
 
   const getActionItems = (record) => {

@@ -28,6 +28,10 @@ const ItemList = () => {
     setLoading(false);
     response = await ProcedureApi.getAllItem();
     setListProcedures(response.data);
+
+    console.log(itemCategoryList)
+    console.log(itemList)
+    console.log(listProcedures)
   };
 
   const showModal = (item) => {
