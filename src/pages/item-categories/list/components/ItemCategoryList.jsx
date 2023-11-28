@@ -57,14 +57,14 @@ const ItemCategoryList = () => {
   };
 
   const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-      width: "30%",
-      sorter: (a, b) => a.id.localeCompare(b.id),
-    },
+    // {
+    //   title: "ID",
+    //   dataIndex: "id",
+    //   key: "id",
+    //   align: "center",
+    //   width: "30%",
+    //   sorter: (a, b) => a.id.localeCompare(b.id),
+    // },
     {
       title: "Tên loại sản phẩm",
       dataIndex: "name",
@@ -75,17 +75,21 @@ const ItemCategoryList = () => {
       sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
     {
-      title: "Tình trạng",
-      dataIndex: "itemCategoryId",
-      key: "itemCategoryId",
+      title: "Số lượng",
+      dataIndex: "quantityItem",
+      key: "quantityItem",
       width: "15%",
       align: "center",
+      // render: (_, record) => {
+      //   return (
+      //     <span>{itemCategoryList?.find((e) => e.id === record.quantityItem)?.name || "-"}</span>
+      //   );
+      // },
+      // sorter: (a, b) => a?.quantityItem.localeCompare(b?.quantityItem),
       render: (_, record) => {
-        return (
-          <span>{itemCategoryList?.find((e) => e.id === record.itemCategoryId)?.name || "-"}</span>
-        );
+        return <span onClick={() => showModal(record)}>{record.quantityItem}</span>;
       },
-      sorter: (a, b) => a?.status.localeCompare(b?.status),
+      sorter: (a, b) => a?.quantityItem.localeCompare(b?.quantityItem),
     },
     {
       title: "Thao tác",

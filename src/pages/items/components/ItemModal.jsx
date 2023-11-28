@@ -241,7 +241,7 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
         >
           <Select options={listCategories} placeholder="Chọn loại sản phẩm..." />
         </Form.Item>
-        <Form.Item
+        {/* <Form.Item
           name="image"
           label="Bảng báo giá"
           rules={[
@@ -260,7 +260,7 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
           >
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
-        </Form.Item>
+        </Form.Item> */}
         {/*  */}
         <Form.Item
           name="drawings2D"

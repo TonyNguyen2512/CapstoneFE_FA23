@@ -83,18 +83,18 @@ const ItemList = () => {
       },
       sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
-    {
-      title: "Màu sắc",
-      dataIndex: "color",
-      key: "color",
-      align: "center",
-      sorter: (a, b) => a?.color.localeCompare(b?.color),
-    },
+    // {
+    //   title: "Màu sắc",
+    //   dataIndex: "color",
+    //   key: "color",
+    //   align: "center",
+    //   sorter: (a, b) => a?.color.localeCompare(b?.color),
+    // },
     {
       title: "Loại sản phẩm",
       dataIndex: "itemCategoryId",
       key: "itemCategoryId",
-      width: "15%",
+      width: "35%",
       align: "center",
       render: (_, record) => {
         return (
