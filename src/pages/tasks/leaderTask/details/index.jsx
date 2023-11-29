@@ -21,6 +21,7 @@ export const LeaderTaskDetailsPage = () => {
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const allMaterials = useRef();
 
@@ -32,11 +33,17 @@ export const LeaderTaskDetailsPage = () => {
     }
     // // retrieve leader task by order id
     try {
-      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id, search, pageIndex, PageSize.LEADER_TASK_PROCEDURE_LIST);
+      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id, search, pageIndex, PageSize.LEADER_TASK_PROCEDURE_LIST);
       if (dataLeaderTasks.code === 0) {
         setTaskInfo(dataLeaderTasks?.data);
       } else {
-        message.error = dataLeaderTasks.message;
+        message.error(dataLeaderTasks.message);
+      }
+      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+      if (dataLeaderTasks.code === 0) {
+        setAllTasks(dataLeaderTasks?.data);
+      } else {
+        message.error(dataLeaderTasks.message);
       }
     } catch (e) {
       console.log(e);
@@ -77,10 +84,11 @@ export const LeaderTaskDetailsPage = () => {
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
             tasks={taskInfo}
+            allTasks={allTasks}
             info={orderInfo}
             material={materialInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(handleLoading);
+              getLeaderTaskData(null, 1, handleLoading);
             }}
             onFilterTask={(search, pageIndex) => {
               getLeaderTaskData(search, pageIndex, true);
