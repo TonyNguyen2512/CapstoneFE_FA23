@@ -66,15 +66,15 @@ export const TaskReportModal = ({
 		}
 	}
 
-	const handleMaterialData = () => {
-		MaterialApi.getAllMaterial().then((resp) => {
-			setMaterialInfo(resp?.data);
-		})
-	}
-
 	useEffect(() => {
+		const handleMaterialData = () => {
+			MaterialApi.getAllMaterial().then((resp) => {
+				setMaterialInfo(resp?.data);
+			})
+		}
+
 		handleMaterialData();
-	});
+	}, []);
 
 	return (
 		<BaseModal
