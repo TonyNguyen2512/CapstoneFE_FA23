@@ -1,4 +1,4 @@
-import { Edit, Error, Forbid, More, Unlock, ViewList } from "@icon-park/react";
+import { Edit, Error, Forbid, Lightning, More, Unlock, ViewList } from "@icon-park/react";
 import { orderColors, orderLabels } from "../../../../constants/enum";
 import { Button, Dropdown, Space, Tag, message } from "antd";
 import { BaseTable } from "../../../../components/BaseTable";
@@ -60,6 +60,15 @@ const OrderList = () => {
         key: "UPDATE_ORDER",
         label: "Cập nhật đơn hàng",
         icon: <Edit />,
+        onClick: () => {
+          orderRef.current = record;
+          setShowOrderModal(true);
+        },
+      },
+      {
+        key: "UPDATE_ORDER_STATUS",
+        label: "Cập nhật trạng thái đơn hàng",
+        icon: <Lightning />,
         onClick: () => {
           orderRef.current = record;
           setShowOrderModal(true);
