@@ -94,14 +94,14 @@ const LeaderTaskList = () => {
 
       sorter: (a, b) => dateSort(a.createTime, b.createTime),
     },
-    {
-      title: "Ngày nghiệm thu",
-      dataIndex: "quoteTime",
-      key: "quoteTime",
-      render: (_, { quoteTime }) =>
-        quoteTime ? <span>{dayjs(quoteTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
-      sorter: (a, b) => dateSort(a?.quoteTime, b?.quoteTime),
-    },
+    // {
+    //   title: "Ngày nghiệm thu",
+    //   dataIndex: "quoteTime",
+    //   key: "quoteTime",
+    //   render: (_, { quoteTime }) =>
+    //     quoteTime ? <span>{dayjs(quoteTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+    //   sorter: (a, b) => dateSort(a?.quoteTime, b?.quoteTime),
+    // },
     {
       title: "Tình trạng",
       dataIndex: "status",
