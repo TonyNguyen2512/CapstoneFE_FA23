@@ -33,7 +33,17 @@ const successComposer = (messageId, data) => {
 
 const createLeaderTasks = async (data) => {
 	try {
-		const response = await BaseApi.post(`/${resource}/Create`, data);
+		await BaseApi.post(`/${resource}/Create`, data);
+		return successComposer(createSuccessCode);
+	} catch (error) {
+		console.log("Error create manager task: ", error);
+		return errorComposer(error);
+	}
+};
+
+const createAcceptanceTasks = async (data) => {
+	try {
+		await BaseApi.post(`/${resource}/CreateAcceptanceTask`, data);
 		return successComposer(createSuccessCode);
 	} catch (error) {
 		console.log("Error create manager task: ", error);
@@ -43,7 +53,7 @@ const createLeaderTasks = async (data) => {
 
 const updateLeaderTasks = async (data) => {
 	try {
-		const response = await BaseApi.put(`/${resource}/Update`, data);
+		await BaseApi.put(`/${resource}/Update`, data);
 		return successComposer(updateSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task: ", error);
@@ -53,7 +63,7 @@ const updateLeaderTasks = async (data) => {
 
 const updateLeaderTasksStatus = async (leaderTasksId, status) => {
 	try {
-		const response = await BaseApi.put(
+		await BaseApi.put(
 			`/${resource}/UpdateStatus/${leaderTasksId}`,
 			{
 				status,
@@ -68,7 +78,7 @@ const updateLeaderTasksStatus = async (leaderTasksId, status) => {
 
 const deleteLeaderTasks = async (leaderTasksId) => {
 	try {
-		const response = await BaseApi.delete(`/${resource}/Delete/${leaderTasksId}`);
+		await BaseApi.delete(`/${resource}/Delete/${leaderTasksId}`);
 		return successComposer(deleteSuccessCode);
 	} catch (error) {
 		console.log("Error delete manager task: ", error);
@@ -91,7 +101,7 @@ const getAll = async (searchName, pageIndex, pageSize) => {
 		const response = await BaseApi.get(`/${resource}/GetAll`, {
 			params: params,
 		});
-		return successComposer(retrieveDataSuccessCode, response.data);
+		return response.status === 200 && successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader tasks by order id: ", error);
 		return errorComposer(error);
@@ -159,6 +169,7 @@ const LeaderTasksApi = {
 	getLeaderTaskById,
 	getLeaderTaskByLeaderId,
 	createLeaderTasks,
+	createAcceptanceTasks,
 	updateLeaderTasksStatus,
 	updateLeaderTasks,
 	deleteLeaderTasks,

@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import BaseModal from "../../../BaseModal";
 import { EditableInput } from "../../../EditableInput";
-import { Button, Card, Col, DatePicker, Form, Input, InputNumber, Row, Select, Typography } from "antd";
+import { Button, Card, Col, DatePicker, Form, Image, Input, InputNumber, Row, Select, Typography } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
 import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { taskStatusOptions } from "../../../../constants/app";
-import { TaskStatus } from "../../../../constants/enum";
+import { ErrorImage, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
@@ -194,8 +194,7 @@ const TaskDetailModal = ({
 											disabled={!isLeader || isCompleted}
 											disabledDate={(date) => {
 												return (
-													date.isBefore(info.startTime) ||
-													date.isAfter(info.endTime)
+													date.isBefore(info.startTime, "day")
 												);
 											}}
 										/>
@@ -261,6 +260,27 @@ const TaskDetailModal = ({
 									</Form.Item>
 								</Col>
 							</Row>
+							{(isPending || isCompleted) &&
+								<Row gutter={[16, 16]}>
+									<Col span={24}>
+										<Text strong>Tệp đính kèm</Text>
+									</Col>
+									<Col span={24}>
+										<Row gutter={[16, 16]}>
+											{task?.resource?.map((x) => (
+												<Col span={3}>
+													<Image src={x} fallback={ErrorImage} width="100%" />
+												</Col>
+											))}
+											{task?.resource?.length === 0 &&
+												<Col>
+													<Text>&nbsp;Không có</Text>
+												</Col>
+											}
+										</Row>
+									</Col>
+								</Row>
+							}
 						</Card>
 					</Col>
 					{(isPending || isCompleted) &&
@@ -333,13 +353,13 @@ const TaskDetailModal = ({
 								>
 									{resourceImage ? <img src={resourceImage} alt="avatar" style={{ width: '100%' }} /> : <></>}
 									{isPending ? (
-											<Button
-												disabled={isCompleted}
-												icon={<UploadOutlined />}>
-												Upload
-											</Button>
-											) : <></>
-										}
+										<Button
+											disabled={isCompleted}
+											icon={<UploadOutlined />}>
+											Upload
+										</Button>
+									) : <></>
+									}
 								</UploadFile>
 							</Card>
 						</Col>

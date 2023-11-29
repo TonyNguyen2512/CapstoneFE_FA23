@@ -14,6 +14,7 @@ import { roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import GroupApi from "../../../../apis/group";
 import OrderApi from "../../../../apis/order";
+import { eTaskStatus } from "../../../../constants/enum";
 
 
 export const WorkerTaskDetailsPage = () => {
@@ -23,6 +24,7 @@ export const WorkerTaskDetailsPage = () => {
   const isForeman = user?.role?.name === roles.FOREMAN;
 
   const [loading, setLoading] = useState(false);
+  const [acceptance, setAcceptance] = useState(false);
   const { leaderTaskId } = useParams();
 
   const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
@@ -98,10 +100,19 @@ export const WorkerTaskDetailsPage = () => {
     }
 
     getData(leaderTaskId, true);
+  }, [leaderTaskId]);
+
+  useEffect(() => {
     if (location?.state) {
       setState(location?.state);
     }
-  }, [location, leaderTaskId]);
+  }, [location]);
+
+  useEffect(() => {
+    if (leaderTaskInfo?.status === eTaskStatus.Completed) {
+      setAcceptance(true);
+    }
+  }, [leaderTaskInfo])
 
   const handleBack = () => {
     if (state?.taskName || state?.orderId) {
@@ -134,11 +145,15 @@ export const WorkerTaskDetailsPage = () => {
             tasks={workderTaskList}
             info={leaderTaskInfo}
             team={groupMemberList}
+            acceptance={acceptance}
             onReload={(handleLoading) => {
               handleRetrieveWorkerTaskList(leaderTaskId, null, handleLoading);
             }}
             onFilterTask={(memberId) => {
               handleRetrieveWorkerTaskList(leaderTaskId, memberId, false);
+            }}
+            onAcceptanceTask={() => {
+              setAcceptance(true);
             }}
           >
             <div className="mt-4">
@@ -146,13 +161,11 @@ export const WorkerTaskDetailsPage = () => {
                 loading={loading}
               />
             </div>
-            {isLeader && (
-              <div className="mt-4">
-                <WorkerTaskOverview
-                  title="Tiến độ công việc"
-                />
-              </div>
-            )}
+            <div className="mt-4">
+              <WorkerTaskOverview
+                title="Tiến độ công việc"
+              />
+            </div>
             <div className="mt-4">
               <WorkerTaskManagement />
             </div>
