@@ -1,5 +1,5 @@
 import { Row, Col, Form, Input, Select, Typography, InputNumber, message, Card, Button } from "antd";
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import { modalModes } from "../../../../constants/enum";
@@ -8,6 +8,7 @@ import { TaskContext } from "../../../../providers/task";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import { workerTaskReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../../components/UploadFile";
+import MaterialApi from "../../../../apis/material";
 
 const { Text } = Typography;
 
@@ -24,6 +25,7 @@ export const TaskReportModal = ({
 
 	const [loading, setLoading] = useState(false);
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
+	const [materialInfo, setMaterialInfo] = useState([]);
 
 	const worderReportFormRef = useRef();
 
@@ -64,6 +66,16 @@ export const TaskReportModal = ({
 		}
 	}
 
+	const handleMaterialData = () => {
+		MaterialApi.getAllMaterial().then((resp) => {
+			setMaterialInfo(resp?.data);
+		})
+	}
+
+	useEffect(() => {
+		handleMaterialData();
+	});
+
 	return (
 		<BaseModal
 			open={open}
@@ -83,12 +95,7 @@ export const TaskReportModal = ({
 				onFinish={onFinish}
 				initialValues={{
 					leaderTaskId: info.id,
-					listSupply: [
-						{
-							materialId: "",
-							amount: ""
-						}
-					]
+					listSupply: []
 				}}
 			>
 				<Row gutter={16}>
@@ -194,10 +201,10 @@ export const TaskReportModal = ({
 																		<Select
 																			placeholder="Chọn vật liệu"
 																			allowClear
-																			options={material?.listFromOrder?.map((e) => {
+																			options={materialInfo?.map((e) => {
 																				return {
 																					label: e.name,
-																					value: e.materialId,
+																					value: e.id,
 																				};
 																			})}
 																		/>
