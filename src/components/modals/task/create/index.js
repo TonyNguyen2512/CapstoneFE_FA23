@@ -87,8 +87,7 @@ export const TaskCreateModal = ({
 								locale={locale}
 								disabledDate={(date) => {
 									return (
-										date.isBefore(info.startTime) ||
-										date.isAfter(info.endTime)
+										date.isBefore(info.startTime, "day")
 									);
 								}}
 							/>
