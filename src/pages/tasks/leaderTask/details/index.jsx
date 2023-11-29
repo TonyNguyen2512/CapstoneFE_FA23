@@ -51,16 +51,12 @@ export const LeaderTaskDetailsPage = () => {
     }
     // // retrieve leader task by order id
     try {
-<<<<<<< HEAD
-      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id, search, pageIndex, PageSize.LEADER_TASK_PROCEDURE_LIST);
-=======
       const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
         id,
         search,
         pageIndex,
         PageSize.LEADER_TASK_PROCEDURE_LIST
       );
->>>>>>> 6e7587451c535099aa151aa44156c2e3ae70bbd2
       if (dataLeaderTasks.code === 0) {
         setTaskInfo(dataLeaderTasks?.data);
       } else {
