@@ -37,14 +37,14 @@ export const AddWorkerToGroupModal = ({
       };
     });
 
-    // const filteredOptions = workerNotInGroupOptions.filter((e) => {
-    //   const { value } = e;
-    //   if (selectedWorkerIds.includes(value) && value !== workerId) {
-    //     return false;
-    //   }
-    //   return true;
-    // });
-    // return filteredOptions;
+    const filteredOptions = workerNotInGroupOptions.filter((e) => {
+      const { value } = e;
+      if (selectedWorkerIds.includes(value) && value !== workerId) {
+        return false;
+      }
+      return true;
+    });
+    return filteredOptions;
   };
 
   return (

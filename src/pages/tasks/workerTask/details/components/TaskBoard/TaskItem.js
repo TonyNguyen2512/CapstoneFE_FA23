@@ -31,6 +31,25 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 
 	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
 
+	const handbleDropdown = () => {
+		let items = [
+			{
+				label: "Xem",
+				icon: <PreviewOpen className="mt-1" />,
+				onClick: () => onView(task),
+			}
+		];
+		if (!isCompleted) {
+			items.push({
+				label: "Xóa",
+				icon: <Delete className="mt-1" />,
+				danger: true,
+				onClick: () => onDelete(task),
+			})
+		}
+		return items;
+	}
+
 	return (
 		<Draggable key={id} draggableId={id} index={index} isDragDisabled={isCompleted}>
 			{(provided) => (
@@ -45,20 +64,7 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 					extra={
 						<Dropdown
 							menu={{
-								items: [
-									{
-										label: "Xem",
-										icon: <PreviewOpen className="mt-1" />,
-										onClick: () => onView(task),
-									},
-									// isLeader && 
-									{
-										label: "Xóa",
-										icon: <Delete className="mt-1" />,
-										danger: true,
-										onClick: () => onDelete(task),
-									},
-								],
+								items: handbleDropdown(),
 							}}
 						>
 							<Button icon={<More />} className="flex-center" />

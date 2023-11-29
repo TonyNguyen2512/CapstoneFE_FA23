@@ -153,16 +153,6 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.quotes.update,
   ],
   [roles.FOREMAN]: [
-    // ACCOUNTS
-    ALL_PERMISSIONS.accounts.sider,
-    ALL_PERMISSIONS.accounts.view,
-    ALL_PERMISSIONS.accounts.create,
-    ALL_PERMISSIONS.accounts.update,
-    // QUOTES
-    ALL_PERMISSIONS.quotes.sider,
-    ALL_PERMISSIONS.quotes.view,
-    ALL_PERMISSIONS.quotes.create,
-    ALL_PERMISSIONS.quotes.update,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,

@@ -32,6 +32,7 @@ import { ProcedureListPage } from "../pages/procedures/list";
 import { StepListPage } from "../pages/steps/list";
 import { QuoteListPage } from "../pages/quotes/list";
 import QuoteDetailPage from "../pages/quotes/detail";
+import { EmployeeListPage } from "../pages/employee/list";
 
 export const router = createBrowserRouter([
   {
@@ -139,6 +140,14 @@ export const router = createBrowserRouter([
           {
             path: `${routes.dashboard.orderReports}/:id`,
             element: <OrderReportDetailPage />,
+          },
+          {
+            path: routes.dashboard.employees,
+            element: <EmployeeListPage />,
+          },
+          {
+            path: `${routes.dashboard.employees}/:id`,
+            // element: <OrderReportDetailPage />,
           },
 
 					//

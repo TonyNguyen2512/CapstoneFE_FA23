@@ -17,7 +17,7 @@ export const WorkerTaskManagement = ({
 }) => {
 
 	const { user } = useContext(UserContext);
-	const { filterTask, reload, tasks, info, team } = useContext(TaskContext);
+	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 	const isInProgress = info.status === eTaskStatus.InProgress;
@@ -92,7 +92,7 @@ export const WorkerTaskManagement = ({
 					<Title level={5} style={{ margin: 0 }}>
 						Công việc ({tasks?.length || 0})
 					</Title>
-					{isLeader && isInProgress && (
+					{!acceptance && isLeader && isInProgress && (
 						<Button
 							icon={<Plus />}
 							className="flex-center ml-3"

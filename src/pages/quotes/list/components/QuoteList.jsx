@@ -122,14 +122,14 @@ const QuoteList = () => {
       render: (_, { orderDate }) => <span>{dayjs(orderDate).format("DD/MM/YYYY")}</span>,
       sorter: (a, b) => a.orderDate.localeCompare(b.orderDate),
     },
-    {
-      title: "Ngày nghiệm thu",
-      dataIndex: "acceptanceDate",
-      key: "acceptanceDate",
-      render: (_, { acceptanceDate }) =>
-        acceptanceDate ? <span>{dayjs(acceptanceDate).format("DD/MM/YYYY")}</span> : <></>,
-      sorter: (a, b) => a?.acceptanceDate?.localeCompare(b?.acceptanceDate),
-    },
+    // {
+    //   title: "Ngày nghiệm thu",
+    //   dataIndex: "quoteTime",
+    //   key: "quoteTime",
+    //   render: (_, { quoteTime }) =>
+    //     quoteTime ? <span>{dayjs(quoteTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+    //   sorter: (a, b) => dateSort(a?.quoteTime, b?.quoteTime),
+    // },
     {
       title: "Tình trạng",
       dataIndex: "status",

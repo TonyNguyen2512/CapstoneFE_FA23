@@ -2,25 +2,37 @@ import { Typography, Col, Row, Space, Card, Collapse, List, Avatar, Button, mess
 import React, { useContext, useState } from "react";
 import { formatDate } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { eTaskColors, eTaskLabels } from "../../../../../constants/enum";
+import { TaskStatus, eTaskColors, eTaskLabels } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
 import { roles } from "../../../../../constants/app";
+import { TaskAcceptanceModal } from "../../components/TaskAcceptanceModal";
+import LeaderTasksApi from "../../../../../apis/leader-task";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 export const WorkerTaskInfo = ({
 	loading
 }) => {
 	const { Title } = Typography;
 	const { user } = useContext(UserContext);
-	const { info, team } = useContext(TaskContext);
-	const [eTaskReportLoading, setETaskReportLoading] = useState([]);
+	const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
+
+	const [taskReportLoading, setTaskReportLoading] = useState([]);
+	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState([]);
+
 	const [showReportModal, setShowReportModal] = useState(false);
+	const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
+
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 
 	const { name, leaderName, status, startTime, endTime } = info || [];
+
+	const completedTasks = tasks?.filter(
+		(e) => e.status === TaskStatus.completed
+	);
+	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 
 	const getTaskStatus = (status) => {
 		return eTaskLabels[status] || "Không Xác Định";
@@ -31,6 +43,7 @@ export const WorkerTaskInfo = ({
 	};
 
 	const handleReportCreate = async (values) => {
+		setTaskReportLoading(true);
 		values.createdDate = new Date();
 		console.log("create report: ", values);
 		const report = await ReportApi.sendProblemReport(values);
@@ -40,11 +53,25 @@ export const WorkerTaskInfo = ({
 		} else {
 			message.error(report.message);
 		}
-		setETaskReportLoading(false);
+		setTaskReportLoading(false);
+	}
+
+	const handleAcceptanceCreate = async (values) => {
+		setTaskAcceptanceLoading(true);
+		console.log("create acceptance: ", values);
+		const report = await LeaderTasksApi.createAcceptanceTasks(values);
+		if (report.code === 0) {
+			setShowAcceptanceModal(false);
+			message.info(report.message);
+			acceptanceTask();
+		} else {
+			message.error(report.message);
+		}
+		setTaskAcceptanceLoading(false);
 	}
 
 	const defaultValue = (value) => {
-		return <Text style={{color: "red"}}>{value}</Text>;
+		return <Text style={{ color: "red" }}>{value}</Text>;
 	}
 
 	return (
@@ -56,15 +83,30 @@ export const WorkerTaskInfo = ({
 					</Title>
 				</Col>
 				{isLeader &&
-					<Col span={2} offset={14}>
-						<Button
-							type="primay"
-							className="btn-primary app-bg-primary font-semibold text-white"
-							onClick={() => setShowReportModal(true)}
-						>
-							Báo cáo vấn đề
-						</Button>
-					</Col>
+					<>
+						<Col span={2} offset={isCompletedTasks ? 10 : 14}>
+							<Button
+								type="primary"
+								className="btn-primary app-bg-primary font-semibold text-white"
+								onClick={() => setShowReportModal(true)}
+								disabled={acceptance}
+							>
+								Báo cáo vấn đề
+							</Button>
+						</Col>
+						{isCompletedTasks &&
+							<Col span={2} offset={1}>
+								<Button
+									type="primary"
+									className="btn-primary app-bg-success font-semibold text-white"
+									onClick={() => setShowAcceptanceModal(true)}
+									disabled={acceptance}
+								>
+									Báo cáo nghiệm thu
+								</Button>
+							</Col>
+						}
+					</>
 				}
 			</Row>
 			<Row gutter={[16, 16]}>
@@ -113,15 +155,27 @@ export const WorkerTaskInfo = ({
 				</Col>
 			</Row>
 			{isLeader &&
-				<TaskReportModal
-					open={showReportModal}
-					title="Thêm báo cáo vấn đề"
-					onCancel={() => {
-						setShowReportModal(false);
-					}}
-					onSubmit={handleReportCreate}
-					confirmLoading={eTaskReportLoading}
-				/>
+				(<>
+					<TaskReportModal
+						open={showReportModal}
+						title="Thêm báo cáo vấn đề"
+						onCancel={() => {
+							setShowReportModal(false);
+						}}
+						onSubmit={handleReportCreate}
+						confirmLoading={taskReportLoading}
+					/>
+
+					<TaskAcceptanceModal
+						open={showAcceptanceModal}
+						title="Thêm báo cáo nghiệm thu"
+						onCancel={() => {
+							setShowAcceptanceModal(false);
+						}}
+						onSubmit={handleAcceptanceCreate}
+						confirmLoading={taskAcceptanceLoading}
+					/>
+				</>)
 			}
 		</Space>
 	);

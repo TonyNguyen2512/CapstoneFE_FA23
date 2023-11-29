@@ -35,7 +35,7 @@ const resource = "Group";
 
 const getAllUserByGroupId = async (id) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/GetAllUserByGroupId/${id}`);
+		const response = await BaseApi.get(`/${resource}/GetAllUsersByGroupId/${id}`);
 		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error GetAllUserByGroupId class: ", error);
