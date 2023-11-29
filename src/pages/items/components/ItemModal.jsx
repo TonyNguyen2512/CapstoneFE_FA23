@@ -8,7 +8,15 @@ import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import { InputNumber } from "antd/lib";
 
-export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel, onSuccess }) => {
+export const ItemModal = ({
+  data,
+  listCategories,
+  listMaterials,
+  listProcedures,
+  open,
+  onCancel,
+  onSuccess,
+}) => {
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
@@ -19,6 +27,7 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
   const [drawings3D, setDrawings3D] = useState(data?.drawings3D ?? "");
   const [drawingsTechnical, setDrawingsTechnical] = useState(data?.drawingsTechnical ?? "");
   const [listProcedure, setListProcedure] = useState([]);
+  const [listMaterial, setListMaterial] = useState([]);
   const [progress, setProgress] = useState(0);
 
   const handleUploadImage = (event) => {
@@ -135,27 +144,69 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
 
   const handleChangeProcedures = (value) => {
     setListProcedure(
-      value?.map((e, i) => {
+      value?.map((procedureId, priority) => ({
+        procedureId,
+        priority,
+      }))
+    );
+  };
+
+  const findMaterialNameById = (materialId) => {
+    const material = listMaterials.find((m) => m.value === materialId);
+    return material ? material.label : "Unknown Material";
+  };
+
+  const handleChangeMaterials = async (value) => {
+    setListMaterial(
+      await value?.map((materialId) => {
+        const existingMaterial = listMaterial.find((m) => m.materialId === materialId);
         return {
-          stepId: e,
-          priority: i,
+          materialId,
+          materialName: findMaterialNameById(materialId),
+          quantity: existingMaterial?.quantity || 100,
         };
       })
     );
   };
 
-  //
   const handleSubmit = async (values) => {
     setLoading(true);
-    const body = { ...values, image: priceImage, drawings2D, drawings3D, drawingsTechnical };
-    if (!values.listMaterial) {
-      body.listMaterial = [];
-    }
-    if (!values.listProcedure) {
-      body.listProcedure = [];
-    }
+    // const updatedMaterials = Array.isArray(values.listMaterial)
+    // ? values.listMaterial.map((material) => ({
+    //     materialId: material.materialId,
+    //     quantity: material.quantity,
+    //   }))
+    // : [];
+    const updatedMaterials = listMaterial.map((material) => ({
+      materialId: material.materialId,
+      quantity: values.listMaterial.map((m) => m.materialId).includes(material.materialId)
+        ? values.listMaterial.find((m) => m.materialId === material.materialId).quantity
+        : material.quantity,
+    }));
 
-    const success = isCreate ? await ItemApi.createItem(body) : await ItemApi.updateItem(body);
+    console.log(listMaterial);
+    console.log(updatedMaterials);
+
+    // Update the values with the correct listMaterial
+    const updatedValues = {
+      ...values,
+      image: priceImage,
+      drawings2D,
+      drawings3D,
+      drawingsTechnical,
+      listMaterial: updatedMaterials,
+      listProcedure,
+    };
+
+    if (!updatedValues.listMaterial) {
+      updatedValues.listMaterial = [];
+    }
+    if (!updatedValues.listProcedure) {
+      updatedValues.listProcedure = [];
+    }
+    const success = isCreate
+      ? await ItemApi.createItem(updatedValues)
+      : await ItemApi.updateItem(updatedValues);
     if (success) {
       message.success(`${typeMessage} thành công`);
       onSuccess();
@@ -186,6 +237,8 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
             depth: 1,
             height: 1,
             mass: 1,
+            unit: "mét",
+            description: "Thêm/ Cập nhật sản phẩm",
           }),
         }}
         onFinish={handleSubmit}
@@ -234,12 +287,12 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
               <Form.Item
                 name="listProcedure"
                 label="Danh sách quy trình"
-                // rules={[
-                //   {
-                //     required: true,
-                //     message: "Vui lòng chọn quy trình cần thực hiện",
-                //   },
-                // ]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn quy trình cần thực hiện",
+                  },
+                ]}
               >
                 <Select
                   mode="multiple"
@@ -355,6 +408,65 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
                 paddingBottom: 16,
               }}
             >
+              {/* <Form.Item name="listMaterial" label="Danh sách nguyên vật liệu">
+                <Select
+                  mode="multiple"
+                  style={{ width: "100%" }}
+                  placeholder="Chọn nguyên vật liệu cần dùng..."
+                  defaultValue={data?.listMaterial}
+                  onChange={handleChangeMaterials}
+                  optionLabelProp="label"
+                  options={listMaterials}
+                />
+              </Form.Item>
+              <Form.List name="listMaterial">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, fieldKey, ...restField }) => (
+                      <Form.Item
+                        {...restField}
+                        key={key}
+                        label={`Quantity for ${name}`}
+                        name={[name, "quantity"]}
+                        fieldKey={[fieldKey, "quantity"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter the quantity for the material",
+                          },
+                        ]}
+                      >
+                        <InputNumber placeholder="Enter quantity" />
+                      </Form.Item>
+                    ))}
+                  </>
+                )}
+              </Form.List> */}
+              <Form.Item name="listMaterial" label="Danh sách nguyên vật liệu">
+                <Select
+                  mode="multiple"
+                  style={{ width: "100%" }}
+                  placeholder="Chọn nguyên vật liệu cần dùng..."
+                  defaultValue={data?.listMaterial}
+                  optionLabelProp="label"
+                  options={listMaterials}
+                  onChange={handleChangeMaterials}
+                />
+              </Form.Item>
+
+              {/* Quantity input for each selected material */}
+              {listMaterial.map((material, index) => (
+                <Form.Item
+                  key={material.materialId}
+                  name={["listMaterial", index, "quantity"]}
+                  label={`Số lượng cho ${material.materialName}`}
+                >
+                  <InputNumber
+                    style={{ width: "100%" }}
+                    placeholder={`Nhập số lượng cho ${material.materialName}`}
+                  />
+                </Form.Item>
+              ))}
               <Form.Item
                 name="length"
                 label="Chiều dài"
@@ -407,6 +519,23 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
                 />
               </Form.Item>
               <Form.Item
+                name="mass"
+                label="Khối"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập khối lượng",
+                  },
+                ]}
+              >
+                <InputNumber
+                  style={{
+                    width: "100%",
+                  }}
+                  placeholder="Nhập khối lượng..."
+                />
+              </Form.Item>
+              <Form.Item
                 name="unit"
                 label="Đơn vị tính"
                 rules={[
@@ -428,7 +557,7 @@ export const ItemModal = ({ data, listCategories, listProcedures, open, onCancel
                 //   },
                 // ]}
               >
-                <TextArea rows={5} placeholder="Nhập mô tả sản phẩm..." />
+                <TextArea rows={3} placeholder="Nhập mô tả sản phẩm..." />
               </Form.Item>
             </Card>
           </Col>

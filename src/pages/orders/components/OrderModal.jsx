@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { Button, Form, Input, Select, Space, Upload, message } from "antd";
+import { Button, DatePicker, Form, Input, Select, Space, Upload, message } from "antd";
 import OrderApi from "../../../apis/order";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import { getRoleName } from "../../../utils";
 import storage, { contractsRef, quotesRef } from "../../../middleware/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { locale } from "dayjs";
 
 export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess }) => {
   const dateFormat = "DD/MM/YYYY";
@@ -77,7 +78,16 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
   const handleSubmit = async (values) => {
     setLoading(true);
     console.log(values);
-    const body = { ...values, fileQuote: quoteUrl, fileContract: contractUrl };
+    const dates = values.dates;
+    const startTime = dates?.[0];
+    const endTime = dates?.[1];
+    const body = {
+      ...values,
+      fileQuote: quoteUrl,
+      fileContract: contractUrl,
+      startTime: new Date(startTime),
+      endTime: new Date(endTime),
+    };
     const success = isCreate ? await OrderApi.createOrder(body) : await OrderApi.updateOrder(body);
     if (success) {
       message.success(`${typeMessage} thành công`);
@@ -211,6 +221,26 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
             type="textarea"
             autoSize={{ minRows: "3", maxRows: "6" }}
             placeholder="Mô tả chi tiết..."
+          />
+        </Form.Item>
+        <Form.Item
+          name="startTime"
+          label="Ngày bắt đầu và kết thúc"
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng nhập tên khách hàng",
+            },
+          ]}
+        >
+          <DatePicker.RangePicker
+            className="w-full"
+            placeholder={["Bắt đầu", "Kết thúc"]}
+            format="HH:mm DD/MM/YYYY"
+            showTime={{
+              format: "HH:mm",
+            }}
+            locale={locale}
           />
         </Form.Item>
       </Form>

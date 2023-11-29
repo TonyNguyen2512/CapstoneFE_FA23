@@ -6,9 +6,7 @@ const getAllOrders = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
       return await searchOrders(search, pageIndex, pageSize);
-    }
-    else {
-
+    } else {
       var params = {};
       if (pageIndex) {
         params = { ...params, pageIndex };
@@ -55,8 +53,8 @@ const getOrderById = async (orderId) => {
   try {
     const response = await BaseApi.get(`/${resource}/GetOrderById`, {
       params: {
-        id: orderId
-      }
+        id: orderId,
+      },
     });
     return response.data;
   } catch (error) {
@@ -73,7 +71,7 @@ const getQuoteMaterialByOrderId = async (orderId) => {
     console.log("Error get quote material by order id: ", error);
     return undefined;
   }
-}
+};
 
 const createOrder = async (data) => {
   try {
@@ -104,6 +102,27 @@ const updateStatus = async (id, status) => {
     return false;
   }
 };
+
+const updateOrderStatus = async (status, id) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/UpdateOrderStatus/${status}/${id}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error update item: ", error);
+    return false;
+  }
+};
+
+const updateQuote = async (id, status) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/syncOrderDetailMaterialAndOrderDetail?orderId=${id}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error update item: ", error);
+    return false;
+  }
+};
+
 const deleteOrder = async (id) => {
   try {
     const success = await updateOrder(id, 5);
@@ -116,7 +135,9 @@ const deleteOrder = async (id) => {
 
 const exportOrder = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/ExportQuoteAsPDF/${id}`, { responseType: 'blob' });
+    const response = await BaseApi.get(`/${resource}/ExportQuoteAsPDF/${id}`, {
+      responseType: "blob",
+    });
     return response.data;
   } catch (error) {
     console.log("Error export order: ", error);
@@ -128,9 +149,7 @@ const getByForemanId = async (id, search, pageIndex, pageSize) => {
   try {
     if (search) {
       return await searchGetByForemanId(id, search, pageIndex, pageSize);
-    }
-    else {
-
+    } else {
       var params = {};
       if (pageIndex) {
         params = { ...params, pageIndex };
@@ -180,6 +199,8 @@ const OrderApi = {
   createOrder,
   updateOrder,
   updateStatus,
+  updateOrderStatus,
+  updateQuote,
   deleteOrder,
   getQuoteMaterialByOrderId,
   exportOrder,

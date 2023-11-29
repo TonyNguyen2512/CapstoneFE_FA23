@@ -1,20 +1,24 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
+import { Edit, Lightning, Forbid, More, Unlock } from "@icon-park/react";
 import { Button, Dropdown, Modal, Space } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemModal } from "../../components/ItemModal";
 import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
+import { ItemDuplicateModal } from "../../components/ItemDuplicate";
 import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
 import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
+import MaterialApi from "../../../../apis/material";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
   const [showItemModal, setShowItemModal] = useState(false);
+  const [showItemDuplicateModal, setShowItemDuplicateModal] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [itemCategoryList, setItemCategoryList] = useState([]);
   const [listProcedures, setListProcedures] = useState([]);
+  const [listMaterials, setListMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,6 +36,8 @@ const ItemList = () => {
     setLoading(false);
     response = await ProcedureApi.getAllItem();
     setListProcedures(response.data);
+    response = await MaterialApi.getAllMaterial();
+    setListMaterials(response.data);
 
     console.log(itemList)
     console.log(listProcedures)
@@ -60,6 +66,15 @@ const ItemList = () => {
         onClick: () => {
           itemRef.current = record;
           setShowItemModal(true);
+        },
+      },
+      {
+        key: "DUPLICATE_ITEM",
+        label: "Nhân bản sản phẩm",
+        icon: <Lightning />,
+        onClick: () => {
+          itemRef.current = record;
+          setShowItemDuplicateModal(true);
         },
       },
       {
@@ -205,8 +220,20 @@ const ItemList = () => {
             value: i.id,
           };
         })}
+        listMaterials={listMaterials.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
         open={showItemModal}
         onCancel={() => setShowItemModal(false)}
+        onSuccess={() => getData()}
+      />
+      <ItemDuplicateModal
+        data={itemRef.current}
+        open={showItemDuplicateModal}
+        onCancel={() => setShowItemDuplicateModal(false)}
         onSuccess={() => getData()}
       />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>

@@ -45,9 +45,17 @@ export const QuoteDetail = () => {
   return (
     <Spin spinning={loading}>
       <Card title="Chi tiết đơn hàng">
-        <Title level={5} style={{ fontWeight: 500 }}>
+        <Title className="gutter-row" span={5} level={5} style={{ fontWeight: 500 }}>
           Tên báo giá: {details?.name}
         </Title>
+        <Row className="mt-4" gutter={[16, 16]}>
+          <Col className="gutter-row" span={10}>
+            Tên người tạo đơn: <strong>{details?.createdBy}</strong>
+          </Col>
+          <Col className="gutter-row" span={10}>
+            Tên người được giao: <strong>{details?.assignTo}</strong>
+          </Col>
+        </Row>
         <Row className="mt-4" gutter={[16, 16]}>
           <Col className="gutter-row" span={10}>
             Tên khách hàng: <strong>{details?.customerName}</strong>

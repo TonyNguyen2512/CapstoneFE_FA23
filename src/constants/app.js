@@ -276,6 +276,16 @@ export const TaskColumnId = {
   COMPLETED: "COMPLETED",
 };
 
+export const OrderStatus = {
+  PENDING: 0,
+  REQUEST: 1,
+  REJECT: 2,
+  APPROVE: 3, 
+  IN_PROGRESS: 4,
+  CANCEL: 5,
+  COMPLETED: 6,
+};
+
 export const SemesterTypeOptions = [
   {
     label: "Spring",
