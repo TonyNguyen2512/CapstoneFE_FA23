@@ -23,7 +23,12 @@ const LeaderTaskList = () => {
       setLoading(true);
     }
 
-    const data = await OrderApi.getByForemanId(user?.id ,search, pageIndex, PageSize.LEADER_TASK_ORDER_LIST);
+    const data = await OrderApi.getByForemanId(
+      user?.id,
+      search,
+      pageIndex,
+      PageSize.LEADER_TASK_ORDER_LIST
+    );
     setOrderList(data);
     setLoading(false);
   };
@@ -31,7 +36,6 @@ const LeaderTaskList = () => {
   useEffect(() => {
     getData(null, 1, true);
   }, []);
-
 
   const getActionItems = (record) => {
     const { id } = record;
@@ -43,7 +47,7 @@ const LeaderTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
-          navigate(id)
+          navigate(id);
         },
       },
     ];
@@ -57,7 +61,7 @@ const LeaderTaskList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + ((currentPage - 1) * PageSize.LEADER_TASK_ORDER_LIST)}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.LEADER_TASK_ORDER_LIST}</span>;
       },
     },
     {
@@ -84,18 +88,19 @@ const LeaderTaskList = () => {
     },
     {
       title: "Ngày tạo đơn",
-      dataIndex: "orderDate",
-      key: "orderDate",
-      render: (_, { orderDate }) => <span>{dayjs(orderDate).format("DD/MM/YYYY")}</span>,
-      sorter: (a, b) => dateSort(a.orderDate, b.orderDate),
+      dataIndex: "createTime",
+      key: "createTime",
+      render: (_, { createTime }) => createTime ? <span>{dayjs(createTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+
+      sorter: (a, b) => dateSort(a.createTime, b.createTime),
     },
     {
       title: "Ngày nghiệm thu",
-      dataIndex: "acceptanceDate",
-      key: "acceptanceDate",
-      render: (_, { acceptanceDate }) =>
-        acceptanceDate ? <span>{dayjs(acceptanceDate).format("DD/MM/YYYY")}</span> : <></>,
-      sorter: (a, b) => dateSort(a?.acceptanceDate, b?.acceptanceDate),
+      dataIndex: "quoteTime",
+      key: "quoteTime",
+      render: (_, { quoteTime }) =>
+        quoteTime ? <span>{dayjs(quoteTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+      sorter: (a, b) => dateSort(a?.quoteTime, b?.quoteTime),
     },
     {
       title: "Tình trạng",

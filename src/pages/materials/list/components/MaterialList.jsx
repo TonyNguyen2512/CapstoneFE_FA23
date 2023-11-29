@@ -6,6 +6,7 @@ import MaterialApi from "../../../../apis/material";
 import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import { MaterialModal } from "../../components/MaterialModal";
+import { formatMoney, formatNum } from "../../../../utils";
 
 const MaterialList = () => {
   const [loading, setLoading] = useState(false);
@@ -129,22 +130,33 @@ const MaterialList = () => {
       sorter: (a, b) => a.sku.localeCompare(b.sku),
     },
     {
-      title: "Số lượng",
-      dataIndex: "amount",
-      key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
+      title: "Nơi nhập",
+      dataIndex: "importPlace",
+      key: "importPlace",
+      // align: "center",
+      sorter: (a, b) => a.importPlace.localeCompare(b.importPlace),
     },
     {
-      title: "Ngày nhập",
-      dataIndex: "importDate",
-      key: "importDate",
-      // align: "center",
-      render: (_, record) => {
-        const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
-        return <span>{formattedDate}</span>;
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
       },
-      sorter: (a, b) => a.importDate.localeCompare(b.importDate),
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
+    // {
+    //   title: "Ngày nhập",
+    //   dataIndex: "importDate",
+    //   key: "importDate",
+    //   // align: "center",
+    //   render: (_, record) => {
+    //     const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
+    //     return <span>{formattedDate}</span>;
+    //   },
+    //   sorter: (a, b) => a.importDate.localeCompare(b.importDate),
+    // },
     {
       title: "Nhà cung cấp",
       dataIndex: "supplier",

@@ -128,7 +128,7 @@ const ItemList = () => {
       align: "center",
       width: "12%",
       render: (_, { price }) => {
-        return <span>{price} VNĐ</span>;
+        return <span>{price} VND</span>;
       },
       sorter: (a, b) => a?.price.localeCompare(b?.price),
     },

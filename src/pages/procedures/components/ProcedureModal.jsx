@@ -61,7 +61,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
       confirmLoading={loading}
       onOk={() => formRef.current?.submit()}
     >
-      {/* <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleSubmit}>
+      <Form layout="vertical" ref={formRef} initialValues={{ ...data }} onFinish={handleSubmit}>
         {!isCreate && (
           <Form.Item name="id" hidden>
             <Input />
@@ -78,7 +78,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
           ]}
         >
           <Input placeholder="Nhập tên quy trình..." />
-        </Form.Item> */}
+        </Form.Item>
         {/* <Form.Item
           name="listStep"
           label="Danh sách các bước"
@@ -100,15 +100,15 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
 
           />
         </Form.Item> */}
-      {/* </Form> */}
-      <AddWorkerToGroupModal
+      </Form>
+      {/* <AddWorkerToGroupModal
         open={addWorkerToGroupModal}
         // onSubmit={handleCreateGroup}
         // confirmLoading={groupCreating}
-        onCancel={() => setAddWorkerToGroupModal(false)}
+        onCancel={addWorkerToGroupModal(false)}
         // group={id}
         // workers={workerNotInGroupList}
-      />
+      /> */}
     </BaseModal>
   );
 };

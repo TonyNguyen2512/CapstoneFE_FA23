@@ -5,6 +5,7 @@ import { BaseTable } from "../../../../components/BaseTable";
 import { ProcedureModal } from "../../components/ProcedureModal";
 import ProcedureApi from "../../../../apis/procedure";
 import StepApi from "../../../../apis/step";
+import { AddStepToProcedureModal } from "../../components/AddStepToProcedureModal";
 
 const ProcedureList = () => {
   const [loading, setLoading] = useState(false);
@@ -120,6 +121,14 @@ const ProcedureList = () => {
           width: 300,
         }}
       />
+      {/* <AddStepToProcedureModal
+        open={true}
+        // onSubmit={handleCreateGroup}
+        // confirmLoading={groupCreating}
+        // onCancel={false}
+        // group={id}
+        // workers={workerNotInGroupList}
+      /> */}
       <ProcedureModal
         data={categoryRef.current}
         options={stepList.map((e) => {

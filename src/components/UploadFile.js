@@ -65,7 +65,7 @@ export const UploadFile = ({
 				label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
 				valuePropName="fileList"
 				getValueFromEvent={normFile}
-				validateStatus="error"
+				// validateStatus="error"
 				help={errorMessage}
 			>
 				<Upload
