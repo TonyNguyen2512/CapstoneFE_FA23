@@ -9,6 +9,7 @@ import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
 import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
+import MaterialApi from "../../../../apis/material";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ const ItemList = () => {
   const [itemList, setItemList] = useState([]);
   const [itemCategoryList, setItemCategoryList] = useState([]);
   const [listProcedures, setListProcedures] = useState([]);
+  const [listMaterials, setListMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,6 +36,8 @@ const ItemList = () => {
     setLoading(false);
     response = await ProcedureApi.getAllItem();
     setListProcedures(response.data);
+    response = await MaterialApi.getAllMaterial();
+    setListMaterials(response.data);
 
     console.log(itemList)
     console.log(listProcedures)
@@ -211,6 +215,12 @@ const ItemList = () => {
           };
         })}
         listProcedures={listProcedures.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        listMaterials={listMaterials.map((i) => {
           return {
             label: i.name,
             value: i.id,
