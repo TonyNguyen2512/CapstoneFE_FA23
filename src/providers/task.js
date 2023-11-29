@@ -2,6 +2,7 @@ import { createContext } from "react";
 
 const TaskContext = createContext({
 	tasks: undefined,
+	allTasks: undefined,
 	order: undefined,
 	material: undefined,
 	team: undefined,
@@ -15,6 +16,7 @@ const TaskContext = createContext({
 const TaskProvider = ({
 	children,
 	tasks,
+	allTasks,
 	order,
 	material,
 	team,
@@ -29,6 +31,7 @@ const TaskProvider = ({
 		<TaskContext.Provider
 			value={{
 				tasks: tasks,
+				allTasks: allTasks,
 				order: order,
 				material: material,
 				reload: onReload,

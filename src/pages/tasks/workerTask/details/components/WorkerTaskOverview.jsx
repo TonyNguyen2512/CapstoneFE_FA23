@@ -19,17 +19,17 @@ export const WorkerTaskOverview = ({
   title,
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const { tasks } = useContext(TaskContext);
-  const allTasks = tasks;
-  const completedTasks = allTasks?.filter(
+  const { allTasks } = useContext(TaskContext);
+  const allWTasks = allTasks;
+  const completedTasks = allWTasks?.filter(
     (e) => e.status === TaskStatus.completed
   );
 
-  const inProgressTasks = allTasks?.filter(
+  const inProgressTasks = allWTasks?.filter(
     (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.inProgress
   )
 
-  const expireTasks = allTasks?.filter(
+  const expireTasks = allWTasks?.filter(
     (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
   )
 
@@ -38,19 +38,19 @@ export const WorkerTaskOverview = ({
       <Row justify="middle">
         <Col span={12}>
           <Title level={4} style={{ margin: 0 }} ellipsis>
-            {title} ({completedTasks?.length ?? 0}/{allTasks?.length ?? 0})
+            {title} ({completedTasks?.length ?? 0}/{allWTasks?.length ?? 0})
           </Title>
         </Col>
       </Row>
       <ProgressIndicator
-        total={allTasks?.length ?? 0}
+        total={allWTasks?.length ?? 0}
         completed={completedTasks?.length}
       />
       <Descriptions
         items={[
           {
             label: "Tổng số công việc",
-            children: allTasks?.length,
+            children: allWTasks?.length,
           },
           {
             label: "Công việc đạt",
@@ -58,7 +58,7 @@ export const WorkerTaskOverview = ({
           },
           {
             label: "Công việc không đạt",
-            children: allTasks?.filter(
+            children: allWTasks?.filter(
               (e) => e.status === TaskStatus.inProgress
             )?.length,
           },
