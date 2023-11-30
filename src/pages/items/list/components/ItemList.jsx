@@ -10,6 +10,8 @@ import ItemCategoryApi from "../../../../apis/item-category";
 import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
 import MaterialApi from "../../../../apis/material";
+import StepApi from "../../../../apis/step";
+import { ProcedureModal } from "../../../procedures/components/ProcedureModal";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -22,10 +24,14 @@ const ItemList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [stepList, setStepList] = useState([]);
+  const [procedureList, setProcedureList] = useState([]);
+  const [showStepModal, setShowStepModal] = useState(false);
 
+  const categoryRef = useRef();
   const itemRef = useRef();
 
-  const getData = async (search, pageIndex, handleLoading) => {
+  const getData = async (search, pageIndex, handleLoading, keyword) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -38,9 +44,25 @@ const ItemList = () => {
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
+    response = await StepApi.getAllItem();
+    setStepList(response.data);
+    response = await ProcedureApi.getAllItem(keyword);
+    setProcedureList(response.data);
 
-    console.log(itemList)
-    console.log(listProcedures)
+    console.log(itemList);
+    console.log(listProcedures);
+  };
+
+  const [expandedRows, setExpandedRows] = useState([]);
+  const handleExpand = (record) => {
+    const isRowExpanded = expandedRows.includes(record.key);
+
+    // Toggle the expanded state for the clicked row
+    const newExpandedRows = isRowExpanded
+      ? expandedRows.filter((key) => key !== record.key)
+      : [...expandedRows, record.key];
+
+    setExpandedRows(newExpandedRows);
   };
 
   const showModal = (item) => {
@@ -87,15 +109,108 @@ const ItemList = () => {
     ];
   };
 
+  const expandedRowRender = () => {
+    const columns = [
+      {
+        title: "Tên quy trình",
+        dataIndex: "name",
+        key: "name",
+        sorter: (a, b) => a?.name.localeCompare(b?.name),
+      },
+      {
+        title: "Danh sách bước",
+        dataIndex: "listStep",
+        key: "listStep",
+        render: (_, { listStep }) =>
+          listStep?.map((e) => (
+            <p>
+              {++e.priority}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            </p>
+          )),
+      },
+      {
+        title: "Thao tác",
+        dataIndex: "action",
+        key: "action",
+        align: "center",
+        render: (_, record) => {
+          return (
+            <Dropdown menu={{ items: getActionItems(record) }}>
+              <Button className="mx-auto flex-center" icon={<More />} />
+            </Dropdown>
+          );
+        },
+      },
+    ];
+    return (
+      <>
+        <Space className="w-full flex justify-between mb-6">
+          <div></div>
+          <Button
+            type="primay"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => setShowStepModal(true)}
+          >
+            Thêm quy trình
+          </Button>
+        </Space>
+        <BaseTable
+          title="Danh sách quy trình"
+          dataSource={procedureList}
+          columns={columns}
+          loading={loading}
+          pagination={{
+            pageSize: 5,
+          }}
+          searchOptions={{
+            visible: true,
+            placeholder: "Tìm kiếm quy trình...",
+            onSearch: handleSearch,
+            width: 300,
+          }}
+        />
+        {/* <AddStepToProcedureModal
+          open={true}
+          // onSubmit={handleCreateGroup}
+          // confirmLoading={groupCreating}
+          // onCancel={false}
+          // group={id}
+          // workers={workerNotInGroupList}
+        /> */}
+        <ProcedureModal
+          data={categoryRef.current}
+          options={stepList.map((e) => {
+            return {
+              label: e.name,
+              value: e.id,
+            };
+          })}
+          open={showStepModal}
+          onCancel={() => setShowStepModal(false)}
+          onSuccess={() => getData()}
+        />
+      </>
+    );
+  };
+
   const columns = [
+    {
+      title: "Expand",
+      key: "expand",
+      width: "5%",
+      render: (_, record) => (
+        <Button type="link" onClick={() => handleExpand(record)}>
+          {expandedRows.includes(record.key) ? "Collapse" : "Expand"}
+        </Button>
+      ),
+    },
     {
       title: "#",
       dataIndex: "index",
       key: "index",
       width: "5%",
-      // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ITEM_LIST))}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ITEM_LIST}</span>;
       },
     },
     {
@@ -130,9 +245,7 @@ const ItemList = () => {
       width: "35%",
       align: "center",
       render: (_, record) => {
-        return (
-          <span>{(record?.itemCategoryName || "-" )}</span>
-        );
+        return <span>{record?.itemCategoryName || "-"}</span>;
       },
       sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
     },
@@ -145,7 +258,7 @@ const ItemList = () => {
       render: (_, { price }) => {
         return <span>{price} VND</span>;
       },
-      sorter: (a, b) => a?.price - (b?.price),
+      sorter: (a, b) => a?.price - b?.price,
     },
     {
       title: "Thao tác",
@@ -175,7 +288,7 @@ const ItemList = () => {
     getData(null, 1, true);
   }, []);
 
-  console.log(itemList)
+  console.log(itemList);
 
   return (
     <>
@@ -191,6 +304,10 @@ const ItemList = () => {
       </Space>
       <BaseTable
         title="Danh sách sản phẩm"
+        expandable={{
+          expandedRowRender,
+          defaultExpandedRowKeys: ["0"],
+        }}
         dataSource={itemList?.data}
         columns={columns}
         loading={loading}
