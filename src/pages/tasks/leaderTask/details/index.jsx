@@ -32,16 +32,23 @@ export const LeaderTaskDetailsPage = () => {
 
   const getMaterials = async () => {
     const assignTo = await OrderApi.updateQuote(id);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(id, true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
     setAssignTo(assignTo);
   };
 
   const getOrderStatus = async () => {
-    const data = {
-      status: 1,
-      id: id,
-    };
     const assignTo = await OrderApi.updateOrderStatus(1, id);
-    console.log(data);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(id, true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
     setAssignTo(assignTo);
   };
 
@@ -75,26 +82,25 @@ export const LeaderTaskDetailsPage = () => {
     }
   };
 
-  useEffect(() => {
-    getMaterials();
-    const getData = (id, handleLoading) => {
-      if (handleLoading) {
-        setLoading(true);
-      }
+  const getData = (id, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
 
-      if (!id) return;
+    if (!id) return;
 
-      // retrieve order data by id
-      OrderApi.getOrderById(id).then((dataOrder) => {
-        setOrderInfo(dataOrder);
-        OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
-          setMaterialInfo(dataMaterials?.listFromOrder);
-          allMaterials.current = dataMaterials?.listFromOrder;
-        });
+    // retrieve order data by id
+    OrderApi.getOrderById(id).then((dataOrder) => {
+      setOrderInfo(dataOrder);
+      OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
+        setMaterialInfo(dataMaterials?.listFromOrder);
+        allMaterials.current = dataMaterials?.listFromOrder;
       });
-      setLoading(false);
-    };
+    });
+    setLoading(false);
+  };
 
+  useEffect(() => {
     getData(id, true);
   }, [id]);
 
