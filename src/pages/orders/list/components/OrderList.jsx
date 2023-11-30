@@ -10,15 +10,18 @@ import { useNavigate } from "react-router-dom";
 import OrderApi from "../../../../apis/order";
 import UserApi from "../../../../apis/user";
 import dayjs from "dayjs";
+import { UpdateStatus } from "../../components/UpdateStatus";
 
 const OrderList = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showOrderModal, setShowOrderModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [orders, setOrders] = useState([]);
 
   const orderRef = useRef();
+  
 
   const getData = async (keyword) => {
     setLoading(true);
@@ -34,7 +37,7 @@ const OrderList = () => {
     });
 
     const foreman = await UserApi.getByForemanRole();
-    setAccounts(foreman.data)
+    setAccounts(foreman.data);
     // setAccounts(
     //   data.map((d) => {
     //     return {
@@ -74,7 +77,7 @@ const OrderList = () => {
         icon: <Lightning />,
         onClick: () => {
           orderRef.current = record;
-          setShowOrderModal(true);
+          setUpdateModal(true);
         },
       },
       {
@@ -215,6 +218,10 @@ const OrderList = () => {
         }}
         onSuccess={() => getData()}
       />
+      <UpdateStatus
+        data={orderRef.current}
+        open={updateModal}
+      ></UpdateStatus>
     </>
   );
 };

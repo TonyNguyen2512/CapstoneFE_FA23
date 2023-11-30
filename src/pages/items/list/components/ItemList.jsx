@@ -145,7 +145,7 @@ const ItemList = () => {
       render: (_, { price }) => {
         return <span>{price} VND</span>;
       },
-      sorter: (a, b) => a?.price.localeCompare(b?.price),
+      sorter: (a, b) => a?.price - (b?.price),
     },
     {
       title: "Thao tác",
