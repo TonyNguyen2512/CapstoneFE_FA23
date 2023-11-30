@@ -32,14 +32,17 @@ const OrderList = () => {
       }
       return 0; // no change in order
     });
-    setAccounts(
-      data.map((d) => {
-        return {
-          ...d,
-          role: d.role?.name || "",
-        };
-      })
-    );
+
+    const foreman = await UserApi.getByForemanRole();
+    setAccounts(foreman.data)
+    // setAccounts(
+    //   data.map((d) => {
+    //     return {
+    //       ...d,
+    //       role: d.role?.name || "",
+    //     };
+    //   })
+    // );
     const response = await OrderApi.getAllOrders(keyword);
     setOrders(response.data || []);
     setLoading(false);
