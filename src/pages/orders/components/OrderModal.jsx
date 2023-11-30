@@ -209,7 +209,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           <Select
             options={users.map((v) => {
               return {
-                label: `${v.fullName} - ${v.userName} (${getRoleName(v.role)})`,
+                label: `${v.fullName} - ${v.userName}`,
                 value: v.id,
               };
             })}
@@ -224,7 +224,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           />
         </Form.Item>
         <Form.Item
-          name="startTime"
+          name="dates"
           label="Ngày bắt đầu và kết thúc"
           rules={[
             {
