@@ -12,30 +12,30 @@ export const LeaderTaskProcedureOverview = ({
   title,
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
-  const { tasks } = useContext(TaskContext);
-  const allTasks = tasks?.data;
+  const { allTasks } = useContext(TaskContext);
+  const allETasks = allTasks?.data;
 
-  const completedTasks = allTasks?.filter(
+  const completedTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.Completed
   );
 
-  const notAchivedTasks = allTasks?.filter(
+  const notAchivedTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.NotAchived
   );
 
-  const newTasks = allTasks?.filter(
+  const newTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.New
   );
 
-  const pendingTasks = allTasks?.filter(
+  const pendingTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.Pending
   );
 
-  const inprocessTasks = allTasks?.filter(
+  const inprocessTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.Inprocessing
   );
 
-  const expireTasks = allTasks?.filter((e) =>
+  const expireTasks = allETasks?.filter((e) =>
     moment(e.timeReport).isBefore(now()) && e.status !== eTaskStatus.Completed
   );
 
@@ -44,19 +44,19 @@ export const LeaderTaskProcedureOverview = ({
       <Row justify="middle">
         <Col span={12}>
           <Title level={4} style={{ margin: 0 }} ellipsis>
-            {title} ({completedTasks?.length ?? 0}/{allTasks?.length ?? 0})
+            {title} ({completedTasks?.length ?? 0}/{allETasks?.length ?? 0})
           </Title>
         </Col>
       </Row>
       <ProgressIndicator
-        total={allTasks?.length ?? 0}
+        total={allETasks?.length ?? 0}
         completed={completedTasks?.length}
       />
       <Descriptions
         items={[
           {
             label: "Tổng số quy trình",
-            children: allTasks?.length,
+            children: allETasks?.length,
           },
           {
             label: "Quy trình mới tạo",

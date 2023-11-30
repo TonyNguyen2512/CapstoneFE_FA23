@@ -19,6 +19,7 @@ export const LeaderTaskDetailsPage = () => {
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const allMaterials = useRef();
 
@@ -31,16 +32,23 @@ export const LeaderTaskDetailsPage = () => {
 
   const getMaterials = async () => {
     const assignTo = await OrderApi.updateQuote(id);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(id, true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
     setAssignTo(assignTo);
   };
 
   const getOrderStatus = async () => {
-    const data = {
-      status: 1,
-      id: id,
-    };
     const assignTo = await OrderApi.updateOrderStatus(1, id);
-    console.log(data);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(id, true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
     setAssignTo(assignTo);
   };
 
@@ -59,7 +67,13 @@ export const LeaderTaskDetailsPage = () => {
       if (dataLeaderTasks.code === 0) {
         setTaskInfo(dataLeaderTasks?.data);
       } else {
-        message.error = dataLeaderTasks.message;
+        message.error(dataLeaderTasks.message);
+      }
+      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+      if (dataLeaderTasks.code === 0) {
+        setAllTasks(dataLeaderTasks?.data);
+      } else {
+        message.error(dataLeaderTasks.message);
       }
     } catch (e) {
       console.log(e);
@@ -68,26 +82,25 @@ export const LeaderTaskDetailsPage = () => {
     }
   };
 
-  useEffect(() => {
-    getMaterials();
-    const getData = (id, handleLoading) => {
-      if (handleLoading) {
-        setLoading(true);
-      }
+  const getData = (id, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
 
-      if (!id) return;
+    if (!id) return;
 
-      // retrieve order data by id
-      OrderApi.getOrderById(id).then((dataOrder) => {
-        setOrderInfo(dataOrder);
-        OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
-          setMaterialInfo(dataMaterials?.listFromOrder);
-          allMaterials.current = dataMaterials?.listFromOrder;
-        });
+    // retrieve order data by id
+    OrderApi.getOrderById(id).then((dataOrder) => {
+      setOrderInfo(dataOrder);
+      OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
+        setMaterialInfo(dataMaterials?.listFromOrder);
+        allMaterials.current = dataMaterials?.listFromOrder;
       });
-      setLoading(false);
-    };
+    });
+    setLoading(false);
+  };
 
+  useEffect(() => {
     getData(id, true);
   }, [id]);
 
@@ -117,10 +130,11 @@ export const LeaderTaskDetailsPage = () => {
           </Button>
           <TaskProvider
             tasks={taskInfo}
+            allTasks={allTasks}
             info={orderInfo}
             material={materialInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(handleLoading);
+              getLeaderTaskData(null, 1, handleLoading);
             }}
             onFilterTask={(search, pageIndex) => {
               getLeaderTaskData(search, pageIndex, true);
