@@ -14,7 +14,7 @@ const getAllItem = async (search, pageIndex, pageSize) => {
       if (pageSize) {
         params = { ...params, pageSize };
       }
-      const response = await BaseApi.get(`/${resource}/GetAll`, {
+      const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
         params: params,
       });
       return response.data;
@@ -37,7 +37,7 @@ const searchItem = async (search, pageIndex, pageSize) => {
     if (pageSize) {
       params = { ...params, pageSize };
     }
-    const response = await BaseApi.get(`/${resource}/GetAll`, {
+    const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
       params: params,
     });
     return response.data;
