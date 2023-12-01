@@ -10,7 +10,6 @@ import AuthApi from "../../apis/auth";
 import { UserContext } from "../../providers/user";
 import { getRoleName } from "../../utils";
 import { roles } from "../../constants/app";
-import { SignalRProvider } from "../../providers/signalr";
 const { Content } = Layout;
 const { Title } = Typography;
 
@@ -48,47 +47,42 @@ export const Dashboard = () => {
 
   return (
     <UserContext.Provider value={{ user: user, setUser: setUser }}>
-      <SignalRProvider
-        url={`${process.env.REACT_APP_API_URL}${process.env.REACT_APP_SIGNALR_HUB}`}
-        actionName={"notify"}
-      >
-        <Layout hasSider>
-          <AppSider />
+      <Layout hasSider>
+        <AppSider />
+        <Layout>
+          <AppHeader />
           <Layout>
-            <AppHeader />
-            <Layout>
-              <Content
-                style={{
-                  padding: 16,
-                  paddingRight: 32,
-                  overflow: "initial",
-                  backgroundColor: "white",
-                }}
-              >
-                {location.pathname === routes.dashboard.root && (
-                  <div className="w-full h-[60vh] flex-center" style={{ flexDirection: "column" }}>
-                    {/* <Title level={3}>JAMA Decor</Title> */}
-                    <Lottie
-                      width="30%"
-                      options={{
-                        animationData: animationData,
-                        autoplay: true,
-                        loop: true,
-                        rendererSettings: {
-                          preserveAspectRatio: "xMidYMid slice",
-                        },
-                      }}
-                    />
-                    <Title level={4}>Coming Soon</Title>
-                  </div>
-                )}
-                <Outlet />
-              </Content>
-              {/* <ActivitySider /> */}
-            </Layout>
+            <Content
+              style={{
+                padding: 16,
+                paddingRight: 32,
+                overflow: "initial",
+                backgroundColor: "white",
+              }}
+            >
+              {location.pathname === routes.dashboard.root && (
+                <div className="w-full h-[60vh] flex-center" style={{ flexDirection: "column" }}>
+                  {/* <Title level={3}>JAMA Decor</Title> */}
+                  <Lottie
+                    width="30%"
+                    options={{
+                      animationData: animationData,
+                      autoplay: true,
+                      loop: true,
+                      rendererSettings: {
+                        preserveAspectRatio: "xMidYMid slice",
+                      },
+                    }}
+                  />
+                  <Title level={4}>Coming Soon</Title>
+                </div>
+              )}
+              <Outlet />
+            </Content>
+            {/* <ActivitySider /> */}
           </Layout>
         </Layout>
-      </SignalRProvider>
+      </Layout>
     </UserContext.Provider>
   );
 };

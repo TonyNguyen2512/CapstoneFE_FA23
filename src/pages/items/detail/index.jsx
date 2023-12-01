@@ -1,39 +1,39 @@
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { OrderDetailsProvider } from "../../../providers/orderDetails";
 import OrderDetailApi from "../../../apis/order-details";
-import { QuoteDetail } from "./components/QuoteDetail";
+import { ItemDetail } from "./components/ItemDetail";
 import React, { useEffect, useRef, useState } from "react";
-import OrderApi from "../../../apis/order";
 import { useParams } from "react-router";
-import { Button, Dropdown, Spin, Typography } from "antd";
+import { Button, Dropdown, Spin, Typography, message } from "antd";
 import UserApi from "../../../apis/user";
 import { BaseTable } from "../../../components/BaseTable";
-import { Edit, More } from "@icon-park/react";
+import { Edit, Error, More } from "@icon-park/react";
 import routes from "../../../constants/routes";
 import { useNavigate } from "react-router-dom";
+import ItemApi from "../../../apis/item";
 
 const { Title } = Typography;
 
-const QuoteDetailPage = () => {
+const OrderDetailPage = () => {
   const { id } = useParams();
+  console.log("id", id);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
-  const [itemList, setItemList] = useState();
+  const [procedures, setProcedures] = useState();
+  const [materials, setMaterials] = useState();
   const [users, setUsers] = useState();
 
-  const quoteRef = useRef();
+  const ref = useRef();
 
   const getDetails = async () => {
     if (!id) return;
     setLoading(true);
-    let data = await OrderApi.getOrderById(id);
+    let data = await ItemApi.getItemById(id);
     setDetails(data);
     data = await OrderDetailApi.getListByOrderId(id);
     setItemList(data);
-    data = await UserApi.getAll();
-    setUsers(data);
     setLoading(false);
   };
 
@@ -42,18 +42,17 @@ const QuoteDetailPage = () => {
     let data = await OrderDetailApi.getListByOrderId(id, search);
     setItemList(data);
     data = await UserApi.getAll();
-    setUsers(data);
     setLoading(false);
   };
 
   const columns = [
     {
-      title: "Tên sản phẩm",
+      title: "Tên vật liệu",
       dataIndex: "itemName",
       key: "itemName",
       width: "25%",
-      render: (_, record) => <span>{record?.item?.name}</span>,
-      sorter: (a, b) => a?.item?.name.localeCompare(b?.item?.name),
+      render: (_, record) => <span>{record?.itemName}</span>,
+      sorter: (a, b) => a?.itemName.localeCompare(b?.itemName),
     },
     {
       title: "Số lượng",
@@ -97,26 +96,26 @@ const QuoteDetailPage = () => {
 
   const getActionItems = (record) => {
     return [
-      {
-        key: "UPDATE_QUOTE_ITEM",
-        label: "Cập nhật sản phẩm",
-        icon: <Edit />,
-        onClick: () => {
-          quoteRef.current = record;
-          // setShowOrderModal(true);
-        },
-      },
+      // {
+      //   key: "UPDATE_ORDER",
+      //   label: "Cập nhật đơn hàng",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     orderRef.current = record;
+      //     // setShowOrderModal(true);
+      //   },
+      // },
       // {
       //   key: "CANCEL_ORDER",
       //   label: "Huỷ đơn",
       //   danger: true,
       //   icon: <Error />,
       //   onClick: async () => {
-      //     let success = await OrderApi.deleteOrder(record.id);
+      //     let success = await ItemApi.deleteOrder(record.id);
       //     if (success) {
-      //       message.success(`Huỷ báo giá thành công!`);
+      //       message.success(`Huỷ đơn hàng thành công!`);
       //     } else {
-      //       message.error(`Huỷ báo giá thất bại! Vui lòng thử lại sau.`);
+      //       message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
       //     }
       //     handleSearch();
       //   },
@@ -134,23 +133,38 @@ const QuoteDetailPage = () => {
       <Spin spinning={loading}>
         <OrderDetailsProvider
           details={details}
-          list={itemList}
-          users={users}
+          procedures={procedures}
+          materials={materials}
           reload={() => getDetails()}
         >
           <section className="mt-4">
-            <QuoteDetail />
+            <ItemDetail />
           </section>
           <section className="mt-4">
             <BaseTable
-              title="Danh sách sản phẩm"
-              dataSource={itemList}
+              title="Danh sách vật liệu"
+              dataSource={materials}
               columns={columns}
               loading={loading}
               pagination={{ pageSize: 5, pageSizeOptions: [] }}
               searchOptions={{
                 visible: true,
-                placeholder: "Tìm kiếm sản phẩm...",
+                placeholder: "Tìm kiếm vật liệu...",
+                onSearch: handleSearch,
+                width: 300,
+              }}
+            />
+          </section>
+          <section className="mt-4">
+            <BaseTable
+              title="Danh sách quy trình"
+              dataSource={materials}
+              columns={columns}
+              loading={loading}
+              pagination={{ pageSize: 5, pageSizeOptions: [] }}
+              searchOptions={{
+                visible: true,
+                placeholder: "Tìm kiếm quy trình...",
                 onSearch: handleSearch,
                 width: 300,
               }}
@@ -162,4 +176,4 @@ const QuoteDetailPage = () => {
   );
 };
 
-export default QuoteDetailPage;
+export default OrderDetailPage;

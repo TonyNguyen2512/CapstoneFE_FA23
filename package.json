@@ -27,7 +27,6 @@
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
-    "react-signalr": "^0.2.18",
     "socket.io-client": "^4.7.2",
     "styled-components": "^6.0.7",
     "web-vitals": "^2.1.4"

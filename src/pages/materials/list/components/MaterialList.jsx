@@ -14,9 +14,7 @@ const MaterialList = () => {
   const [materialList, setMaterialList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
-  const [isCreate, setIsCreate] = useState(true);
   const materialRef = useRef();
-  const userRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
@@ -25,17 +23,11 @@ const MaterialList = () => {
     setLoading(false);
   };
 
-  const showModal = (item) => {
-    setLoading(true);
-    setPreviewUrl(item.imageUrl);
-    setLoading(false);
-    setIsModalOpen(true);
-  };
-
   const closeModal = () => {
     setPreviewUrl("");
     setIsModalOpen(false);
   };
+  
   useEffect(() => {
     getData();
   }, []);
@@ -62,19 +54,18 @@ const MaterialList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           materialRef.current = record;
-          // setShowUpdateMaterialModal(true);
-        },
-      },
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          setIsCreate(false);
-          materialRef.current = record;
           setShowUpdateMaterialModal(true);
         },
       },
+      // {
+      //   key: "UPDATE_ROLE",
+      //   label: "Cập nhật thông tin",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     materialRef.current = record;
+      //     setShowUpdateMaterialModal(true);
+      //   },
+      // },
       {
         key: "SET_STATUS",
         label: isDeleted ? "Mở khóa" : "Khóa",
@@ -170,7 +161,7 @@ const MaterialList = () => {
       // align: "center",
       render: (_, color) => {
         return (
-          <Tooltip title={color?.color} >
+          <Tooltip title={color?.color}>
             <Button
               block
               type="primary"
@@ -229,11 +220,9 @@ const MaterialList = () => {
       <MaterialModal
         data={materialRef.current}
         open={showUpdateMaterialModal}
-        isCreate={isCreate}
         onCancel={() => {
           setShowUpdateMaterialModal(false);
           materialRef.current = null;
-          setIsCreate(true);
         }}
         onSuccess={() => getData()}
       />
