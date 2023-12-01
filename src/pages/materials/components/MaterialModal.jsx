@@ -34,12 +34,12 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 //   materialCategoryId: "",
 // };
 
-export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => {
+export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [initialValues, setInitialValues] = useState();
-  const [color, setColor] = useState();
+  const [color, setColor] = useState(data?.color);
   const [form] = Form.useForm();
   const dateFormat = "DD/MM/YYYY";
+  const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
   const [loading, setLoading] = useState(false);
@@ -47,17 +47,9 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
   const [materialImage, setMaterialImage] = useState(data?.image ?? "");
   const formRef = useRef();
 
-  console.log({ ...data, importDate: dayjs(data?.importDate, "DD/MM/YYYY") });
-  console.log("Data: ", data);
-
-  const handleValue = (values) => {
-    form.setFieldsValue(values);
-  };
-
   const btnStyle = {
     width: "100%",
     height: "35px",
-    // backgroundColor: form.getFieldValue("color"),
     margin: "center",
   };
 
@@ -81,7 +73,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
         setProgress(0);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-          formRef.current.setFieldValue("image", url);
+          formRef.current?.setFieldValue("image", url);
           setMaterialImage(url);
         });
       }
@@ -89,44 +81,27 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
     setLoading(false);
   };
 
-  const handleMaterial = async (values) => {
+  const handleSubmit = async (values) => {
     setLoading(true);
     console.log("asdsdgafhgdjf", values);
-    const body = { ...values, color: typeof color === "string" ? color : color.toHexString() };
+    const body = {
+      ...values,
+      color: typeof color === "string" ? color : color?.toHexString(),
+      image: materialImage,
+    };
     const success = isCreate
       ? await MaterialApi.createMaterial(body)
       : await MaterialApi.updateMaterial(body);
     if (success) {
       message.success(`${typeMessage} thành công`);
+      form.resetFields();
       onSuccess();
     } else {
       message.error(`${typeMessage} thất bại`);
     }
-    setInitialValues(values);
     setLoading(false);
-    onCancel();
+    success && onCancel();
   };
-
-  useEffect(() => {
-    handleValue({
-      id: data?.id,
-      name: data?.name,
-      color: data?.color,
-      price: data?.price,
-      thickness: data?.thickness,
-      supplier: data?.supplier,
-      importDate: data && data.importDate ? dayjs(data.importDate) : null,
-      importPlace: data?.importPlace,
-      image: data?.image,
-      isDeleted: data?.isDeleted,
-      unit: data?.unit,
-      amount: data?.amount,
-      materialCategoryId: data?.materialCategoryId,
-    });
-  }, [data]);
-
-  console.log(data);
-  console.log(form.getFieldValue("color"));
 
   const handleChangeMaterial = (id) => {
     setSearchParams({
@@ -140,10 +115,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
       setSearchParams(searchParams);
     }
   };
-
-  useEffect(() => {
-    // console.log(form.getFieldValue("color"), color);
-  }, [form, color]);
+  useEffect(() => {}, [data]);
 
   return (
     <BaseModal
@@ -156,10 +128,9 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
       confirmLoading={loading}
       onOk={() => {
         form.submit();
-        form.resetFields();
       }}
     >
-      <Form form={form} initialValues={initialValues} onFinish={handleMaterial} layout="vertical">
+      <Form form={form} initialValues={data} onFinish={handleSubmit} layout="vertical">
         {!isCreate && (
           <Form.Item name="id" hidden>
             <Input />
@@ -202,57 +173,51 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
           >
             <Button
               type="primary"
-              style={{ ...btnStyle, backgroundColor: color || form.getFieldValue("color") }}
+              style={{
+                ...btnStyle,
+                backgroundColor: color || form.getFieldValue("color"),
+              }}
               align="center"
             ></Button>
           </ColorPicker>
         </Form.Item>
-        <Form.Item
-          name="unit"
-          label="Đơn vị đo"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
-            },
-          ]}
-        >
-          <Input placeholder="Tên loại vật liệu..." />
-        </Form.Item>
-        <Form.Item
-          name="amount"
-          label="Số lượng"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
-            },
-          ]}
-        >
-          <InputNumber
-            style={{
-              width: "100%",
-            }}
-            placeholder="Tên loại vật liệu..."
-          />
-        </Form.Item>
-        <Form.Item
-          name="thickness"
-          label="Độ dày"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
-            },
-          ]}
-        >
-          <InputNumber
-            style={{
-              width: "100%",
-            }}
-            placeholder="Tên loại vật liệu..."
-          />
-        </Form.Item>
+
+        <Space className="w-full justify-start">
+          <Form.Item
+            name="thickness"
+            label="Độ dày"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập tên loại vật liệu",
+              },
+            ]}
+          >
+            <InputNumber
+              style={{
+                width: "100%",
+              }}
+              placeholder="Độ dày..."
+            />
+          </Form.Item>
+          <Form.Item
+            name="unit"
+            label="Đơn vị đo"
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng nhập tên loại vật liệu",
+              },
+            ]}
+          >
+            <Input
+              style={{
+                width: "155%",
+              }}
+              placeholder="Đơn vị đo..."
+            />
+          </Form.Item>
+        </Space>
         <Form.Item
           name="price"
           label="Đơn giá"
@@ -268,7 +233,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
             style={{
               width: "100%",
             }}
-            placeholder="Tên loại vật liệu..."
+            placeholder="Đơn giá..."
           />
         </Form.Item>
         <Form.Item
@@ -295,35 +260,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
         >
           <Input placeholder="Tên loại vật liệu..." />
         </Form.Item>
-        <Form.Item
-          name="importDate"
-          label="Ngày nhập"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng nhập tên loại vật liệu",
-            },
-          ]}
-        >
-          <DatePicker
-            inputReadOnly="true"
-            style={{
-              width: "100%",
-            }}
-            format={dateFormat}
-            placeholder="Chọn ngày nhập vật liệu..."
-          />
-        </Form.Item>
-        <Form.Item
-          name="image"
-          label="Chọn hình"
-          // rules={[
-          //   {
-          //     required: true,
-          //     message: "Vui lòng nhập tên loại vật liệu",
-          //   },
-          // ]}
-        >
+        <Form.Item name="image" label="Hình ảnh">
           <Space
             direction="vertical"
             style={{
@@ -333,9 +270,14 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess, isCreate }) => 
           >
             <Upload
               listType="picture"
-              beforeUpload={() => {
-                return false;
-              }}
+              defaultFileList={[
+                {
+                  uid: data?.id,
+                  url: data?.image,
+                },
+              ]}
+              beforeUpload={() => false}
+              onChange={handleUploadImage}
               maxCount={1}
             >
               <Button icon={<UploadOutlined />}>Upload</Button>

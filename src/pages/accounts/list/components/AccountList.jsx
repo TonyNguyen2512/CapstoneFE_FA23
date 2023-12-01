@@ -257,7 +257,7 @@ const AccountList = () => {
         loading={loading}
         dataSource={users}
         columns={columns}
-        pagination={{ pageSize: 9 }}
+        pagination={{ pageSize: 10, pageSizeOptions: [] }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",

@@ -269,7 +269,7 @@ export const AppSider = () => {
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
       theme="light"
-      className="dashboard-sider pb-8 h-[100vh] !border-x-2 !border-gray-600"
+      className="dashboard-sider pb-8 overflow-auto !border-x-2 !border-gray-600"
     >
       <Link
         to={routes.dashboard.home}
