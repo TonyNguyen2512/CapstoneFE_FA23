@@ -28,18 +28,18 @@ const MaterialTypeList = () => {
   const getActionItems = (record) => {
     const { isDeleted } = record;
     return [
-      {
-        key: "VIEW_DETAIL",
-        label: "Xem thông tin chi tiết",
-        icon: <PreviewOpen/>,
-        onClick: () => {
-          materialTypeRef.current = record;
-          // setShowUpdateMaterialTypeModal(true);
-        },
-      },
+      // {
+      //   key: "VIEW_DETAIL",
+      //   label: "Xem thông tin chi tiết",
+      //   icon: <PreviewOpen/>,
+      //   onClick: () => {
+      //     materialTypeRef.current = record;
+      //     // setShowUpdateMaterialTypeModal(true);
+      //   },
+      // },
       {
         key: "UPDATE_MATERIAL_TYPE",
-        label: "Cập nhật thông tin",
+        label: "Xem thông tin chi tiết",
         icon: <Edit />,
         onClick: () => {
           materialTypeRef.current = record;
@@ -94,6 +94,23 @@ const MaterialTypeList = () => {
         );
       },
       sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Số lượng vật liệu",
+      dataIndex: "quantityMaterial",
+      key: "quantityMaterial",
+      render: (_, record) => {
+        return (
+          <span
+            onClick={() => {
+              /*showModal(record) */
+            }}
+          >
+            {record.quantityMaterial}
+          </span>
+        );
+      },
+      sorter: (a, b) => a.quantityMaterial.localeCompare(b.quantityMaterial),
     },
     // {
     //   title: "Tình trạng",

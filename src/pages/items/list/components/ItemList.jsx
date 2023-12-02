@@ -11,6 +11,7 @@ import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
 import MaterialApi from "../../../../apis/material";
 import StepApi from "../../../../apis/step";
+import { useParams } from "react-router-dom";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -25,6 +26,7 @@ const ItemList = () => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [listRowExpand, setListRowExpand] = useState([]);
+  const { id } = useParams();
 
   const itemRef = useRef();
 
@@ -72,7 +74,7 @@ const ItemList = () => {
       },
       {
         key: "DUPLICATE_ITEM",
-        label: "Nhân bản sản phẩm",
+        label: "Sao chép sản phẩm",
         icon: <Lightning />,
         onClick: () => {
           itemRef.current = record;
@@ -291,6 +293,7 @@ const ItemList = () => {
         data={itemRef.current}
         open={showItemDuplicateModal}
         onCancel={() => setShowItemDuplicateModal(false)}
+        id={id}
         onSuccess={() => getData()}
       />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
