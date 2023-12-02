@@ -65,9 +65,9 @@ const ProcedureList = () => {
       dataIndex: "listStep",
       key: "listStep",
       render: (_, { listStep }) =>
-        listStep?.map((e) => (
+        listStep?.map((e, i) => (
           <p>
-            {++e.priority}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
           </p>
         )),
     },

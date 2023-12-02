@@ -7,7 +7,7 @@ export const BaseTable = ({
 	columns,
 	title,
 	dataSource,
-	expandedRowRender,
+	expandable,
 	searchOptions = {
 		visible: true,
 		placeholder: "Tìm kiếm...",
@@ -130,9 +130,7 @@ export const BaseTable = ({
 						<Empty description={<Text disabled>Chưa có dữ liệu</Text>} />
 					),
 				}}
-				expandable={{
-					expandedRowRender: expandedRowRender,
-				}}
+				expandable={expandable}
 			/>
 		</div>
 	);
