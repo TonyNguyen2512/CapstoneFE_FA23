@@ -6,6 +6,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Progress,
   Space,
   Upload,
   message,
@@ -43,7 +44,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(-1);
   const [materialImage, setMaterialImage] = useState(data?.image ?? "");
   const formRef = useRef();
 
@@ -70,7 +71,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current?.setFieldValue("image", url);
@@ -130,6 +131,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
         form.submit();
       }}
     >
+      {progress > 0 && <Progress percent={progress} />}
       <Form form={form} initialValues={data} onFinish={handleSubmit} layout="vertical">
         {!isCreate && (
           <Form.Item name="id" hidden>

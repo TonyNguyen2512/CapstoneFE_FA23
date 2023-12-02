@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { Button, Card, Col, Form, Input, Row, Select, Upload, message } from "antd";
+import { Button, Card, Col, Form, Input, Progress, Row, Select, Upload, message } from "antd";
 import ItemApi from "../../../apis/item";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { drawingsRef, imagesItemRef } from "../../../middleware/firebase";
@@ -28,7 +28,7 @@ export const ItemModal = ({
   const [drawingsTechnical, setDrawingsTechnical] = useState(data?.drawingsTechnical ?? "");
   const [listProcedure, setListProcedure] = useState([]);
   const [listMaterial, setListMaterial] = useState([]);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(-1);
 
   const handleUploadImage = (event) => {
     setLoading(true);
@@ -47,7 +47,7 @@ export const ItemModal = ({
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("image", url);
@@ -75,7 +75,7 @@ export const ItemModal = ({
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("drawings2D", url);
@@ -103,7 +103,7 @@ export const ItemModal = ({
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("drawings3D", url);
@@ -131,7 +131,7 @@ export const ItemModal = ({
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("drawingsTechnical", url);
@@ -226,6 +226,7 @@ export const ItemModal = ({
       title={`${typeMessage} sản phẩm`}
       onOk={() => formRef.current?.submit()}
     >
+      {progress > 0 && <Progress percent={progress} />}
       <Form
         layout="vertical"
         ref={formRef}

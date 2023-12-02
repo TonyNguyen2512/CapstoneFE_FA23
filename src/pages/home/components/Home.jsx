@@ -1,4 +1,4 @@
-import { Card, Col, Row, Typography, Space } from "antd";
+import { Card, Col, Row, Typography, Space, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../apis/role";
 import { roles } from "../../../constants/app";
@@ -18,9 +18,6 @@ const Home = () => {
   const [orderByMonthData, setOrderByMonthData] = useState();
   const [leaderTaskData, setLeaderTaskData] = useState();
   const [workerTaskData, setWorkerTaskData] = useState();
-
-  const userRef = useRef();
-  const rolesRef = useRef();
 
   const getUsersStatistics = () => {
     let data = [];
@@ -140,25 +137,18 @@ const Home = () => {
     setLeaderTaskData(data);
     data = await DashboardApi.WorkerTaskDashboard();
     setWorkerTaskData(data);
-    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
     setLoading(false);
   };
 
-  const getAllRoles = async () => {
-    const result = await RoleApi.getAllRoles();
-    rolesRef.current = result.filter((e) => e.name !== roles.ADMIN);
-  };
-
   useEffect(() => {
-    console.log('asdasd');
     getHomeData();
-    getAllRoles();
+    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
   }, []);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <Title level={4}>Tổng quan</Title>
-      {/* <Space direction="vertical" className="w-full gap-6">
+      <Space direction="vertical" className="w-full gap-6">
         <Row gutter={32}>
           <Col span={6}>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
@@ -324,8 +314,8 @@ const Home = () => {
             </Card>
           </Col>
         </Row>
-      </Space> */}
-    </>
+      </Space>
+    </Spin>
   );
 };
 

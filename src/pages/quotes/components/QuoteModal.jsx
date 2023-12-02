@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { Button, Form, Input, Select, Space, Upload, message } from "antd";
+import { Button, Form, Input, Progress, Select, Space, Upload, message } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import { getRoleName } from "../../../utils";
 import storage, { contractsRef, quotesRef } from "../../../middleware/firebase";
@@ -13,7 +13,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
   const formRef = useRef();
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(-1);
 
   const [quoteUrl, setQuoteUrl] = useState(data?.fileQuote ?? "");
   const [contractUrl, setContractUrl] = useState(data?.fileContract ?? "");
@@ -35,7 +35,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("fileQuote", url);
@@ -63,7 +63,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
         setLoading(false);
       },
       () => {
-        setProgress(0);
+        setProgress(-1);
         // download url
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           formRef.current.setFieldValue("fileContract", url);
@@ -97,10 +97,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
       title={`${typeMessage} báo giá`}
       onOk={() => formRef.current?.submit()}
     >
-      {/* <div>
-        <input type="file" accept="image/*" onChange={handleChange} />
-        <button>Upload to Firebase</button>
-      </div> */}
+      {progress > 0 && <Progress percent={progress} />}
       <Form
         ref={formRef}
         layout="vertical"

@@ -1,5 +1,5 @@
 import { Edit, Lightning, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space } from "antd";
+import { Button, Dropdown, Modal, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemModal } from "../../components/ItemModal";
@@ -10,6 +10,7 @@ import ItemCategoryApi from "../../../../apis/item-category";
 import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
 import MaterialApi from "../../../../apis/material";
+import StepApi from "../../../../apis/step";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
@@ -18,14 +19,16 @@ const ItemList = () => {
   const [itemList, setItemList] = useState([]);
   const [itemCategoryList, setItemCategoryList] = useState([]);
   const [listProcedures, setListProcedures] = useState([]);
+  const [stepList, setStepList] = useState([]);
   const [listMaterials, setListMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [listRowExpand, setListRowExpand] = useState([]);
 
   const itemRef = useRef();
 
-  const getData = async (search, pageIndex, handleLoading) => {
+  const getData = async (search, pageIndex, handleLoading = true) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -38,9 +41,8 @@ const ItemList = () => {
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
-
-    console.log(itemList)
-    console.log(listProcedures)
+    response = await StepApi.getAllItem();
+    setStepList(response.data);
   };
 
   const showModal = (item) => {
@@ -95,7 +97,7 @@ const ItemList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ITEM_LIST))}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ITEM_LIST}</span>;
       },
     },
     {
@@ -116,13 +118,6 @@ const ItemList = () => {
       },
       sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
-    // {
-    //   title: "Màu sắc",
-    //   dataIndex: "color",
-    //   key: "color",
-    //   align: "center",
-    //   sorter: (a, b) => a?.color.localeCompare(b?.color),
-    // },
     {
       title: "Loại sản phẩm",
       dataIndex: "itemCategoryName",
@@ -130,9 +125,7 @@ const ItemList = () => {
       width: "35%",
       align: "center",
       render: (_, record) => {
-        return (
-          <span>{(record?.itemCategoryName || "-" )}</span>
-        );
+        return <span>{record?.itemCategoryName || "-"}</span>;
       },
       sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
     },
@@ -145,7 +138,7 @@ const ItemList = () => {
       render: (_, { price }) => {
         return <span>{price} VND</span>;
       },
-      sorter: (a, b) => a?.price - (b?.price),
+      sorter: (a, b) => a?.price - b?.price,
     },
     {
       title: "Thao tác",
@@ -162,6 +155,65 @@ const ItemList = () => {
     },
   ];
 
+  const expandedRowRender = (row) => {
+    // columns for procedure
+    const columns = [
+      {
+        title: "Quy trình",
+        width: "30%",
+        dataIndex: "procedureId",
+        key: "procedureId",
+        render: (_, { procedure }) => <span>{procedure?.name}</span>,
+      },
+      {
+        title: "Độ ưu tiên",
+        width: "12%",
+        align: "center",
+        dataIndex: "priority",
+        key: "priority",
+      },
+      {
+        title: "Danh sách các bước",
+        dataIndex: "listStep",
+        key: "listStep",
+        render: (_, { procedure }) =>
+          procedure?.listStep?.map((e, i) => (
+            <p className="my-1">
+              {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            </p>
+          )),
+      },
+      // {
+      //   title: "Thao tác",
+      //   dataIndex: "action",
+      //   key: "action",
+      //   align: "center",
+      //   render: (_, record) => {
+      //     return (
+      //       <Dropdown menu={{ items: getActionItems(record) }}>
+      //         <Button className="mx-auto flex-center" icon={<More />} />
+      //       </Dropdown>
+      //     );
+      //   },
+      // },
+    ];
+    return (
+      <Table
+        columns={columns}
+        dataSource={row.listProcedure?.map((e) => {
+          return {
+            ...e,
+            key: e.procedureId,
+            procedure: listProcedures?.find((p) => p.id === e.procedureId) || null,
+          };
+        })}
+        size="small"
+        pagination={false}
+        style={{ marginRight: "4%" }}
+      />
+    );
+  };
+
   const handleSearch = (value) => {
     getData(value, 1, true);
   };
@@ -175,7 +227,7 @@ const ItemList = () => {
     getData(null, 1, true);
   }, []);
 
-  console.log(itemList)
+  console.log(itemList);
 
   return (
     <>
@@ -191,13 +243,18 @@ const ItemList = () => {
       </Space>
       <BaseTable
         title="Danh sách sản phẩm"
-        dataSource={itemList?.data}
+        dataSource={itemList?.data?.map((e) => {
+          return { ...e, key: e.id };
+        })}
         columns={columns}
         loading={loading}
         pagination={{
           onChange: onPageChange,
           pageSize: PageSize.ITEM_LIST,
           total: itemList?.total,
+        }}
+        expandable={{
+          expandedRowRender,
         }}
         searchOptions={{
           visible: true,

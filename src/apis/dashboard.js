@@ -22,9 +22,9 @@ const OrderDashboard = async () => {
   }
 };
 
-const OrderByMonthDashboard = async () => {
+const OrderByMonthDashboard = async (year) => {
   try {
-    const response = await BaseApi.get(`/${resource}/OrderDashboard`);
+    const response = await BaseApi.get(`/${resource}/OrderByMonthDashboard`, { params: { year: year || new Date().getFullYear() } });
     return response.data;
   } catch (error) {
     console.log("Error get items: ", error);
@@ -35,7 +35,7 @@ const OrderByMonthDashboard = async () => {
 
 const LeaderTaskDashboard = async () => {
   try {
-    const response = await BaseApi.get(`/${resource}/OrderDashboard`);
+    const response = await BaseApi.get(`/${resource}/LeaderTaskDashboard`);
     return response.data;
   } catch (error) {
     console.log("Error get items: ", error);
@@ -45,7 +45,7 @@ const LeaderTaskDashboard = async () => {
 
 const WorkerTaskDashboard = async () => {
   try {
-    const response = await BaseApi.get(`/${resource}/OrderDashboard`);
+    const response = await BaseApi.get(`/${resource}/WorkerTaskDashboard`);
     return response.data;
   } catch (error) {
     console.log("Error get items: ", error);
