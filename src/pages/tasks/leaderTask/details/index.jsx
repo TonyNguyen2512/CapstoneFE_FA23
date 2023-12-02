@@ -7,7 +7,7 @@ import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOve
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import { Button, Space, Spin, message } from "antd";
+import { Button, Row, Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
@@ -22,34 +22,31 @@ export const LeaderTaskDetailsPage = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const allMaterials = useRef();
-
-  const { getMaterial, setMaterial } = useState([]);
-  const { getQuote, setQuote } = useState([]);
-
-  const [assignTo, setAssignTo] = useState([]);
-
+  const { material, setMaterial } = useState([]);
+  const { rderStatus, setOrderStatus } = useState([]);
+  
   const navigate = useNavigate();
 
-  const getMaterials = async () => {
-    const assignTo = await OrderApi.updateQuote(id);
-    if (assignTo) {
-      message.success(`Cập nhật thành công`);
+  const syncMaterials = async () => {
+    const syncMaterials = await OrderApi.updateQuote(id);
+    if (syncMaterials) {
+      message.success(`Cập nhật nguyên vât liệu thành công`);
       getData(id, true);
     } else {
       message.error(`Cập nhật thất bại`);
     }
-    setAssignTo(assignTo);
+    setMaterial(syncMaterials);
   };
 
   const getOrderStatus = async () => {
-    const assignTo = await OrderApi.updateOrderStatus(1, id);
-    if (assignTo) {
-      message.success(`Cập nhật thành công`);
+    const getOrderStatus = await OrderApi.updateOrderStatus(1, id);
+    if (getOrderStatus) {
+      message.success(`Báo giá thành công`);
       getData(id, true);
     } else {
-      message.error(`Cập nhật thất bại`);
+      message.error(`Báo giá thất bại`);
     }
-    setAssignTo(assignTo);
+    setOrderStatus(getOrderStatus);
   };
 
   const getLeaderTaskData = async (search, pageIndex, handleLoading) => {
@@ -114,20 +111,24 @@ export const LeaderTaskDetailsPage = () => {
     >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
-          <Button
-            type="primay"
-            className="btn-primary app-bg-primary font-semibold text-white"
-            onClick={() => getMaterials()}
-          >
-            Cập nhật nguyên vật liệu
-          </Button>
-          <Button
-            type="primay"
-            className="btn-primary app-bg-primary font-semibold text-white"
-            onClick={() => getOrderStatus()}
-          >
-            Báo giá đơn hàng
-          </Button>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <Space>
+              <Button
+                type="primary"
+                className="btn-primary app-bg-primary font-semibold text-white"
+                onClick={() => syncMaterials()}
+              >
+                Cập nhật nguyên vật liệu
+              </Button>
+              <Button
+                type="primary"
+                className="btn-primary app-bg-primary font-semibold text-white"
+                onClick={() => getOrderStatus()}
+              >
+                Báo giá đơn hàng
+              </Button>
+            </Space>
+          </div>
           <TaskProvider
             tasks={taskInfo}
             allTasks={allTasks}

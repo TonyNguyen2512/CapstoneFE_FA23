@@ -26,7 +26,14 @@ const ApiCodes = {
 	94: "Hãy xoá hết người dùng trước khi xoá tổ",
 	95: "Công nhân đang ở tổ khác, hãy xoá ra khỏi trước khi thêm vào tổ mới!",
 	96: "Tổ đã có tổ trưởng!",
-	102: "",
+	78: "Công nhân đang thực hiện công việc, hiện tại không thể khoá tài khoản!",
+	79: "Tổ trưởng đang thực hiện công việc, hiện tại không thể khoá tài khoản!",
+	80: "Quản đốc đang thực hiện đơn hàng, hiện tại không thể khoá tài khoản!",
+	81: "Công nhân đang thực hiện công việc, hiện tại không thay đổi vai trò!",
+	83: "Tổ trưởng đang thực hiện công việc, hiện tại không thay đổi vai trò!",
+	84: "Quản đốc đang thực hiện đơn hàng, hiện tại không thể thay đổi vai trò!",
+	85: "Không thể thay đổi vai trò của quản trị viên!",
+	102: "Tổ trưởng đang ở tổ khác!",
 	//Group
 	16: "Tên tổ đã tồn tại!",
 	17: "Hãy xoá người dùng khỏi nhóm trước khi thêm vào tổ mới!",
@@ -45,6 +52,7 @@ const ApiCodes = {
 	28: "Không tìm thấy thông tin loại vật liệu!",
 	29: "Không tìm thấy thông tin vật liệu!",
 	97: "Không tìm thấy thông tin đơn hàng!",
+	82: "Vật liệu này đang tồn tại trong sản phẩm, hãy xoá ra khỏi sản phẩm trước khi xoá vật liệu!",
 	//ItemCategory
 	30: "Tên loại mặt hàng này đã tồn tại!",
 	31: "Không tìm thấy thông tin loại mặt hàng!",
@@ -71,6 +79,7 @@ const ApiCodes = {
 	44: "Không tìm thấy thông tin công việc tổ trưởng!",
 	45: "Nhóm không hợp lệ!",
 	46: "Nhóm đã xoá!",
+	86: "Công việc nghiệm thu cho đơn hàng này đã được tạo!",
 	91: "Mức độ ưu tiên này đã tồn tại!",
 	103: "Mặt hàng chưa đủ 3 bản vẽ, hãy cập nhập đủ bản vẽ trong mặt hàng trước khi tạo công việc!",
 	//WokerTask
@@ -112,24 +121,15 @@ const ApiCodes = {
 	//Procedure
 	70: "Tên quy trình này đã tồn tại!",
 	71: "Không tìm thấy thông tin quy trình!",
+	77: "Quy trình này đang tồn tại trong sản phẩm, hãy xoá ra khỏi sản phẩm trước khi xoá quy trình!",
 	//Step
 	72: "Tên bước này đã tồn tại!",
 	73: "Không tìm thấy thông tin bước!",
+	76: "Bước này đang tồn tại trong quy trình, hãy xoá ra khỏi trước khi xoá bước!",
 	//Report
 	98: "Số lượng mặt hàng thất bại không lớn hơn số lượng mặt hàng!",
 	101: "Đã quá hạn chỉnh sửa báo cáo!",
 	//Not used
-	76: "",
-	77: "",
-	78: "",
-	79: "",
-	80: "",
-	81: "",
-	82: "",
-	83: "",
-	84: "",
-	85: "",
-	86: "",
 	87: "",
 	88: "",
 	89: "",
