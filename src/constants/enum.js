@@ -5,10 +5,10 @@ export const TeamRequestStatus = {
 };
 
 export const TaskStatus = {
-	new: 0,
-	inProgress: 1,
-	pending: 2,
-	completed: 3,
+  new: 0,
+  inProgress: 1,
+  pending: 2,
+  completed: 3,
 };
 
 export const ReportFeedbackStatus = {
@@ -94,14 +94,12 @@ export const ReportMap = {
 export const ErrorImage =
   "https://firebasestorage.googleapis.com/v0/b/capstonebwm.appspot.com/o/Picture%2Fno_photo.jpg?alt=media&token=3dee5e48-234a-44a1-affa-92c8cc4de565&_gl=1*bxxcv*_ga*NzMzMjUwODQ2LjE2OTY2NTU2NjA.*_ga_CW55HF8NVT*MTY5ODIyMjgyNC40LjEuMTY5ODIyMzIzNy41Ny4wLjA&fbclid=IwAR0aZK4I3ay2MwA-5AyI-cqz5cGAMFcbwoAiMBHYe8TEim-UTtlbREbrCS0";
 
-
 export const SupplyStatus = {
   Fail: 0,
   Missing: 1,
   AcceptByCustomer: 2,
   RejectByCustomer: 3,
 };
-
 
 export const SupplyLabel = [
   "Thất bại",
@@ -116,5 +114,13 @@ export const PageSize = {
   LEADER_TASK_MATERIAL_LIST: 3,
   ITEM_CATEGORY_LIST: 10,
   ITEM_LIST: 10,
-  EMPLOYEES_LIST: 10
-}
+  EMPLOYEES_LIST: 10,
+};
+
+export const NotificationType = {
+  Order: 0,
+  LeaderTask: 1,
+  WorkerTask: 2,
+  TaskReport: 3,
+  OrderReport: 4,
+};
