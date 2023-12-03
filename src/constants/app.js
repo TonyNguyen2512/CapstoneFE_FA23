@@ -151,6 +151,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.quotes.view,
     ALL_PERMISSIONS.quotes.create,
     ALL_PERMISSIONS.quotes.update,
+    // items
+    ALL_PERMISSIONS.items.sider,
+    ALL_PERMISSIONS.items.view,
   ],
   [roles.FOREMAN]: [
     // ACCOUNTS

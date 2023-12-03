@@ -267,6 +267,7 @@ const ItemList = () => {
       />
       <ItemModal
         data={itemRef.current}
+        listItemNames={itemList.data?.map((i) => i.name)}
         listCategories={itemCategoryList.map((i) => {
           return {
             label: i.name,
