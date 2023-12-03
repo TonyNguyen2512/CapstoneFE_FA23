@@ -2,6 +2,7 @@ import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
+import { orderLabels } from "../constants/enum";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -39,6 +40,10 @@ export const getRoleName = (role) => {
 	}
 };
 
+export const getStatusName = (status) => {
+	return orderLabels[status]
+};
+
 // Number processing
 const shrinkSuffix = ['', 'K', 'M', 'G', 'T'];
 export const reduceNumber = (num) => {
@@ -70,5 +75,5 @@ export const dateSort = (dateA, dateB) => {
 }
 
 export const formatMoney = (money) => {
-	return money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
 }

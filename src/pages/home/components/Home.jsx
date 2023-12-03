@@ -2,7 +2,7 @@ import { Card, Col, Row, Typography, Space, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../apis/role";
 import { roles } from "../../../constants/app";
-import { reduceNumber } from "../../../utils";
+import { getRoleName, getStatusName, reduceNumber } from "../../../utils";
 import { mockOverview } from "../../../__mocks__/jama/dashboard";
 import { TrendingDown, TrendingUp } from "@icon-park/react";
 import ReactECharts from "echarts-for-react";
@@ -19,13 +19,56 @@ const Home = () => {
   const [leaderTaskData, setLeaderTaskData] = useState();
   const [workerTaskData, setWorkerTaskData] = useState();
 
+  const getHomeData = async () => {
+    setLoading(true);
+    let data = await DashboardApi.UserDashboard();
+    setUserData(data);
+    data = await DashboardApi.OrderDashboard();
+    setOrderData(data);
+    data = await DashboardApi.OrderByMonthDashboard();
+    setOrderByMonthData(data);
+    data = await DashboardApi.LeaderTaskDashboard();
+    setLeaderTaskData(data);
+    data = await DashboardApi.WorkerTaskDashboard();
+    setWorkerTaskData(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    getHomeData();
+    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
+  }, []);
+
   const getUsersStatistics = () => {
-    let data = [];
-    mockAccounts.map((e) => {
-      let index = data.findIndex((d) => d.name === e.role);
-      index >= 0 ? (data[index].value += 1) : data.push({ name: e.role, value: 1 });
-    });
-    return data;
+    return (
+      userData?.map((e) => {
+        return { name: getRoleName(e.roleName), value: e.totalUser };
+      }) || []
+    );
+  };
+
+  const getOrdersStatistics = () => {
+    return (
+      orderData?.map((e) => {
+        return { name: getStatusName(e.orderStatus), value: e.total };
+      }) || []
+    );
+  };
+
+  const getLTasksStatistics = () => {
+    return (
+      leaderTaskData?.map((e) => {
+        return { name: getStatusName(e.orderStatus), value: e.total };
+      }) || []
+    );
+  };
+
+  const getWTasksStatistics = () => {
+    return (
+      workerTaskData?.map((e) => {
+        return { name: getStatusName(e.orderStatus), value: e.total };
+      }) || []
+    );
   };
 
   const userOptions = {
@@ -107,43 +150,94 @@ const Home = () => {
         labelLine: {
           show: false,
         },
-        data: [
-          {
-            name: "Đang tiến hành",
-            value: 50,
-          },
-          {
-            name: "Hoàn thành",
-            value: 32,
-          },
-          {
-            name: "Chưa tiến hành",
-            value: 18,
-          },
-        ],
+        data: getOrdersStatistics(),
       },
     ],
   };
 
-  const getHomeData = async () => {
-    setLoading(true);
-    let data = await DashboardApi.UserDashboard();
-    setUserData(data);
-    data = await DashboardApi.OrderDashboard();
-    setOrderData(data);
-    data = await DashboardApi.OrderByMonthDashboard();
-    setOrderByMonthData(data);
-    data = await DashboardApi.LeaderTaskDashboard();
-    setLeaderTaskData(data);
-    data = await DashboardApi.WorkerTaskDashboard();
-    setWorkerTaskData(data);
-    setLoading(false);
+  const leaderTaskOptions = {
+    textStyle: {
+      fontFamily: "Roboto",
+    },
+    height: "420px",
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      left: "5%",
+      left: "center",
+    },
+    series: [
+      {
+        name: "Order's statistic",
+        type: "pie",
+        radius: ["0%", "80%"],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: "center",
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 36,
+            fontWeight: "bold",
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: getLTasksStatistics(),
+      },
+    ],
   };
 
-  useEffect(() => {
-    getHomeData();
-    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
-  }, []);
+  const workerTaskOptions = {
+    textStyle: {
+      fontFamily: "Roboto",
+    },
+    height: "420px",
+    tooltip: {
+      trigger: "item",
+    },
+    legend: {
+      top: "0",
+      left: "center",
+    },
+    series: [
+      {
+        name: "User's statistic",
+        type: "pie",
+        radius: ["54%", "80%"],
+        avoidLabelOverlap: false,
+        itemStyle: {
+          borderRadius: 10,
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+        label: {
+          show: false,
+          position: "center",
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: 36,
+            fontWeight: "bold",
+          },
+        },
+        labelLine: {
+          show: false,
+        },
+        data: getWTasksStatistics(),
+      },
+    ],
+  };
 
   return (
     <Spin spinning={loading}>
@@ -155,15 +249,15 @@ const Home = () => {
               <Row>
                 <Space className="w-full" direction="vertical">
                   <Row>
-                    <Title level={5}>Tổng đơn hàng tại xưởng</Title>
+                    <Title level={5}>Tổng số người dùng</Title>
                   </Row>
                   <Row>
                     <Col span={16} className="flex items-center">
-                      <Title level={2} className="!mb-0">
-                        {reduceNumber(mockOverview.views.total)}
+                      <Title level={1} className="!mb-0">
+                        {reduceNumber(userData?.reduce((p, c) => p + c.totalUser, 0) || 0)}
                       </Title>
                     </Col>
-                    <Col span={8} className="flex items-center">
+                    {/* <Col span={8} className="flex items-center">
                       <span>{mockOverview.views.percenatge > 0 ? "+" : ""}</span>
                       <span>{mockOverview.views.percenatge}</span>
                       {mockOverview.views.percenatge > 0 ? (
@@ -181,7 +275,7 @@ const Home = () => {
                           className="relative top-1"
                         />
                       )}
-                    </Col>
+                    </Col> */}
                   </Row>
                 </Space>
               </Row>
@@ -192,15 +286,15 @@ const Home = () => {
               <Row>
                 <Space className="w-full" direction="vertical">
                   <Row>
-                    <Title level={5}>Tổng đơn hàng tại công trình</Title>
+                    <Title level={5}>Tổng số đơn hàng</Title>
                   </Row>
                   <Row>
                     <Col span={16} className="flex items-center">
-                      <Title level={2} className="!mb-0">
-                        {reduceNumber(mockOverview.visits.total)}
+                      <Title level={1} className="!mb-0">
+                        {reduceNumber(orderData?.reduce((p, c) => p + c.total, 0) || 0)}
                       </Title>
                     </Col>
-                    <Col span={8} className="flex items-center">
+                    {/* <Col span={8} className="flex items-center">
                       <span>{mockOverview.visits.percenatge > 0 ? "+" : ""}</span>
                       <span>{mockOverview.visits.percenatge}</span>
                       {mockOverview.visits.percenatge > 0 ? (
@@ -218,7 +312,7 @@ const Home = () => {
                           className="relative top-1"
                         />
                       )}
-                    </Col>
+                    </Col> */}
                   </Row>
                 </Space>
               </Row>
@@ -229,15 +323,15 @@ const Home = () => {
               <Row>
                 <Space className="w-full" direction="vertical">
                   <Row>
-                    <Title level={5}>Tổng hợp đồng</Title>
+                    <Title level={5}>Tổng công việc (trưởng nhóm)</Title>
                   </Row>
                   <Row>
                     <Col span={16} className="flex items-center">
-                      <Title level={2} className="!mb-0">
-                        {reduceNumber(mockOverview.newUsers.total)}
+                      <Title level={1} className="!mb-0">
+                        {reduceNumber(leaderTaskData?.reduce((p, c) => p + c.total, 0) || 0)}
                       </Title>
                     </Col>
-                    <Col span={8} className="flex items-center">
+                    {/* <Col span={8} className="flex items-center">
                       <span>{mockOverview.newUsers.percenatge > 0 ? "+" : ""}</span>
                       <span>{mockOverview.newUsers.percenatge}</span>
                       {mockOverview.newUsers.percenatge > 0 ? (
@@ -255,7 +349,7 @@ const Home = () => {
                           className="relative top-1"
                         />
                       )}
-                    </Col>
+                    </Col> */}
                   </Row>
                 </Space>
               </Row>
@@ -266,15 +360,15 @@ const Home = () => {
               <Row>
                 <Space className="w-full" direction="vertical">
                   <Row>
-                    <Title level={5}>Tổng doanh thu</Title>
+                    <Title level={5}>Tổng công việc (công nhân)</Title>
                   </Row>
                   <Row>
                     <Col span={16} className="flex items-center">
-                      <Title level={2} className="!mb-0">
-                        {reduceNumber(mockOverview.activeUsers.total)}
+                      <Title level={1} className="!mb-0">
+                        {reduceNumber(workerTaskData?.reduce((p, c) => p + c.total, 0) || 0)}
                       </Title>
                     </Col>
-                    <Col span={8} className="flex items-center">
+                    {/* <Col span={8} className="flex items-center">
                       <span>{mockOverview.activeUsers.percenatge > 0 ? "+" : ""}</span>
                       <span>{mockOverview.activeUsers.percenatge}</span>
                       {mockOverview.activeUsers.percenatge > 0 ? (
@@ -292,7 +386,7 @@ const Home = () => {
                           className="relative top-1"
                         />
                       )}
-                    </Col>
+                    </Col> */}
                   </Row>
                 </Space>
               </Row>
@@ -302,7 +396,6 @@ const Home = () => {
         <Row gutter={32}>
           <Col span={12}>
             <Title level={4}>Thống kê người dùng</Title>
-
             <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
               <ReactECharts className="!h-[420px]" option={userOptions} />
             </Card>
@@ -311,6 +404,20 @@ const Home = () => {
             <Title level={4}>Thống kê đơn đặt hàng</Title>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
               <ReactECharts className="!h-[420px]" option={orderOptions} />
+            </Card>
+          </Col>
+        </Row>
+        <Row gutter={32}>
+          <Col span={12}>
+            <Title level={4}>Thống kê công việc (trưởng nhóm)</Title>
+            <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
+              <ReactECharts className="!h-[420px]" option={leaderTaskOptions} />
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Title level={4}>Thống kê công việc (công nhân)</Title>
+            <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
+              <ReactECharts className="!h-[420px]" option={workerTaskOptions} />
             </Card>
           </Col>
         </Row>
