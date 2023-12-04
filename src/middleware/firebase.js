@@ -19,10 +19,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 // Initialize Cloud Storage and get a reference to the service
 const storage = getStorage(app);
 
+// Initialize something else
+export const analytics = getAnalytics(app);
 // Create a child reference
 export const imagesItemRef = ref(storage, "Items/Images");
 export const drawingsRef = ref(storage, "Items/Drawings");
