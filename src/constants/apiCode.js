@@ -40,7 +40,7 @@ const ApiCodes = {
 	18: "Không tìm thấy người dùng trong hệ thống!",
 	19: "Hãy xoá người dùng ra khỏi nhóm!",
 	20: "Không tìm thấy tổ trưởng trong hệ thống!",
-	21: "Người dùng không phải tổ trưởng nhóm!",
+	21: "Người dùng không phải tổ trưởng!",
 	22: "Người dùng không phải công nhân!",
 	23: "Hãy xoá hết nhóm trước khi xoá tổ!",
 	//MaterialCategory

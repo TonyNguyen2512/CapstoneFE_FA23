@@ -66,7 +66,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 
 		if (!canDrop) {
 			message.info(
-				"Chỉ trưởng nhóm hoặc những thành viên được phân công mới được chuyển trạng thái công việc này"
+				"Chỉ tổ trưởng hoặc những thành viên được phân công mới được chuyển trạng thái công việc này"
 			);
 			return;
 		}
@@ -77,7 +77,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 			if (finish.id === TaskColumnId.IN_APPROVE
 				|| finish.id === TaskColumnId.COMPLETED) {
 					message.info(
-						"Chỉ trưởng nhóm mới được chuyển trạng thái công việc này"
+						"Chỉ tổ trưởng mới được chuyển trạng thái công việc này"
 					);
 					return;
 				}

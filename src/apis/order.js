@@ -113,9 +113,9 @@ const updateOrderStatus = async (status, id) => {
   }
 };
 
-const updateQuote = async (id, status) => {
+const updateQuote = async (id) => {
   try {
-    const response = await BaseApi.put(`/${resource}/syncOrderDetailMaterialAndOrderDetail?orderId=${id}`);
+    const response = await BaseApi.put(`/${resource}/SyncItem/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);

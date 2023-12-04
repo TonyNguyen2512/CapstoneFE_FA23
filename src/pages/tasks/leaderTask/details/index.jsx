@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
 import { LeaderTaskMaterials } from "./components/LeaderTaskMaterials";
 import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
 import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
-import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
 import { Button, Row, Space, Spin, message } from "antd";
@@ -14,7 +13,6 @@ import { TaskProvider } from "../../../../providers/task";
 import { PageSize } from "../../../../constants/enum";
 
 export const LeaderTaskDetailsPage = () => {
-  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
@@ -22,23 +20,24 @@ export const LeaderTaskDetailsPage = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const allMaterials = useRef();
-  const { material, setMaterial } = useState([]);
-  const { rderStatus, setOrderStatus } = useState([]);
-  
+
   const navigate = useNavigate();
 
   const syncMaterials = async () => {
-    const syncMaterials = await OrderApi.updateQuote(id);
-    if (syncMaterials) {
+    setLoading(true);
+    const syncMaterial = await OrderApi.updateQuote(id);
+    if (syncMaterial) {
       message.success(`Cập nhật nguyên vât liệu thành công`);
       getData(id, true);
     } else {
       message.error(`Cập nhật thất bại`);
     }
-    setMaterial(syncMaterials);
+    setLoading(false);
+    // setMaterial(syncMaterial);
   };
 
   const getOrderStatus = async () => {
+    setLoading(true);
     const getOrderStatus = await OrderApi.updateOrderStatus(1, id);
     if (getOrderStatus) {
       message.success(`Báo giá thành công`);
@@ -46,7 +45,9 @@ export const LeaderTaskDetailsPage = () => {
     } else {
       message.error(`Báo giá thất bại`);
     }
-    setOrderStatus(getOrderStatus);
+    setLoading(false);
+
+    // setOrderStatus(getOrderStatus);
   };
 
   const getLeaderTaskData = async (search, pageIndex, handleLoading) => {

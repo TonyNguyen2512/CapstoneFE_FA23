@@ -136,7 +136,7 @@ export const LeaderTaskProcedure = ({
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Nhóm trưởng",
+      title: "Tổ trưởng",
       dataIndex: "leaderName",
       key: "leaderName",
       sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
