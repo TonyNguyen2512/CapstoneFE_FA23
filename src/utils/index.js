@@ -2,6 +2,7 @@ import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
+import { eTaskColors, eTaskLabels } from "../constants/enum";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -70,5 +71,29 @@ export const dateSort = (dateA, dateB) => {
 }
 
 export const formatMoney = (money) => {
-	return money.toLocaleString('it-IT', {style : 'currency', currency : 'VND'})
+	if (!money) return null;
+	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+}
+
+export const getEStatusName = (status) => {
+	return eTaskLabels[status] || "Không Xác Định";
+};
+
+export const getEStatusColor = (status) => {
+	return eTaskColors[status] || "#FF0000";
+};
+
+export const handleDownloadFile = async (url, filename, message) => {
+	if (!url) message.warning("Không có bản vẽ");
+	try {
+		var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
+		var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
+		var fileURL = window.URL.createObjectURL(downloadFile);
+		var a = document.createElement("a");
+		a.download = fileName;
+		a.href = fileURL;
+		a.click();
+	} catch (err) {
+		console.log(err);
+	}
 }

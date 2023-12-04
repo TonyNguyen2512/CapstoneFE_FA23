@@ -27,6 +27,7 @@ import { QuoteListPage } from "../pages/quotes/list";
 import QuoteDetailPage from "../pages/quotes/detail";
 import { EmployeeListPage } from "../pages/employee/list";
 import ProfilePage from "../pages/profile";
+import { LeaderTaskOrderDetailsPage } from "../pages/tasks/leaderTask/details/components/orderDetail";
 
 export const router = createBrowserRouter([
   {
@@ -114,6 +115,14 @@ export const router = createBrowserRouter([
           {
             path: `${routes.dashboard.managersTasks}/:id`,
             element: <LeaderTaskDetailsPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId`,
+            element: <LeaderTaskOrderDetailsPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId/${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
           },
           {
             path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,

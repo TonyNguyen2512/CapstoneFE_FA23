@@ -7,7 +7,7 @@ import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum
 import ItemApi from "../../../../apis/item";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
-import { formatDate } from "../../../../utils";
+import { formatDate, handleDownloadFile } from "../../../../utils";
 import { TaskContext } from "../../../../providers/task";
 
 const { Text } = Typography;
@@ -40,21 +40,6 @@ export const LeaderTaskModal = ({
 	const onFinish = async (values) => {
 		await onSubmit({ ...values });
 	};
-
-	const handleDownloadFile = async (url, filename) => {
-		if (!url) message.warning("Không có bản vẽ");
-		try {
-			var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
-			var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
-			var fileURL = window.URL.createObjectURL(downloadFile);
-			var a = document.createElement("a");
-			a.download = fileName;
-			a.href = fileURL;
-			a.click();
-		} catch (err) {
-		} finally {
-		}
-	}
 
 	const handleTitle = () => {
 		switch (mode) {

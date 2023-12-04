@@ -1,9 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
-import { LeaderTaskMaterials } from "./components/LeaderTaskMaterials";
-import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
-import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
+import { LeaderTaskOrderDetails } from "./components/LeaderTaskOrderDetails";
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
@@ -12,6 +10,7 @@ import { BasePageContent } from "../../../../layouts/containers/BasePageContent"
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
 import { PageSize } from "../../../../constants/enum";
+import OrderDetailApi from "../../../../apis/order-details";
 
 export const LeaderTaskDetailsPage = () => {
   const { user } = useContext(UserContext);
@@ -20,8 +19,7 @@ export const LeaderTaskDetailsPage = () => {
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
-  const [materialInfo, setMaterialInfo] = useState();
-  const allMaterials = useRef();
+  const [orderDetailInfo, setOrderDetailInfo] = useState();
 
   const { getMaterial, setMaterial } = useState([]);
   const { getQuote, setQuote } = useState([]);
@@ -52,13 +50,13 @@ export const LeaderTaskDetailsPage = () => {
     setAssignTo(assignTo);
   };
 
-  const getLeaderTaskData = async (search, pageIndex, handleLoading) => {
+  const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
     if (handleLoading) {
       setLoading(true);
     }
-    // // retrieve leader task by order id
+    // retrieve leader task by order id
     try {
-      const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
+      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
         id,
         search,
         pageIndex,
@@ -82,7 +80,7 @@ export const LeaderTaskDetailsPage = () => {
     }
   };
 
-  const getData = (id, handleLoading) => {
+  const getData = (handleLoading, id) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -92,20 +90,19 @@ export const LeaderTaskDetailsPage = () => {
     // retrieve order data by id
     OrderApi.getOrderById(id).then((dataOrder) => {
       setOrderInfo(dataOrder);
-      OrderApi.getQuoteMaterialByOrderId(dataOrder?.id).then((dataMaterials) => {
-        setMaterialInfo(dataMaterials?.listFromOrder);
-        allMaterials.current = dataMaterials?.listFromOrder;
+      OrderDetailApi.getListByOrderId(dataOrder?.id).then((dataOrderDetails) => {
+        setOrderDetailInfo(dataOrderDetails);
       });
     });
     setLoading(false);
   };
 
   useEffect(() => {
-    getData(id, true);
+    getData(true, id);
   }, [id]);
 
   useEffect(() => {
-    getLeaderTaskData(null, 1, true);
+    getLeaderTaskData(true, 1);
   }, []);
 
   return (
@@ -132,36 +129,19 @@ export const LeaderTaskDetailsPage = () => {
             tasks={taskInfo}
             allTasks={allTasks}
             info={orderInfo}
-            material={materialInfo}
+            orderDetails={orderDetailInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(null, 1, handleLoading);
+              getLeaderTaskData(handleLoading, 1);
             }}
             onFilterTask={(search, pageIndex) => {
-              getLeaderTaskData(search, pageIndex, true);
-            }}
-            onFilterMaterial={(search) => {
-              let dataMaterialFilter = {};
-              if (search) {
-                dataMaterialFilter = allMaterials.current.filter(
-                  (x) => x.name.indexOf(search) !== -1
-                );
-              } else {
-                dataMaterialFilter = allMaterials.current;
-              }
-              setMaterialInfo(dataMaterialFilter);
+              getLeaderTaskData(true, pageIndex, search);
             }}
           >
             <div className="mt-4">
               <LeaderTaskInfo loading={loading} />
             </div>
             <div className="mt-4">
-              <LeaderTaskMaterials title="Danh sách vật liệu" />
-            </div>
-            <div className="mt-4">
-              <LeaderTaskProcedureOverview title="Tiến độ quy trình" />
-            </div>
-            <div className="mt-4">
-              <LeaderTaskProcedure title="Danh sách quy trình" />
+              <LeaderTaskOrderDetails title="Danh sách vật liệu" />
             </div>
           </TaskProvider>
         </Space>

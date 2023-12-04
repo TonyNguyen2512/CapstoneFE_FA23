@@ -1,19 +1,20 @@
 import { Typography, Space } from "antd";
 import { Col, Descriptions, Row } from "antd/lib";
-import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
+import { ProgressIndicator } from "../../../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { eTaskStatus } from "../../../../../constants/enum";
+import { eTaskStatus } from "../../../../../../../constants/enum";
 import { useContext } from "react";
-import { TaskContext } from "../../../../../providers/task";
+import { TaskContext } from "../../../../../../../providers/task";
 
 const { Title } = Typography;
 
-export const LeaderTaskProcedureOverview = ({
+export const LeaderTaskOrderDetailProcedureOverview = ({
   title,
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { allTasks } = useContext(TaskContext);
-  const allETasks = allTasks?.data;
+  console.log("allTasks", allTasks)
+  const allETasks = allTasks;
 
   const completedTasks = allETasks?.filter(
     (e) => e.status === eTaskStatus.Completed
@@ -32,7 +33,7 @@ export const LeaderTaskProcedureOverview = ({
   );
 
   const inprocessTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.Inprocessing
+    (e) => e.status === eTaskStatus.InProgress
   );
 
   const expireTasks = allETasks?.filter((e) =>

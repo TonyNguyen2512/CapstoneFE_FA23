@@ -22,6 +22,7 @@ const routes = {
     managersTasks: "managers-tasks",
     managersReports: "managers-reports",
     orderReports: "order-reports",
+    taskOrderDetails: "task-order-details",
     // leader / manager
     workers: "workers",
     workersTasks: "workers-tasks",
