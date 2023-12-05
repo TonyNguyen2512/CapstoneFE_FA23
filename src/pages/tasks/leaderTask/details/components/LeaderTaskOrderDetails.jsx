@@ -22,7 +22,7 @@ export const LeaderTaskOrderDetails = ({
   title,
 }) => {
   const { info, orderDetails, reload } = useContext(TaskContext);
-
+console.log("orderDetails", orderDetails)
   const [loading, setLoading] = useState(false);
   const [showETaskCreateModal, setShowETaskCreateModal] = useState(false);
   const [showETaskUpdateModal, setShowETaskUpdateModal] = useState(false);
@@ -262,11 +262,12 @@ export const LeaderTaskOrderDetails = ({
       "description": null,
       "isDeleted": false
     }]
+    console.log("row.leaderTasks", row.leaderTasks)
     return <Table
       expandable={{ expandedRowRender: handleWorkerTaskRowRender }}
       columns={columns}
       dataSource={row.leaderTasks}
-      rowKey={(record) => record.leaderTaskId}
+      rowKey={(record) => record.id}
       pagination={false}
     />;
   };
@@ -447,13 +448,22 @@ export const LeaderTaskOrderDetails = ({
         title: "Tên công việc",
         dataIndex: "name",
         key: "name",
+        width: "15.5%",
         sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: "Nhóm trưởng",
+        dataIndex: "leaderName",
+        key: "naleaderNameme",
+        width: "15.5%",
+        sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
       },
       {
         title: "Ngày bắt đầu",
         dataIndex: "startTime",
         key: "startTime",
         align: "center",
+        width: "15.5%",
         render: (_, record) => {
           const formattedDate = formatDate(record.startTime, "DD/MM/YYYY");
           return <span>{formattedDate}</span>;
@@ -465,6 +475,7 @@ export const LeaderTaskOrderDetails = ({
         dataIndex: "endTime",
         key: "endTime",
         align: "center",
+        width: "16%",
         render: (_, record) => {
           const formattedDate = formatDate(record.endTime, "DD/MM/YYYY");
           return <span>{formattedDate}</span>;
@@ -477,7 +488,7 @@ export const LeaderTaskOrderDetails = ({
         key: "priority",
         defaultSortOrder: 'ascend',
         // align: "center",
-        width: "10%",
+        width: "10.3%",
         render: (_, record) => {
           return <span>{record.priority}</span>;
         },
@@ -487,6 +498,7 @@ export const LeaderTaskOrderDetails = ({
         title: "Trạng thái",
         dataIndex: "status",
         key: "status",
+        width: "15.3%",
         render: (_, record) => {
           return (
             <span style={{ color: getEStatusColor(record.status), fontWeight: "bold" }}>
@@ -559,9 +571,10 @@ export const LeaderTaskOrderDetails = ({
     }]
     return <Table
       columns={columns}
-      dataSource={row.workerTasks}
-      rowKey={(record) => record.workerTaskId}
+      dataSource={row.workerTask}
+      rowKey={(record) => record.id}
       pagination={false}
+      showHeader={false}
     />;
   };
 

@@ -90,13 +90,13 @@ const getAll = async (searchName, pageIndex, pageSize) => {
 	try {
 		var params = {};
 		if (searchName) {
-		  params = { ...params, searchName };
+			params = { ...params, searchName };
 		}
 		if (pageIndex) {
-		  params = { ...params, pageIndex };
+			params = { ...params, pageIndex };
 		}
 		if (pageSize) {
-		  params = { ...params, pageSize };
+			params = { ...params, pageSize };
 		}
 		const response = await BaseApi.get(`/${resource}/GetAll`, {
 			params: params,
@@ -108,20 +108,22 @@ const getAll = async (searchName, pageIndex, pageSize) => {
 	}
 };
 
-const getLeaderTaskByOrderId = async (orderId, search, pageIndex, pageSize) => {
+const getLeaderTaskByOrderDetailId = async (orderDetailId, search, pageIndex, pageSize) => {
 	try {
 		var params = {};
+		if (!orderDetailId) return errorComposer();
+		params = { ...params, orderDetailId }
 		if (search) {
-		  params = { ...params, search };
+			params = { ...params, search };
 		}
 		if (pageIndex) {
-		  params = { ...params, pageIndex };
+			params = { ...params, pageIndex };
 		}
 		if (pageSize) {
-		  params = { ...params, pageSize };
+			params = { ...params, pageSize };
 		}
 		console.log("params", params)
-		const response = await BaseApi.get(`/${resource}/GetByOrderId/${orderId}`, {
+		const response = await BaseApi.get(`/${resource}/GetByOrderDetailId`, {
 			params: params,
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
@@ -145,13 +147,13 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 	try {
 		var params = {};
 		if (searchName) {
-		  params = { ...params, searchName };
+			params = { ...params, searchName };
 		}
 		if (pageIndex) {
-		  params = { ...params, pageIndex };
+			params = { ...params, pageIndex };
 		}
 		if (pageSize) {
-		  params = { ...params, pageSize };
+			params = { ...params, pageSize };
 		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
 			params: params,
@@ -165,7 +167,7 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 
 const LeaderTasksApi = {
 	getAll,
-	getLeaderTaskByOrderId,
+	getLeaderTaskByOrderDetailId,
 	getLeaderTaskById,
 	getLeaderTaskByLeaderId,
 	createLeaderTasks,

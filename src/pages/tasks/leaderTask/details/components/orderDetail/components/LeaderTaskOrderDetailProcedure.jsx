@@ -319,7 +319,7 @@ export const LeaderTaskOrderDetailProcedure = ({
         </Row>
       </Row>
       <BaseTable
-        dataSource={tasks}
+        dataSource={tasks?.data}
         columns={columns}
         loading={loading}
         pagination={{ 

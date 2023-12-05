@@ -30,35 +30,35 @@ export const LeaderTaskOrderDetailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // const getOrderDetailData = async (handleLoading, pageIndex, search) => {
-  //   if (handleLoading) {
-  //     setLoading(true);
-  //   }
-  //   // // retrieve order detail by id
-  //   try {
-  //     let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
-  //       orderDetailId,
-  //       search,
-  //       pageIndex,
-  //       PageSize.LEADER_TASK_PROCEDURE_LIST
-  //     );
-  //     if (dataLeaderTasks.code === 0) {
-  //       setTaskInfo(dataLeaderTasks?.data);
-  //     } else {
-  //       message.error(dataLeaderTasks.message);
-  //     }
-  //     dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(orderDetailId);
-  //     if (dataLeaderTasks.code === 0) {
-  //       setAllTasks(dataLeaderTasks?.data);
-  //     } else {
-  //       message.error(dataLeaderTasks.message);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const getOrderDetailData = async (handleLoading, pageIndex, search) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    // // retrieve order detail by id
+    try {
+      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(
+        orderDetailId,
+        search,
+        pageIndex,
+        PageSize.LEADER_TASK_PROCEDURE_LIST
+      );
+      if (dataLeaderTasks.code === 0) {
+        setTaskInfo(dataLeaderTasks?.data);
+      } else {
+        message.error(dataLeaderTasks.message);
+      }
+      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(orderDetailId);
+      if (dataLeaderTasks.code === 0) {
+        setAllTasks(dataLeaderTasks?.data);
+      } else {
+        message.error(dataLeaderTasks.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getData = async (handleLoading, id) => {
     if (handleLoading) {
@@ -71,8 +71,8 @@ export const LeaderTaskOrderDetailsPage = () => {
     const orderDetailData = await OrderDetailApi.getAllTaskByOrderDetailId(id);
     if (orderDetailData) {
       setOrderDetailInfo(orderDetailData);
-      setAllTasks(orderDetailData?.leaderTasks);
-      setTaskInfo(orderDetailData?.leaderTasks);
+      // setAllTasks(orderDetailData?.leaderTasks);
+      // setTaskInfo(orderDetailData?.leaderTasks);
     }
 
     const materialData = await OrderDetailMaterialApi.getByOrderDetailId(id);
@@ -94,9 +94,9 @@ export const LeaderTaskOrderDetailsPage = () => {
     }
   }, [location]);
 
-  // useEffect(() => {
-  //   getOrderDetailData(true, 1);
-  // }, []);
+  useEffect(() => {
+    getOrderDetailData(true, 1);
+  }, []);
 
   const handleBack = () => {
     if (state?.orderId) {
@@ -123,10 +123,10 @@ export const LeaderTaskOrderDetailsPage = () => {
             info={orderDetailInfo}
             materials={materialInfo}
             onReload={(handleLoading) => {
-              // getOrderDetailData(handleLoading, 1);
+              getOrderDetailData(handleLoading, 1);
             }}
             onFilterTask={(search, pageIndex) => {
-              // getOrderDetailData(true, pageIndex, search);
+              getOrderDetailData(true, pageIndex, search);
             }}
           >
             <div className="mt-4">

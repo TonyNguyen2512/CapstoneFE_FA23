@@ -32,7 +32,7 @@ export const LeaderTaskDetailsPage = () => {
     const assignTo = await OrderApi.updateQuote(id);
     if (assignTo) {
       message.success(`Cập nhật thành công`);
-      getData(id, true);
+      getData(true);
     } else {
       message.error(`Cập nhật thất bại`);
     }
@@ -43,44 +43,44 @@ export const LeaderTaskDetailsPage = () => {
     const assignTo = await OrderApi.updateOrderStatus(1, id);
     if (assignTo) {
       message.success(`Cập nhật thành công`);
-      getData(id, true);
+      getData(true);
     } else {
       message.error(`Cập nhật thất bại`);
     }
     setAssignTo(assignTo);
   };
 
-  const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
-    // retrieve leader task by order id
-    try {
-      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
-        id,
-        search,
-        pageIndex,
-        PageSize.LEADER_TASK_PROCEDURE_LIST
-      );
-      if (dataLeaderTasks.code === 0) {
-        setTaskInfo(dataLeaderTasks?.data);
-      } else {
-        message.error(dataLeaderTasks.message);
-      }
-      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
-      if (dataLeaderTasks.code === 0) {
-        setAllTasks(dataLeaderTasks?.data);
-      } else {
-        message.error(dataLeaderTasks.message);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
+  //   if (handleLoading) {
+  //     setLoading(true);
+  //   }
+  //   // retrieve leader task by order id
+  //   try {
+  //     let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
+  //       id,
+  //       search,
+  //       pageIndex,
+  //       PageSize.LEADER_TASK_PROCEDURE_LIST
+  //     );
+  //     if (dataLeaderTasks.code === 0) {
+  //       setTaskInfo(dataLeaderTasks?.data);
+  //     } else {
+  //       message.error(dataLeaderTasks.message);
+  //     }
+  //     dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+  //     if (dataLeaderTasks.code === 0) {
+  //       setAllTasks(dataLeaderTasks?.data);
+  //     } else {
+  //       message.error(dataLeaderTasks.message);
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  const getData = (handleLoading, id) => {
+  const getData = (handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -98,12 +98,12 @@ export const LeaderTaskDetailsPage = () => {
   };
 
   useEffect(() => {
-    getData(true, id);
+    getData(true);
   }, [id]);
 
-  useEffect(() => {
-    getLeaderTaskData(true, 1);
-  }, []);
+  // useEffect(() => {
+  //   getLeaderTaskData(true, 1);
+  // }, []);
 
   return (
     <BasePageContent
@@ -131,10 +131,11 @@ export const LeaderTaskDetailsPage = () => {
             info={orderInfo}
             orderDetails={orderDetailInfo}
             onReload={(handleLoading) => {
-              getLeaderTaskData(handleLoading, 1);
+              // getLeaderTaskData(handleLoading, 1);
+              getData(handleLoading);
             }}
             onFilterTask={(search, pageIndex) => {
-              getLeaderTaskData(true, pageIndex, search);
+              // getLeaderTaskData(true, pageIndex, search);
             }}
           >
             <div className="mt-4">
