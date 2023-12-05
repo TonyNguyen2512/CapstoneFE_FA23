@@ -53,9 +53,10 @@ const EmployeeList = () => {
     getUsers();
   };
 
-  const getAllRoles = async () => {
-    const data = await RoleApi.getAllRoles();
-    setRoleOptions(data);
+  const getLeaderAndWorker = async () => {
+    const data = await UserApi.getRoleLeaderAndWorker();
+    console.log(data.data)
+    setRoleOptions(data.data);
   };
 
   const banUser = async (userId) => {
@@ -80,7 +81,7 @@ const EmployeeList = () => {
 
   useEffect(() => {
     getUsers();
-    getAllRoles();
+    getLeaderAndWorker();
     getRoleForCreateUsers();
   }, []);
 
@@ -290,11 +291,11 @@ const EmployeeList = () => {
       />
       <AccountModal
         data={userRef.current}
-        roleOptions={roleCreateOptions?.map((e) => {
+        roleOptions={roleOptions?.map((e) => {
           return {
             key: e.name,
             value: e.id,
-            label: getRoleName(e.name),
+            label: e.name,
           };
         })}
         open={showUserModal}
@@ -310,7 +311,7 @@ const EmployeeList = () => {
           return {
             key: e.name,
             value: e.id,
-            label: getRoleName(e.name),
+            label: e.name,
           };
         })}
         user={userRef.current}
