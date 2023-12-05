@@ -1,7 +1,7 @@
 import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
 import { Typography, Row, message } from "antd";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
@@ -14,7 +14,7 @@ import { TaskContext } from "../../../../../../../providers/task";
 import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
 import ReportApi from "../../../../../../../apis/task-report";
 import { LeaderTaskReportModal } from "../../../../components/LeaderTaskReportModal";
-import { getEStatusColor, getEStatusName } from "../../../../../../../utils";
+import { getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
@@ -24,7 +24,7 @@ export const LeaderTaskOrderDetailProcedure = ({
   const { tasks, info, reload, filterTask } = useContext(TaskContext);
 
   const { Title } = Typography;
-  const [titleInfo, setTitleInfo] = useState([]);
+  const titleInfo = title + ` (${tasks?.total ? tasks.total : 0})`;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -35,10 +35,6 @@ export const LeaderTaskOrderDetailProcedure = ({
   const [eTaskReportLoading, setETaskReportLoading] = useState(false);
 
   const leaderTaskInfo = useRef();
-
-  useEffect(() => {
-    setTitleInfo(title + ` (${tasks?.total ? tasks.total : 0})`)
-  });
 
   const getActionItems = (record) => {
     const { isActive, id } = record;
@@ -173,8 +169,8 @@ export const LeaderTaskOrderDetailProcedure = ({
       key: "status",
       render: (_, record) => {
         return (
-          <span style={{ color: getEStatusColor(record.status), fontWeight: "bold" }}>
-            {getEStatusName(record.status)}
+          <span style={{ color: getTaskStatusColor(record.status), fontWeight: "bold" }}>
+            {getTaskStatusName(record.status)}
           </span>
         );
       },
@@ -214,7 +210,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: info.id,
+      orderId: orderId,
     }
     console.log("create", data)
     try {
@@ -238,7 +234,6 @@ export const LeaderTaskOrderDetailProcedure = ({
     const data = {
       id: values?.id,
       name: values?.name,
-      leaderId: values?.leaderId,
       priority: values?.priority,
       leaderId: values?.leaderId,
       itemQuantity: values?.itemQuantity,
@@ -322,11 +317,11 @@ export const LeaderTaskOrderDetailProcedure = ({
         dataSource={tasks?.data}
         columns={columns}
         loading={loading}
-        pagination={{ 
+        pagination={{
           onChange: onPageChange,
           pageSize: PageSize.LEADER_TASK_PROCEDURE_LIST,
           total: tasks?.total,
-         }}
+        }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,

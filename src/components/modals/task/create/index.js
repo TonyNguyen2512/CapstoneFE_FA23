@@ -1,12 +1,11 @@
 import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import React, { useContext, useRef } from "react";
 import { TaskStatus } from "../../../../constants/enum";
-import { TeamContext } from "../../../../providers/team";
 import { UserContext } from "../../../../providers/user";
 import BaseModal from "../../../BaseModal";
 import { RichTextEditor } from "../../../RichTextEditor";
 import locale from "antd/es/date-picker/locale/vi_VN";
-import { taskStatusOptions } from "../../../../constants/app";
+import { WTaskStatusOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
 
 export const TaskCreateModal = ({
@@ -96,7 +95,7 @@ export const TaskCreateModal = ({
 					<Col span={12}>
 						<Form.Item name="status" label="Trạng thái">
 							<Select
-								options={taskStatusOptions}
+								options={WTaskStatusOptions}
 								placeholder="Chọn trạng thái"
 							/>
 						</Form.Item>

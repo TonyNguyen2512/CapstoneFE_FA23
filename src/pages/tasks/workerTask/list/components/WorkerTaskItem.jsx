@@ -6,23 +6,14 @@ import {
 } from "antd";
 import React from "react";
 import { TextTile } from "../../../../../components/TextTile";
-import { formatDate } from "../../../../../utils";
+import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { SearchOutlined } from "@ant-design/icons";
-import { eTaskColors, eTaskLabels } from "../../../../../constants/enum";
 
 const { Text } = Typography;
 
 const WorkerTaskItem = ({ task, onView }) => {
 
 	const { id, name, startTime, endTime, status } = task;
-
-	const getTaskStatus = (status) => {
-		return eTaskLabels[status] || "Không Xác Định";
-	};
-
-	const getTaskStatusColor = (status) => {
-		return eTaskColors[status] || "#FF0000";
-	};
 
 	return (
 		<>
@@ -49,7 +40,7 @@ const WorkerTaskItem = ({ task, onView }) => {
 						</div>
 						<div>
 							<Text strong style={{ color: getTaskStatusColor(status) }}>
-								{getTaskStatus(status)}
+								{getTaskStatusName(status)}
 							</Text>
 						</div>
 					</Col>

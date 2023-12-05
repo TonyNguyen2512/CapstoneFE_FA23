@@ -20,17 +20,18 @@ export const WorkerTaskOverview = ({
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { allTasks } = useContext(TaskContext);
+  console.log("allTasks", allTasks)
   const allWTasks = allTasks;
   const completedTasks = allWTasks?.filter(
-    (e) => e.status === TaskStatus.completed
+    (e) => e.status === TaskStatus.Completed
   );
 
   const inProgressTasks = allWTasks?.filter(
-    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.inProgress
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.InProgress
   )
 
   const expireTasks = allWTasks?.filter(
-    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.Completed
   )
 
   return (
@@ -56,12 +57,12 @@ export const WorkerTaskOverview = ({
             label: "Công việc đạt",
             children: completedTasks?.length,
           },
-          {
-            label: "Công việc không đạt",
-            children: allWTasks?.filter(
-              (e) => e.status === TaskStatus.inProgress
-            )?.length,
-          },
+          // {
+          //   label: "Công việc không đạt",
+          //   children: allWTasks?.filter(
+          //     (e) => e.status === TaskStatus.inProgress
+          //   )?.length,
+          // },
           {
             label: "Công việc trong tiến độ",
             children: inProgressTasks?.length,

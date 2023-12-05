@@ -1,17 +1,13 @@
 import { Typography, Col, Row, Space, Card, Button, Image, Collapse } from "antd";
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { formatDate, formatMoney, handleDownloadFile } from "../../../../../../../utils";
-import UserApi from "../../../../../../../apis/user";
-import { ErrorImage, orderColors, orderLabels } from "../../../../../../../constants/enum";
+import React, { useContext, useRef } from "react";
+import { formatMoney, handleDownloadFile } from "../../../../../../../utils";
+import { ErrorImage } from "../../../../../../../constants/enum";
 import { TaskContext } from "../../../../../../../providers/task";
-import OrderApi from "../../../../../../../apis/order";
-import { useParams } from "react-router-dom";
 import { DownloadOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
 export const LeaderTaskOrderDetailInfo = ({ loading }) => {
-  const all = useRef();
   const { Title } = Typography;
 
   const { info, materials } = useContext(TaskContext);

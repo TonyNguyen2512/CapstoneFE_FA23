@@ -8,7 +8,7 @@ import { UserContext } from "../../../../../../providers/user";
 import WorkerTasksApi from "../../../../../../apis/worker-task";
 import { TaskContext } from "../../../../../../providers/task";
 
-export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
+export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
 
 	const { user } = useContext(UserContext);
 	const { tasks, reload } = useContext(TaskContext);
@@ -95,19 +95,19 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 		let taskStatus;
 		switch (finish.id) {
 			case TaskColumnId.TODO:
-				taskStatus = TaskStatus.new;
+				taskStatus = TaskStatus.New;
 				break;
 			case TaskColumnId.IN_PROGRESS:
-				taskStatus = TaskStatus.inProgress;
+				taskStatus = TaskStatus.InProgress;
 				break;
 			case TaskColumnId.IN_APPROVE:
-				taskStatus = TaskStatus.pending;
+				taskStatus = TaskStatus.Pending;
 				break;
 			case TaskColumnId.COMPLETED:
-				taskStatus = TaskStatus.completed;
+				taskStatus = TaskStatus.Completed;
 				break;
 			default:
-				taskStatus = TaskStatus.new;
+				taskStatus = TaskStatus.New;
 				break;
 		}
 
@@ -127,16 +127,16 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 	function loadColumn(allTasks) {
 
 		const todoTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.new
+			(e) => e.status === TaskStatus.New
 		);
 		const inProgressTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.inProgress
+			(e) => e.status === TaskStatus.InProgress
 		);
 		const inApproveTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.pending
+			(e) => e.status === TaskStatus.Pending
 		);
 		const completedTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.completed
+			(e) => e.status === TaskStatus.Completed
 		);
 		const newColumns = [...columns];
 		for (let i = 0; i < newColumns.length; i++) {
@@ -170,6 +170,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
 							column={column}
 							onViewTask={onViewTask}
 							onDeleteTask={onDeleteTask}
+							onChatTask={onChatTask}
 						/>
 					</Col>
 				))}

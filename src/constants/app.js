@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -246,26 +246,45 @@ export const USER_PERMISSIONS = {
   ],
 };
 
-export const taskStatusOptions = [
+export const ETaskStatusOptions = [
   {
-    value: TaskStatus.new,
-    label: "Cần làm",
+    value: TaskStatus.New,
+    label: TaskMap[TaskStatus.New].label,
   },
   {
-    value: TaskStatus.inProgress,
-    label: "Đang làm",
+    value: TaskStatus.InProgress,
+    label: TaskMap[TaskStatus.InProgress].label,
   },
   {
-    value: TaskStatus.pending,
-    label: "Chờ duyệt",
+    value: TaskStatus.Pending,
+    label: TaskMap[TaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.inEvaluete,
-    label: "Đánh giá",
+    value: TaskStatus.NotAchived,
+    label: TaskMap[TaskStatus.NotAchived].label,
   },
   {
-    value: TaskStatus.completed,
-    label: "Đã hoàn thành",
+    value: TaskStatus.Completed,
+    label: TaskMap[TaskStatus.Completed].label,
+  },
+];
+
+export const WTaskStatusOptions = [
+  {
+    value: TaskStatus.New,
+    label: TaskMap[TaskStatus.New].label,
+  },
+  {
+    value: TaskStatus.InProgress,
+    label: TaskMap[TaskStatus.InProgress].label,
+  },
+  {
+    value: TaskStatus.Pending,
+    label: TaskMap[TaskStatus.Pending].label,
+  },
+  {
+    value: TaskStatus.Completed,
+    label: TaskMap[TaskStatus.Completed].label,
   },
 ];
 

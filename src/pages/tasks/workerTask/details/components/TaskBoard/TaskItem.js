@@ -19,10 +19,11 @@ import { UserContext } from "../../../../../../providers/user";
 import { TaskStatus, eTaskStatus } from "../../../../../../constants/enum";
 import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
 import { TaskContext } from "../../../../../../providers/task";
+import { WechatOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-export const TaskItem = ({ task, index, onView, onDelete }) => {
+export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 	const { user } = useContext(UserContext);
 	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
@@ -37,15 +38,22 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 				label: "Xem",
 				icon: <PreviewOpen className="mt-1" />,
 				onClick: () => onView(task),
-			}
+			},
 		];
 		if (!isCompleted) {
-			items.push({
-				label: "Xóa",
-				icon: <Delete className="mt-1" />,
-				danger: true,
-				onClick: () => onDelete(task),
-			})
+			items.push(
+				{
+					label: "Chat",
+					icon: <WechatOutlined className="mt-1" />,
+					onClick: () => onChat(task),
+				},
+				{
+					label: "Xóa",
+					icon: <Delete className="mt-1" />,
+					danger: true,
+					onClick: () => onDelete(task),
+				},
+			)
 		}
 		return items;
 	}
