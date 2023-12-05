@@ -10,6 +10,7 @@ import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
 import { TaskStatus } from "../../../../../constants/enum";
+import { TaskChatModal } from "../../components/TaskChatModal";
 
 const { Title } = Typography;
 
@@ -21,11 +22,17 @@ export const WorkerTaskManagement = () => {
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 	const isInProgress = info.status === TaskStatus.InProgress;
 	
+	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
+	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
+	const [taskChatLoading, setTaskChatLoading] = useState(false);
+
 	const [showCreateModal, setShowCreateModal] = useState(false);
-	const [taskCreating, setTaskCreating] = useState(false);
-	const [taskUpdating, setTaskUpdating] = useState(false);
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showChatModal, setShowChatModal] = useState(false);
+
+	// TODO Chat
+	const [taskChatData, setTaskChatData] = useState([]);
 
 	const taskRef = useRef();
 
@@ -40,7 +47,7 @@ export const WorkerTaskManagement = () => {
 			description: values?.taskDescription,
 			assignees: values?.assignees,
 		};
-		setTaskCreating(true);
+		setTaskCreateLoading(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
 		if (resp?.code === 0) {
 			message.success(resp?.message);
@@ -49,7 +56,7 @@ export const WorkerTaskManagement = () => {
 		} else {
 			message.error(resp?.message);
 		}
-		setTaskCreating(false);
+		setTaskCreateLoading(false);
 	};
 
 	const handleDeleteTask = async () => {
@@ -65,7 +72,8 @@ export const WorkerTaskManagement = () => {
 	};
 
 	const handleSubmitUpdate = async (values) => {
-		setTaskUpdating(true);
+		console.log("handleSubmitUpdate")
+		setTaskUpdateLoading(true);
 		let resp = null;
 		if (values.status !== TaskStatus.Pending) {
 			console.log("update task: ", values);
@@ -81,8 +89,16 @@ export const WorkerTaskManagement = () => {
 		} else {
 			message.error(resp?.message);
 		}
-		setTaskUpdating(false);
+		setTaskUpdateLoading(false);
 	};
+
+	// TODO Chat
+	const handleChatTask = async (values) => {
+		setTaskChatLoading(true);
+		// send something
+		console.log("click chat confirm")
+		setTaskChatLoading(false);
+	}
 
 	return (
 		<div>
@@ -120,25 +136,28 @@ export const WorkerTaskManagement = () => {
 			<TaskBoard
 				onViewTask={(task) => {
 					taskRef.current = task;
-					console.log("taskRef.current ", taskRef.current )
 					setShowDetailModal(true);
 				}}
 				onDeleteTask={(task) => {
 					taskRef.current = task;
 					setShowDeleteModal(true);
 				}}
+				onChatTask={(task) => {
+					taskRef.current = task;
+					setShowChatModal(true);
+				}}
 			/>
 			<TaskCreateModal
 				open={showCreateModal}
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
-				confirmLoading={taskCreating}
+				confirmLoading={taskCreateLoading}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
 				onCancel={() => setShowDetailModal(false)}
 				onSubmit={handleSubmitUpdate}
-				confirmLoading={taskUpdating}
+				confirmLoading={taskUpdateLoading}
 				task={taskRef.current}
 			/>
 			<ConfirmDeleteModal
@@ -146,6 +165,14 @@ export const WorkerTaskManagement = () => {
 				open={showDeleteModal}
 				onCancel={() => setShowDeleteModal(false)}
 				onOk={() => handleDeleteTask()}
+			/>
+			<TaskChatModal 
+				title={`Chat gi do`}
+				open={showChatModal}
+				onCancel={() => setShowChatModal(false)}
+				onSubmit={() => handleChatTask()}
+				confirmLoading={taskChatLoading}
+				dataSource={taskRef.current}
 			/>
 		</div>
 	);

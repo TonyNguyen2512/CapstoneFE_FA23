@@ -147,6 +147,7 @@ export const WorkerTaskDetailsPage = () => {
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
             tasks={workderTaskList}
+            allTasks={workderTaskList}
             info={leaderTaskInfo}
             team={groupMemberList}
             acceptance={acceptance}
