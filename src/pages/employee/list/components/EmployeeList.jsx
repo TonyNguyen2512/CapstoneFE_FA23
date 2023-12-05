@@ -10,7 +10,6 @@ import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
 import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
 import { PageSize } from "../../../../constants/enum";
-import OTPInput from "react-otp-input/lib";
 
 const roleColors = {
   ADMIN: "#FF7777",
