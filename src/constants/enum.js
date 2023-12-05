@@ -114,9 +114,9 @@ export const PageSize = {
   LEADER_TASK_ORDER_DETAIL_LIST: 3,
   ITEM_CATEGORY_LIST: 10,
   ITEM_LIST: 10,
-  EMPLOYEES_LIST: 20,
+  EMPLOYEES_LIST: 10,
   GROUP_LIST: 10,
-  WORKER_IN_GROUP_LIST: 20,
+  WORKER_IN_GROUP_LIST: 10,
 };
 
 export const NotificationType = {

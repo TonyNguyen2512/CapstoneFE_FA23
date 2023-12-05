@@ -76,7 +76,6 @@ export const dateSort = (dateA, dateB) => {
 }
 
 export const formatMoney = (money) => {
-	if (!money) return null;
 	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
 }
 
