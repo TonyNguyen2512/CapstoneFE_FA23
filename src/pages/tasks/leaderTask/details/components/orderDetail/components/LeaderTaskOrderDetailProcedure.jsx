@@ -34,6 +34,8 @@ export const LeaderTaskOrderDetailProcedure = ({
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [eTaskReportLoading, setETaskReportLoading] = useState(false);
 
+  const [searchData, setSearchData] = useState("")
+
   const leaderTaskInfo = useRef();
 
   const getActionItems = (record) => {
@@ -192,11 +194,12 @@ export const LeaderTaskOrderDetailProcedure = ({
   ];
 
   const handleSearch = (value) => {
-    filterTask(value, 1);
+    setSearchData(value);
+    filterTask(1, value);
   };
 
   const onPageChange = (current) => {
-    filterTask(null, current);
+    filterTask(current, searchData);
   };
 
   const handleSubmitCreate = async (values) => {
@@ -204,7 +207,7 @@ export const LeaderTaskOrderDetailProcedure = ({
     const data = {
       name: values?.name,
       leaderId: values?.leaderId,
-      itemId: values?.itemId,
+      itemId: info?.itemId,
       priority: values?.priority,
       itemQuantity: values?.itemQuantity,
       startTime: values.dates?.[0],

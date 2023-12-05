@@ -11,6 +11,7 @@ import { PageSize } from "../../../../../../constants/enum";
 import routes from "../../../../../../constants/routes";
 import OrderDetailApi from "../../../../../../apis/order-detail";
 import OrderDetailMaterialApi from "../../../../../../apis/order-details-material";
+import OrderApi from "../../../../../../apis/order";
 
 export const LeaderTaskOrderDetailsPage = () => {
   // const { user } = useContext(UserContext);
@@ -64,12 +65,11 @@ export const LeaderTaskOrderDetailsPage = () => {
 
     if (!orderDetailId) return;
 
+    const orderData = await OrderApi.getOrderById(id);
     // retrieve order detail data by id
     const orderDetailData = await OrderDetailApi.getAllTaskByOrderDetailId(orderDetailId);
     if (orderDetailData) {
-      setOrderDetailInfo(orderDetailData);
-      // setAllTasks(orderDetailData?.leaderTasks);
-      // setTaskInfo(orderDetailData?.leaderTasks);
+      setOrderDetailInfo({ ...orderDetailData, status: orderData?.status });
     }
 
     const materialData = await OrderDetailMaterialApi.getByOrderDetailId(orderDetailId);
@@ -122,7 +122,7 @@ export const LeaderTaskOrderDetailsPage = () => {
             onReload={(handleLoading) => {
               getOrderDetailData(handleLoading, 1);
             }}
-            onFilterTask={(search, pageIndex) => {
+            onFilterTask={(pageIndex, search) => {
               getOrderDetailData(true, pageIndex, search);
             }}
           >
