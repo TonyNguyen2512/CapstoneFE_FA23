@@ -13,10 +13,10 @@ import routes from "../../../constants/routes";
 import { useNavigate } from "react-router-dom";
 import { ItemOrderModal } from "./components/ItemOrderModal";
 import ItemApi from "../../../apis/item";
+import { UpdateStatus } from "../components/UpdateStatus";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
-  console.log("id", id);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -24,9 +24,11 @@ const OrderDetailPage = () => {
   const [itemList, setItemList] = useState();
   const [listItemSelect, setListItemSelect] = useState();
   const [showItemModal, setShowItemModal] = useState(false);
+  const [updateModal, setUpdateModal] = useState(false);
   const [users, setUsers] = useState();
 
   const itemRef = useRef();
+  const orderRef = useRef();
 
   const getDetails = async () => {
     if (!id) return;
@@ -47,6 +49,18 @@ const OrderDetailPage = () => {
       })
     );
     setLoading(false);
+  };
+  const syncPrice = async () => {
+    setLoading(true);
+    let success = await OrderApi.syncItems(details?.id);
+    if (success) {
+      success = await getDetails();
+      message.success("Cập nhật giá thành công");
+      setLoading(false);
+    } else {
+      message.success("Cập nhật giá thất bại");
+      setLoading(false);
+    }
   };
 
   const handleSearch = async (search) => {
@@ -157,13 +171,32 @@ const OrderDetailPage = () => {
           <section className="mt-4">
             <Space className="w-full flex justify-between mb-6">
               <div></div>
-              <Button
-                type="primary"
-                className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => setShowItemModal(true)}
-              >
-                Thêm sản phẩm
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="primary"
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={() => {
+                    orderRef.current = details;
+                    setUpdateModal(true);
+                  }}
+                >
+                  Cập nhật trạng thái đơn hàng
+                </Button>
+                <Button
+                  type="primary"
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={syncPrice}
+                >
+                  Cập nhật giá
+                </Button>
+                <Button
+                  type="primary"
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={() => setShowItemModal(true)}
+                >
+                  Thêm sản phẩm
+                </Button>
+              </div>
             </Space>
             <BaseTable
               title="Danh sách sản phẩm"
@@ -193,6 +226,15 @@ const OrderDetailPage = () => {
               onSuccess={() => getDetails()}
             />
           </section>
+          <UpdateStatus
+            data={orderRef.current}
+            open={updateModal}
+            onCancel={() => {
+              setUpdateModal(false);
+              orderRef.current = null;
+            }}
+            onSuccess={() => window.location.reload()}
+          />
         </OrderDetailsProvider>
       </Spin>
     </BasePageContent>

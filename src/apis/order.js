@@ -192,6 +192,16 @@ const searchGetByForemanId = async (id, search, pageIndex, pageSize = 1000) => {
   }
 };
 
+const syncItems = async (id) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/SyncItem/${id}`);
+    return response.status === 200 ? response.data : response.status === 200;
+  } catch (error) {
+    console.log("Error sync item: ", error);
+    return false;
+  }
+};
+
 const OrderApi = {
   getAllOrders,
   searchOrders,
@@ -205,6 +215,7 @@ const OrderApi = {
   getQuoteMaterialByOrderId,
   exportOrder,
   getByForemanId,
+  syncItems,
 };
 
 export default OrderApi;

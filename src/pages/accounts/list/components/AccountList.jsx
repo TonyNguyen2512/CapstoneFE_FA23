@@ -33,16 +33,6 @@ const AccountList = () => {
   const getUsers = async (keyword) => {
     setLoading(true);
     const data = await UserApi.getAll(keyword);
-    console.log(data);
-    // data?.sort((a, b) => {
-    //   if (a.role?.name === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role?.name === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
     setUsers(data);
     setLoading(false);
   };
