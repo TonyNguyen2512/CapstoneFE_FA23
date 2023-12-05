@@ -21,7 +21,7 @@ import WorkerTasksApi from "../../../../../apis/worker-task";
 export const LeaderTaskOrderDetails = ({
   title,
 }) => {
-  const { info, orderDetails, reload } = useContext(TaskContext);
+  const { info, orderDetails, reload, filterTask } = useContext(TaskContext);
   const isInProgress = info.status === OrderStatus.InProgress;
 
   const [loading, setLoading] = useState(false);
@@ -34,6 +34,9 @@ export const LeaderTaskOrderDetails = ({
 
   const [showWTaskDetailModal, setShowWTaskDetailModal] = useState(false);
   const [wTaskDetailLoading, setWTaskDetaiLoading] = useState(false);
+  
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchData, setSearchData] = useState("");
 
   const navigate = useNavigate();
 
@@ -52,7 +55,7 @@ export const LeaderTaskOrderDetails = ({
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.LEADER_TASK_ORDER_DETAIL_LIST))}</span>;
       },
     },
     {
@@ -132,7 +135,10 @@ export const LeaderTaskOrderDetails = ({
         key: "CREATE_FOREMAN_TASK",
         label: "Thêm công việc cho nhóm trưởng",
         icon: <Edit />,
-        onClick: () => setShowETaskCreateModal(true),
+        onClick: () => {
+          orderDetailRef.current = record;
+          setShowETaskCreateModal(true)
+        },
       },
     ];
   };
@@ -294,7 +300,7 @@ export const LeaderTaskOrderDetails = ({
     const data = {
       name: values?.name,
       leaderId: values?.leaderId,
-      itemId: orderDetailRef.current?.id,
+      itemId: orderDetailRef.current?.itemId,
       priority: values?.priority,
       itemQuantity: values?.itemQuantity,
       startTime: values.dates?.[0],
@@ -302,6 +308,7 @@ export const LeaderTaskOrderDetails = ({
       description: values?.description,
       orderId: info.id,
     }
+    console.log("orderDetailRef", orderDetailRef)
     console.log("create", data)
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
@@ -542,8 +549,12 @@ export const LeaderTaskOrderDetails = ({
     setWTaskDetaiLoading(false);
   };
 
+  /**
+   * TABLE
+   */
   const handleSearch = (value) => {
-    // filterMaterial(value);
+    setSearchData(value);
+    filterTask(1, value);
   };
 
   const onExpand = (expanded, record) => {
@@ -554,14 +565,23 @@ export const LeaderTaskOrderDetails = ({
     }
   }
 
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    filterTask(current, searchData);
+  };
+
   return (
     <>
       <BaseTable
         title={title}
-        dataSource={orderDetails}
+        dataSource={orderDetails?.data}
         columns={orderDetailColumns}
         loading={loading}
-        pagination={{ pageSize: PageSize.LEADER_TASK_ORDER_DETAIL_LIST }}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.LEADER_TASK_ORDER_DETAIL_LIST,
+          total: orderDetails?.total,
+        }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,

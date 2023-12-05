@@ -80,7 +80,7 @@ export const LeaderTaskDetailsPage = () => {
   //   }
   // };
 
-  const getData = (handleLoading) => {
+  const getData = (handleLoading, pageIndex, search) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -90,20 +90,28 @@ export const LeaderTaskDetailsPage = () => {
     // retrieve order data by id
     OrderApi.getOrderById(id).then((dataOrder) => {
       setOrderInfo(dataOrder);
-      OrderDetailApi.getListByOrderId(dataOrder?.id).then((dataOrderDetails) => {
-        setOrderDetailInfo(dataOrderDetails);
-      });
+      getDataOrderDetail(handleLoading, dataOrder?.id, 1);
     });
     setLoading(false);
   };
 
+  const getDataOrderDetail = (handleLoading, orderId, pageIndex, search) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+
+    if (!orderId) return;
+
+    OrderDetailApi.getListByOrderId(orderId, search, pageIndex, PageSize.LEADER_TASK_ORDER_DETAIL_LIST).then((dataOrderDetails) => {
+      setOrderDetailInfo(dataOrderDetails);
+    });
+
+    setLoading(false);
+  }
+
   useEffect(() => {
     getData(true);
   }, [id]);
-
-  // useEffect(() => {
-  //   getLeaderTaskData(true, 1);
-  // }, []);
 
   return (
     <BasePageContent
@@ -131,11 +139,10 @@ export const LeaderTaskDetailsPage = () => {
             info={orderInfo}
             orderDetails={orderDetailInfo}
             onReload={(handleLoading) => {
-              // getLeaderTaskData(handleLoading, 1);
-              getData(handleLoading);
+              getDataOrderDetail(handleLoading, orderInfo?.id, 1);
             }}
-            onFilterTask={(search, pageIndex) => {
-              // getLeaderTaskData(true, pageIndex, search);
+            onFilterTask={(pageIndex, search) => {
+              getDataOrderDetail(true, orderInfo?.id, pageIndex, search);
             }}
           >
             <div className="mt-4">
