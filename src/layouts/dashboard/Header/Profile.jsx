@@ -1,12 +1,11 @@
 import { Down, Logout, User } from "@icon-park/react";
-import { BellFilled, BellOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Dropdown, Space } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import { UserOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, Space } from "antd";
+import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../providers/user";
 import routes from "../../../constants/routes";
 import styled from "styled-components";
-import useMicrosoftSignalR from "../../../hooks/microsoftSignalr";
 
 const Container = styled.div`
   color: white;
@@ -14,27 +13,8 @@ const Container = styled.div`
 
 export const ProfileBar = () => {
   const navigate = useNavigate();
-  const { createMicrosoftSignalrConnection, ENotificationHub } = useMicrosoftSignalR();
 
   const { user, setUser } = useContext(UserContext);
-  const [notificationCount, setNotificationCount] = useState(0);
-
-  useEffect(() => {
-    initNotificationSignalR();
-  }, []);
-
-  const initNotificationSignalR = () => {
-    // connect to hub
-    const connection = createMicrosoftSignalrConnection(ENotificationHub.EndPoint);
-
-    const method = ENotificationHub.Method;
-
-    // listen to method name
-    connection?.on(method.NewNotify, (res) => {
-      console.log("Received a message from the server:", res);
-      setNotificationCount(res?.countUnseen || 0);
-    });
-  };
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
@@ -61,14 +41,6 @@ export const ProfileBar = () => {
   return (
     <Container theme="light">
       <Space size={24} style={{ margin: "0 0.5rem" }}>
-        {notificationCount > 0 ? (
-          <Badge count={notificationCount}>
-            <BellFilled className="text-[#666] text-2xl relative top-1" />
-          </Badge>
-        ) : (
-          <BellOutlined className="text-[#666] text-2xl relative top-1" />
-        )}
-
         <Avatar size="default" icon={<UserOutlined />} />
       </Space>
       <Dropdown

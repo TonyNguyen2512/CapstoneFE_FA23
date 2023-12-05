@@ -3,6 +3,7 @@ import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
 import { eTaskColors, eTaskLabels } from "../constants/enum";
+import { orderLabels } from "../constants/enum";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -38,6 +39,10 @@ export const getRoleName = (role) => {
 		default:
 			return "";
 	}
+};
+
+export const getStatusName = (status) => {
+	return orderLabels[status]
 };
 
 // Number processing

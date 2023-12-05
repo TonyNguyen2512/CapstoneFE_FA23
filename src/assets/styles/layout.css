@@ -4,3 +4,7 @@
 .ant-menu-submenu .ant-menu-title-content {
   font-size: 14px;
 } */
+
+:where(.css-dev-only-do-not-override-nllxry).ant-card .ant-card-body {
+  padding: 24px 16px;
+}

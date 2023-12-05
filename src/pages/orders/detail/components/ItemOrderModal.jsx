@@ -191,16 +191,7 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
           </Upload>
         </Form.Item>
         {/*  */}
-        <Form.Item
-          name="drawings3D"
-          label="Bản vẽ 3D"
-          // rules={[
-          //   {
-          //     required: !drawings3D,
-          //     message: "Vui lòng chọn bản vẽ 3D",
-          //   },
-          // ]}
-        >
+        <Form.Item name="drawings3D" label="Bản vẽ 3D">
           <Upload
             listType="picture"
             beforeUpload={() => false}
@@ -208,19 +199,10 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
             onChange={handleUploadDrawing3D}
             maxCount={1}
           >
-            <Button icon={<UploadOutlined />}>Upload</Button>
+            <Button icon={<UploadOutlined />}>Upload</Button>  
           </Upload>
         </Form.Item>
-        <Form.Item
-          name="drawingsTechnical"
-          label="Bảng vẽ kỹ thuật"
-          // rules={[
-          //   {
-          //     required: !drawingsTechnical,
-          //     message: "Vui lòng chọn bản vẽ kỹ thuật",
-          //   },
-          // ]}
-        >
+        <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
           <Upload
             listType="picture"
             beforeUpload={() => false}

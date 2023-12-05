@@ -3,12 +3,14 @@ import { Input, Space, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import { ProfileBar } from "./Profile";
 import { Search } from "@icon-park/react";
-import Title from "antd/lib/typography/Title";
-import { getTitle } from "../../../utils";
 import { useLocation } from "react-router-dom";
+import Notifications from "./Notifications";
+
+const { Title } = Typography;
 
 export const AppHeader = () => {
   const location = useLocation();
+
   const [title, setTitle] = useState("Quản lý xưởng nội thất JAMA");
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export const AppHeader = () => {
             prefix={<Search size="16" fill="#999" style={{ marginTop: "4px" }} />}
           />
         </Space.Compact>
+        <Notifications />
         <ProfileBar />
       </Space>
     </Header>

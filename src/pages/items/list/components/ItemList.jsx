@@ -13,7 +13,7 @@ import MaterialApi from "../../../../apis/material";
 import StepApi from "../../../../apis/step";
 import { useParams } from "react-router-dom";
 
-const ItemList = () => {
+const ItemList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showItemDuplicateModal, setShowItemDuplicateModal] = useState(false);
@@ -61,10 +61,9 @@ const ItemList = () => {
 
   const getActionItems = (record) => {
     const { isActive, id } = record;
-
     return [
-      {
-        key: "UPDATE_ROLE",
+      canModify.canUpdate && {
+        key: "UPDATE_ITEM",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
@@ -72,7 +71,7 @@ const ItemList = () => {
           setShowItemModal(true);
         },
       },
-      {
+      canModify.canCreate && {
         key: "DUPLICATE_ITEM",
         label: "Sao chép sản phẩm",
         icon: <Lightning />,
@@ -81,12 +80,15 @@ const ItemList = () => {
           setShowItemDuplicateModal(true);
         },
       },
-      {
+      canModify.canUpdate && {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
+        label: "Xoá",
         danger: !isActive,
         icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {},
+        onClick: ({ id }) => {
+          const success = ItemApi.deleteItem(id);
+          success && getData();
+        },
       },
     ];
   };
@@ -149,7 +151,10 @@ const ItemList = () => {
       align: "center",
       render: (_, record) => {
         return (
-          <Dropdown menu={{ items: getActionItems(record) }}>
+          <Dropdown
+            menu={{ items: getActionItems(record) }}
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+          >
             <Button className="mx-auto flex-center" icon={<More />} />
           </Dropdown>
         );
@@ -185,19 +190,6 @@ const ItemList = () => {
             </p>
           )),
       },
-      // {
-      //   title: "Thao tác",
-      //   dataIndex: "action",
-      //   key: "action",
-      //   align: "center",
-      //   render: (_, record) => {
-      //     return (
-      //       <Dropdown menu={{ items: getActionItems(record) }}>
-      //         <Button className="mx-auto flex-center" icon={<More />} />
-      //       </Dropdown>
-      //     );
-      //   },
-      // },
     ];
     return (
       <Table
