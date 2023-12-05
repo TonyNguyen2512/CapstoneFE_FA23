@@ -26,6 +26,22 @@ const getOrderDetailById = async (orderId, pageIndex, pageSize) => {
   }
 };
 
+const getAllTaskByOrderDetailId = async (orderDetailId) => {
+  try {
+    var params = {};
+    if (orderDetailId) {
+      params = { ...params, orderDetailId };
+    }
+    const response = await BaseApi.get(`/${resource}/GetAllTaskByOrderDetailId`, {
+      params: params,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error get order detail by id: ", error);
+    return false;
+  }
+};
+
 const updateOrderDetail = async (orderDetail) => {
   try {
     const params = {
@@ -47,6 +63,7 @@ const updateOrderDetail = async (orderDetail) => {
 const OrderDetailApi = {
   getOrderDetailById,
   updateOrderDetail,
+  getAllTaskByOrderDetailId,
 };
 
 export default OrderDetailApi;

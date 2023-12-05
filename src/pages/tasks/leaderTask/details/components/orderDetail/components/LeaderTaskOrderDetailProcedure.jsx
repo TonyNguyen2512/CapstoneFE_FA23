@@ -3,20 +3,22 @@ import { Typography, Row, message } from "antd";
 import dayjs from "dayjs";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BaseTable } from "../../../../../components/BaseTable";
+import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
-import { OrderStatus, PageSize, eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
-import LeaderTasksApi from "../../../../../apis/leader-task";
-import routes from "../../../../../constants/routes";
-import { TaskContext } from "../../../../../providers/task";
-import { LeaderTaskModal } from "../../components/LeaderTaskModal";
-import ReportApi from "../../../../../apis/task-report";
-import { LeaderTaskReportModal } from "../../components/LeaderTaskReportModal";
+import { OrderStatus, PageSize, modalModes } from "../../../../../../../constants/enum";
+import LeaderTasksApi from "../../../../../../../apis/leader-task";
+import routes from "../../../../../../../constants/routes";
+import { TaskContext } from "../../../../../../../providers/task";
+import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
+import ReportApi from "../../../../../../../apis/task-report";
+import { LeaderTaskReportModal } from "../../../../components/LeaderTaskReportModal";
+import { getEStatusColor, getEStatusName } from "../../../../../../../utils";
 
-export const LeaderTaskProcedure = ({
+export const LeaderTaskOrderDetailProcedure = ({
   title,
+  orderId,
 }) => {
 
   const { tasks, info, reload, filterTask } = useContext(TaskContext);
@@ -50,7 +52,8 @@ export const LeaderTaskProcedure = ({
           leaderTaskInfo.current = record;
           navigate(routes.dashboard.workersTasks + "/" + id, {
             state: {
-              orderId: info.id
+              orderId: orderId,
+              orderDetailId: info.id,
             }
           }, { replace: true });
         },
@@ -89,14 +92,6 @@ export const LeaderTaskProcedure = ({
         },
       },
     ];
-  };
-
-  const getProcedureStatus = (status) => {
-    return eTaskLabels[status] || "Không Xác Định";
-  };
-
-  const getProcedureStatusColor = (status) => {
-    return eTaskColors[status] || "#FF0000";
   };
 
   const handleShowReportModal = async (eTaskId) => {
@@ -178,8 +173,8 @@ export const LeaderTaskProcedure = ({
       key: "status",
       render: (_, record) => {
         return (
-          <span style={{ color: getProcedureStatusColor(record.status), fontWeight: "bold" }}>
-            {getProcedureStatus(record.status)}
+          <span style={{ color: getEStatusColor(record.status), fontWeight: "bold" }}>
+            {getEStatusName(record.status)}
           </span>
         );
       },

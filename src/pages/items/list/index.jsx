@@ -5,7 +5,7 @@ import ItemList from "./components/ItemList";
 
 export const ItemListPage = () => {
 	const permissions = usePermissions();
-	const canView = permissions?.includes(ALL_PERMISSIONS.itemCategories.view);
+	const canView = permissions?.includes(ALL_PERMISSIONS.items.view);
 
 	return <div>{canView && <ItemList />}</div>;
 };

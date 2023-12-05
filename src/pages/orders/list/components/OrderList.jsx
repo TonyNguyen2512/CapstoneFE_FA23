@@ -82,7 +82,7 @@ const OrderList = () => {
       },
       {
         key: "VIEW_ORDER_DETAIL",
-        label: "Chi tiết",
+        label: "Xem chi tiết",
         color: "blue",
         icon: <ViewList />,
         onClick: () => {

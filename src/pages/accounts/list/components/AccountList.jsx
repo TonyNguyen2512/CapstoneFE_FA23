@@ -96,7 +96,6 @@ const AccountList = () => {
         key: "UPDATE_USER",
         label: "Cập nhật thông tin",
         icon: <Edit />,
-        // disabled: role === roles.ADMIN,
         onClick: () => {
           userRef.current = record;
           setShowUserModal(true);
@@ -115,7 +114,7 @@ const AccountList = () => {
         key: "UPDATE_ROLE",
         label: "Cập nhật vai trò",
         icon: <UserPositioning />,
-        // disabled: role === roles.ADMIN,
+        disabled: role?.name === roles.ADMIN,
         onClick: () => {
           userRef.current = record;
           setShowModal(true);
@@ -239,7 +238,7 @@ const AccountList = () => {
       render: (_, record) => {
         return (
           <>
-            {record.role !== roles.ADMIN && (
+            {record.role?.name !== roles.ADMIN && (
               <Dropdown menu={{ items: getActionItems(record) }}>
                 <Button className="mx-auto flex-center" icon={<More />} />
               </Dropdown>

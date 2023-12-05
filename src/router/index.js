@@ -6,13 +6,6 @@ import { Dashboard } from "../layouts/dashboard";
 import { AccountListPage } from "../pages/accounts/list";
 import RootRoute from "./RootRoute";
 import PageNotFound from "../pages/error/404";
-// import ProjectListPage from "../pages/project/list";
-// import ProjectDetailPage from "../pages/project/detail";
-// import ProfilePage from "../pages/profile";
-// import ProjectReportListPage from "../pages/report/list";
-// import SemesterListPage from "../pages/semester/list";
-// import SemesterDetailPage from "../pages/semester/detail";
-// import ProjectReportDetailPage from "../pages/report/detail";
 import OrderReportListPage from "../pages/report/orderReport/list";
 import { HomePage } from "../pages/home";
 import { MaterialListPage } from "../pages/materials/list";
@@ -33,6 +26,8 @@ import { StepListPage } from "../pages/steps/list";
 import { QuoteListPage } from "../pages/quotes/list";
 import QuoteDetailPage from "../pages/quotes/detail";
 import { EmployeeListPage } from "../pages/employee/list";
+import ProfilePage from "../pages/profile";
+import { LeaderTaskOrderDetailsPage } from "../pages/tasks/leaderTask/details/components/orderDetail";
 
 export const router = createBrowserRouter([
   {
@@ -56,6 +51,10 @@ export const router = createBrowserRouter([
             path: routes.dashboard.home,
             element: <HomePage />,
           },
+					{
+						path: routes.dashboard.profile,
+						element: <ProfilePage />,
+					},
           {
             path: routes.dashboard.accounts,
             element: <AccountListPage />,
@@ -106,33 +105,41 @@ export const router = createBrowserRouter([
             element: <WorkerTaskListPage />,
           },
           {
-						path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
-						element: <WorkerTaskDetailsPage />,
-					},
-					{
-						path: routes.dashboard.managersTasks,
-						element: <LeaderTaskListPage />,
-					},
-					{
-						path: `${routes.dashboard.managersTasks}/:id`,
-						element: <LeaderTaskDetailsPage />,
-					},
-					{
-						path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,
-						element: <WorkerTaskDetailsPage />,
-					},
-					{
-						path: routes.dashboard.reports,
-						element: <AccountListPage />,
-					},
-					{
-						path: routes.dashboard.groups,
-						element: <GroupListPage />,
-					},
-					{
-						path: `${routes.dashboard.groups}/:id`,
-						element: <GroupDetailPage />,
-					},
+            path: `${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
+          },
+          {
+            path: routes.dashboard.managersTasks,
+            element: <LeaderTaskListPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id`,
+            element: <LeaderTaskDetailsPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId`,
+            element: <LeaderTaskOrderDetailsPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId/${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
+          },
+          {
+            path: `${routes.dashboard.managersTasks}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
+          },
+          {
+            path: routes.dashboard.reports,
+            element: <AccountListPage />,
+          },
+          {
+            path: routes.dashboard.groups,
+            element: <GroupListPage />,
+          },
+          {
+            path: `${routes.dashboard.groups}/:id`,
+            element: <GroupDetailPage />,
+          },
           {
             path: routes.dashboard.orderReports,
             element: <OrderReportListPage />,
@@ -149,56 +156,8 @@ export const router = createBrowserRouter([
             path: `${routes.dashboard.employees}/:id`,
             // element: <OrderReportDetailPage />,
           },
-
-					//
-					// old routes
-					//
-					// {
-					// 	path: routes.dashboard.courses,
-					// 	element: <CourseListPage />,
-					// },
-					// {
-					// 	path: `${routes.dashboard.courses}/:id`,
-					// 	element: <CourseDetailPage />,
-					// },
-					// {
-					// 	path: routes.dashboard.projects,
-					// 	element: <ProjectListPage />,
-					// },
-					// {
-					// 	path: `${routes.dashboard.projects}/:id`,
-					// 	element: <ProjectDetailPage />,
-					// },
-					// {
-					// 	path: routes.dashboard.profile,
-					// 	element: <ProfilePage />,
-					// },
-					// {
-					// 	path: routes.dashboard.classes,
-					// 	element: <ClassListPage />,
-					// },
-					// {
-					// 	path: `${routes.dashboard.classes}/:id`,
-					// 	element: <ClassDetailPage />,
-					// },
-					// {
-					// 	path: routes.dashboard.report,
-					// 	element: <ProjectReportListPage />,
-					// },
-					// {
-					// 	path: `${routes.dashboard.report}/:id`,
-					// 	element: <ProjectReportDetailPage />,
-					// },
-					// {
-					// 	path: routes.dashboard.semester,
-					// 	element: <SemesterListPage />,
-					// },
-					// {
-					// 	path: `${routes.dashboard.semester}/:id`,
-					// 	element: <SemesterDetailPage />,
-					// },
-				],
-			},
-		],
-	},
+        ],
+      },
+    ],
+  },
 ]);

@@ -79,7 +79,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         >
           <Input placeholder="Nhập tên quy trình..." />
         </Form.Item>
-        {/* <Form.Item
+        <Form.Item
           name="listStep"
           label="Danh sách các bước"
           rules={[
@@ -99,7 +99,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
             options={options}
 
           />
-        </Form.Item> */}
+        </Form.Item>
       </Form>
       {/* <AddWorkerToGroupModal
         open={addWorkerToGroupModal}

@@ -10,6 +10,7 @@ import { InputNumber } from "antd/lib";
 
 export const ItemModal = ({
   data,
+  listItemNames,
   listCategories,
   listMaterials,
   listProcedures,
@@ -204,6 +205,11 @@ export const ItemModal = ({
     if (!updatedValues.listProcedure) {
       updatedValues.listProcedure = [];
     }
+    if (isCreate) {
+      !!listItemNames.find((e) => e === values.name) && message.error(`Tên sản phẩm đã tồn tại`);
+      return;
+    }
+
     const success = isCreate
       ? await ItemApi.createItem(updatedValues)
       : await ItemApi.updateItem(updatedValues);

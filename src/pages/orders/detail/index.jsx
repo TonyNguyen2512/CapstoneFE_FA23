@@ -5,26 +5,28 @@ import { OrderDetail } from "./components/OrderDetail";
 import React, { useEffect, useRef, useState } from "react";
 import OrderApi from "../../../apis/order";
 import { useParams } from "react-router";
-import { Button, Dropdown, Spin, Typography, message } from "antd";
+import { Button, Dropdown, Space, Spin, Typography, message } from "antd";
 import UserApi from "../../../apis/user";
 import { BaseTable } from "../../../components/BaseTable";
 import { Edit, Error, More } from "@icon-park/react";
 import routes from "../../../constants/routes";
 import { useNavigate } from "react-router-dom";
-
-const { Title } = Typography;
+import { ItemOrderModal } from "./components/ItemOrderModal";
+import ItemApi from "../../../apis/item";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
-  console.log("id", id)
+  console.log("id", id);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
   const [itemList, setItemList] = useState();
+  const [listItemSelect, setListItemSelect] = useState();
+  const [showItemModal, setShowItemModal] = useState(false);
   const [users, setUsers] = useState();
 
-  const orderRef = useRef();
+  const itemRef = useRef();
 
   const getDetails = async () => {
     if (!id) return;
@@ -35,6 +37,15 @@ const OrderDetailPage = () => {
     setItemList(data);
     data = await UserApi.getAll();
     setUsers(data);
+    data = await ItemApi.getAllItem();
+    setUsers(
+      data?.data?.map((e) => {
+        return {
+          ...e,
+          itemId: e?.id,
+        };
+      })
+    );
     setLoading(false);
   };
 
@@ -98,15 +109,16 @@ const OrderDetailPage = () => {
 
   const getActionItems = (record) => {
     return [
-      // {
-      //   key: "UPDATE_ORDER",
-      //   label: "Cập nhật đơn hàng",
-      //   icon: <Edit />,
-      //   onClick: () => {
-      //     orderRef.current = record;
-      //     // setShowOrderModal(true);
-      //   },
-      // },
+      {
+        key: "UPDATE_ORDER",
+        label: "Cập nhật sản phẩm",
+        icon: <Edit />,
+        onClick: () => {
+          console.log(record);
+          itemRef.current = record;
+          setShowItemModal(true);
+        },
+      },
       // {
       //   key: "CANCEL_ORDER",
       //   label: "Huỷ đơn",
@@ -143,6 +155,16 @@ const OrderDetailPage = () => {
             <OrderDetail />
           </section>
           <section className="mt-4">
+            <Space className="w-full flex justify-between mb-6">
+              <div></div>
+              <Button
+                type="primary"
+                className="btn-primary app-bg-primary font-semibold text-white"
+                onClick={() => setShowItemModal(true)}
+              >
+                Thêm sản phẩm
+              </Button>
+            </Space>
             <BaseTable
               title="Danh sách sản phẩm"
               dataSource={itemList}
@@ -155,6 +177,20 @@ const OrderDetailPage = () => {
                 onSearch: handleSearch,
                 width: 300,
               }}
+            />
+            <ItemOrderModal
+              data={itemRef.current}
+              listItem={
+                listItemSelect?.map((i) => {
+                  return {
+                    label: i.name,
+                    value: i.id,
+                  };
+                }) || []
+              }
+              open={showItemModal}
+              onCancel={() => setShowItemModal(false)}
+              onSuccess={() => getDetails()}
             />
           </section>
         </OrderDetailsProvider>

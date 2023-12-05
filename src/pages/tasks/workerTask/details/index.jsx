@@ -104,7 +104,8 @@ export const WorkerTaskDetailsPage = () => {
 
   useEffect(() => {
     if (location?.state) {
-      setState(location?.state);
+      setState(location.state);
+      console.log(location.state)
     }
   }, [location]);
 
@@ -127,6 +128,10 @@ export const WorkerTaskDetailsPage = () => {
         path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
         if (state?.orderId) {
           path += `/${state?.orderId}`;
+
+          if (state?.orderDetailId) {
+            path += `/${routes.dashboard.taskOrderDetails}/${state?.orderDetailId}`
+          }
         }
       }
       navigate(path, {

@@ -2,33 +2,20 @@ import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
 import { Button, Form, Input, message } from "antd";
 import ItemApi from "../../../apis/item";
+import { useParams } from "react-router-dom";
 
-export const ItemDuplicateModal = ({ data, open, onCancel, onSuccess }) => {
-  const typeMessage = "Nhân bản";
+export const ItemDuplicateModal = ({ data, id, open, onCancel, onSuccess }) => {
+  const typeMessage = "Sao chép";
   const formRef = useRef();
 
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    // const numValue = Number(values.num);
-    // const body = { ...values, num: numValue }; // Ensure the key is 'num' and not 'numValue'
-
-    // const success = await ItemApi.duplicateItem(body);
-    // if (success) {
-    //   message.success(`${typeMessage} thành công`);
-    //   onSuccess();
-    // } else {
-    //   message.error(`${typeMessage} thất bại`);
-    //   message.error(response.message);
-    // }
-    // setLoading(false);
-    // onCancel();
     try {
-      const numValue = Number(values.num);
-      const body = { ...values, num: numValue };
-      const response = await ItemApi.duplicateItem(body);
-      console.log("Request URL:", ItemApi.duplicateItem());
+      const numValue = Number(values.number);
+      const response = await ItemApi.duplicateItem(id, numValue); // Fix: Pass 'numValue' instead of 'number'
+      console.log("Request URL:", ItemApi.duplicateItem(id, numValue));
 
       // Check if the API call was successful
       if (response.code === 0) {
@@ -61,7 +48,7 @@ export const ItemDuplicateModal = ({ data, open, onCancel, onSuccess }) => {
         ref={formRef}
         initialValues={{
           ...(data || {
-            num: 1,
+            number: 1,
           }),
         }}
         onFinish={handleSubmit}
@@ -70,16 +57,16 @@ export const ItemDuplicateModal = ({ data, open, onCancel, onSuccess }) => {
           <Input />
         </Form.Item>
         <Form.Item
-          name="num"
-          label="Số lượng nhân bản"
+          name="number"
+          label="Số lượng sao chép"
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập số lượng muốn nhân bản sản phẩm",
+              message: "Vui lòng nhập số lượng muốn sao chép sản phẩm",
             },
           ]}
         >
-          <Input placeholder="Nhập số lượng muốn nhân bản..." />
+          <Input placeholder="Nhập số lượng muốn sao chép..." />
         </Form.Item>
       </Form>
     </BaseModal>
