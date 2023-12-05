@@ -21,7 +21,6 @@ const OrderList = () => {
   const [orders, setOrders] = useState([]);
 
   const orderRef = useRef();
-  
 
   const getData = async (keyword) => {
     setLoading(true);
@@ -221,7 +220,12 @@ const OrderList = () => {
       <UpdateStatus
         data={orderRef.current}
         open={updateModal}
-      ></UpdateStatus>
+        onCancel={() => {
+          setUpdateModal(false);
+          orderRef.current = null;
+        }}
+        onSuccess={() => getData()}
+      />
     </>
   );
 };
