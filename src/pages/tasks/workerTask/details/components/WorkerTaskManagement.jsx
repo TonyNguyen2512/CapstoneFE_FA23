@@ -9,18 +9,17 @@ import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import { eTaskStatus } from "../../../../../constants/enum";
+import { TaskStatus } from "../../../../../constants/enum";
 
 const { Title } = Typography;
 
-export const WorkerTaskManagement = ({
-}) => {
+export const WorkerTaskManagement = () => {
 
 	const { user } = useContext(UserContext);
 	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === eTaskStatus.InProgress;
+	const isInProgress = info.status === TaskStatus.InProgress;
 	
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [taskCreating, setTaskCreating] = useState(false);
@@ -68,7 +67,7 @@ export const WorkerTaskManagement = ({
 	const handleSubmitUpdate = async (values) => {
 		setTaskUpdating(true);
 		let resp = null;
-		if (values.status !== eTaskStatus.Pending) {
+		if (values.status !== TaskStatus.Pending) {
 			console.log("update task: ", values);
 			resp = await WorkerTasksApi.updateWorkerTask(values);
 		} else {

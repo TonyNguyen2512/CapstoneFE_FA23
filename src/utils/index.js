@@ -2,7 +2,7 @@ import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
-import { eTaskColors, eTaskLabels } from "../constants/enum";
+import { TaskMap } from "../constants/enum";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -71,16 +71,16 @@ export const dateSort = (dateA, dateB) => {
 }
 
 export const formatMoney = (money) => {
-	if (!money) return null;
+	if (!money) money = 0;
 	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
 }
 
-export const getEStatusName = (status) => {
-	return eTaskLabels[status] || "Không Xác Định";
+export const getTaskStatusName = (status) => {
+	return TaskMap[status]?.label || "Không Xác Định";
 };
 
-export const getEStatusColor = (status) => {
-	return eTaskColors[status] || "#FF0000";
+export const getTaskStatusColor = (status) => {
+	return TaskMap[status]?.color || "#FF0000";
 };
 
 export const handleDownloadFile = async (url, filename, message) => {

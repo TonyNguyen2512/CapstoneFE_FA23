@@ -4,12 +4,12 @@ export const TeamRequestStatus = {
   denied: 2,
 };
 
-export const TaskStatus = {
-	new: 0,
-	inProgress: 1,
-	pending: 2,
-	completed: 3,
-};
+// export const TaskStatus = {
+// 	new: 0,
+// 	inProgress: 1,
+// 	pending: 2,
+// 	completed: 3,
+// };
 
 export const ReportFeedbackStatus = {
   passed: 0,
@@ -52,7 +52,7 @@ export const modalModes = {
   DETAIL: "3",
 };
 
-export const eTaskStatus = {
+export const TaskStatus = {
   New: 0,
   InProgress: 1,
   Pending: 2,
@@ -60,15 +60,28 @@ export const eTaskStatus = {
   Completed: 4,
 };
 
-export const eTaskLabels = [
-  "Mới tạo",
-  "Đang tiến hành",
-  "Chờ duyệt",
-  "Không hoàn thành",
-  "Hoàn thành",
-];
-
-export const eTaskColors = ["#BEBB6D", "#FBD305", "#FF0000", "#FF0000", "#29CB00"];
+export const TaskMap = {
+  [TaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [TaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [TaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [TaskStatus.NotAchived]: {
+    color: "#FF0000",
+    label: "Không hoàn thành",
+  },
+  [TaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
 
 export const EReport = {
   Uncomplete: 0,

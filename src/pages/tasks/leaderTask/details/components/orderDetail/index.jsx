@@ -1,13 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskOrderDetailInfo } from "./components/LeaderTaskOrderDetailInfo";
 import { LeaderTaskOrderDetailProcedure } from "./components/LeaderTaskOrderDetailProcedure";
 import { LeaderTaskOrderDetailProcedureOverview } from "./components/LeaderTaskOrderDetailProcedureOverview";
-import { UserContext } from "../../../../../../providers/user";
-import { Button, Space, Spin, message } from "antd";
+import { Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../../../layouts/containers/BasePageContent";
 import { TaskProvider } from "../../../../../../providers/task";
-import OrderApi from "../../../../../../apis/order";
 import LeaderTasksApi from "../../../../../../apis/leader-task";
 import { PageSize } from "../../../../../../constants/enum";
 import routes from "../../../../../../constants/routes";
@@ -15,7 +13,7 @@ import OrderDetailApi from "../../../../../../apis/order-detail";
 import OrderDetailMaterialApi from "../../../../../../apis/order-details-material";
 
 export const LeaderTaskOrderDetailsPage = () => {
-  const { user } = useContext(UserContext);
+  // const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
   const { orderDetailId, id } = useParams();
@@ -24,7 +22,6 @@ export const LeaderTaskOrderDetailsPage = () => {
   const [taskInfo, setTaskInfo] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
-  const allMaterials = useRef();
   const [state, setState] = useState([]);
 
   const navigate = useNavigate();
@@ -34,7 +31,7 @@ export const LeaderTaskOrderDetailsPage = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    // // retrieve order detail by id
+    // retrieve order detail by id
     try {
       let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(
         orderDetailId,
@@ -60,22 +57,22 @@ export const LeaderTaskOrderDetailsPage = () => {
     }
   };
 
-  const getData = async (handleLoading, id) => {
+  const getData = async (handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
 
-    if (!id) return;
+    if (!orderDetailId) return;
 
     // retrieve order detail data by id
-    const orderDetailData = await OrderDetailApi.getAllTaskByOrderDetailId(id);
+    const orderDetailData = await OrderDetailApi.getAllTaskByOrderDetailId(orderDetailId);
     if (orderDetailData) {
       setOrderDetailInfo(orderDetailData);
       // setAllTasks(orderDetailData?.leaderTasks);
       // setTaskInfo(orderDetailData?.leaderTasks);
     }
 
-    const materialData = await OrderDetailMaterialApi.getByOrderDetailId(id);
+    const materialData = await OrderDetailMaterialApi.getByOrderDetailId(orderDetailId);
     if (materialData.code === 0) {
       setMaterialInfo(materialData?.data);
     } else {
@@ -85,8 +82,8 @@ export const LeaderTaskOrderDetailsPage = () => {
   };
 
   useEffect(() => {
-    getData(true, orderDetailId);
-  }, [orderDetailId]);
+    getData(true);
+  }, []);
 
   useEffect(() => {
     if (location?.state) {

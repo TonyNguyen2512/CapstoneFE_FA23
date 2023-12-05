@@ -1,14 +1,14 @@
-import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Upload, Image, Button } from "antd";
+import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, Card, Button } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import dayjs from "dayjs";
-import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum";
-import ItemApi from "../../../../apis/item";
+import { modalModes } from "../../../../constants/enum";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
-import { formatDate, handleDownloadFile } from "../../../../utils";
+import { handleDownloadFile } from "../../../../utils";
 import { TaskContext } from "../../../../providers/task";
+import { ETaskStatusOptions } from "../../../../constants/app";
 
 const { Text } = Typography;
 
@@ -20,14 +20,10 @@ export const LeaderTaskModal = ({
 	dataSource,
 	mode,
 }) => {
-	// const { user } = useContext(UserContext);
 	const { info } = useContext(TaskContext);
 
-	// const isLeader = user?.userId === team?.leader?.id;
 	const [title, setTitle] = useState(false);
 	const [leadersData, setLeadersData] = useState([]);
-	const [itemsData, setItemsData] = useState([]);
-	const [statusList, setStatusList] = useState([]);
 
 	const leadTaskFormRef = useRef();
 
@@ -41,7 +37,20 @@ export const LeaderTaskModal = ({
 		await onSubmit({ ...values });
 	};
 
-	const handleTitle = () => {
+	const initLeaderInfo = async () => {
+		UserApi.getByLeaderRole().then((resp) => {
+			setLeadersData(resp?.data);
+		});
+	}
+
+	useEffect(() => {
+		const initialData = () => {
+			initLeaderInfo();
+		}
+		initialData();
+	}, [dataSource]);
+
+	useEffect(() => {
 		switch (mode) {
 			case modalModes.UPDATE:
 				setTitle("Thông tin công việc")
@@ -51,42 +60,7 @@ export const LeaderTaskModal = ({
 				setTitle("Thêm công việc")
 				break;
 		}
-	}
-
-	const initLeaderInfo = async () => {
-		// const data = await UserApi.getAllUser();
-		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		UserApi.getUserByRoleId(roleId).then((resp) => {
-			setLeadersData(resp?.data);
-		});
-	}
-
-	const initItemInfo = async () => {
-		ItemApi.getAllItem().then((resp) => {
-			setItemsData(resp?.data);
-		});
-	}
-
-	const initETaskStatus = () => {
-		let data = [];
-		for (const status in eTaskStatus) {
-			data.push({
-				value: eTaskStatus[status],
-				label: eTaskLabels[eTaskStatus[status]],
-			})
-		}
-		setStatusList(data);
-	}
-
-	useEffect(() => {
-		const initialData = () => {
-			handleTitle();
-			initETaskStatus();
-			initLeaderInfo();
-			initItemInfo();
-		}
-		initialData();
-	}, [dataSource]);
+	}, [mode])
 
 	return (
 		<BaseModal
@@ -164,25 +138,9 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="itemId"
-								label={<Text strong>Sản phẩm</Text>}
-								rules={[
-									{
-										required: true,
-										message: "Vui lòng chọn sản phẩm",
-									},
-								]}
+								hidden
 							>
-								<Select
-									className="w-full"
-									placeholder="Chọn sản phẩm"
-									options={itemsData?.map((e) => {
-										return {
-											label: e.name,
-											value: e.id,
-										};
-									})}
-									disabled={!isCreate}
-								/>
+								<Input />
 							</Form.Item>
 							<Row gutter={16}>
 								<Col span={16}>
@@ -246,7 +204,7 @@ export const LeaderTaskModal = ({
 											<Select
 												className="w-full"
 												placeholder="Chọn sản phẩm"
-												options={statusList}
+												options={ETaskStatusOptions}
 											/>
 										</Form.Item>
 									}

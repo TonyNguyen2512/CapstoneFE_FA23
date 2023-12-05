@@ -7,7 +7,7 @@ import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { taskStatusOptions } from "../../../../constants/app";
+import { WTaskStatusOptions } from "../../../../constants/app";
 import { ErrorImage, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
@@ -35,15 +35,13 @@ const TaskDetailModal = ({
 	const { user } = useContext(UserContext);
 	const { team, info } = useContext(TaskContext);
 
-	const [loading, setLoading] = useState(false);
-	const [progress, setProgress] = useState(0);
-	const [resourceImage, setResourceImage] = useState(task?.resource?.[0] ?? "");
+	const [resourceImage] = useState(task?.resource?.[0] ?? "");
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 	// const [fileListUrl, setFileListUrl] = useState([]);
 
 	const isLeader = user?.userId === task?.leader?.id;
-	const ownedTask =
-		task?.members.find((e) => e.id === user?.userId) !== undefined;
+	// const ownedTask =
+	// 	task?.members?.find((e) => e.id === user?.userId) !== undefined;
 
 	const isPending = task?.status === TaskStatus.pending;
 	const isCompleted = task?.status === TaskStatus.completed;
@@ -118,7 +116,7 @@ const TaskDetailModal = ({
 		nameRef.current = task?.name;
 		descRef.current = task?.description;
 		contentRef.current = task?.feedbackContent;
-	}, []);
+	}, [task]);
 
 	return (
 		<BaseModal
@@ -208,7 +206,7 @@ const TaskDetailModal = ({
 										<Select
 											className="w-full"
 											placeholder="Chọn trạng thái"
-											options={taskStatusOptions}
+											options={WTaskStatusOptions}
 											disabled={!isLeader || isCompleted}
 										/>
 									</Form.Item>

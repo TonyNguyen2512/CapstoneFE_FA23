@@ -1,6 +1,6 @@
 import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { UNSAFE_DataRouterStateContext, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
 import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
 import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
@@ -13,8 +13,7 @@ import { UserContext } from "../../../../providers/user";
 import { roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import GroupApi from "../../../../apis/group";
-import OrderApi from "../../../../apis/order";
-import { eTaskStatus } from "../../../../constants/enum";
+import { TaskStatus } from "../../../../constants/enum";
 
 
 export const WorkerTaskDetailsPage = () => {
@@ -85,7 +84,7 @@ export const WorkerTaskDetailsPage = () => {
 
       let dataGroupMembers = [];
       if (dataLeaderUser?.groupId) {
-        dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+        dataGroupMembers = await GroupApi.getWorkersByGroupId(dataLeaderUser?.groupId);
         if (!dataGroupMembers) {
           message.error("Không tìm thấy thông tin các thành viên trong tổ");
         }
@@ -110,7 +109,7 @@ export const WorkerTaskDetailsPage = () => {
   }, [location]);
 
   useEffect(() => {
-    if (leaderTaskInfo?.status === eTaskStatus.Completed) {
+    if (leaderTaskInfo?.status === TaskStatus.Completed) {
       setAcceptance(true);
     }
   }, [leaderTaskInfo])

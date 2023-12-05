@@ -1,8 +1,8 @@
-import { Typography, Col, Row, Space, Card, Collapse, List, Avatar, Button, message } from "antd";
+import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "antd";
 import React, { useContext, useState } from "react";
-import { formatDate } from "../../../../../utils";
+import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { TaskStatus, eTaskColors, eTaskLabels } from "../../../../../constants/enum";
+import { TaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
@@ -33,14 +33,6 @@ export const WorkerTaskInfo = ({
 		(e) => e.status === TaskStatus.completed
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
-
-	const getTaskStatus = (status) => {
-		return eTaskLabels[status] || "Không Xác Định";
-	};
-
-	const getTaskStatusColor = (status) => {
-		return eTaskColors[status] || "#FF0000";
-	};
 
 	const handleReportCreate = async (values) => {
 		setTaskReportLoading(true);
@@ -121,7 +113,7 @@ export const WorkerTaskInfo = ({
 							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(endTime, " DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong></Col>
 							<Col className="gutter-row" span={8}>
 								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(status) }}>
-									{getTaskStatus(status)}</strong></span>
+									{getTaskStatusName(status)}</strong></span>
 							</Col>
 						</Row>
 						<Row gutter={[16, 16]}>
