@@ -2,7 +2,7 @@ import BaseApi from ".";
 
 const resource = "Item";
 
-const getAllItem = async (search, pageIndex, pageSize) => {
+const getAllItem = async (search, pageIndex, pageSize = 1000) => {
   try {
     if (search) {
       return await searchItem(search, pageIndex, pageSize);
