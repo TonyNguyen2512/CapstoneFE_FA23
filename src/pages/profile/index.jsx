@@ -5,6 +5,7 @@ import { getRoleName } from "../../utils";
 import { Container } from "react-bootstrap";
 import { UserOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { genderLabels } from "../../constants/enum";
 
 const { Title } = Typography;
 
@@ -30,7 +31,11 @@ const ProfilePage = () => {
               layout="horizontal"
               labelCol={{ span: 6 }}
               wrapperCol={{ span: 16 }}
-              initialValues={{ ...user, dob: user.dob ? dayjs(user.dob) : null }}
+              initialValues={{
+                ...user,
+                dob: user?.dob ? dayjs(user.dob) : null,
+                genderLabel: genderLabels[user?.gender],
+              }}
             >
               <Form.Item name="id" label="ID" hidden>
                 <Input disabled readOnly />
@@ -49,13 +54,11 @@ const ProfilePage = () => {
               </Form.Item>
               <Form.Item name="dob" label="Sinh nhật">
                 {user?.dob && (
-                  <DatePicker
-                    className="w-full"
-                    placeholder="Chọn ngày sinh..."
-                    format="DD/MM/YYYY"
-                    showTime={false}
-                  />
+                  <DatePicker className="w-full" format="DD/MM/YYYY" showTime={false} disabled />
                 )}
+              </Form.Item>
+              <Form.Item name="genderLabel" label="Giới tính">
+                <Input placeholder="Giới tính..." readOnly />
               </Form.Item>
               <Form.Item name="address" label="Địa chỉ">
                 <Input placeholder="Địa chỉ..." readOnly />

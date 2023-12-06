@@ -58,7 +58,7 @@ const Home = () => {
   const getLTasksStatistics = () => {
     return (
       leaderTaskData?.map((e) => {
-        return { name: getStatusName(e.orderStatus), value: e.total };
+        return { name: getStatusName(e.taskStatus), value: e.total };
       }) || []
     );
   };
@@ -66,7 +66,7 @@ const Home = () => {
   const getWTasksStatistics = () => {
     return (
       workerTaskData?.map((e) => {
-        return { name: getStatusName(e.orderStatus), value: e.total };
+        return { name: getStatusName(e.taskStatus), value: e.total };
       }) || []
     );
   };
