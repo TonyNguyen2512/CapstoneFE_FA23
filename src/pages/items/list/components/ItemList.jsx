@@ -228,6 +228,7 @@ const ItemList = ({ canModify }) => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
+          disabled={!canModify.canCreate || !canModify.canUpdate}
           type="primay"
           className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowItemModal(true)}

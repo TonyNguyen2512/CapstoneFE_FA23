@@ -29,7 +29,7 @@ export const OrderStatus = {
 export const orderLabels = [
   "Chờ báo giá",
   "Chờ duyệt",
-  "Bị từ Chối",
+  "Huỷ báo giá",
   "Đã duyệt",
   "Đang tiến hành",
   "Đã huỷ",

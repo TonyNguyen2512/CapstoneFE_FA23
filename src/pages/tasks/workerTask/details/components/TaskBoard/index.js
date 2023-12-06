@@ -1,180 +1,152 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { DragDropContext } from "react-beautiful-dnd";
-import { TaskColumn } from "./TaskColumn";
-import { Col, Row, message } from "antd";
-import { TaskColumnId, roles } from "../../../../../../constants/app";
-import { wTaskStatus } from "../../../../../../constants/enum";
-import { UserContext } from "../../../../../../providers/user";
-import WorkerTasksApi from "../../../../../../apis/worker-task";
-import { TaskContext } from "../../../../../../providers/task";
+import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
+import React, { useContext, useRef } from "react";
+import { TaskStatus } from "../../../../constants/enum";
+import { UserContext } from "../../../../providers/user";
+import BaseModal from "../../../BaseModal";
+import { RichTextEditor } from "../../../RichTextEditor";
+import locale from "antd/es/date-picker/locale/vi_VN";
+import { WTaskStatusOptions } from "../../../../constants/app";
+import { TaskContext } from "../../../../providers/task";
 
-export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
-
+export const TaskCreateModal = ({
+	open,
+	onCancel,
+	onSubmit,
+	confirmLoading,
+}) => {
 	const { user } = useContext(UserContext);
-	const { tasks, reload } = useContext(TaskContext);
+	const { team, info } = useContext(TaskContext);
 
-	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-
-	const [columns, setColumns] = useState([
-		{
-			id: TaskColumnId.TODO,
-			title: "Cần làm",
-			tasks: [],
-		},
-		{
-			id: TaskColumnId.IN_PROGRESS,
-			title: "Trong tiến độ",
-			tasks: [],
-		},
-		{
-			id: TaskColumnId.IN_APPROVE,
-			title: "Chờ duyệt",
-			tasks: [],
-		},
-		{
-			id: TaskColumnId.COMPLETED,
-			title: "Hoàn thành",
-			tasks: [],
-		},
-	]);
-
-	const onDragEnd = (result) => {
-		console.log("onDragEnd");
-		console.log(result)
-
-		const { destination, source, draggableId } = result;
-
-		if (!destination) {
-			return;
-		}
-
-		if (
-			destination.droppableId === source.droppableId &&
-			destination.index === source.index
-		) {
-			return;
-		}
-		var canDrop = true;
-		const taskId = draggableId;
-		const task = tasks?.find((e) => e.id === taskId);
-		const ownedTask =
-			task?.members.find((e) => e.id === user?.id) !== undefined;
-
-		if (!isLeader && !ownedTask) {
-			canDrop = false;
-		}
-
-		if (!canDrop) {
-			message.info(
-				"Chỉ tổ trưởng hoặc những thành viên được phân công mới được chuyển trạng thái công việc này"
-			);
-			return;
-		}
-
-		const finish = columns.find((e) => e.id === destination.droppableId);
-
-		if (!isLeader) {
-			if (finish.id === TaskColumnId.IN_APPROVE
-				|| finish.id === TaskColumnId.COMPLETED) {
-					message.info(
-						"Chỉ tổ trưởng mới được chuyển trạng thái công việc này"
-					);
-					return;
-				}
-		}
-
-		// TODO
-		// const sourceTask = columns.find((e) => e.id === source.droppableId);
-		// if (sourceTask.id === TaskColumnId.COMPLETED) {
-		// 	message.error(
-		// 		"Không thể chuyển trạng thái công việc đã hoàn thành"
-		// 	);
-		// 	return;
-		// }
-
-		let taskStatus;
-		switch (finish.id) {
-			case TaskColumnId.TODO:
-				taskStatus = wTaskStatus.New;
-				break;
-			case TaskColumnId.IN_PROGRESS:
-				taskStatus = wTaskStatus.InProgress;
-				break;
-			case TaskColumnId.IN_APPROVE:
-				taskStatus = wTaskStatus.Pending;
-				break;
-			case TaskColumnId.COMPLETED:
-				taskStatus = wTaskStatus.Completed;
-				break;
-			default:
-				taskStatus = wTaskStatus.New;
-				break;
-		}
-
-		if (taskId !== undefined && taskStatus !== undefined) {
-			console.log("drag drop", taskId, taskStatus)
-			WorkerTasksApi.updateWorkerTasksStatus(taskId, taskStatus).then((success) => {
-				if (success?.code === 0) {
-					console.log("success")
-					reload(false);
-				} else {
-					message?.error(success?.message);
-				}
-			});
-		}
-	};
-
-	function loadColumn(allTasks) {
-
-		const todoTasks = allTasks?.filter(
-			(e) => e.status === wTaskStatus.New
-		);
-		const inProgressTasks = allTasks?.filter(
-			(e) => e.status === wTaskStatus.InProgress
-		);
-		const inApproveTasks = allTasks?.filter(
-			(e) => e.status === wTaskStatus.Pending
-		);
-		const completedTasks = allTasks?.filter(
-			(e) => e.status === wTaskStatus.Completed
-		);
-		const newColumns = [...columns];
-		for (let i = 0; i < newColumns.length; i++) {
-			const column = newColumns[i];
-			if (column.id === TaskColumnId.TODO) {
-				column.tasks = todoTasks || [];
-			}
-			if (column.id === TaskColumnId.IN_PROGRESS) {
-				column.tasks = inProgressTasks || [];
-			}
-			if (column.id === TaskColumnId.IN_APPROVE) {
-				column.tasks = inApproveTasks || [];
-			}
-			if (column.id === TaskColumnId.COMPLETED) {
-				column.tasks = completedTasks || [];
-			}
-		}
-		setColumns(newColumns);
-	}
-
-	useEffect(() => {
-		loadColumn(tasks);
-	}, [tasks]);
+	const formRef = useRef();
+	const descRef = useRef();
 
 	return (
-		<DragDropContext onDragEnd={onDragEnd}>
-			<Row gutter={16}>
-				{columns.map((column) => (
-					<Col key={column.id} span={6}>
-						<TaskColumn
-							column={column}
-							onViewTask={onViewTask}
-							onDeleteTask={onDeleteTask}
-							onChatTask={onChatTask}
-						/>
+		<BaseModal
+			open={open}
+			onCancel={onCancel}
+			title="Thêm công việc"
+			onOk={() => formRef.current.submit()}
+			confirmLoading={confirmLoading}
+			width="50%"
+		>
+			<Form
+				ref={formRef}
+				layout="vertical"
+				onFinish={async (values) => {
+					const dates = values.dates;
+					const startTime = dates?.[0];
+					const endTime = dates?.[1];
+					await onSubmit({
+						...values,
+						taskDescription: descRef.current,
+						startTime: new Date(startTime),
+						endTime: new Date(endTime),
+					});
+				}}
+				initialValues={{
+					taskName: "",
+					status: TaskStatus.new,
+					dates: ["", ""],
+					assignees: [],
+					priority: "",
+				}}
+			>
+				<Form.Item
+					name="taskName"
+					label="Tên công việc"
+					rules={[
+						{
+							required: true,
+							message: "Vui lòng nhập tên công việc",
+						},
+					]}
+				>
+					<Input
+						showCount
+						maxLength={255}
+						placeholder="Nhập tên công việc..."
+					/>
+				</Form.Item>
+				<Form.Item label="Mô tả công việc">
+					<RichTextEditor
+						onChange={(value) => (descRef.current = value)}
+						placeholder="Nhập mô tả công việc..."
+					/>
+				</Form.Item>
+				<Row gutter={16}>
+					<Col span={12}>
+						<Form.Item name="dates" label="Thời hạn công việc">
+							<DatePicker.RangePicker
+								className="w-full"
+								placeholder={["Bắt đầu", "Kết thúc"]}
+								format="HH:mm DD/MM/YYYY"
+								showTime={{
+									format: "HH:mm",
+								}}
+								locale={locale}
+								disabledDate={(date) => {
+									return (
+										date.isBefore(info.startTime, "day")
+									);
+								}}
+							/>
+						</Form.Item>
 					</Col>
-				))}
-			</Row>
-		</DragDropContext>
+					<Col span={12}>
+						<Form.Item name="status" label="Trạng thái">
+							<Select
+								options={WTaskStatusOptions}
+								placeholder="Chọn trạng thái"
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
+
+				<Row gutter={16}>
+					<Col span={12}>
+						<Form.Item
+							name="assignees"
+							label="Thành viên được phân công"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng chọn ít nhất 1 thành viên để phân công",
+								},
+							]}
+						>
+							<Select
+								options={team?.map((e) => {
+									const isLeader = user?.id === e.id;
+									return {
+										label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
+										value: e.id,
+									};
+								})}
+								mode="multiple"
+								placeholder="Chọn thành viên"
+							/>
+						</Form.Item>
+					</Col>
+					<Col span={12}>
+						<Form.Item
+							name="priority"
+							label="Độ ưu tiên"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng thêm độ ưu tiên",
+								},
+							]}
+						>
+							<InputNumber
+								min={0}
+								max={10}
+								placeholder="Độ ưu tiên"
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
+			</Form>
+		</BaseModal >
 	);
 };

@@ -6,7 +6,7 @@ import { MaterialTypeModal } from "../../components/MaterialTypeModal";
 import MaterialCategoryApi from "../../../../apis/material-category";
 import { ConfirmDeleteModal } from "../../../../components/ConfirmDeleteModal";
 import confirm from "antd/es/modal/confirm";
-const MaterialTypeList = () => {
+const MaterialTypeList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
   const [showUpdateMaterialTypeModal, setShowUpdateMaterialTypeModal] = useState(false);
   const [materialTypeList, setMaterialTypeList] = useState([]);
@@ -37,7 +37,7 @@ const MaterialTypeList = () => {
       //     // setShowUpdateMaterialTypeModal(true);
       //   },
       // },
-      {
+      canModify.canUpdate && {
         key: "UPDATE_MATERIAL_TYPE",
         label: "Xem thông tin chi tiết",
         icon: <Edit />,
@@ -46,7 +46,7 @@ const MaterialTypeList = () => {
           setShowUpdateMaterialTypeModal(true);
         },
       },
-      {
+      canModify.canUpdate && {
         key: "SET_STATUS",
         danger: !isDeleted,
         label: !isDeleted ? "Xoá" : "Phục hồi",
@@ -56,7 +56,7 @@ const MaterialTypeList = () => {
             title: "Xoá loại vật liệu",
             content: `Chắc chắn xoá "${record.name}"?`,
             type: "confirm",
-            
+
             cancelText: "Hủy",
             onOk: () => deleteMaterialCategory(record.id),
             onCancel: () => {},
@@ -149,7 +149,10 @@ const MaterialTypeList = () => {
       align: "center",
       render: (_, record) => {
         return (
-          <Dropdown menu={{ items: getActionItems(record) }}>
+          <Dropdown
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+            menu={{ items: getActionItems(record) }}
+          >
             <Button className="mx-auto flex-center" icon={<More />} />
           </Dropdown>
         );
@@ -178,6 +181,7 @@ const MaterialTypeList = () => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
+          disabled={!canModify.canCreate || !canModify.canUpdate}
           type="primary"
           className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowUpdateMaterialTypeModal(true)}

@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { DocDetail, Download } from "@icon-park/react";
 import React, { useContext, useState } from "react";
 import dayjs from "dayjs";
+import { orderLabels } from "../../../../constants/enum";
 
 const { Title } = Typography;
 
@@ -49,24 +50,27 @@ export const OrderDetail = () => {
           Tên đơn hàng: {details?.name}
         </Title>
         <Row className="mt-4" gutter={[16, 16]}>
-          <Col className="gutter-row" span={10}>
-            Tên người tạo đơn: <strong>{details?.createdBy}</strong>
+          <Col className="gutter-row" span={9}>
+            Người tạo đơn: <strong>{details?.createdBy}</strong>
           </Col>
-          <Col className="gutter-row" span={10}>
-            Tên người được giao: <strong>{details?.assignTo}</strong>
+          <Col className="gutter-row" span={9}>
+            Người được giao: <strong>{details?.assignTo}</strong>
           </Col>
-        </Row>
-        <Row className="mt-4" gutter={[16, 16]}>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={6}>
+            Trạng thái: <strong>{orderLabels[details?.status]}</strong>
+          </Col>
+
+          <Col className="gutter-row" span={9}>
             Tên khách hàng: <strong>{details?.customerName}</strong>
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={9}>
             Ngày tạo đơn: <strong>{dayjs(details?.createTime).format("HH:mm DD/MM/YYYY")}</strong>
           </Col>
-          <Col className="gutter-row" span={4}>
+          <Col className="gutter-row" span={6}>
             Báo giá xưởng: <strong>{details?.totalPrice}</strong>
           </Col>
-          <Col className="gutter-row" span={10}>
+
+          <Col className="gutter-row" span={9}>
             Bảng báo giá:{" "}
             {details?.fileQuote ? (
               <strong>
@@ -78,7 +82,7 @@ export const OrderDetail = () => {
               <strong>{"{Trống}"}</strong>
             )}
           </Col>
-          <Col className="gutter-row" span={10}>
+          <Col className="gutter-row" span={9}>
             Hợp đồng:{" "}
             {details?.fileContract ? (
               <strong>
@@ -93,7 +97,7 @@ export const OrderDetail = () => {
               <strong>{"{ Trống }"}</strong>
             )}
           </Col>
-          <Col className="gutter-row" span={4}>
+          <Col className="gutter-row" span={6}>
             <Button
               className="flex-center border-2 border-gray-400 text-gray-600"
               icon={<DocDetail />}
@@ -101,7 +105,7 @@ export const OrderDetail = () => {
               name="Export"
               onClick={handleExport}
             >
-              Export PDF
+              Tải PDF
             </Button>
           </Col>
         </Row>

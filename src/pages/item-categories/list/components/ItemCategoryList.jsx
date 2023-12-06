@@ -6,7 +6,7 @@ import { ItemCategoryModal } from "../../components/ItemCategoryModal";
 import ItemCategoryApi from "../../../../apis/item-category";
 import { PageSize } from "../../../../constants/enum";
 
-const ItemCategoryList = () => {
+const ItemCategoryList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
   const [showItemCategoryModal, setShowItemCategoryModal] = useState(false);
   const [itemCategoryList, setItemCategoryList] = useState([]);
@@ -20,7 +20,11 @@ const ItemCategoryList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    const response = await ItemCategoryApi.getAllItem(search, pageIndex, PageSize.ITEM_CATEGORY_LIST);
+    const response = await ItemCategoryApi.getAllItem(
+      search,
+      pageIndex,
+      PageSize.ITEM_CATEGORY_LIST
+    );
     setItemCategoryList(response.data);
     setLoading(false);
   };
@@ -68,7 +72,7 @@ const ItemCategoryList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ITEM_CATEGORY_LIST))}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ITEM_CATEGORY_LIST}</span>;
       },
     },
     {
@@ -104,7 +108,10 @@ const ItemCategoryList = () => {
       align: "center",
       render: (_, record) => {
         return (
-          <Dropdown menu={{ items: getActionItems(record) }}>
+          <Dropdown
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+            menu={{ items: getActionItems(record) }}
+          >
             <Button className="mx-auto flex-center" icon={<More />} />
           </Dropdown>
         );
@@ -121,7 +128,6 @@ const ItemCategoryList = () => {
     getData(null, current, false);
   };
 
-
   useEffect(() => {
     getData(null, 1, true);
   }, []);
@@ -131,6 +137,7 @@ const ItemCategoryList = () => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
+          disabled={!canModify.canCreate || !canModify.canUpdate}
           type="primay"
           className="btn-primary app-bg-primary font-semibold text-white"
           onClick={() => setShowItemCategoryModal(true)}

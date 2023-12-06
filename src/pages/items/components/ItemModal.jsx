@@ -345,7 +345,6 @@ export const ItemModal = ({
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
-                  accept=".jpg,.jepg,.png,.svg,.bmp"
                   onChange={handleUploadDrawing2D}
                   maxCount={1}
                   defaultValue=""
@@ -367,7 +366,6 @@ export const ItemModal = ({
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
-                  accept=".jpg,.jepg,.png,.svg,.bmp"
                   onChange={handleUploadDrawing3D}
                   maxCount={1}
                 >
@@ -387,7 +385,6 @@ export const ItemModal = ({
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
-                  accept=".jpg,.jepg,.png,.svg,.bmp"
                   onChange={handleUploadDrawingTechnical}
                   maxCount={1}
                 >

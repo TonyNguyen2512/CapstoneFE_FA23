@@ -323,7 +323,7 @@ const Home = () => {
               <Row>
                 <Space className="w-full" direction="vertical">
                   <Row>
-                    <Title level={5}>Tổng công việc (trưởng nhóm)</Title>
+                    <Title level={5}>Tổng công việc (tổ trưởng)</Title>
                   </Row>
                   <Row>
                     <Col span={16} className="flex items-center">
@@ -409,7 +409,7 @@ const Home = () => {
         </Row>
         <Row gutter={32}>
           <Col span={12}>
-            <Title level={4}>Thống kê công việc (trưởng nhóm)</Title>
+            <Title level={4}>Thống kê công việc (tổ trưởng)</Title>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
               <ReactECharts className="!h-[420px]" option={leaderTaskOptions} />
             </Card>
