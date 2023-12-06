@@ -2,7 +2,6 @@ import { Plus } from "@icon-park/react";
 import { Button, Row, Select, Typography, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
-import { TaskBoard } from "./TaskBoard";
 import { TaskCreateModal } from "../../../../../components/modals/task/create";
 import WorkerTasksApi from "../../../../../apis/worker-task";
 import { roles } from "../../../../../constants/app";
@@ -11,6 +10,7 @@ import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
 import { wTaskStatus } from "../../../../../constants/enum";
 import { TaskChatModal } from "../../components/TaskChatModal";
+import { TaskBoard } from "./TaskBoard";
 
 const { Title } = Typography;
 
