@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus, wTaskMap, wTaskStatus } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -271,20 +271,20 @@ export const ETaskStatusOptions = [
 
 export const WTaskStatusOptions = [
   {
-    value: TaskStatus.New,
-    label: TaskMap[TaskStatus.New].label,
+    value: wTaskStatus.New,
+    label: wTaskMap[wTaskStatus.New].label,
   },
   {
-    value: TaskStatus.InProgress,
-    label: TaskMap[TaskStatus.InProgress].label,
+    value: wTaskStatus.InProgress,
+    label: wTaskMap[wTaskStatus.InProgress].label,
   },
   {
-    value: TaskStatus.Pending,
-    label: TaskMap[TaskStatus.Pending].label,
+    value: wTaskStatus.Pending,
+    label: wTaskMap[wTaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.Completed,
-    label: TaskMap[TaskStatus.Completed].label,
+    value: wTaskStatus.Completed,
+    label: wTaskMap[wTaskStatus.Completed].label,
   },
 ];
 

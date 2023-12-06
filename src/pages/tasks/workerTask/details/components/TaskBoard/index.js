@@ -3,7 +3,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { TaskColumn } from "./TaskColumn";
 import { Col, Row, message } from "antd";
 import { TaskColumnId, roles } from "../../../../../../constants/app";
-import { TaskStatus } from "../../../../../../constants/enum";
+import { wTaskStatus } from "../../../../../../constants/enum";
 import { UserContext } from "../../../../../../providers/user";
 import WorkerTasksApi from "../../../../../../apis/worker-task";
 import { TaskContext } from "../../../../../../providers/task";
@@ -33,7 +33,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
 		},
 		{
 			id: TaskColumnId.COMPLETED,
-			title: "Đã hoàn thành",
+			title: "Hoàn thành",
 			tasks: [],
 		},
 	]);
@@ -95,19 +95,19 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
 		let taskStatus;
 		switch (finish.id) {
 			case TaskColumnId.TODO:
-				taskStatus = TaskStatus.New;
+				taskStatus = wTaskStatus.New;
 				break;
 			case TaskColumnId.IN_PROGRESS:
-				taskStatus = TaskStatus.InProgress;
+				taskStatus = wTaskStatus.InProgress;
 				break;
 			case TaskColumnId.IN_APPROVE:
-				taskStatus = TaskStatus.Pending;
+				taskStatus = wTaskStatus.Pending;
 				break;
 			case TaskColumnId.COMPLETED:
-				taskStatus = TaskStatus.Completed;
+				taskStatus = wTaskStatus.Completed;
 				break;
 			default:
-				taskStatus = TaskStatus.New;
+				taskStatus = wTaskStatus.New;
 				break;
 		}
 
@@ -127,16 +127,16 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
 	function loadColumn(allTasks) {
 
 		const todoTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.New
+			(e) => e.status === wTaskStatus.New
 		);
 		const inProgressTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.InProgress
+			(e) => e.status === wTaskStatus.InProgress
 		);
 		const inApproveTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.Pending
+			(e) => e.status === wTaskStatus.Pending
 		);
 		const completedTasks = allTasks?.filter(
-			(e) => e.status === TaskStatus.Completed
+			(e) => e.status === wTaskStatus.Completed
 		);
 		const newColumns = [...columns];
 		for (let i = 0; i < newColumns.length; i++) {

@@ -60,6 +60,13 @@ export const TaskStatus = {
   Completed: 4,
 };
 
+export const wTaskStatus = {
+  New: 0,
+  InProgress: 1,
+  Pending: 2,
+  Completed: 3,
+};
+
 export const TaskMap = {
   [TaskStatus.New]: {
     color: "#BEBB6D",
@@ -78,6 +85,25 @@ export const TaskMap = {
     label: "Không hoàn thành",
   },
   [TaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
+
+export const wTaskMap = {
+  [wTaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [wTaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [wTaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [wTaskStatus.Completed]: {
     color: "#29CB00",
     label: "Hoàn thành",
   },

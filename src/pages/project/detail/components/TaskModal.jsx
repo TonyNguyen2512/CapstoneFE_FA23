@@ -17,15 +17,15 @@ export const TaskModal = ({
 
 	const statusOptions = [
 		{
-			value: TaskStatus.new,
+			value: TaskStatus.New,
 			label: "Cần làm",
 		},
 		{
-			value: TaskStatus.inProgress,
+			value: TaskStatus.InProgress,
 			label: "Đang làm",
 		},
 		{
-			value: TaskStatus.completed,
+			value: TaskStatus.Completed,
 			label: "Đã hoàn thành",
 		},
 	];

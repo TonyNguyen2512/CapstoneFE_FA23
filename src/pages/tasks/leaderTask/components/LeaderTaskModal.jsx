@@ -162,8 +162,7 @@ export const LeaderTaskModal = ({
 											format="HH:mm DD/MM/YYYY"
 											disabledDate={(date) => {
 												return (
-													date.isBefore(info.startTime) ||
-													date.isAfter(info.endTime)
+													date.isBefore(info.startTime)
 												);
 											}}
 										/>

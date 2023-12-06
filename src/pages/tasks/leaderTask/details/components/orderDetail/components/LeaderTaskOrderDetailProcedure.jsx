@@ -64,14 +64,14 @@ export const LeaderTaskOrderDetailProcedure = ({
           handleShowModal(record?.id);
         },
       },
-      {
-        key: "REPORT_ROLE",
-        label: "Báo cáo công việc",
-        icon: <Edit />,
-        onClick: () => {
-          handleShowReportModal(record?.id);
-        },
-      },
+      // {
+      //   key: "REPORT_ROLE",
+      //   label: "Báo cáo công việc",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     handleShowReportModal(record?.id);
+      //   },
+      // },
       {
         key: "SET_STATUS",
         label: isActive ? "Mở khóa" : "Khóa",
@@ -206,6 +206,7 @@ export const LeaderTaskOrderDetailProcedure = ({
     setETaskCreateLoading(true);
     const data = {
       name: values?.name,
+      itemId: values?.itemId,
       leaderId: values?.leaderId,
       itemId: info?.itemId,
       priority: values?.priority,

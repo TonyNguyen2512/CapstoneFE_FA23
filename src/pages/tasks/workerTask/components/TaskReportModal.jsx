@@ -87,7 +87,7 @@ export const TaskReportModal = ({
 			}}
 			confirmLoading={confirmLoading}
 			width="40%"
-			okText="Lưu"
+			okText="Gửi"
 		>
 			<Form
 				ref={worderReportFormRef}
