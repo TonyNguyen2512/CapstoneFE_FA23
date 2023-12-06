@@ -16,7 +16,6 @@ const ApiCodes = {
 	3: "Số điện thoại này đã được đăng ký!",
 	4: "Email đã tồn tạii!",
 	5: "Người dùng không trong độ tuổi lao động!",
-	6: "Xác thực sai!",
 	7: "Sai mật khẩu!",
 	8: "Tài khoản đã bị khoá!",
 	9: "Không tìm thấy số điện thoại!",
@@ -36,13 +35,12 @@ const ApiCodes = {
 	102: "Tổ trưởng đang ở tổ khác!",
 	//Group
 	16: "Tên tổ đã tồn tại!",
-	17: "Hãy xoá người dùng khỏi nhóm trước khi thêm vào tổ mới!",
+	17: "Hãy xoá công nhân khỏi nhóm trước khi thêm vào tổ mới!",
 	18: "Không tìm thấy người dùng trong hệ thống!",
 	19: "Hãy xoá người dùng ra khỏi nhóm!",
 	20: "Không tìm thấy tổ trưởng trong hệ thống!",
 	21: "Người dùng không phải tổ trưởng!",
 	22: "Người dùng không phải công nhân!",
-	23: "Hãy xoá hết nhóm trước khi xoá tổ!",
 	//MaterialCategory
 	24: "Tên loại vật liệu này đã tồn tại!",
 	25: "Không tìm thấy thông tin loại vật liệu!",
@@ -79,7 +77,7 @@ const ApiCodes = {
 	44: "Không tìm thấy thông tin công việc tổ trưởng!",
 	45: "Nhóm không hợp lệ!",
 	46: "Nhóm đã xoá!",
-	86: "Công việc nghiệm thu cho đơn hàng này đã được tạo!",
+	87: "Công việc nghiệm thu cho đơn hàng này đã được tạo!",
 	91: "Mức độ ưu tiên này đã tồn tại!",
 	103: "Mặt hàng chưa đủ 3 bản vẽ, hãy cập nhập đủ bản vẽ trong mặt hàng trước khi tạo công việc!",
 	//WokerTask
@@ -98,6 +96,7 @@ const ApiCodes = {
 	53: "Chưa thể gửi báo cáo vào lúc này!",
 	54: "Không tìm thấy thông tin báo cáo tiến độ!",
 	55: "Báo cáo này đã hoàn thành!",
+	111: "Báo cáo đã phản hồi không thể chỉnh sửa!",
 	//OrderReport
 	56: "Người dùng không phải quản đốc!",
 	57: "Không tìm thấy thông tin đơn hàng!",
@@ -111,7 +110,7 @@ const ApiCodes = {
 	62: "Vui lòng thêm file báo giá để tạo đơn đặt hàng",
 	63: "Vui lòng thêm sản phẩm vào file báo giá để tạo đơn đặt hàng!",
 	64: "Không thể đọc file báo giá!",
-	65: "Tên sản phẩm không được trống!",
+	6: "Tên sản phẩm không được trống!",
 	66: "Đơn vị không được trống!",
 	67: "Đơn hàng không có sản phẩm không thể tạo file báo giá!",
 	68: "Những mã sản phẩm không tìm thấy trong hệ thống:",
@@ -129,12 +128,20 @@ const ApiCodes = {
 	//Report
 	98: "Số lượng mặt hàng thất bại không lớn hơn số lượng mặt hàng!",
 	101: "Đã quá hạn chỉnh sửa báo cáo!",
+	//Notification
+	88: "Không tìm thấy thông báo!",
+	//Comment
+	89: "Không tìm thấy thông tin công việc công nhân!",
+	90: "Công việc đã hoàn thành, không thể gửi bình luận!",
+	99: "Không tìm thấy thông tin bình luận!",
+	//OrderDetail
+	112: "Không tìm thấy thông tin đơn hàng!",
+	113: "Không tìm thấy thông tin của sản phẩm!",
+	109: "Sản phẩm đã tồn tại trong đơn hàng!",
+	110: "Không tìm thấy thông tin vật liệu!",
 	//Not used
-	87: "",
-	88: "",
-	89: "",
-	90: "",
-	99: "",
+	23: "",
+	86: "",
 };
 
 export default ApiCodes;
