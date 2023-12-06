@@ -5,8 +5,10 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { UploadOutlined } from "@ant-design/icons";
 import { drawingsRef } from "../../../../middleware/firebase";
 import BaseModal from "../../../../components/BaseModal";
+import OrderDetailApi from "../../../../apis/order-details";
+import TextArea from "antd/lib/input/TextArea";
 
-export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) => {
+export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSuccess }) => {
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
@@ -104,16 +106,17 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
   const handleSubmit = async (values) => {
     setLoading(true);
 
-    const updatedValues = {
+    const payload = {
       ...values,
       drawings2D,
       drawings3D,
       drawingsTechnical,
+      orderId,
     };
 
     const success = isCreate
-      ? await ItemApi.createItem(updatedValues)
-      : await ItemApi.updateItem(updatedValues);
+      ? await OrderDetailApi.createOrderDetail(payload)
+      : await OrderDetailApi.updateOrderDetail(payload);
     if (success) {
       message.success(`${typeMessage} thành công`);
       onSuccess();
@@ -121,7 +124,7 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
       message.error(`${typeMessage} thất bại`);
     }
     setLoading(false);
-    onCancel();
+    success && onCancel();
   };
 
   return (
@@ -139,14 +142,7 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
         ref={formRef}
         initialValues={{
           ...(data || {
-            listMaterial: [],
-            listProcedure: [],
-            length: 1,
-            depth: 1,
-            height: 1,
-            mass: 1,
-            unit: "mét",
-            description: "Thêm/ Cập nhật sản phẩm",
+            quantity: 1,
           }),
         }}
         onFinish={handleSubmit}
@@ -156,64 +152,75 @@ export const ItemOrderModal = ({ data, listItem, open, onCancel, onSuccess }) =>
             <Input />
           </Form.Item>
         )}
-        <Form.Item
-          name="itemId"
-          label="Loại sản phẩm"
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng chọn sản phẩm",
-            },
-          ]}
-        >
-          <Select options={listItem} placeholder="Chọn sản phẩm..." />
+        <Row gutter={[16, 16]}>
+          <Col span={20}>
+            <Form.Item
+              name="itemId"
+              label="Sản phẩm"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn sản phẩm",
+                },
+              ]}
+            >
+              <Select options={listItem} placeholder="Chọn sản phẩm..." />
+            </Form.Item>
+          </Col>
+          <Col span={4}>
+            <Form.Item
+              name="quantity"
+              label="Số lượng"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập số lượng",
+                },
+              ]}
+            >
+              <Input placeholder="Số lượng..." type="number" min={1} />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Form.Item name="description" label="Mô tả">
+          <TextArea placeholder="Mô tả..." />
         </Form.Item>
-
-        <Form.Item
-          name="drawings2D"
-          label="Bản vẽ 2D"
-          // rules={[
-          //   {
-          //     required: !drawings2D,
-          //     message: "Vui lòng chọn bản vẽ 2D",
-          //   },
-          // ]}
-        >
-          <Upload
-            listType="picture"
-            beforeUpload={() => false}
-            accept=".jpg,.jepg,.png,.svg,.bmp"
-            onChange={handleUploadDrawing2D}
-            maxCount={1}
-            defaultValue=""
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </Form.Item>
-        {/*  */}
-        <Form.Item name="drawings3D" label="Bản vẽ 3D">
-          <Upload
-            listType="picture"
-            beforeUpload={() => false}
-            accept=".jpg,.jepg,.png,.svg,.bmp"
-            onChange={handleUploadDrawing3D}
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>  
-          </Upload>
-        </Form.Item>
-        <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
-          <Upload
-            listType="picture"
-            beforeUpload={() => false}
-            accept=".jpg,.jepg,.png,.svg,.bmp"
-            onChange={handleUploadDrawingTechnical}
-            maxCount={1}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </Form.Item>
-
+        {!isCreate && (
+          <>
+            <Form.Item name="drawings2D" label="Bản vẽ 2D">
+              <Upload
+                listType="picture"
+                beforeUpload={() => false}
+                accept=".jpg,.jepg,.png,.svg,.bmp"
+                onChange={handleUploadDrawing2D}
+                maxCount={1}
+                defaultValue=""
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item name="drawings3D" label="Bản vẽ 3D">
+              <Upload
+                listType="picture"
+                beforeUpload={() => false}
+                onChange={handleUploadDrawing3D}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </Form.Item>
+            <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
+              <Upload
+                listType="picture"
+                beforeUpload={() => false}
+                onChange={handleUploadDrawingTechnical}
+                maxCount={1}
+              >
+                <Button icon={<UploadOutlined />}>Upload</Button>
+              </Upload>
+            </Form.Item>
+          </>
+        )}
         {/* hidden data */}
         <Form.Item name="listMaterial" hidden>
           <Input />

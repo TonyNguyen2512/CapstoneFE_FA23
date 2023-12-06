@@ -40,7 +40,7 @@ const OrderDetailPage = () => {
     data = await UserApi.getAll();
     setUsers(data);
     data = await ItemApi.getAllItem();
-    setUsers(
+    setListItemSelect(
       data?.data?.map((e) => {
         return {
           ...e,
@@ -212,6 +212,7 @@ const OrderDetailPage = () => {
               }}
             />
             <ItemOrderModal
+              orderId={details?.id}
               data={itemRef.current}
               listItem={
                 listItemSelect?.map((i) => {
