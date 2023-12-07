@@ -1,6 +1,6 @@
 import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
 import React, { useContext, useRef } from "react";
-import { TaskStatus } from "../../../../constants/enum";
+import { ETaskStatus } from "../../../../constants/enum";
 import { UserContext } from "../../../../providers/user";
 import BaseModal from "../../../BaseModal";
 import { RichTextEditor } from "../../../RichTextEditor";
@@ -40,7 +40,7 @@ export const TaskCreateModal = ({ open, onCancel, onSubmit, confirmLoading }) =>
         }}
         initialValues={{
           taskName: "",
-          status: TaskStatus.new,
+          status: ETaskStatus.New,
           dates: ["", ""],
           assignees: [],
           priority: "",
@@ -66,7 +66,16 @@ export const TaskCreateModal = ({ open, onCancel, onSubmit, confirmLoading }) =>
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item name="dates" label="Thời hạn công việc">
+            <Form.Item
+              name="dates"
+              label="Thời hạn công việc"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập thời hạn công việc",
+                },
+              ]}
+            >
               <DatePicker.RangePicker
                 className="w-full"
                 placeholder={["Bắt đầu", "Kết thúc"]}
@@ -82,7 +91,15 @@ export const TaskCreateModal = ({ open, onCancel, onSubmit, confirmLoading }) =>
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="status" label="Trạng thái">
+            <Form.Item
+              name="status"
+              label="Trạng thái"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập trạng thái",
+                },
+              ]} >
               <Select options={WTaskStatusOptions} placeholder="Chọn trạng thái" />
             </Form.Item>
           </Col>

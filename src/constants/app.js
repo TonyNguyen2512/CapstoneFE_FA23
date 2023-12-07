@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -270,24 +270,24 @@ export const USER_PERMISSIONS = {
 
 export const ETaskStatusOptions = [
   {
-    value: TaskStatus.New,
-    label: TaskMap[TaskStatus.New].label,
+    value: ETaskStatus.New,
+    label: ETaskMap[ETaskStatus.New].label,
   },
   {
-    value: TaskStatus.InProgress,
-    label: TaskMap[TaskStatus.InProgress].label,
+    value: ETaskStatus.InProgress,
+    label: ETaskMap[ETaskStatus.InProgress].label,
   },
   {
-    value: TaskStatus.Pending,
-    label: TaskMap[TaskStatus.Pending].label,
+    value: ETaskStatus.Pending,
+    label: ETaskMap[ETaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.NotAchived,
-    label: TaskMap[TaskStatus.NotAchived].label,
+    value: ETaskStatus.NotAchived,
+    label: ETaskMap[ETaskStatus.NotAchived].label,
   },
   {
-    value: TaskStatus.Completed,
-    label: TaskMap[TaskStatus.Completed].label,
+    value: ETaskStatus.Completed,
+    label: ETaskMap[ETaskStatus.Completed].label,
   },
 ];
 

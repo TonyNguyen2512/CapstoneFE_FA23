@@ -8,7 +8,7 @@ import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
 import { WTaskStatusOptions } from "../../../../constants/app";
-import { ErrorImage, TaskStatus } from "../../../../constants/enum";
+import { ErrorImage, ETaskStatus, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
@@ -146,7 +146,7 @@ const TaskDetailModal = ({
 					description: task?.description,
 					dates: [task?.startTime ? dayjs(task?.startTime) : "", task?.startTime ? dayjs(task?.endTime) : ""],
 					assignees: task?.members?.map((e) => e.memberId),
-					status: task?.status || TaskStatus.New,
+					status: task?.status || ETaskStatus.New,
 					...task,
 					resource: task?.resource?.[0],
 				}}
@@ -186,6 +186,12 @@ const TaskDetailModal = ({
 									<Form.Item
 										name="dates"
 										label={<Text strong>Thời hạn công việc</Text>}
+										rules={[
+										  {
+											required: true,
+											message: "Vui lòng nhập thời hạn công việc",
+										  },
+										]}
 									>
 										<DatePicker.RangePicker
 											showNow
@@ -207,6 +213,12 @@ const TaskDetailModal = ({
 									<Form.Item
 										name="status"
 										label={<Text strong>Trạng thái</Text>}
+										rules={[
+										  {
+											required: true,
+											message: "Vui lòng nhập trạng thái",
+										  },
+										]}
 									>
 										<Select
 											className="w-full"

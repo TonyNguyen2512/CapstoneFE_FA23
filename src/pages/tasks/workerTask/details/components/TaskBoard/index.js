@@ -3,7 +3,7 @@ import { DragDropContext } from "react-beautiful-dnd";
 import { TaskColumn } from "./TaskColumn";
 import { Col, Row, message } from "antd";
 import { TaskColumnId, roles } from "../../../../../../constants/app";
-import { TaskStatus } from "../../../../../../constants/enum";
+import { ETaskStatus, TaskStatus } from "../../../../../../constants/enum";
 import { UserContext } from "../../../../../../providers/user";
 import WorkerTasksApi from "../../../../../../apis/worker-task";
 import { TaskContext } from "../../../../../../providers/task";

@@ -9,7 +9,7 @@ import { Button, Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
-import { OrderStatus, PageSize, TaskStatus } from "../../../../constants/enum";
+import { OrderStatus, PageSize, ETaskStatus } from "../../../../constants/enum";
 import OrderDetailApi from "../../../../apis/order-details";
 
 export const LeaderTaskDetailsPage = () => {
