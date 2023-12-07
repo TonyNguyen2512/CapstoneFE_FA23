@@ -261,10 +261,15 @@ export const USER_PERMISSIONS = {
   ],
   [roles.WORKER]: [
     // tasks
-    ALL_PERMISSIONS.tasks.sider,
-    ALL_PERMISSIONS.tasks.view,
-    ALL_PERMISSIONS.tasks.create,
-    ALL_PERMISSIONS.tasks.update,
+    ALL_PERMISSIONS.workers.sider,
+    ALL_PERMISSIONS.workers.view,
+    ALL_PERMISSIONS.workers.create,
+    ALL_PERMISSIONS.workers.update,
+    // workersTasks
+    ALL_PERMISSIONS.workersTasks.sider,
+    ALL_PERMISSIONS.workersTasks.view,
+    ALL_PERMISSIONS.workersTasks.create,
+    ALL_PERMISSIONS.workersTasks.update,
   ],
 };
 

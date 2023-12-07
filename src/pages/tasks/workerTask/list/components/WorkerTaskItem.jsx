@@ -24,17 +24,17 @@ const WorkerTaskItem = ({ task, onView }) => {
 				key={id}
 			>
 				<Row gutter={[16, 16]}>
-					<Col className="gutter-row" span={8}>
+					<Col className="gutter-row" xs={24} xl={8}>
 						<TextTile label="Ngày tạo đơn" colon>
 							{formatDate(startTime, "DD/MM/YYYY")}
 						</TextTile>
 					</Col>
-					<Col className="gutter-row" span={8}>
+					<Col className="gutter-row" xs={24} xl={8}>
 						<TextTile label="Hạn công việc" colon>
 							{formatDate(endTime, "DD/MM/YYYY")}
 						</TextTile>
 					</Col>
-					<Col className="gutter-row" span={8}>
+					<Col className="gutter-row" xs={24} xl={8}>
 						<div>
 							<TextTile label="Tình trạng" colon></TextTile>
 						</div>

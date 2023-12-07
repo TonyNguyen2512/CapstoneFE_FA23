@@ -7,6 +7,8 @@ import LeaderTasksApi from "../../../../../apis/leader-task";
 import WorkerTaskItem from "./WorkerTaskItem";
 import { UserContext } from "../../../../../providers/user";
 import { useSearchParams } from 'react-router-dom';
+import WorkerTasksApi from "../../../../../apis/worker-task";
+import { roles } from "../../../../../constants/app";
 
 const { Search } = Input;
 const { Text } = Typography;
@@ -19,6 +21,8 @@ const WorkerTaskList = () => {
   const [searchName, setSearchName] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
+  const isWorker = user?.role?.name === roles.WORKER;
+
   const navigate = useNavigate();
 
   const getData = async (handleLoading, taskName) => {
@@ -26,10 +30,15 @@ const WorkerTaskList = () => {
       setLoading(true);
     }
     // retrieve leader task data by id
-    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName);
+    let dataLeaderTasks = [];
+    if(isWorker) {
+      dataLeaderTasks = await WorkerTasksApi.getWorkerTaskByUserId(user.id, searchName);
+    } else {
+      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName);
+    }
     // const dataLeaderTasks = await LeaderTasksApi.getAll();
     if (dataLeaderTasks.code === 0) {
-      setLeaderTasksInfo(dataLeaderTasks?.data);
+      setLeaderTasksInfo(dataLeaderTasks?.data?.data || dataLeaderTasks?.data);
       if (taskName) {
         setSearchParams({["taskName"]: taskName});
       }
@@ -45,7 +54,8 @@ const WorkerTaskList = () => {
   }, []);
 
   const onView = (task) => {
-    navigate(task.id, {
+    const leaderTaskId = isWorker ? task?.leaderTaskId : task?.id
+    navigate(leaderTaskId, {
       state: {
         taskName: searchName
       }
@@ -68,7 +78,7 @@ const WorkerTaskList = () => {
       </Space>
       <Space className="w-full flex justify-between mb-6">
         <Row gutter={[16, 16]}>
-          {leaderTasksInfo?.data?.map((task, index) => (
+          {leaderTasksInfo?.map((task, index) => (
             <Col className="gutter-row" span={12} key={task.id}>
               <WorkerTaskItem
                 task={task}
@@ -78,7 +88,7 @@ const WorkerTaskList = () => {
             </Col>
           ))}
           <Col className="gutter-row" span={16}>
-            {leaderTasksInfo?.data?.length <= 0 && (
+            {leaderTasksInfo?.length <= 0 && (
               <Empty description={<Text disabled>Chưa có công việc</Text>} />
             )}
           </Col>
