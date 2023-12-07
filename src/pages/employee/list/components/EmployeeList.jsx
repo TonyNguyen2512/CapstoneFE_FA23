@@ -29,6 +29,7 @@ const EmployeeList = () => {
   const [roleOptions, setRoleOptions] = useState([]);
   const [roleCreateOptions, setRoleCreateOptions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [otp, setOtp] = useState('');
 
   const userRef = useRef();
 
@@ -36,7 +37,11 @@ const EmployeeList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    const data = await UserApi.getByLeaderRoleAndWorkerRole(search, pageIndex, PageSize.EMPLOYEES_LIST);
+    const data = await UserApi.getByLeaderRoleAndWorkerRole(
+      search,
+      pageIndex,
+      PageSize.EMPLOYEES_LIST
+    );
     console.log(data);
     setEmployees(data);
     setLoading(false);
@@ -48,9 +53,10 @@ const EmployeeList = () => {
     getUsers();
   };
 
-  const getAllRoles = async () => {
-    const data = await RoleApi.getAllRoles();
-    setRoleOptions(data);
+  const getLeaderAndWorker = async () => {
+    const data = await UserApi.getRoleLeaderAndWorker();
+    console.log(data.data)
+    setRoleOptions(data.data);
   };
 
   const banUser = async (userId) => {
@@ -75,7 +81,7 @@ const EmployeeList = () => {
 
   useEffect(() => {
     getUsers();
-    getAllRoles();
+    getLeaderAndWorker();
     getRoleForCreateUsers();
   }, []);
 
@@ -137,7 +143,7 @@ const EmployeeList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.EMPLOYEES_LIST))}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.EMPLOYEES_LIST}</span>;
       },
     },
     {
@@ -253,16 +259,19 @@ const EmployeeList = () => {
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          type="primary"
-          className="btn-primary app-bg-primary font-semibold text-white"
-          onClick={() => setShowUserModal(true)}
-        >
-          Tạo tài khoản
-        </Button>
-      </Space>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Space>
+          <Button
+            type="primary"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => setShowUserModal(true)}
+          >
+            Tạo tài khoản
+          </Button>
+
+        </Space>
+      </div>
+
       <BaseTable
         title="Quản lý tài khoản"
         loading={loading}
@@ -282,11 +291,11 @@ const EmployeeList = () => {
       />
       <AccountModal
         data={userRef.current}
-        roleOptions={roleCreateOptions?.map((e) => {
+        roleOptions={roleOptions?.map((e) => {
           return {
             key: e.name,
             value: e.id,
-            label: getRoleName(e.name),
+            label: e.name,
           };
         })}
         open={showUserModal}
@@ -296,12 +305,13 @@ const EmployeeList = () => {
           userRef.current = null;
         }}
       />
+
       <UpdateRoleModal
         roleOptions={roleOptions?.map((e) => {
           return {
             key: e.name,
             value: e.id,
-            label: getRoleName(e.name),
+            label: e.name,
           };
         })}
         user={userRef.current}

@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -7,10 +7,8 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 
 export const roles = {
   ADMIN: "Admin",
-  // FACTORY: "Factory",
   FOREMAN: "Foreman",
   LEADER: "Leader",
-  // MANAGER: "Manager",
   WORKER: "Worker",
 };
 
@@ -171,11 +169,6 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.materialTypes.view,
   ],
   [roles.FOREMAN]: [
-    // ACCOUNTS
-    ALL_PERMISSIONS.accounts.sider,
-    ALL_PERMISSIONS.accounts.view,
-    ALL_PERMISSIONS.accounts.create,
-    ALL_PERMISSIONS.accounts.update,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,
@@ -261,33 +254,57 @@ export const USER_PERMISSIONS = {
   ],
   [roles.WORKER]: [
     // tasks
-    ALL_PERMISSIONS.tasks.sider,
-    ALL_PERMISSIONS.tasks.view,
-    ALL_PERMISSIONS.tasks.create,
-    ALL_PERMISSIONS.tasks.update,
+    ALL_PERMISSIONS.workers.sider,
+    ALL_PERMISSIONS.workers.view,
+    ALL_PERMISSIONS.workers.create,
+    ALL_PERMISSIONS.workers.update,
+    // workersTasks
+    ALL_PERMISSIONS.workersTasks.sider,
+    ALL_PERMISSIONS.workersTasks.view,
+    ALL_PERMISSIONS.workersTasks.create,
+    ALL_PERMISSIONS.workersTasks.update,
   ],
 };
 
-export const taskStatusOptions = [
+export const ETaskStatusOptions = [
   {
-    value: TaskStatus.new,
-    label: "Cần làm",
+    value: ETaskStatus.New,
+    label: ETaskMap[ETaskStatus.New].label,
   },
   {
-    value: TaskStatus.inProgress,
-    label: "Đang làm",
+    value: ETaskStatus.InProgress,
+    label: ETaskMap[ETaskStatus.InProgress].label,
   },
   {
-    value: TaskStatus.pending,
-    label: "Chờ duyệt",
+    value: ETaskStatus.Pending,
+    label: ETaskMap[ETaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.inEvaluete,
-    label: "Đánh giá",
+    value: ETaskStatus.NotAchived,
+    label: ETaskMap[ETaskStatus.NotAchived].label,
   },
   {
-    value: TaskStatus.completed,
-    label: "Đã hoàn thành",
+    value: ETaskStatus.Completed,
+    label: ETaskMap[ETaskStatus.Completed].label,
+  },
+];
+
+export const WTaskStatusOptions = [
+  {
+    value: TaskStatus.New,
+    label: TaskMap[TaskStatus.New].label,
+  },
+  {
+    value: TaskStatus.InProgress,
+    label: TaskMap[TaskStatus.InProgress].label,
+  },
+  {
+    value: TaskStatus.Pending,
+    label: TaskMap[TaskStatus.Pending].label,
+  },
+  {
+    value: TaskStatus.Completed,
+    label: TaskMap[TaskStatus.Completed].label,
   },
 ];
 
@@ -415,12 +432,12 @@ export const SupplyOptions = [
     value: SupplyStatus.Missing,
     label: SupplyLabel[1],
   },
-  {
-    value: SupplyStatus.AcceptByCustomer,
-    label: SupplyLabel[2],
-  },
-  {
-    value: SupplyStatus.RejectByCustomer,
-    label: SupplyLabel[3],
-  },
+  // {
+  //   value: SupplyStatus.AcceptByCustomer,
+  //   label: SupplyLabel[2],
+  // },
+  // {
+  //   value: SupplyStatus.RejectByCustomer,
+  //   label: SupplyLabel[3],
+  // },
 ];

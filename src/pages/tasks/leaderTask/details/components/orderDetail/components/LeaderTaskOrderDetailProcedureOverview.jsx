@@ -1,42 +1,43 @@
 import { Typography, Space } from "antd";
 import { Col, Descriptions, Row } from "antd/lib";
-import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
+import { ProgressIndicator } from "../../../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { eTaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus } from "../../../../../../../constants/enum";
 import { useContext } from "react";
-import { TaskContext } from "../../../../../providers/task";
+import { TaskContext } from "../../../../../../../providers/task";
 
 const { Title } = Typography;
 
-export const LeaderTaskProcedureOverview = ({
+export const LeaderTaskOrderDetailProcedureOverview = ({
   title,
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { allTasks } = useContext(TaskContext);
+  console.log("allTasks", allTasks)
   const allETasks = allTasks?.data;
 
   const completedTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.Completed
+    (e) => e.status === ETaskStatus.Completed
   );
 
   const notAchivedTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.NotAchived
+    (e) => e.status === ETaskStatus.NotAchived
   );
 
   const newTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.New
+    (e) => e.status === ETaskStatus.New
   );
 
   const pendingTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.Pending
+    (e) => e.status === ETaskStatus.Pending
   );
 
   const inprocessTasks = allETasks?.filter(
-    (e) => e.status === eTaskStatus.Inprocessing
+    (e) => e.status === ETaskStatus.InProgress
   );
 
   const expireTasks = allETasks?.filter((e) =>
-    moment(e.timeReport).isBefore(now()) && e.status !== eTaskStatus.Completed
+    moment(e.timeReport).isBefore(now()) && e.status !== ETaskStatus.Completed
   );
 
   return (

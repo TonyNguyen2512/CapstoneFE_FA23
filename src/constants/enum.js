@@ -5,10 +5,10 @@ export const TeamRequestStatus = {
 };
 
 export const TaskStatus = {
-  new: 0,
-  inProgress: 1,
-  pending: 2,
-  completed: 3,
+  New: 0,
+  InProgress: 1,
+  Pending: 2,
+  Completed: 3,
 };
 
 export const ReportFeedbackStatus = {
@@ -57,7 +57,7 @@ export const modalModes = {
   DETAIL: "3",
 };
 
-export const eTaskStatus = {
+export const ETaskStatus = {
   New: 0,
   InProgress: 1,
   Pending: 2,
@@ -65,15 +65,73 @@ export const eTaskStatus = {
   Completed: 4,
 };
 
-export const eTaskLabels = [
-  "Mới tạo",
-  "Đang tiến hành",
-  "Chờ duyệt",
-  "Không hoàn thành",
-  "Hoàn thành",
-];
+export const wTaskStatus = {
+  New: 0,
+  InProgress: 1,
+  Pending: 2,
+  Completed: 3,
+};
 
-export const eTaskColors = ["#BEBB6D", "#FBD305", "#FF0000", "#FF0000", "#29CB00"];
+export const TaskMap = {
+  [TaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [TaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [TaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [TaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
+
+export const ETaskMap = {
+  [ETaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [ETaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [ETaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [ETaskStatus.NotAchived]: {
+    color: "#FF0000",
+    label: "Không hoàn thành",
+  },
+  [ETaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
+
+export const wTaskMap = {
+  [wTaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [wTaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [wTaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [wTaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
 
 export const EReport = {
   Uncomplete: 0,
@@ -116,10 +174,12 @@ export const SupplyLabel = [
 export const PageSize = {
   LEADER_TASK_ORDER_LIST: 10,
   LEADER_TASK_PROCEDURE_LIST: 3,
-  LEADER_TASK_MATERIAL_LIST: 3,
+  LEADER_TASK_ORDER_DETAIL_LIST: 3,
   ITEM_CATEGORY_LIST: 10,
   ITEM_LIST: 10,
   EMPLOYEES_LIST: 10,
+  GROUP_LIST: 10,
+  WORKER_IN_GROUP_LIST: 10,
 };
 
 export const NotificationType = {

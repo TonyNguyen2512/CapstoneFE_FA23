@@ -9,6 +9,7 @@ import { getRoleName } from "../../../../utils";
 import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
 import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
+import { PageSize } from "../../../../constants/enum";
 
 const roleColors = {
   ADMIN: "#FF7777",
@@ -27,12 +28,25 @@ const AccountList = () => {
   const [users, setUsers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
   const [roleCreateOptions, setRoleCreateOptions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const userRef = useRef();
 
-  const getUsers = async (keyword) => {
-    setLoading(true);
-    const data = await UserApi.getAll(keyword);
+  const getUsers = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const data = await UserApi.GetAllWithSearchAndPaging(search, pageIndex, PageSize.ACCOUNTS_LIST);
+    console.log(data);
+    // data?.sort((a, b) => {
+    //   if (a.role?.name === roles.ADMIN) {
+    //     return -1; // a comes before b
+    //   }
+    //   if (b.role?.name === roles.ADMIN) {
+    //     return 1; // b comes before a
+    //   }
+    //   return 0; // no change in order
+    // });
     setUsers(data);
     setLoading(false);
   };
@@ -69,7 +83,7 @@ const AccountList = () => {
   };
 
   useEffect(() => {
-    getUsers();
+    getUsers(null, 1, true);
     getAllRoles();
     getRoleForCreateUsers();
   }, []);
@@ -124,6 +138,16 @@ const AccountList = () => {
   };
 
   const columns = [
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ACCOUNTS_LIST))}</span>;
+      },
+    },
     {
       title: "Họ và tên",
       dataIndex: "fullName",
@@ -226,7 +250,12 @@ const AccountList = () => {
   ];
 
   const handleSearch = (value) => {
-    getUsers(value);
+    getUsers(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getUsers(null, current, false);
   };
 
   return (
@@ -244,9 +273,13 @@ const AccountList = () => {
       <BaseTable
         title="Quản lý tài khoản"
         loading={loading}
-        dataSource={users}
+        dataSource={users.data}
         columns={columns}
-        pagination={{ pageSize: 10, pageSizeOptions: [] }}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.ACCOUNTS_LIST,
+          total: users?.total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",

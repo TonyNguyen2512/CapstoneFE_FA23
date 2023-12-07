@@ -1,14 +1,14 @@
-import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, message, Card, Upload, Image, Button } from "antd";
+import { Row, Col, Form, Input, Select, DatePicker, Typography, InputNumber, Card, Button } from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import dayjs from "dayjs";
-import { eTaskLabels, eTaskStatus, modalModes } from "../../../../constants/enum";
-import ItemApi from "../../../../apis/item";
+import { modalModes } from "../../../../constants/enum";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
-import { formatDate } from "../../../../utils";
+import { handleDownloadFile } from "../../../../utils";
 import { TaskContext } from "../../../../providers/task";
+import { ETaskStatusOptions } from "../../../../constants/app";
 
 const { Text } = Typography;
 
@@ -20,14 +20,10 @@ export const LeaderTaskModal = ({
 	dataSource,
 	mode,
 }) => {
-	// const { user } = useContext(UserContext);
 	const { info } = useContext(TaskContext);
 
-	// const isLeader = user?.userId === team?.leader?.id;
 	const [title, setTitle] = useState(false);
 	const [leadersData, setLeadersData] = useState([]);
-	const [itemsData, setItemsData] = useState([]);
-	const [statusList, setStatusList] = useState([]);
 
 	const leadTaskFormRef = useRef();
 
@@ -41,22 +37,20 @@ export const LeaderTaskModal = ({
 		await onSubmit({ ...values });
 	};
 
-	const handleDownloadFile = async (url, filename) => {
-		if (!url) message.warning("Không có bản vẽ");
-		try {
-			var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
-			var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
-			var fileURL = window.URL.createObjectURL(downloadFile);
-			var a = document.createElement("a");
-			a.download = fileName;
-			a.href = fileURL;
-			a.click();
-		} catch (err) {
-		} finally {
-		}
+	const initLeaderInfo = async () => {
+		UserApi.getByLeaderRole().then((resp) => {
+			setLeadersData(resp?.data);
+		});
 	}
 
-	const handleTitle = () => {
+	useEffect(() => {
+		const initialData = () => {
+			initLeaderInfo();
+		}
+		initialData();
+	}, [dataSource]);
+
+	useEffect(() => {
 		switch (mode) {
 			case modalModes.UPDATE:
 				setTitle("Thông tin công việc")
@@ -66,42 +60,7 @@ export const LeaderTaskModal = ({
 				setTitle("Thêm công việc")
 				break;
 		}
-	}
-
-	const initLeaderInfo = async () => {
-		// const data = await UserApi.getAllUser();
-		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		UserApi.getUserByRoleId(roleId).then((resp) => {
-			setLeadersData(resp?.data);
-		});
-	}
-
-	const initItemInfo = async () => {
-		ItemApi.getAllItem().then((resp) => {
-			setItemsData(resp?.data);
-		});
-	}
-
-	const initETaskStatus = () => {
-		let data = [];
-		for (const status in eTaskStatus) {
-			data.push({
-				value: eTaskStatus[status],
-				label: eTaskLabels[eTaskStatus[status]],
-			})
-		}
-		setStatusList(data);
-	}
-
-	useEffect(() => {
-		const initialData = () => {
-			handleTitle();
-			initETaskStatus();
-			initLeaderInfo();
-			initItemInfo();
-		}
-		initialData();
-	}, [dataSource]);
+	}, [mode])
 
 	return (
 		<BaseModal
@@ -158,17 +117,17 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="leaderId"
-								label={<Text strong>Nhóm trưởng</Text>}
+								label={<Text strong>Tổ trưởng</Text>}
 								rules={[
 									{
 										required: true,
-										message: "Vui lòng chọn nhóm trưởng",
+										message: "Vui lòng chọn Tổ trưởng",
 									},
 								]}
 							>
 								<Select
 									className="w-full"
-									placeholder="Chọn nhóm trưởng"
+									placeholder="Chọn Tổ trưởng"
 									options={leadersData?.map((e) => {
 										return {
 											label: e.fullName,
@@ -179,25 +138,9 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="itemId"
-								label={<Text strong>Sản phẩm</Text>}
-								rules={[
-									{
-										required: true,
-										message: "Vui lòng chọn sản phẩm",
-									},
-								]}
+								hidden
 							>
-								<Select
-									className="w-full"
-									placeholder="Chọn sản phẩm"
-									options={itemsData?.map((e) => {
-										return {
-											label: e.name,
-											value: e.id,
-										};
-									})}
-									disabled={!isCreate}
-								/>
+								<Input />
 							</Form.Item>
 							<Row gutter={16}>
 								<Col span={16}>
@@ -219,8 +162,7 @@ export const LeaderTaskModal = ({
 											format="HH:mm DD/MM/YYYY"
 											disabledDate={(date) => {
 												return (
-													date.isBefore(info.startTime) ||
-													date.isAfter(info.endTime)
+													date.isBefore(info.startTime)
 												);
 											}}
 										/>
@@ -261,7 +203,7 @@ export const LeaderTaskModal = ({
 											<Select
 												className="w-full"
 												placeholder="Chọn sản phẩm"
-												options={statusList}
+												options={ETaskStatusOptions}
 											/>
 										</Form.Item>
 									}

@@ -3,13 +3,14 @@ import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
 import { orderLabels } from "../constants/enum";
+import { ETaskMap } from "../constants/enum";
 
-export const formatDate = (date, pattern) => {
+export const formatDate = (date, pattern, defaultValue) => {
   let result = "";
   if (date) {
     result = moment(date).format(pattern);
   }
-  return result;
+  return defaultValue ?? result;
 };
 
 export const getTitle = (route) => {
@@ -26,18 +27,18 @@ export const getTitle = (route) => {
 };
 
 export const getRoleName = (role) => {
-  switch (role) {
-    case roles.ADMIN:
-      return "Quản trị viên";
-    case roles.FOREMAN:
-      return "Quản đốc";
-    case roles.LEADER:
-      return "Tổ trưởng";
-    case roles.WORKER:
-      return "Công nhân";
-    default:
-      return "";
-  }
+	switch (role) {
+		case roles.ADMIN:
+			return "Quản trị viên";
+		case roles.FOREMAN:
+			return "Quản đốc";
+		case roles.LEADER:
+			return "Tổ trưởng";
+		case roles.WORKER:
+			return "Công nhân";
+		default:
+			return "";
+	}
 };
 
 export const getStatusName = (status) => {
@@ -75,5 +76,29 @@ export const dateSort = (dateA, dateB) => {
 };
 
 export const formatMoney = (money) => {
-  return money.toLocaleString("it-IT", { style: "currency", currency: "VND" });
+	if (!money) money = 0;
+	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+}
+
+export const getTaskStatusName = (status) => {
+	return ETaskMap[status]?.label || "Không Xác Định";
 };
+
+export const getTaskStatusColor = (status) => {
+	return ETaskMap[status]?.color || "#FF0000";
+};
+
+export const handleDownloadFile = async (url, filename, message) => {
+	if (!url) message.warning("Không có bản vẽ");
+	try {
+		var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
+		var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
+		var fileURL = window.URL.createObjectURL(downloadFile);
+		var a = document.createElement("a");
+		a.download = fileName;
+		a.href = fileURL;
+		a.click();
+	} catch (err) {
+		console.log(err);
+	}
+}

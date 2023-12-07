@@ -2,35 +2,42 @@ import { Plus } from "@icon-park/react";
 import { Button, Row, Select, Typography, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
-import { TaskBoard } from "./TaskBoard";
 import { TaskCreateModal } from "../../../../../components/modals/task/create";
 import WorkerTasksApi from "../../../../../apis/worker-task";
 import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import { eTaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
+import { TaskChatModal } from "../../components/TaskChatModal";
+import { TaskBoard } from "./TaskBoard";
 
 const { Title } = Typography;
 
-export const WorkerTaskManagement = ({
-}) => {
+export const WorkerTaskManagement = () => {
 
 	const { user } = useContext(UserContext);
 	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === eTaskStatus.InProgress;
-	
+	const isInProgress = info.status === ETaskStatus.InProgress;
+
+	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
+	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
+	const [taskChatLoading, setTaskChatLoading] = useState(false);
+
 	const [showCreateModal, setShowCreateModal] = useState(false);
-	const [taskCreating, setTaskCreating] = useState(false);
-	const [taskUpdating, setTaskUpdating] = useState(false);
 	const [showDetailModal, setShowDetailModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
+	const [showChatModal, setShowChatModal] = useState(false);
+
+	// TODO Chat
+	const [taskChatData, setTaskChatData] = useState([]);
 
 	const taskRef = useRef();
 
 	const handleSubmitCreate = async (values) => {
+		console.log("handleSubmitCreate", values)
 		const request = {
 			leaderTaskId: info?.id,
 			name: values?.taskName,
@@ -41,7 +48,7 @@ export const WorkerTaskManagement = ({
 			description: values?.taskDescription,
 			assignees: values?.assignees,
 		};
-		setTaskCreating(true);
+		setTaskCreateLoading(true);
 		const resp = await WorkerTasksApi.createWorkerTask(request);
 		if (resp?.code === 0) {
 			message.success(resp?.message);
@@ -50,7 +57,7 @@ export const WorkerTaskManagement = ({
 		} else {
 			message.error(resp?.message);
 		}
-		setTaskCreating(false);
+		setTaskCreateLoading(false);
 	};
 
 	const handleDeleteTask = async () => {
@@ -66,9 +73,10 @@ export const WorkerTaskManagement = ({
 	};
 
 	const handleSubmitUpdate = async (values) => {
-		setTaskUpdating(true);
+		console.log("handleSubmitUpdate", values)
+		setTaskUpdateLoading(true);
 		let resp = null;
-		if (values.status !== eTaskStatus.Pending) {
+		if (values.status !== TaskStatus.Pending) {
 			console.log("update task: ", values);
 			resp = await WorkerTasksApi.updateWorkerTask(values);
 		} else {
@@ -82,8 +90,16 @@ export const WorkerTaskManagement = ({
 		} else {
 			message.error(resp?.message);
 		}
-		setTaskUpdating(false);
+		setTaskUpdateLoading(false);
 	};
+
+	// TODO Chat
+	const handleChatTask = async (values) => {
+		setTaskChatLoading(true);
+		// send something
+		console.log("click chat confirm")
+		setTaskChatLoading(false);
+	}
 
 	return (
 		<div>
@@ -101,45 +117,52 @@ export const WorkerTaskManagement = ({
 							onClick={() => setShowCreateModal(true)}
 						/>
 					)}
-					<span className="ml-10 mr-2">Thành viên: </span>
-					<Select
-						allowClear
-						placeholder="Chọn thành viên"
-						options={team?.map((e) => {
-							return {
-								label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
-								value: e.id,
-							};
-						})}
-						onChange={(value) => {
-							filterTask && filterTask(value);
-						}}
-						style={{ width: 250 }}
-					/>
+					{isLeader &&
+						<>
+							<span className="ml-10 mr-2">Thành viên: </span>
+							<Select
+								allowClear
+								placeholder="Chọn thành viên"
+								options={team?.map((e) => {
+									return {
+										label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
+										value: e.id,
+									};
+								})}
+								onChange={(value) => {
+									filterTask && filterTask(value);
+								}}
+								style={{ width: 250 }}
+							/>
+						</>
+					}
 				</Row>
 			</Row>
 			<TaskBoard
 				onViewTask={(task) => {
 					taskRef.current = task;
-					console.log("taskRef.current ", taskRef.current )
 					setShowDetailModal(true);
 				}}
 				onDeleteTask={(task) => {
 					taskRef.current = task;
 					setShowDeleteModal(true);
 				}}
+				onChatTask={(task) => {
+					taskRef.current = task;
+					setShowChatModal(true);
+				}}
 			/>
 			<TaskCreateModal
 				open={showCreateModal}
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
-				confirmLoading={taskCreating}
+				confirmLoading={taskCreateLoading}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
 				onCancel={() => setShowDetailModal(false)}
 				onSubmit={handleSubmitUpdate}
-				confirmLoading={taskUpdating}
+				confirmLoading={taskUpdateLoading}
 				task={taskRef.current}
 			/>
 			<ConfirmDeleteModal
@@ -147,6 +170,14 @@ export const WorkerTaskManagement = ({
 				open={showDeleteModal}
 				onCancel={() => setShowDeleteModal(false)}
 				onOk={() => handleDeleteTask()}
+			/>
+			<TaskChatModal
+				title={`Chat gi do`}
+				open={showChatModal}
+				onCancel={() => setShowChatModal(false)}
+				onSubmit={() => handleChatTask()}
+				confirmLoading={taskChatLoading}
+				dataSource={taskRef.current}
 			/>
 		</div>
 	);

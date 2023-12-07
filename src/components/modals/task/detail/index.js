@@ -7,8 +7,8 @@ import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
 import weekday from "dayjs/plugin/weekday";
 import localeData from "dayjs/plugin/localeData";
-import { taskStatusOptions } from "../../../../constants/app";
-import { ErrorImage, TaskStatus } from "../../../../constants/enum";
+import { WTaskStatusOptions } from "../../../../constants/app";
+import { ErrorImage, ETaskStatus, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
@@ -35,18 +35,16 @@ const TaskDetailModal = ({
 	const { user } = useContext(UserContext);
 	const { team, info } = useContext(TaskContext);
 
-	const [loading, setLoading] = useState(false);
-	const [progress, setProgress] = useState(0);
-	const [resourceImage, setResourceImage] = useState(task?.resource?.[0] ?? "");
+	const [resourceImage] = useState(task?.resource?.[0] ?? "");
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 	// const [fileListUrl, setFileListUrl] = useState([]);
 
 	const isLeader = user?.userId === task?.leader?.id;
-	const ownedTask =
-		task?.members.find((e) => e.id === user?.userId) !== undefined;
+	// const ownedTask =
+	// 	task?.members?.find((e) => e.id === user?.userId) !== undefined;
 
-	const isPending = task?.status === TaskStatus.pending;
-	const isCompleted = task?.status === TaskStatus.completed;
+	const isPending = task?.status === TaskStatus.Pending;
+	const isCompleted = task?.status === TaskStatus.Completed;
 
 	const onFinish = async (values) => {
 
@@ -89,10 +87,15 @@ const TaskDetailModal = ({
 	};
 
 	const handleValidateUpload = () => {
-		const resource = taskFormRef.current?.getFieldValue('resource');
-		if (!resource || resource.length === 0) {
-			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
-			return false;
+		if (isPending) {
+			const resource = taskFormRef.current?.getFieldValue('resource');
+			if (!resource || resource.length === 0) {
+				setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+				return false;
+			} else {
+				setResourceErrorMsg("");
+				return true;
+			}
 		} else {
 			setResourceErrorMsg("");
 			return true;
@@ -118,7 +121,7 @@ const TaskDetailModal = ({
 		nameRef.current = task?.name;
 		descRef.current = task?.description;
 		contentRef.current = task?.feedbackContent;
-	}, []);
+	}, [task]);
 
 	return (
 		<BaseModal
@@ -131,7 +134,7 @@ const TaskDetailModal = ({
 			}}
 			okText="Lưu"
 			onOk={() => {
-				handleValidateUpload();
+				isPending && handleValidateUpload();
 				taskFormRef.current?.submit();
 			}}
 			confirmLoading={confirmLoading}
@@ -141,9 +144,9 @@ const TaskDetailModal = ({
 				ref={taskFormRef}
 				initialValues={{
 					description: task?.description,
-					dates: [dayjs(task?.startTime), dayjs(task?.endTime)],
+					dates: [task?.startTime ? dayjs(task?.startTime) : "", task?.startTime ? dayjs(task?.endTime) : ""],
 					assignees: task?.members?.map((e) => e.memberId),
-					status: task?.status || TaskStatus.new,
+					status: task?.status || ETaskStatus.New,
 					...task,
 					resource: task?.resource?.[0],
 				}}
@@ -183,6 +186,12 @@ const TaskDetailModal = ({
 									<Form.Item
 										name="dates"
 										label={<Text strong>Thời hạn công việc</Text>}
+										rules={[
+										  {
+											required: true,
+											message: "Vui lòng nhập thời hạn công việc",
+										  },
+										]}
 									>
 										<DatePicker.RangePicker
 											showNow
@@ -204,11 +213,17 @@ const TaskDetailModal = ({
 									<Form.Item
 										name="status"
 										label={<Text strong>Trạng thái</Text>}
+										rules={[
+										  {
+											required: true,
+											message: "Vui lòng nhập trạng thái",
+										  },
+										]}
 									>
 										<Select
 											className="w-full"
 											placeholder="Chọn trạng thái"
-											options={taskStatusOptions}
+											options={WTaskStatusOptions}
 											disabled={!isLeader || isCompleted}
 										/>
 									</Form.Item>

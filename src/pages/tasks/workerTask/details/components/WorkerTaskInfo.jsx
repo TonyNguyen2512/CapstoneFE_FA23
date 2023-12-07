@@ -1,8 +1,8 @@
-import { Typography, Col, Row, Space, Card, Collapse, List, Avatar, Button, message } from "antd";
+import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "antd";
 import React, { useContext, useState } from "react";
-import { formatDate } from "../../../../../utils";
+import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { TaskStatus, eTaskColors, eTaskLabels } from "../../../../../constants/enum";
+import { ETaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
@@ -19,28 +19,22 @@ export const WorkerTaskInfo = ({
 	const { user } = useContext(UserContext);
 	const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
 
-	const [taskReportLoading, setTaskReportLoading] = useState([]);
-	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState([]);
+	const [taskReportLoading, setTaskReportLoading] = useState(false);
+	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState(false);
 
 	const [showReportModal, setShowReportModal] = useState(false);
 	const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
 
-	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+	const isLeader = user?.role?.name === roles.LEADER;
 
-	const { name, leaderName, status, startTime, endTime } = info || [];
+	const { name, leaderName, status, startTime, endTime, item } = info || [];
+
+	const isInProgress = status === ETaskStatus.InProgress;
 
 	const completedTasks = tasks?.filter(
-		(e) => e.status === TaskStatus.completed
+		(e) => e.status === ETaskStatus.Completed
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
-
-	const getTaskStatus = (status) => {
-		return eTaskLabels[status] || "Không Xác Định";
-	};
-
-	const getTaskStatusColor = (status) => {
-		return eTaskColors[status] || "#FF0000";
-	};
 
 	const handleReportCreate = async (values) => {
 		setTaskReportLoading(true);
@@ -82,7 +76,7 @@ export const WorkerTaskInfo = ({
 						Chi tiết việc làm {name}
 					</Title>
 				</Col>
-				{isLeader &&
+				{isLeader && isInProgress &&
 					<>
 						<Col span={2} offset={isCompletedTasks ? 10 : 14}>
 							<Button
@@ -94,7 +88,7 @@ export const WorkerTaskInfo = ({
 								Báo cáo vấn đề
 							</Button>
 						</Col>
-						{isCompletedTasks &&
+						{isCompletedTasks && 
 							<Col span={2} offset={1}>
 								<Button
 									type="primary"
@@ -113,7 +107,7 @@ export const WorkerTaskInfo = ({
 				<Col span={24}>
 					<Card style={{ borderRadius: "1rem" }} loading={loading}>
 						<Row gutter={[16, 16]}>
-							<Col className="gutter-row" span={8}>Tên đơn hàng: <strong>{name}</strong></Col>
+							<Col className="gutter-row" span={8}>Tên công việc: <strong>{name}</strong></Col>
 							<Col className="gutter-row" span={8}>Tên quản lý: <strong>{leaderName || defaultValue("Không xác định được quản lý")}</strong></Col>
 							<Col></Col>
 							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(startTime, "DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong>
@@ -121,27 +115,50 @@ export const WorkerTaskInfo = ({
 							<Col className="gutter-row" span={8}>Ngày kết thúc: <strong>{formatDate(endTime, " DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong></Col>
 							<Col className="gutter-row" span={8}>
 								<span>Tình trạng: <strong style={{ color: getTaskStatusColor(status) }}>
-									{getTaskStatus(status)}</strong></span>
+									{getTaskStatusName(status)}</strong></span>
 							</Col>
 						</Row>
+						{isLeader &&
+							<Row gutter={[16, 16]}>
+								<Col className="gutter-row" span={24}>
+									<Collapse
+										ghost
+										items={[
+											{
+												label: `Thành viên nhóm (${team?.length ?? 0})`,
+												children: (
+													<Row gutter={[16, 16]}>
+														{team?.map((item, index) => (
+															<Col className="gutter-row" span={4} key={item.id}>
+																<Button type="text" >{index + 1}. {item.fullName}
+																	{user?.id === item.id && (
+																		<span className="ml-2" style={{ fontWeight: "bold" }}>
+																			(Tôi)
+																		</span>
+																	)}
+																</Button>
+															</Col>
+														))}
+													</Row>
+												),
+											},
+										]}
+									/>
+								</Col>
+							</Row>
+						}
 						<Row gutter={[16, 16]}>
 							<Col className="gutter-row" span={24}>
 								<Collapse
 									ghost
 									items={[
 										{
-											label: `Thành viên nhóm (${team?.length ?? 0})`,
+											label: `Danh sách vật liệu (${item?.itemMaterials?.length ?? 0})`,
 											children: (
 												<Row gutter={[16, 16]}>
-													{team?.map((item, index) => (
-														<Col className="gutter-row" span={4} key={item.id}>
-															<Button type="text" >{index + 1}. {item.fullName}
-																{user?.id === item.id && (
-																	<span className="ml-2" style={{ fontWeight: "bold" }}>
-																		(Tôi)
-																	</span>
-																)}
-															</Button>
+													{item?.itemMaterials?.map((item, index) => (
+														<Col className="gutter-row" span={24} key={item.materialId}>
+															{index + 1}. {item.materialName}
 														</Col>
 													))}
 												</Row>

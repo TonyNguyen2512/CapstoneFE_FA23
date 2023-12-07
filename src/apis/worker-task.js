@@ -103,7 +103,7 @@ const getWorkerTaskByLeaderTaskId = async (leaderTaskId, searchName, pageIndex, 
 	}
 };
 
-const getWorkerTaskByUserId = async (memberId, leaderTaskId, searchName, pageIndex, pageSize = 1000) => {
+const getWorkerTaskByLeaderTaskIdAndUserId = async (memberId, leaderTaskId, searchName, pageIndex, pageSize = 1000) => {
 	try {
 		var params = {};
 		if (searchName) {
@@ -115,7 +115,29 @@ const getWorkerTaskByUserId = async (memberId, leaderTaskId, searchName, pageInd
 		if (pageSize) {
 		  params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}/${leaderTaskId}`, {
+		const response = await BaseApi.get(`/${resource}/GetByLeaderTaskIdAndUserId/${memberId}/${leaderTaskId}`, {
+			params:params
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get Worker tasks by Worker id: ", error);
+		return errorComposer(error);
+	}
+};
+
+const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize = 1000) => {
+	try {
+		var params = {};
+		if (searchName) {
+		  params = { ...params, searchName };
+		}
+		if (pageIndex) {
+		  params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+		  params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}`, {
 			params:params
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);
@@ -142,6 +164,7 @@ const WorkerTasksApi = {
 	deleteWorkerTask,
 	getWorkerTaskById,
 	getWorkerTaskByLeaderTaskId,
+	getWorkerTaskByLeaderTaskIdAndUserId,
 	getWorkerTaskByUserId,
 	sendFeedback,
 };

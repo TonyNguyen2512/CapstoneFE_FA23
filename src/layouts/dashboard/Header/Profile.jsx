@@ -50,7 +50,7 @@ export const ProfileBar = () => {
       >
         <span className="cursor-pointer text-[#666] font-semibold" style={{ marginRight: "0px" }}>
           {user?.fullName}
-          <Down className="ml-1 absolute top-[0.2rem] bottom-0" />
+          <Down className="ml-1  top-[0.2rem] bottom-0" />
         </span>
       </Dropdown>
     </Container>

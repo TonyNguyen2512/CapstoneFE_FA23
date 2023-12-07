@@ -7,17 +7,21 @@ import GroupApi from "../../../../apis/group";
 import { GroupModal } from "../../components/GroupModal";
 import { Navigate, useNavigate } from "react-router-dom";
 import routes from "../../../../constants/routes";
+import { PageSize } from "../../../../constants/enum";
 
 const GroupList = () => {
   const [loading, setLoading] = useState(false);
   const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
   const [groupList, setGroupTypeList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const groupRef = useRef();
   const navigate = useNavigate();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    const response = await GroupApi.getAll(keyword);
+  const getData = async (search, pageIndex, handleLoading = true) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const response = await GroupApi.getAll(search, pageIndex, PageSize.GROUP_LIST);
 
     setGroupTypeList(response.data);
     setLoading(false);
@@ -33,10 +37,10 @@ const GroupList = () => {
       {
         key: "VIEW_DETAIL",
         label: "Xem thông tin chi tiết",
-        icon: <PreviewOpen/>,
+        icon: <PreviewOpen />,
         onClick: () => {
           groupRef.current = record;
-          navigate(record?.id)
+          navigate(record?.id);
         },
       },
       {
@@ -58,7 +62,7 @@ const GroupList = () => {
             title: "Xoá nhóm",
             content: `Chắc chắn xoá "${record.name}"?`,
             type: "confirm",
-            
+
             cancelText: "Hủy",
             onOk: () => deleteGroup(record.id),
             onCancel: () => {},
@@ -70,6 +74,16 @@ const GroupList = () => {
   };
 
   const columns = [
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.GROUP_LIST}</span>;
+      },
+    },
     {
       title: "Tên nhóm",
       dataIndex: "name",
@@ -88,7 +102,7 @@ const GroupList = () => {
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Nhóm trưởng",
+      title: "Tổ trưởng",
       dataIndex: "leaderName",
       key: "leaderName",
       render: (_, record) => {
@@ -138,7 +152,12 @@ const GroupList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   const deleteGroup = async (value) => {
@@ -170,7 +189,11 @@ const GroupList = () => {
         dataSource={groupList}
         columns={columns}
         loading={loading}
-        pagination={true}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.GROUP_LIST,
+          total: groupList?.total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm nhóm...",

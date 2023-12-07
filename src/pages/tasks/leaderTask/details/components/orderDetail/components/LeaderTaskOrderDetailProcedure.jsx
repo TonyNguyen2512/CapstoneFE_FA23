@@ -1,28 +1,30 @@
 import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
 import { Typography, Row, message } from "antd";
 import dayjs from "dayjs";
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BaseTable } from "../../../../../components/BaseTable";
+import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
-import { OrderStatus, PageSize, eTaskColors, eTaskLabels, modalModes } from "../../../../../constants/enum";
-import LeaderTasksApi from "../../../../../apis/leader-task";
-import routes from "../../../../../constants/routes";
-import { TaskContext } from "../../../../../providers/task";
-import { LeaderTaskModal } from "../../components/LeaderTaskModal";
-import ReportApi from "../../../../../apis/task-report";
-import { LeaderTaskReportModal } from "../../components/LeaderTaskReportModal";
+import { OrderStatus, PageSize, modalModes } from "../../../../../../../constants/enum";
+import LeaderTasksApi from "../../../../../../../apis/leader-task";
+import routes from "../../../../../../../constants/routes";
+import { TaskContext } from "../../../../../../../providers/task";
+import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
+import ReportApi from "../../../../../../../apis/task-report";
+import { LeaderTaskReportModal } from "../../../../components/LeaderTaskReportModal";
+import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 
-export const LeaderTaskProcedure = ({
+export const LeaderTaskOrderDetailProcedure = ({
   title,
+  orderId,
 }) => {
 
   const { tasks, info, reload, filterTask } = useContext(TaskContext);
 
   const { Title } = Typography;
-  const [titleInfo, setTitleInfo] = useState([]);
+  const titleInfo = title + ` (${tasks?.total ? tasks.total : 0})`;
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -32,11 +34,9 @@ export const LeaderTaskProcedure = ({
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [eTaskReportLoading, setETaskReportLoading] = useState(false);
 
-  const leaderTaskInfo = useRef();
+  const [searchData, setSearchData] = useState("")
 
-  useEffect(() => {
-    setTitleInfo(title + ` (${tasks?.total ? tasks.total : 0})`)
-  });
+  const leaderTaskInfo = useRef();
 
   const getActionItems = (record) => {
     const { isActive, id } = record;
@@ -50,7 +50,8 @@ export const LeaderTaskProcedure = ({
           leaderTaskInfo.current = record;
           navigate(routes.dashboard.workersTasks + "/" + id, {
             state: {
-              orderId: info.id
+              orderId: orderId,
+              orderDetailId: info.id,
             }
           }, { replace: true });
         },
@@ -63,14 +64,14 @@ export const LeaderTaskProcedure = ({
           handleShowModal(record?.id);
         },
       },
-      {
-        key: "REPORT_ROLE",
-        label: "Báo cáo công việc",
-        icon: <Edit />,
-        onClick: () => {
-          handleShowReportModal(record?.id);
-        },
-      },
+      // {
+      //   key: "REPORT_ROLE",
+      //   label: "Báo cáo công việc",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     handleShowReportModal(record?.id);
+      //   },
+      // },
       {
         key: "SET_STATUS",
         label: isActive ? "Mở khóa" : "Khóa",
@@ -89,14 +90,6 @@ export const LeaderTaskProcedure = ({
         },
       },
     ];
-  };
-
-  const getProcedureStatus = (status) => {
-    return eTaskLabels[status] || "Không Xác Định";
-  };
-
-  const getProcedureStatusColor = (status) => {
-    return eTaskColors[status] || "#FF0000";
   };
 
   const handleShowReportModal = async (eTaskId) => {
@@ -136,7 +129,7 @@ export const LeaderTaskProcedure = ({
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Nhóm trưởng",
+      title: "Tổ trưởng",
       dataIndex: "leaderName",
       key: "leaderName",
       sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
@@ -156,7 +149,7 @@ export const LeaderTaskProcedure = ({
       key: "startTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.startTime).format("DD/MM/YYYY");
+        const formattedDate = formatDate(record.startTime, "DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
       sorter: (a, b) => a.startTime.localeCompare(b.startTime),
@@ -167,7 +160,7 @@ export const LeaderTaskProcedure = ({
       key: "endTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.endTime).format("DD/MM/YYYY");
+        const formattedDate = formatDate(record.endTime, "DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
       sorter: (a, b) => a.endTime.localeCompare(b.endTime),
@@ -178,8 +171,8 @@ export const LeaderTaskProcedure = ({
       key: "status",
       render: (_, record) => {
         return (
-          <span style={{ color: getProcedureStatusColor(record.status), fontWeight: "bold" }}>
-            {getProcedureStatus(record.status)}
+          <span style={{ color: getTaskStatusColor(record.status), fontWeight: "bold" }}>
+            {getTaskStatusName(record.status)}
           </span>
         );
       },
@@ -201,25 +194,27 @@ export const LeaderTaskProcedure = ({
   ];
 
   const handleSearch = (value) => {
-    filterTask(value, 1);
+    setSearchData(value);
+    filterTask(1, value);
   };
 
   const onPageChange = (current) => {
-    filterTask(null, current);
+    filterTask(current, searchData);
   };
 
   const handleSubmitCreate = async (values) => {
     setETaskCreateLoading(true);
     const data = {
       name: values?.name,
-      leaderId: values?.leaderId,
       itemId: values?.itemId,
+      leaderId: values?.leaderId,
+      itemId: info?.itemId,
       priority: values?.priority,
       itemQuantity: values?.itemQuantity,
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: info.id,
+      orderId: orderId,
     }
     console.log("create", data)
     try {
@@ -243,7 +238,6 @@ export const LeaderTaskProcedure = ({
     const data = {
       id: values?.id,
       name: values?.name,
-      leaderId: values?.leaderId,
       priority: values?.priority,
       leaderId: values?.leaderId,
       itemQuantity: values?.itemQuantity,
@@ -327,11 +321,11 @@ export const LeaderTaskProcedure = ({
         dataSource={tasks?.data}
         columns={columns}
         loading={loading}
-        pagination={{ 
+        pagination={{
           onChange: onPageChange,
           pageSize: PageSize.LEADER_TASK_PROCEDURE_LIST,
           total: tasks?.total,
-         }}
+        }}
         rowKey={(record) => record.id}
         searchOptions={{
           visible: true,

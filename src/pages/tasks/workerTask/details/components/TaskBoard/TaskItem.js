@@ -16,20 +16,20 @@ import { TextTile } from "../../../../../../components/TextTile";
 import { formatDate } from "../../../../../../utils";
 import moment, { now } from "moment";
 import { UserContext } from "../../../../../../providers/user";
-import { TaskStatus, eTaskStatus } from "../../../../../../constants/enum";
-import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
+import { TaskStatus } from "../../../../../../constants/enum";
 import { TaskContext } from "../../../../../../providers/task";
+import { WechatOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-export const TaskItem = ({ task, index, onView, onDelete }) => {
+export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 	const { user } = useContext(UserContext);
 	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
-	const isCompleted = status === TaskStatus.completed;
+	const isCompleted = status === TaskStatus.Completed;
 
-	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
+	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.Completed;
 
 	const handbleDropdown = () => {
 		let items = [
@@ -37,15 +37,22 @@ export const TaskItem = ({ task, index, onView, onDelete }) => {
 				label: "Xem",
 				icon: <PreviewOpen className="mt-1" />,
 				onClick: () => onView(task),
-			}
+			},
 		];
 		if (!isCompleted) {
-			items.push({
-				label: "Xóa",
-				icon: <Delete className="mt-1" />,
-				danger: true,
-				onClick: () => onDelete(task),
-			})
+			items.push(
+				{
+					label: "Chat",
+					icon: <WechatOutlined className="mt-1" />,
+					onClick: () => onChat(task),
+				},
+				{
+					label: "Xóa",
+					icon: <Delete className="mt-1" />,
+					danger: true,
+					onClick: () => onDelete(task),
+				},
+			)
 		}
 		return items;
 	}

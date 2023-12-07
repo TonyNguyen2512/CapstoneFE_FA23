@@ -10,6 +10,7 @@ import confirm from "antd/lib/modal/confirm";
 import { AddWorkerToGroupModal } from "./components/AddWorkerToGroupModal";
 import routes from "../../../constants/routes";
 import { GroupContext } from "../../../providers/group";
+import { PageSize } from "../../../constants/enum";
 
 const GroupDetailPage = () => {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ const GroupDetailPage = () => {
   const [addWorkerToGroupModal, setAddWorkerToGroupModal] = useState(false);
   const [showDeleteProjectModal, setShowDeleteProjectModal] = useState(false);
   const [workerNotInGroupList, setWorkerNotInGroupList] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
   const [workerList, setGroupWorkerList] = useState([]);
   const [groupCreating, setGroupCreating] = useState(false);
 
@@ -26,9 +27,11 @@ const GroupDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const getData = async (id, keyword) => {
-    setLoading(true);
-    const response = await GroupApi.getWorkersByGroupId(id, keyword);
+  const getData = async (id, search, pageIndex, handleLoading = true) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const response = await GroupApi.getWorkersByGroupId(id, search, pageIndex, PageSize.WORKER_IN_GROUP_LIST);
     setGroupWorkerList(response.data);
     setLoading(false);
   };
@@ -54,7 +57,12 @@ const GroupDetailPage = () => {
   };
 
   const handleSearch = (value) => {
-    getData(id, value);
+    getData(id, value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   const handleWorkerNotInGroup = async () => {
@@ -87,8 +95,8 @@ const GroupDetailPage = () => {
   };
 
   useEffect(() => {
-    if (id) {
-      getData(id);
+    if (id, null, 1, true) {
+      getData(id, null, 1, true);
     }
     handleWorkerNotInGroup();
   }, [id]);
@@ -145,7 +153,7 @@ const GroupDetailPage = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.WORKER_IN_GROUP_LIST}</span>;
       },
     },
     {
@@ -250,7 +258,11 @@ const GroupDetailPage = () => {
         dataSource={workerList}
         columns={columns}
         loading={loading}
-        pagination={true}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.WORKER_IN_GROUP_LIST,
+          total: workerList?.total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm nhóm...",

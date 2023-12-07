@@ -3,7 +3,7 @@ import { Col, Descriptions, Row } from "antd/lib";
 import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { TaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus } from "../../../../../constants/enum";
 import { useContext } from "react";
 import { TaskContext } from "../../../../../providers/task";
 
@@ -22,15 +22,15 @@ export const WorkerTaskOverview = ({
   const { allTasks } = useContext(TaskContext);
   const allWTasks = allTasks;
   const completedTasks = allWTasks?.filter(
-    (e) => e.status === TaskStatus.completed
+    (e) => e.status === ETaskStatus.Completed
   );
 
   const inProgressTasks = allWTasks?.filter(
-    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.inProgress
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === ETaskStatus.InProgress
   )
 
   const expireTasks = allWTasks?.filter(
-    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.completed
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== ETaskStatus.Completed
   )
 
   return (
@@ -56,12 +56,12 @@ export const WorkerTaskOverview = ({
             label: "Công việc đạt",
             children: completedTasks?.length,
           },
-          {
-            label: "Công việc không đạt",
-            children: allWTasks?.filter(
-              (e) => e.status === TaskStatus.inProgress
-            )?.length,
-          },
+          // {
+          //   label: "Công việc không đạt",
+          //   children: allWTasks?.filter(
+          //     (e) => e.status === TaskStatus.inProgress
+          //   )?.length,
+          // },
           {
             label: "Công việc trong tiến độ",
             children: inProgressTasks?.length,

@@ -1,6 +1,6 @@
 import { Space, message, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { UNSAFE_DataRouterStateContext, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
 import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
 import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
@@ -13,8 +13,7 @@ import { UserContext } from "../../../../providers/user";
 import { roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import GroupApi from "../../../../apis/group";
-import OrderApi from "../../../../apis/order";
-import { eTaskStatus } from "../../../../constants/enum";
+import { ETaskStatus } from "../../../../constants/enum";
 
 
 export const WorkerTaskDetailsPage = () => {
@@ -22,6 +21,7 @@ export const WorkerTaskDetailsPage = () => {
   const { user } = useContext(UserContext);
   const isLeader = user?.role?.name === roles.LEADER;
   const isForeman = user?.role?.name === roles.FOREMAN;
+  const isWorker = user?.role?.name === roles.WORKER;
 
   const [loading, setLoading] = useState(false);
   const [acceptance, setAcceptance] = useState(false);
@@ -37,7 +37,7 @@ export const WorkerTaskDetailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleRetrieveWorkerTaskList = async (leaderTaskId, memberId, handleLoading) => {
+  const handleRetrieveWorkerTaskList = async (handleLoading, leaderTaskId, memberId) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -48,7 +48,7 @@ export const WorkerTaskDetailsPage = () => {
       dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
     }
     if (dataWorkerTasks.code !== 0) {
-      message.error = dataWorkerTasks.message;
+      message.error(dataWorkerTasks.message);
       return;
     }
 
@@ -64,6 +64,8 @@ export const WorkerTaskDetailsPage = () => {
       }
 
       if (!leaderTaskId) return;
+
+      console.log("leaderTaskId", leaderTaskId)
 
       // retrieve leader task data by id
       const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
@@ -85,7 +87,7 @@ export const WorkerTaskDetailsPage = () => {
 
       let dataGroupMembers = [];
       if (dataLeaderUser?.groupId) {
-        dataGroupMembers = await GroupApi.getAllUserByGroupId(dataLeaderUser?.groupId);
+        dataGroupMembers = await GroupApi.getWorkersByGroupId(dataLeaderUser?.groupId);
         if (!dataGroupMembers) {
           message.error("Không tìm thấy thông tin các thành viên trong tổ");
         }
@@ -94,7 +96,11 @@ export const WorkerTaskDetailsPage = () => {
       }
       setGroupMemberList(dataGroupMembers?.data);
 
-      handleRetrieveWorkerTaskList(leaderTaskId, null, true);
+      if (isWorker) {
+        handleRetrieveWorkerTaskList(true, leaderTaskId, user?.id);
+      } else {
+        handleRetrieveWorkerTaskList(true, leaderTaskId, null);
+      }
 
       setLoading(false);
     }
@@ -104,12 +110,12 @@ export const WorkerTaskDetailsPage = () => {
 
   useEffect(() => {
     if (location?.state) {
-      setState(location?.state);
+      setState(location.state);
     }
   }, [location]);
 
   useEffect(() => {
-    if (leaderTaskInfo?.status === eTaskStatus.Completed) {
+    if (leaderTaskInfo?.status === ETaskStatus.Completed) {
       setAcceptance(true);
     }
   }, [leaderTaskInfo])
@@ -127,6 +133,10 @@ export const WorkerTaskDetailsPage = () => {
         path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
         if (state?.orderId) {
           path += `/${state?.orderId}`;
+
+          if (state?.orderDetailId) {
+            path += `/${routes.dashboard.taskOrderDetails}/${state?.orderDetailId}`
+          }
         }
       }
       navigate(path, {
@@ -143,14 +153,15 @@ export const WorkerTaskDetailsPage = () => {
         <Space direction="vertical" className="w-full gap-6">
           <TaskProvider
             tasks={workderTaskList}
+            allTasks={workderTaskList}
             info={leaderTaskInfo}
             team={groupMemberList}
             acceptance={acceptance}
             onReload={(handleLoading) => {
-              handleRetrieveWorkerTaskList(leaderTaskId, null, handleLoading);
+              handleRetrieveWorkerTaskList(handleLoading, leaderTaskId);
             }}
             onFilterTask={(memberId) => {
-              handleRetrieveWorkerTaskList(leaderTaskId, memberId, false);
+              handleRetrieveWorkerTaskList(false, leaderTaskId, memberId);
             }}
             onAcceptanceTask={() => {
               setAcceptance(true);

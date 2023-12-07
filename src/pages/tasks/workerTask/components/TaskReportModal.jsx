@@ -57,13 +57,13 @@ export const TaskReportModal = ({
 	};
 
 	const handleValidateUpload = () => {
-		if (!worderReportFormRef.current?.getFieldValue('resource')) {
-			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
-			return false;
-		} else {
+		// if (!worderReportFormRef.current?.getFieldValue('resource')) {
+		// 	setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+		// 	return false;
+		// } else {
 			setResourceErrorMsg("");
 			return true;
-		}
+		// }
 	}
 
 	useEffect(() => {
@@ -87,7 +87,7 @@ export const TaskReportModal = ({
 			}}
 			confirmLoading={confirmLoading}
 			width="40%"
-			okText="Lưu"
+			okText="Gửi"
 		>
 			<Form
 				ref={worderReportFormRef}

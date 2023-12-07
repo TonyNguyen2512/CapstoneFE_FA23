@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProjectApi from "../../../apis/project";
 import TaskApi from "../../../apis/task";
 import { ProgressIndicator } from "../../../components/ProgressIndicator";
-import { TaskStatus } from "../../../constants/enum";
+import { ETaskStatus } from "../../../constants/enum";
 import { BasePageContent } from "../../../layouts/containers/BasePageContent";
 import { ProjectProvider } from "../../../providers/project";
 import { ProjectDescriptionModal } from "../components/ProjectDescriptionModal";
@@ -34,11 +34,11 @@ const ProjectDetailPage = () => {
 	// Data states
 	const [project, setProject] = useState({});
 	const [tasks, setTasks] = useState([]);
-	const newTasks = tasks.filter((e) => e.status === TaskStatus.new);
+	const newTasks = tasks.filter((e) => e.status === ETaskStatus.new);
 	const inProgressTasks = tasks.filter(
-		(e) => e.status === TaskStatus.inProgress
+		(e) => e.status === ETaskStatus.inProgress
 	);
-	const completedTasks = tasks.filter((e) => e.status === TaskStatus.completed);
+	const completedTasks = tasks.filter((e) => e.status === ETaskStatus.completed);
 
 	// Modal states
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
