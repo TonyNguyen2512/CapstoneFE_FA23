@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { dateSort, formatDate, formatMoney, formatNum, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
-import { OrderStatus, PageSize, TaskStatus, modalModes } from "../../../../../constants/enum";
+import { OrderStatus, PageSize, ETaskStatus, modalModes } from "../../../../../constants/enum";
 import { Table, message } from "antd";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
@@ -532,7 +532,7 @@ export const LeaderTaskOrderDetails = ({
   const handleSubmitWTaskUpdate = async (values) => {
     setWTaskDetaiLoading(true);
     let resp = null;
-    if (values.status !== TaskStatus.Pending) {
+    if (values.status !== ETaskStatus.Pending) {
       console.log("update task: ", values);
       resp = await WorkerTasksApi.updateWorkerTask(values);
     } else {

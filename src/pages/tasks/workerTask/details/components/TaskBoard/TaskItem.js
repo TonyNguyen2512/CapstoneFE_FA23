@@ -16,8 +16,7 @@ import { TextTile } from "../../../../../../components/TextTile";
 import { formatDate } from "../../../../../../utils";
 import moment, { now } from "moment";
 import { UserContext } from "../../../../../../providers/user";
-import { wTaskStatus, eTaskStatus, TaskStatus } from "../../../../../../constants/enum";
-import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
+import { TaskStatus } from "../../../../../../constants/enum";
 import { TaskContext } from "../../../../../../providers/task";
 import { WechatOutlined } from "@ant-design/icons";
 

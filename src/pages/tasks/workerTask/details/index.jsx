@@ -13,7 +13,7 @@ import { UserContext } from "../../../../providers/user";
 import { roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import GroupApi from "../../../../apis/group";
-import { wTaskStatus } from "../../../../constants/enum";
+import { ETaskStatus } from "../../../../constants/enum";
 
 
 export const WorkerTaskDetailsPage = () => {
@@ -113,7 +113,7 @@ export const WorkerTaskDetailsPage = () => {
   }, [location]);
 
   useEffect(() => {
-    if (leaderTaskInfo?.status === wTaskStatus.Completed) {
+    if (leaderTaskInfo?.status === ETaskStatus.Completed) {
       setAcceptance(true);
     }
   }, [leaderTaskInfo])

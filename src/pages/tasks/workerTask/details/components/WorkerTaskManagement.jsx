@@ -8,7 +8,7 @@ import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import { TaskStatus, wTaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
 import { TaskChatModal } from "../../components/TaskChatModal";
 import { TaskBoard } from "./TaskBoard";
 
@@ -20,7 +20,7 @@ export const WorkerTaskManagement = () => {
 	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === TaskStatus.InProgress;
+	const isInProgress = info.status === ETaskStatus.InProgress;
 
 	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
 	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
@@ -37,6 +37,7 @@ export const WorkerTaskManagement = () => {
 	const taskRef = useRef();
 
 	const handleSubmitCreate = async (values) => {
+		console.log("handleSubmitCreate", values)
 		const request = {
 			leaderTaskId: info?.id,
 			name: values?.taskName,
@@ -72,10 +73,10 @@ export const WorkerTaskManagement = () => {
 	};
 
 	const handleSubmitUpdate = async (values) => {
-		console.log("handleSubmitUpdate")
+		console.log("handleSubmitUpdate", values)
 		setTaskUpdateLoading(true);
 		let resp = null;
-		if (values.status !== wTaskStatus.Pending) {
+		if (values.status !== TaskStatus.Pending) {
 			console.log("update task: ", values);
 			resp = await WorkerTasksApi.updateWorkerTask(values);
 		} else {

@@ -2,7 +2,7 @@ import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "an
 import React, { useContext, useState } from "react";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { TaskStatus, wTaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
@@ -29,10 +29,10 @@ export const WorkerTaskInfo = ({
 
 	const { name, leaderName, status, startTime, endTime, item } = info || [];
 
-	const isInProgress = status === TaskStatus.InProgress;
+	const isInProgress = status === ETaskStatus.InProgress;
 
 	const completedTasks = tasks?.filter(
-		(e) => e.status === TaskStatus.Completed
+		(e) => e.status === ETaskStatus.Completed
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 
@@ -107,7 +107,7 @@ export const WorkerTaskInfo = ({
 				<Col span={24}>
 					<Card style={{ borderRadius: "1rem" }} loading={loading}>
 						<Row gutter={[16, 16]}>
-							<Col className="gutter-row" span={8}>Tên đơn hàng: <strong>{name}</strong></Col>
+							<Col className="gutter-row" span={8}>Tên công việc: <strong>{name}</strong></Col>
 							<Col className="gutter-row" span={8}>Tên quản lý: <strong>{leaderName || defaultValue("Không xác định được quản lý")}</strong></Col>
 							<Col></Col>
 							<Col className="gutter-row" span={8}>Ngày bắt đầu: <strong>{formatDate(startTime, "DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}</strong>

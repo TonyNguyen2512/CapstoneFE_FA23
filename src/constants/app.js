@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus, wTaskMap, wTaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -263,6 +263,29 @@ export const USER_PERMISSIONS = {
 
 export const ETaskStatusOptions = [
   {
+    value: ETaskStatus.New,
+    label: ETaskMap[ETaskStatus.New].label,
+  },
+  {
+    value: ETaskStatus.InProgress,
+    label: ETaskMap[ETaskStatus.InProgress].label,
+  },
+  {
+    value: ETaskStatus.Pending,
+    label: ETaskMap[ETaskStatus.Pending].label,
+  },
+  {
+    value: ETaskStatus.NotAchived,
+    label: ETaskMap[ETaskStatus.NotAchived].label,
+  },
+  {
+    value: ETaskStatus.Completed,
+    label: ETaskMap[ETaskStatus.Completed].label,
+  },
+];
+
+export const WTaskStatusOptions = [
+  {
     value: TaskStatus.New,
     label: TaskMap[TaskStatus.New].label,
   },
@@ -275,31 +298,8 @@ export const ETaskStatusOptions = [
     label: TaskMap[TaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.NotAchived,
-    label: TaskMap[TaskStatus.NotAchived].label,
-  },
-  {
     value: TaskStatus.Completed,
     label: TaskMap[TaskStatus.Completed].label,
-  },
-];
-
-export const WTaskStatusOptions = [
-  {
-    value: wTaskStatus.New,
-    label: wTaskMap[wTaskStatus.New].label,
-  },
-  {
-    value: wTaskStatus.InProgress,
-    label: wTaskMap[wTaskStatus.InProgress].label,
-  },
-  {
-    value: wTaskStatus.Pending,
-    label: wTaskMap[wTaskStatus.Pending].label,
-  },
-  {
-    value: wTaskStatus.Completed,
-    label: wTaskMap[wTaskStatus.Completed].label,
   },
 ];
 

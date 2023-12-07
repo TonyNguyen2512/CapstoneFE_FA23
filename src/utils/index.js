@@ -3,7 +3,7 @@ import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
 import { orderLabels } from "../constants/enum";
-import { TaskMap } from "../constants/enum";
+import { ETaskMap } from "../constants/enum";
 
 export const formatDate = (date, pattern, defaultValue) => {
   let result = "";
@@ -81,11 +81,11 @@ export const formatMoney = (money) => {
 }
 
 export const getTaskStatusName = (status) => {
-	return TaskMap[status]?.label || "Không Xác Định";
+	return ETaskMap[status]?.label || "Không Xác Định";
 };
 
 export const getTaskStatusColor = (status) => {
-	return TaskMap[status]?.color || "#FF0000";
+	return ETaskMap[status]?.color || "#FF0000";
 };
 
 export const handleDownloadFile = async (url, filename, message) => {

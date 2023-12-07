@@ -2,7 +2,7 @@ import { Form, Input, Select } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import React, { useRef } from "react";
 import BaseModal from "../../../../components/BaseModal";
-import { TaskStatus } from "../../../../constants/enum";
+import { ETaskStatus } from "../../../../constants/enum";
 
 export const TaskModal = ({
 	open,
@@ -17,15 +17,15 @@ export const TaskModal = ({
 
 	const statusOptions = [
 		{
-			value: TaskStatus.New,
+			value: ETaskStatus.New,
 			label: "Cần làm",
 		},
 		{
-			value: TaskStatus.InProgress,
+			value: ETaskStatus.InProgress,
 			label: "Đang làm",
 		},
 		{
-			value: TaskStatus.Completed,
+			value: ETaskStatus.Completed,
 			label: "Đã hoàn thành",
 		},
 	];
