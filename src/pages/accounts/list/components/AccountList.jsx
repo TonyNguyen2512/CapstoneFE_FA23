@@ -1,5 +1,5 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Tag, message } from "antd";
+import { Edit, Forbid, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
+import { Button, Dropdown, Space, Tag, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../../apis/role";
 import UserApi from "../../../../apis/user";
@@ -8,47 +8,54 @@ import { roles } from "../../../../constants/app";
 import { getRoleName } from "../../../../utils";
 import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
+import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
+
+const roleColors = {
+  ADMIN: "#FF7777",
+  FACTORY: "#4ECA69",
+  FOREMAN: "#4ECA69",
+  MANAGER: "#F1CA7F",
+  LEADER: "#F1CA5A",
+  WORKER: "#59A7DE",
+};
 
 const AccountList = () => {
-  const [accountLoading, setAccountLoading] = useState(false);
-  const [showUpdateRoleModal, setShowUpdateRoleModal] = useState(false);
-  const [accounts, setAccounts] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [showPhoneModal, setShowPhoneModal] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [roleOptions, setRoleOptions] = useState([]);
+  const [roleCreateOptions, setRoleCreateOptions] = useState([]);
 
   const userRef = useRef();
-  const rolesRef = useRef();
 
   const getUsers = async (keyword) => {
-    setAccountLoading(true);
-    const data = await UserApi.searchUsers(keyword);
-    data.sort((a, b) => {
-      if (a.role.name === roles.ADMIN) {
-        return -1; // a comes before b
-      }
-      if (b.role.name === roles.ADMIN) {
-        return 1; // b comes before a
-      }
-      return 0; // no change in order
-    });
-    // data.map((d) => {
-    //   return {
-    //     ...d,
-    //     role: d.role?.name || "",
-    //   };
+    setLoading(true);
+    const data = await UserApi.getAll(keyword);
+    console.log(data);
+    // data?.sort((a, b) => {
+    //   if (a.role?.name === roles.ADMIN) {
+    //     return -1; // a comes before b
+    //   }
+    //   if (b.role?.name === roles.ADMIN) {
+    //     return 1; // b comes before a
+    //   }
+    //   return 0; // no change in order
     // });
-    setAccounts(
-      data.map((d) => {
-        return {
-          ...d,
-          role: d.role?.name || "",
-        };
-      })
-    );
-    setAccountLoading(false);
+    setUsers(data);
+    setLoading(false);
+  };
+
+  const getRoleForCreateUsers = async () => {
+    const data = await RoleApi.getRoleForCreateUser();
+    setRoleCreateOptions(data);
+    getUsers();
   };
 
   const getAllRoles = async () => {
-    const result = await RoleApi.getAllRoles();
-    rolesRef.current = result.filter((e) => e.name !== roles.ADMIN);
+    const data = await RoleApi.getAllRoles();
+    setRoleOptions(data);
   };
 
   const banUser = async (userId) => {
@@ -74,32 +81,51 @@ const AccountList = () => {
   useEffect(() => {
     getUsers();
     getAllRoles();
+    getRoleForCreateUsers();
   }, []);
 
   const getActionItems = (record) => {
-    const { isBan, userId, role } = record;
+    const { banStatus, id, role } = record;
 
     return [
       {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật vai trò",
+        key: "UPDATE_USER",
+        label: "Cập nhật thông tin",
         icon: <Edit />,
-        disabled: role === roles.ADMIN,
         onClick: () => {
           userRef.current = record;
-          setShowUpdateRoleModal(true);
+          setShowUserModal(true);
+        },
+      },
+      {
+        key: "UPDATE_PHONE",
+        label: "Cập nhật số điện thoại",
+        icon: <Phone />,
+        onClick: () => {
+          userRef.current = record;
+          setShowPhoneModal(true);
+        },
+      },
+      {
+        key: "UPDATE_ROLE",
+        label: "Cập nhật vai trò",
+        icon: <UserPositioning />,
+        disabled: role?.name === roles.ADMIN,
+        onClick: () => {
+          userRef.current = record;
+          setShowModal(true);
         },
       },
       {
         key: "SET_STATUS",
-        label: isBan ? "Mở khóa tài khoản" : "Khóa tài khoản",
-        danger: !isBan,
-        icon: !isBan ? <Forbid /> : <Unlock />,
+        label: banStatus ? "Mở khóa tài khoản" : "Khóa tài khoản",
+        danger: !banStatus,
+        icon: !banStatus ? <Forbid /> : <Unlock />,
         onClick: () => {
-          if (isBan) {
-            unbanUser(userId);
+          if (banStatus) {
+            unbanUser(id);
           } else {
-            banUser(userId);
+            banUser(id);
           }
         },
         disabled: role === roles.ADMIN,
@@ -114,12 +140,6 @@ const AccountList = () => {
       key: "fullName",
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
-    // {
-    //   title: "Ngày sinh",
-    //   dataIndex: "birthday",
-    //   key: "birthday",
-    //   sorter: (a, b) => a.birthday.localeCompare(b.birthday),
-    // },
     {
       title: "Địa chỉ",
       dataIndex: "address",
@@ -140,62 +160,47 @@ const AccountList = () => {
     },
     {
       title: "Vai trò",
-      dataIndex: "role",
-      key: "role",
-      render: (_, { role }) => {
+      dataIndex: "roleId",
+      key: "roleId",
+      render: (_, { roleId }) => {
+        const role = roleOptions.find((r) => r.id === roleId);
         return (
           <Tag
             className="text-center"
-            color={
-              role === roles.ADMIN
-                ? "#FF7777"
-                : role === roles.FOREMAN
-                ? "#4ECA69"
-                : role === roles.LEADER
-                ? "#F1CA7F"
-                : "#59A7DE"
-            }
+            color={roleColors[role?.name?.toUpperCase() || "WORKER"]}
             style={{ fontWeight: "bold" }}
           >
-            {getRoleName(role)}
+            {getRoleName(role?.name)}
           </Tag>
         );
       },
-      sorter: (a, b) => a.role.localeCompare(b.role),
+      sorter: (a, b) => a.role?.name.localeCompare(b.role?.name),
       filter: {
         placeholder: "Chọn vai trò",
         label: "Vai trò",
-        filterOptions: [
-          {
-            label: getRoleName(roles.ADMIN),
-            value: roles.ADMIN,
-          },
-          {
-            label: getRoleName(roles.WORKER),
-            value: roles.WORKER,
-          },
-          {
-            label: getRoleName(roles.FOREMAN),
-            value: roles.FOREMAN,
-          },
-        ],
+        filterOptions: roleOptions?.map((role) => {
+          return {
+            label: getRoleName(role?.name),
+            value: role?.id,
+          };
+        }),
       },
     },
     {
       title: "Trạng thái",
-      dataIndex: "isBan",
-      key: "isBan",
-      render: (_, { isBan }) => {
+      dataIndex: "banStatus",
+      key: "banStatus",
+      render: (_, { banStatus }) => {
         return (
           // <Tag color={!isBan ? "#29CB00" : "#FF0000"}>
           //   {!isBan ? "Đang hoạt động" : "Không hoạt động"}
           // </Tag>
-          <span style={{ color: !isBan ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
-            {!isBan ? "Đang hoạt động" : "Không hoạt động"}
+          <span style={{ color: !banStatus ? "#29CB00" : "#FF0000", fontWeight: "bold" }}>
+            {!banStatus ? "Đang hoạt động" : "Không hoạt động"}
           </span>
         );
       },
-      sorter: (a, b) => a.isBan - b.isBan,
+      sorter: (a, b) => a.banStatus - b.banStatus,
       filter: {
         placeholder: "Chọn trạng thái",
         label: "Trạng thái",
@@ -219,7 +224,7 @@ const AccountList = () => {
       render: (_, record) => {
         return (
           <>
-            {record.role !== roles.ADMIN && (
+            {record.role?.name !== roles.ADMIN && (
               <Dropdown menu={{ items: getActionItems(record) }}>
                 <Button className="mx-auto flex-center" icon={<More />} />
               </Dropdown>
@@ -236,12 +241,22 @@ const AccountList = () => {
 
   return (
     <>
+      <Space className="w-full flex justify-between mb-6">
+        <div></div>
+        <Button
+          type="primary"
+          className="btn-primary app-bg-primary font-semibold text-white"
+          onClick={() => setShowUserModal(true)}
+        >
+          Tạo tài khoản
+        </Button>
+      </Space>
       <BaseTable
         title="Quản lý tài khoản"
-        dataSource={accounts}
+        loading={loading}
+        dataSource={users}
         columns={columns}
-        loading={accountLoading}
-        pagination={false}
+        pagination={{ pageSize: 10, pageSizeOptions: [] }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm tài khoản...",
@@ -249,13 +264,46 @@ const AccountList = () => {
           width: 300,
         }}
       />
-      <AccountModal title="Thêm học kỳ"></AccountModal>
-      <UpdateRoleModal
-        user={userRef.current}
-        open={showUpdateRoleModal}
-        onCancel={() => setShowUpdateRoleModal(false)}
-        allRoles={rolesRef.current}
+      <AccountModal
+        data={userRef.current}
+        roleOptions={roleCreateOptions?.map((e) => {
+          return {
+            key: e.name,
+            value: e.id,
+            label: getRoleName(e.name),
+          };
+        })}
+        open={showUserModal}
         onSuccess={() => getUsers()}
+        onCancel={() => {
+          setShowUserModal(false);
+          userRef.current = null;
+        }}
+      />
+      <UpdateRoleModal
+        roleOptions={roleOptions?.map((e) => {
+          return {
+            key: e.name,
+            value: e.id,
+            label: getRoleName(e.name),
+          };
+        })}
+        user={userRef.current}
+        open={showModal}
+        onSuccess={() => getUsers()}
+        onCancel={() => {
+          setShowModal(false);
+          userRef.current = null;
+        }}
+      />
+      <UpdatePhoneModal
+        data={userRef.current}
+        open={showPhoneModal}
+        onSuccess={() => getUsers()}
+        onCancel={() => {
+          setShowPhoneModal(false);
+          userRef.current = null;
+        }}
       />
     </>
   );

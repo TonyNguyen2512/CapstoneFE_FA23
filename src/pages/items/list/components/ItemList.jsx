@@ -1,27 +1,50 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space } from "antd";
+import { Edit, Lightning, Forbid, More, Unlock } from "@icon-park/react";
+import { Button, Dropdown, Modal, Space, Table } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
-import { UpdateItemModal } from "../../components/UpdateItemModal";
+import { ItemModal } from "../../components/ItemModal";
 import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
+import { ItemDuplicateModal } from "../../components/ItemDuplicate";
 import ItemApi from "../../../../apis/item";
+import ItemCategoryApi from "../../../../apis/item-category";
+import ProcedureApi from "../../../../apis/procedure";
+import { PageSize } from "../../../../constants/enum";
+import MaterialApi from "../../../../apis/material";
+import StepApi from "../../../../apis/step";
+import { useParams } from "react-router-dom";
 
 const ItemList = () => {
   const [loading, setLoading] = useState(false);
-  const [showUpdateItemModal, setShowUpdateItemModal] = useState(false);
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [showItemDuplicateModal, setShowItemDuplicateModal] = useState(false);
   const [itemList, setItemList] = useState([]);
+  const [itemCategoryList, setItemCategoryList] = useState([]);
+  const [listProcedures, setListProcedures] = useState([]);
+  const [stepList, setStepList] = useState([]);
+  const [listMaterials, setListMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [listRowExpand, setListRowExpand] = useState([]);
+  const { id } = useParams();
 
-  const userRef = useRef();
+  const itemRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    const response = await ItemApi.getAllItem(keyword);
-    console.log(response.data);
-    setItemList(response.data);
-    // setItemList(mockItems);
+  const getData = async (search, pageIndex, handleLoading = true) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    let response = await ItemApi.getAllItem(search, pageIndex, PageSize.ITEM_LIST);
+    setItemList(response);
+    response = await ItemCategoryApi.getAllItem();
+    setItemCategoryList(response.data);
     setLoading(false);
+    response = await ProcedureApi.getAllItem();
+    setListProcedures(response.data);
+    response = await MaterialApi.getAllMaterial();
+    setListMaterials(response.data);
+    response = await StepApi.getAllItem();
+    setStepList(response.data);
   };
 
   const showModal = (item) => {
@@ -45,8 +68,17 @@ const ItemList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          userRef.current = record;
-          setShowUpdateItemModal(true);
+          itemRef.current = record;
+          setShowItemModal(true);
+        },
+      },
+      {
+        key: "DUPLICATE_ITEM",
+        label: "Sao chép sản phẩm",
+        icon: <Lightning />,
+        onClick: () => {
+          itemRef.current = record;
+          setShowItemDuplicateModal(true);
         },
       },
       {
@@ -61,12 +93,23 @@ const ItemList = () => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-      width: "10%",
-      sorter: (a, b) => a.id.localeCompare(b.id),
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ITEM_LIST}</span>;
+      },
+    },
+    {
+      title: "Mã sản phẩm",
+      dataIndex: "code",
+      key: "code",
+      render: (_, record) => {
+        return <span onClick={() => showModal(record)}>{record.code}</span>;
+      },
+      sorter: (a, b) => a?.code.localeCompare(b?.code),
     },
     {
       title: "Tên sản phẩm",
@@ -75,36 +118,29 @@ const ItemList = () => {
       render: (_, record) => {
         return <span onClick={() => showModal(record)}>{record.name}</span>;
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Màu sắc",
-      dataIndex: "color",
-      key: "color",
-      align: "center",
-      sorter: (a, b) => a.color.localeCompare(b.color),
+      sorter: (a, b) => a?.name.localeCompare(b?.name),
     },
     {
       title: "Loại sản phẩm",
-      dataIndex: "typeId",
-      key: "typeId",
-      width: "15%",
+      dataIndex: "itemCategoryName",
+      key: "itemCategoryName",
+      width: "35%",
       align: "center",
       render: (_, record) => {
-        return <span>{mockItemTypes.find((e) => e.id === record.typeId)?.name}</span>;
+        return <span>{record?.itemCategoryName || "-"}</span>;
       },
-      sorter: (a, b) => a.typeId.localeCompare(b.typeId),
+      sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
     },
     {
       title: "Đơn giá",
-      dataIndex: "amount",
-      key: "amount",
+      dataIndex: "price",
+      key: "price",
       align: "center",
       width: "12%",
-      render: (_, { amount }) => {
-        return <span>{amount} VND</span>;
+      render: (_, { price }) => {
+        return <span>{price} VND</span>;
       },
-      sorter: (a, b) => a.amount.localeCompare(b.amount),
+      sorter: (a, b) => a?.price - b?.price,
     },
     {
       title: "Thao tác",
@@ -121,28 +157,107 @@ const ItemList = () => {
     },
   ];
 
+  const expandedRowRender = (row) => {
+    // columns for procedure
+    const columns = [
+      {
+        title: "Quy trình",
+        width: "30%",
+        dataIndex: "procedureId",
+        key: "procedureId",
+        render: (_, { procedure }) => <span>{procedure?.name}</span>,
+      },
+      {
+        title: "Độ ưu tiên",
+        width: "12%",
+        align: "center",
+        dataIndex: "priority",
+        key: "priority",
+      },
+      {
+        title: "Danh sách các bước",
+        dataIndex: "listStep",
+        key: "listStep",
+        render: (_, { procedure }) =>
+          procedure?.listStep?.map((e, i) => (
+            <p className="my-1">
+              {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            </p>
+          )),
+      },
+      // {
+      //   title: "Thao tác",
+      //   dataIndex: "action",
+      //   key: "action",
+      //   align: "center",
+      //   render: (_, record) => {
+      //     return (
+      //       <Dropdown menu={{ items: getActionItems(record) }}>
+      //         <Button className="mx-auto flex-center" icon={<More />} />
+      //       </Dropdown>
+      //     );
+      //   },
+      // },
+    ];
+    return (
+      <Table
+        columns={columns}
+        dataSource={row.listProcedure?.map((e) => {
+          return {
+            ...e,
+            key: e.procedureId,
+            procedure: listProcedures?.find((p) => p.id === e.procedureId) || null,
+          };
+        })}
+        size="small"
+        pagination={false}
+        style={{ marginRight: "4%" }}
+      />
+    );
+  };
+
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   useEffect(() => {
-    getData();
+    getData(null, 1, true);
   }, []);
+
+  console.log(itemList);
 
   return (
     <>
       <Space className="w-full flex justify-between mb-6">
         <div></div>
-        <Button className="btn-primary app-bg-primary font-semibold text-white" type="primay">
+        <Button
+          type="primay"
+          className="btn-primary app-bg-primary font-semibold text-white"
+          onClick={() => setShowItemModal(true)}
+        >
           Thêm sản phẩm
         </Button>
       </Space>
       <BaseTable
         title="Danh sách sản phẩm"
-        dataSource={itemList}
+        dataSource={itemList?.data?.map((e) => {
+          return { ...e, key: e.id };
+        })}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.ITEM_LIST,
+          total: itemList?.total,
+        }}
+        expandable={{
+          expandedRowRender,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm sản phẩm...",
@@ -150,13 +265,38 @@ const ItemList = () => {
           width: 300,
         }}
       />
-      {/* <UpdateItemModal
-        user={userRef.current}
-        open={showUpdateItemModal}
-        onCancel={() => setShowUpdateItemModal(false)}
-        allRoles={rolesRef.current}
+      <ItemModal
+        data={itemRef.current}
+        listItemNames={itemList.data?.map((i) => i.name)}
+        listCategories={itemCategoryList.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        listProcedures={listProcedures.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        listMaterials={listMaterials.map((i) => {
+          return {
+            label: i.name,
+            value: i.id,
+          };
+        })}
+        open={showItemModal}
+        onCancel={() => setShowItemModal(false)}
         onSuccess={() => getData()}
-      /> */}
+      />
+      <ItemDuplicateModal
+        data={itemRef.current}
+        open={showItemDuplicateModal}
+        onCancel={() => setShowItemDuplicateModal(false)}
+        id={id}
+        onSuccess={() => getData()}
+      />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />
       </Modal>

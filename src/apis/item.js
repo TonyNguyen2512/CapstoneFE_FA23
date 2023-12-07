@@ -4,12 +4,9 @@ const resource = "Item";
 
 const getAllItem = async (search, pageIndex, pageSize) => {
   try {
-
     if (search) {
       return await searchItem(search, pageIndex, pageSize);
-    }
-    else {
-
+    } else {
       var params = {};
       if (pageIndex) {
         params = { ...params, pageIndex };
@@ -17,10 +14,9 @@ const getAllItem = async (search, pageIndex, pageSize) => {
       if (pageSize) {
         params = { ...params, pageSize };
       }
-      const response = await BaseApi.get(`/${resource}/GetAll`, {
+      const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
         params: params,
       });
-      console.log("get all item", response.data)
       return response.data;
     }
   } catch (error) {
@@ -41,21 +37,19 @@ const searchItem = async (search, pageIndex, pageSize) => {
     if (pageSize) {
       params = { ...params, pageSize };
     }
-
-    const response = await BaseApi.post(`/${resource}/SearchItem`, {
+    const response = await BaseApi.get(`/${resource}/GetAllWithSearchAndPaging`, {
       params: params,
     });
-
     return response.data;
   } catch (error) {
-    console.log("Error search item: ", error);
-    return [];
+    console.log("Error get item: ", error);
+    return false;
   }
 };
 
 const getItemById = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/GetItemById/${id}`);
+    const response = await BaseApi.get(`/${resource}/GetById/${id}`);
     return response.data;
   } catch (error) {
     console.log("Error get item by id: ", error);
@@ -65,7 +59,7 @@ const getItemById = async (id) => {
 
 const createItem = async (data) => {
   try {
-    const response = await BaseApi.post(`/${resource}/CreateItem`, data);
+    const response = await BaseApi.post(`/${resource}/Create`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error create item: ", error);
@@ -73,9 +67,19 @@ const createItem = async (data) => {
   }
 };
 
+const duplicateItem = async (id, number) => {
+  try {
+    const response = await BaseApi.post(`/${resource}/DuplicateItem/${id}/${number}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error duplicate item: ", error);
+    return false;
+  }
+};
+
 const updateItem = async (data) => {
   try {
-    const response = await BaseApi.put(`/${resource}/UpdateItem`, data);
+    const response = await BaseApi.put(`/${resource}/Update`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);
@@ -85,7 +89,7 @@ const updateItem = async (data) => {
 
 const deleteItem = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/DeleteItem/${id}`);
+    const response = await BaseApi.get(`/${resource}/Delete/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error delete item: ", error);
@@ -95,9 +99,9 @@ const deleteItem = async (id) => {
 
 const ItemApi = {
   getAllItem,
-  searchItem,
   getItemById,
   createItem,
+  duplicateItem,
   updateItem,
   deleteItem,
 };

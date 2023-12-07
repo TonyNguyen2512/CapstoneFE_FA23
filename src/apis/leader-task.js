@@ -1,102 +1,177 @@
 import BaseApi from ".";
+import ApiCodes from "../constants/apiCode";
 
 const resource = "LeaderTask";
 
+const retrieveDataSuccessCode = 300;
+const createSuccessCode = 302;
+const updateSuccessCode = 303;
+const deleteSuccessCode = 304;
+const updateStatusSuccessCode = 305;
+
+const errorComposer = (error) => {
+	if (error?.response?.data) {
+		const { code } = error?.response?.data
+		return {
+			code,
+			message: ApiCodes[code] || "Có lỗi xảy ra",
+		}
+	}
+	return {
+		code: -1,
+		message: "Có lỗi xảy ra",
+	};
+}
+
+const successComposer = (messageId, data) => {
+	return {
+		code: 0,
+		message: ApiCodes[messageId],
+		data: data,
+	}
+}
+
 const createLeaderTasks = async (data) => {
 	try {
-		const response = await BaseApi.post(`/${resource}/Create`, data);
-		return response.status === 200;
+		await BaseApi.post(`/${resource}/Create`, data);
+		return successComposer(createSuccessCode);
 	} catch (error) {
 		console.log("Error create manager task: ", error);
-		return false;
+		return errorComposer(error);
+	}
+};
+
+const createAcceptanceTasks = async (data) => {
+	try {
+		await BaseApi.post(`/${resource}/CreateAcceptanceTask`, data);
+		return successComposer(createSuccessCode);
+	} catch (error) {
+		console.log("Error create manager task: ", error);
+		return errorComposer(error);
 	}
 };
 
 const updateLeaderTasks = async (data) => {
 	try {
-		const response = await BaseApi.put(`/${resource}/Update`, data);
-		return response.status === 200;
+		await BaseApi.put(`/${resource}/Update`, data);
+		return successComposer(updateSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
 const updateLeaderTasksStatus = async (leaderTasksId, status) => {
 	try {
-		const response = await BaseApi.put(
+		await BaseApi.put(
 			`/${resource}/UpdateStatus/${leaderTasksId}`,
 			{
 				status,
 			}
 		);
-		return response.status === 200;
+		return successComposer(updateStatusSuccessCode);
 	} catch (error) {
 		console.log("Error update manager task status: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
 const deleteLeaderTasks = async (leaderTasksId) => {
 	try {
-		const response = await BaseApi.delete(`/${resource}/Delete/${leaderTasksId}`);
-		return response.status === 200;
+		await BaseApi.delete(`/${resource}/Delete/${leaderTasksId}`);
+		return successComposer(deleteSuccessCode);
 	} catch (error) {
 		console.log("Error delete manager task: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
-const getLeaderTaskByOrderId = async (orderId, searchName, pageIndex, pageSize) => {
+const getAll = async (searchName, pageIndex, pageSize) => {
 	try {
 		var params = {};
 		if (searchName) {
-		  params = { ...params, searchName };
+			params = { ...params, searchName };
 		}
 		if (pageIndex) {
-		  params = { ...params, pageIndex };
+			params = { ...params, pageIndex };
 		}
 		if (pageSize) {
-		  params = { ...params, pageSize };
+			params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetByOrderId/${orderId}`, {
+		const response = await BaseApi.get(`/${resource}/GetAll`, {
 			params: params,
 		});
-		console.log(response.data)
-		return response.data;
+		return response.status === 200 && successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader tasks by order id: ", error);
-		return [];
+		return errorComposer(error);
+	}
+};
+
+const getLeaderTaskByOrderDetailId = async (orderDetailId, search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (!orderDetailId) return errorComposer();
+		params = { ...params, orderDetailId }
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		console.log("params", params)
+		const response = await BaseApi.get(`/${resource}/GetByOrderDetailId`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get leader tasks by order id: ", error);
+		return errorComposer(error);
 	}
 };
 
 const getLeaderTaskById = async (id) => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetById/${id}`);
-		return response.data;
+		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader task by id: ", error);
-		return false;
+		return errorComposer(error);
 	}
 };
 
 const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize) => {
 	try {
+		var params = {};
+		if (searchName) {
+			params = { ...params, searchName };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderId/${leaderId}`, {
-			searchName, pageIndex, pageSize
+			params: params,
 		});
-		return response.data;
+		return successComposer(retrieveDataSuccessCode, response.data);
 	} catch (error) {
 		console.log("Error get leader tasks by leader id: ", error);
-		return [];
+		return errorComposer(error);
 	}
 };
 
 const LeaderTasksApi = {
-	getLeaderTaskByOrderId,
+	getAll,
+	getLeaderTaskByOrderDetailId,
 	getLeaderTaskById,
 	getLeaderTaskByLeaderId,
 	createLeaderTasks,
+	createAcceptanceTasks,
 	updateLeaderTasksStatus,
 	updateLeaderTasks,
 	deleteLeaderTasks,

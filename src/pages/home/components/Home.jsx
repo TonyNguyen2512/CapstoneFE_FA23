@@ -1,4 +1,4 @@
-import { Card, Col, Row, Typography, Space } from "antd";
+import { Card, Col, Row, Typography, Space, Spin } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../apis/role";
 import { roles } from "../../../constants/app";
@@ -7,16 +7,17 @@ import { mockOverview } from "../../../__mocks__/jama/dashboard";
 import { TrendingDown, TrendingUp } from "@icon-park/react";
 import ReactECharts from "echarts-for-react";
 import { mockAccounts } from "../../../__mocks__/accounts";
+import DashboardApi from "../../../apis/dashboard";
 
 const { Title } = Typography;
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [showUpdateRoleModal, setShowUpdateRoleModal] = useState(false);
-  const [data, setData] = useState({});
-
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const [userData, setUserData] = useState();
+  const [orderData, setOrderData] = useState();
+  const [orderByMonthData, setOrderByMonthData] = useState();
+  const [leaderTaskData, setLeaderTaskData] = useState();
+  const [workerTaskData, setWorkerTaskData] = useState();
 
   const getUsersStatistics = () => {
     let data = [];
@@ -124,34 +125,28 @@ const Home = () => {
     ],
   };
 
-  const getHomeData = async (keyword) => {
+  const getHomeData = async () => {
     setLoading(true);
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    setData(data);
+    let data = await DashboardApi.UserDashboard();
+    setUserData(data);
+    data = await DashboardApi.OrderDashboard();
+    setOrderData(data);
+    data = await DashboardApi.OrderByMonthDashboard();
+    setOrderByMonthData(data);
+    data = await DashboardApi.LeaderTaskDashboard();
+    setLeaderTaskData(data);
+    data = await DashboardApi.WorkerTaskDashboard();
+    setWorkerTaskData(data);
     setLoading(false);
-  };
-
-  const getAllRoles = async () => {
-    const result = await RoleApi.getAllRoles();
-    rolesRef.current = result.filter((e) => e.name !== roles.ADMIN);
   };
 
   useEffect(() => {
     getHomeData();
-    getAllRoles();
+    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
   }, []);
 
   return (
-    <>
+    <Spin spinning={loading}>
       <Title level={4}>Tổng quan</Title>
       <Space direction="vertical" className="w-full gap-6">
         <Row gutter={32}>
@@ -320,7 +315,7 @@ const Home = () => {
           </Col>
         </Row>
       </Space>
-    </>
+    </Spin>
   );
 };
 

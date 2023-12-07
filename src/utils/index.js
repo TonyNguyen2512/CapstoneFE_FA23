@@ -1,6 +1,8 @@
 import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
+import dayjs from "dayjs";
+import { TaskMap } from "../constants/enum";
 
 export const formatDate = (date, pattern) => {
 	let result = "";
@@ -26,11 +28,11 @@ export const getTitle = (route) => {
 export const getRoleName = (role) => {
 	switch (role) {
 		case roles.ADMIN:
-			return "Admin";
+			return "Quản trị viên";
 		case roles.FOREMAN:
 			return "Quản đốc";
 		case roles.LEADER:
-			return "Quản lý";
+			return "Trưởng nhóm";
 		case roles.WORKER:
 			return "Công nhân";
 		default:
@@ -58,4 +60,40 @@ export const reduceNumber = (num) => {
 		// }
 	}
 	return num;
+}
+
+export const formatNum = (value) => {
+	return (value || 0) * 1;
+}
+
+export const dateSort = (dateA, dateB) => {
+	return dayjs(dateA).isAfter(dayjs(dateB)) ? 1 : dayjs(dateA).isBefore(dayjs(dateB)) ? -1 : 0;
+}
+
+export const formatMoney = (money) => {
+	if (!money) money = 0;
+	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+}
+
+export const getTaskStatusName = (status) => {
+	return TaskMap[status]?.label || "Không Xác Định";
+};
+
+export const getTaskStatusColor = (status) => {
+	return TaskMap[status]?.color || "#FF0000";
+};
+
+export const handleDownloadFile = async (url, filename, message) => {
+	if (!url) message.warning("Không có bản vẽ");
+	try {
+		var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
+		var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
+		var fileURL = window.URL.createObjectURL(downloadFile);
+		var a = document.createElement("a");
+		a.download = fileName;
+		a.href = fileURL;
+		a.click();
+	} catch (err) {
+		console.log(err);
+	}
 }

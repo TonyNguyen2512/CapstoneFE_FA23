@@ -1,105 +1,182 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Typography, Modal, Row, Space } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import { mockTasks } from "../../../../__mocks__/jama/tasks";
-import { mockMaterials } from "../../../../__mocks__/jama/materials";
-import { mockWorkerProcedure } from "../../../../__mocks__/jama/procedures";
-
+import { Space, message, Spin } from "antd";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { WorkerTaskInfo } from "./components/WorkerTaskInfo";
-import { WorkerTaskMaterial } from "./components/WorkerTaskMaterial";
-import { WorkerTaskProcedure } from "./components/WorkerTaskProcedure";
-import { WorkerTaskProcedureOverview } from "./components/WorkerTaskProcedureOverview";
-import { WorkerTaskProcedureManagement } from "./components/WorkerTaskProcedureManagement";
+import { WorkerTaskOverview } from "./components/WorkerTaskOverview";
+import { WorkerTaskManagement } from "./components/WorkerTaskManagement";
+import LeaderTasksApi from "../../../../apis/leader-task";
+import UserApi from "../../../../apis/user";
+import WorkerTasksApi from "../../../../apis/worker-task";
+import routes from "../../../../constants/routes";
+import { TaskProvider } from "../../../../providers/task";
+import { UserContext } from "../../../../providers/user";
+import { roles } from "../../../../constants/app";
+import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import GroupApi from "../../../../apis/group";
+import { TaskStatus } from "../../../../constants/enum";
 
 
 export const WorkerTaskDetailsPage = () => {
+
+  const { user } = useContext(UserContext);
+  const isLeader = user?.role?.name === roles.LEADER;
+  const isForeman = user?.role?.name === roles.FOREMAN;
+
   const [loading, setLoading] = useState(false);
-  const { id } = useParams();
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [taskInfo, setTaskInfo] = useState([]);
-  const [materialInfo, setMaterialInfo] = useState([]);
-  const [procedureInfo, setProcedureInfo] = useState([]);
-  const { Title } = Typography;
+  const [acceptance, setAcceptance] = useState(false);
+  const { leaderTaskId } = useParams();
 
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
+  const [groupMemberList, setGroupMemberList] = useState([]);
+  const [workderTaskList, setWorkerTaskList] = useState([]);
+  const [state, setState] = useState([]);
 
-  const getData = async (taskId, handleLoading) => {
+  const allTasks = useRef();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleRetrieveWorkerTaskList = async (leaderTaskId, memberId, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
-    // const data = await UserApi.searchUsers(keyword);
-    // data.sort((a, b) => {
-    //   if (a.role === roles.ADMIN) {
-    //     return -1; // a comes before b
-    //   }
-    //   if (b.role === roles.ADMIN) {
-    //     return 1; // b comes before a
-    //   }
-    //   return 0; // no change in order
-    // });
-    // setTaskList(data);
-    const dataTaskInfo = mockTasks.find(x => x.id === taskId);
-    setTaskInfo(dataTaskInfo);
-
-    setMaterialInfo(mockMaterials)
-
-    setProcedureInfo(mockWorkerProcedure);
-
-    setLoading(false);
-  };
-  
-  useEffect(() => {
-    if (id) {
-      getData(id, true);
+    let dataWorkerTasks = [];
+    if (memberId) {
+      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByUserId(memberId, leaderTaskId)
+    } else {
+      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
     }
-  }, [id]);
+    if (dataWorkerTasks.code !== 0) {
+      message.error = dataWorkerTasks.message;
+      return;
+    }
 
-  const getActionItems = (record) => {
-    const { isActive, id } = record;
+    allTasks.current = dataWorkerTasks?.data;
+    setWorkerTaskList(dataWorkerTasks?.data);
+    setLoading(false);
+  }
 
-    return [
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          userRef.current = record;
-          setShowUpdateModal(true);
-        },
-      },
-      {
-        key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => { },
-      },
-    ];
-  };
+  useEffect(() => {
+    const getData = async (leaderTaskId, handleLoading) => {
+      if (handleLoading) {
+        setLoading(true);
+      }
 
-  const handleSearch = (value) => {
-    getData(value);
-  };
+      if (!leaderTaskId) return;
+
+      // retrieve leader task data by id
+      const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
+      if (dataLeaderTask.code !== 0) {
+        message.error(dataLeaderTask?.message);
+        return;
+      } else {
+        setLeaderTaskInfo(dataLeaderTask?.data);
+      }
+
+      let dataLeaderUser = [];
+      if (dataLeaderTask?.data?.leaderId) {
+        dataLeaderUser = await UserApi.getUserById(dataLeaderTask?.data?.leaderId);
+      }
+
+      if (!dataLeaderUser) {
+        message.error("Không tìm thấy thông tin quản lý");
+      }
+
+      let dataGroupMembers = [];
+      if (dataLeaderUser?.groupId) {
+        dataGroupMembers = await GroupApi.getWorkersByGroupId(dataLeaderUser?.groupId);
+        if (!dataGroupMembers) {
+          message.error("Không tìm thấy thông tin các thành viên trong tổ");
+        }
+      } else {
+        message.error("Quản lý không có tổ phụ trách");
+      }
+      setGroupMemberList(dataGroupMembers?.data);
+
+      handleRetrieveWorkerTaskList(leaderTaskId, null, true);
+
+      setLoading(false);
+    }
+
+    getData(leaderTaskId, true);
+  }, [leaderTaskId]);
+
+  useEffect(() => {
+    if (location?.state) {
+      setState(location.state);
+      console.log(location.state)
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (leaderTaskInfo?.status === TaskStatus.Completed) {
+      setAcceptance(true);
+    }
+  }, [leaderTaskInfo])
+
+  const handleBack = () => {
+    if (state?.taskName || state?.orderId) {
+      let path = "";
+      if (isLeader) {
+        path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`;
+        if (state?.taskName) {
+          path += `?taskName=${state?.taskName}`;
+        }
+      }
+      if (isForeman) {
+        path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
+        if (state?.orderId) {
+          path += `/${state?.orderId}`;
+
+          if (state?.orderDetailId) {
+            path += `/${routes.dashboard.taskOrderDetails}/${state?.orderDetailId}`
+          }
+        }
+      }
+      navigate(path, {
+        state: state
+      }, { replace: true });
+    } else {
+      navigate(-1);
+    }
+  }
 
   return (
-    <Space direction="vertical" className="w-full gap-6">
-      <WorkerTaskInfo
-        dataSource={taskInfo}
-        loading={loading}
-      />
-      <WorkerTaskMaterial
-        title="Danh sách vật liệu"
-        dataSource={materialInfo}
-      />
-      <WorkerTaskProcedureOverview
-        title="Tiến độ công việc"
-        dataSource={procedureInfo}
-      />
-      <WorkerTaskProcedureManagement
-        dataSource={procedureInfo}
-      />
-    </Space>
+    <BasePageContent onBack={() => handleBack()}>
+      <Spin spinning={loading}>
+        <Space direction="vertical" className="w-full gap-6">
+          <TaskProvider
+            tasks={workderTaskList}
+            allTasks={workderTaskList}
+            info={leaderTaskInfo}
+            team={groupMemberList}
+            acceptance={acceptance}
+            onReload={(handleLoading) => {
+              handleRetrieveWorkerTaskList(leaderTaskId, null, handleLoading);
+            }}
+            onFilterTask={(memberId) => {
+              handleRetrieveWorkerTaskList(leaderTaskId, memberId, false);
+            }}
+            onAcceptanceTask={() => {
+              setAcceptance(true);
+            }}
+          >
+            <div className="mt-4">
+              <WorkerTaskInfo
+                loading={loading}
+              />
+            </div>
+            <div className="mt-4">
+              <WorkerTaskOverview
+                title="Tiến độ công việc"
+              />
+            </div>
+            <div className="mt-4">
+              <WorkerTaskManagement />
+            </div>
+          </TaskProvider>
+        </Space>
+      </Spin>
+    </BasePageContent>
   );
 };

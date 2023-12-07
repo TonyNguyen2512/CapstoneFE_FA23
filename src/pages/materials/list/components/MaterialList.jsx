@@ -6,6 +6,7 @@ import MaterialApi from "../../../../apis/material";
 import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import { MaterialModal } from "../../components/MaterialModal";
+import { formatMoney, formatNum } from "../../../../utils";
 
 const MaterialList = () => {
   const [loading, setLoading] = useState(false);
@@ -13,9 +14,7 @@ const MaterialList = () => {
   const [materialList, setMaterialList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
-  const [isCreate, setIsCreate] = useState(true);
   const materialRef = useRef();
-  const userRef = useRef();
 
   const getData = async (keyword) => {
     setLoading(true);
@@ -24,17 +23,11 @@ const MaterialList = () => {
     setLoading(false);
   };
 
-  const showModal = (item) => {
-    setLoading(true);
-    setPreviewUrl(item.imageUrl);
-    setLoading(false);
-    setIsModalOpen(true);
-  };
-
   const closeModal = () => {
     setPreviewUrl("");
     setIsModalOpen(false);
   };
+  
   useEffect(() => {
     getData();
   }, []);
@@ -61,19 +54,18 @@ const MaterialList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           materialRef.current = record;
-          // setShowUpdateMaterialModal(true);
-        },
-      },
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          setIsCreate(false);
-          materialRef.current = record;
           setShowUpdateMaterialModal(true);
         },
       },
+      // {
+      //   key: "UPDATE_ROLE",
+      //   label: "Cập nhật thông tin",
+      //   icon: <Edit />,
+      //   onClick: () => {
+      //     materialRef.current = record;
+      //     setShowUpdateMaterialModal(true);
+      //   },
+      // },
       {
         key: "SET_STATUS",
         label: isDeleted ? "Mở khóa" : "Khóa",
@@ -129,22 +121,33 @@ const MaterialList = () => {
       sorter: (a, b) => a.sku.localeCompare(b.sku),
     },
     {
-      title: "Số lượng",
-      dataIndex: "amount",
-      key: "amount",
-      sorter: (a, b) => a.amount - b.amount,
+      title: "Nơi nhập",
+      dataIndex: "importPlace",
+      key: "importPlace",
+      // align: "center",
+      sorter: (a, b) => a.importPlace.localeCompare(b.importPlace),
     },
     {
-      title: "Ngày nhập",
-      dataIndex: "importDate",
-      key: "importDate",
-      // align: "center",
-      render: (_, record) => {
-        const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
-        return <span>{formattedDate}</span>;
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
       },
-      sorter: (a, b) => a.importDate.localeCompare(b.importDate),
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
+    // {
+    //   title: "Ngày nhập",
+    //   dataIndex: "importDate",
+    //   key: "importDate",
+    //   // align: "center",
+    //   render: (_, record) => {
+    //     const formattedDate = dayjs(record.importDate).format("DD/MM/YYYY");
+    //     return <span>{formattedDate}</span>;
+    //   },
+    //   sorter: (a, b) => a.importDate.localeCompare(b.importDate),
+    // },
     {
       title: "Nhà cung cấp",
       dataIndex: "supplier",
@@ -158,7 +161,7 @@ const MaterialList = () => {
       // align: "center",
       render: (_, color) => {
         return (
-          <Tooltip title={color?.color} >
+          <Tooltip title={color?.color}>
             <Button
               block
               type="primary"
@@ -217,11 +220,9 @@ const MaterialList = () => {
       <MaterialModal
         data={materialRef.current}
         open={showUpdateMaterialModal}
-        isCreate={isCreate}
         onCancel={() => {
           setShowUpdateMaterialModal(false);
           materialRef.current = null;
-          setIsCreate(true);
         }}
         onSuccess={() => getData()}
       />

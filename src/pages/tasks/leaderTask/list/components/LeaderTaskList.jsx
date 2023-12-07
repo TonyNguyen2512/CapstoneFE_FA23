@@ -1,103 +1,44 @@
-import { Edit, Forbid, More, PreviewOpen, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Space } from "antd";
+import { More, PreviewOpen } from "@icon-park/react";
+import { Button, Dropdown } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { enumTaskStatuses, mockTasks } from "../../../../../__mocks__/jama/tasks";
-import { message } from "antd/lib";
 import dayjs from "dayjs";
-import confirm from "antd/es/modal/confirm";
-import ManagerTaskApi from "../../../../../apis/leader-task";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { useNavigate } from "react-router-dom";
-import { LeaderTaskModal } from "./LeaderTaskModal";
-import { UserContext } from "../../../../../providers/user";
-import LeaderTasksApi from "../../../../../apis/leader-task";
 import OrderApi from "../../../../../apis/order";
+import { PageSize, orderColors, orderLabels } from "../../../../../constants/enum";
+import { dateSort, formatMoney, formatNum } from "../../../../../utils";
+import { UserContext } from "../../../../../providers/user";
 
 const LeaderTaskList = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [taskCreateLoading, setTaskCreateLoading] = useState(false);
-  const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
   const [orderList, setOrderList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  const taskRef = useRef();
   const userRef = useRef();
-  // const rolesRef = useRef();
 
-  const getData = async () => {
-    setLoading(true);
-    const data = await OrderApi.getAllOrders();
-    setOrderList(data.data);
-    setLoading(false);
-  };
-
-  const deleteTaskCategory = async (value) => {
-    setLoading(true);
-    const success = await ManagerTaskApi.deleteTaskCategory(value);
-    if (success) {
-      message.success("Xoá thành công");
-    } else {
-      message.error("Xoá thất bại");
+  const getData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
     }
-    getData();
+
+    const data = await OrderApi.getByForemanId(
+      user?.id,
+      search,
+      pageIndex,
+      PageSize.LEADER_TASK_ORDER_LIST
+    );
+    setOrderList(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    console.log("user.id", user.id)
-    getData(user.id);
-  }, [user]);
-
-  
-
-  const handleSubmitCreate = async (values) => {
-    console.log("create task: ", values);
-    // const projectId = team?.project?.id;
-    // const request = {
-    // 	projectId: projectId,
-    // 	taskName: values?.taskName,
-    // 	startTime: values?.startTime,
-    // 	endTime: values?.endTime,
-    // 	taskDescription: values?.taskDescription,
-    // 	status: values?.status,
-    // 	assignees: values?.assignees,
-    // };
-    // setTaskCreating(true);
-    // const success = await TaskApi.createTask(request);
-    // if (success) {
-    // 	message.success("Đã tạo công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    // setMaterial(values);
-    // console.log(material);
-    setTaskCreateLoading(false);
-    setShowCreateModal(false);
-    // setShowCreateModal(false);
-  };
-
-  const handleSubmitUpdate = async (values) => {
-    console.log("update task: ", values);
-    // setProcedureUpdating(true);
-    // const success = await TaskApi.updateTask(values);
-    // if (success) {
-    // 	message.success("Đã cập nhật công việc");
-    // 	reload(false);
-    // } else {
-    // 	message.error("Có lỗi xảy ra");
-    // }
-    // setProcedureUpdating(false);
-    // setShowDetailModal(false);
-    setTaskUpdateLoading(false);
-    setShowUpdateModal(false);
-  };
+    getData(null, 1, true);
+  }, []);
 
   const getActionItems = (record) => {
-    const { isActive, id } = record;
+    const { id } = record;
 
     return [
       {
@@ -106,36 +47,7 @@ const LeaderTaskList = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           userRef.current = record;
-          console.log("record.id")
-          console.log(record.id)
-          navigate(record?.id)
-        },
-      },
-      {
-        key: "UPDATE_ROLE",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          taskRef.current = record;
-          setShowUpdateModal(true);
-        },
-      },
-      {
-        key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {
-          confirm({
-            title: "Xoá công việc",
-            content: `Chắc chắn xoá "${record.name}"?`,
-            type: "confirm",
-
-            cancelText: "Hủy",
-            onOk: () => deleteTaskCategory(record.id),
-            onCancel: () => { },
-            closable: true,
-          });
+          navigate(id);
         },
       },
     ];
@@ -149,7 +61,7 @@ const LeaderTaskList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.LEADER_TASK_ORDER_LIST}</span>;
       },
     },
     {
@@ -159,45 +71,46 @@ const LeaderTaskList = () => {
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Tên công việc",
-      dataIndex: "name",
-      key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      title: "Khách hàng",
+      dataIndex: "customerName",
+      key: "customerName",
+      sorter: (a, b) => a.customerName.localeCompare(b.customerName),
     },
     {
-      title: "Thời gian bắt đầu",
-      dataIndex: "startTime",
-      key: "startTime",
-      align: "center",
-      render: (_, record) => {
-        const formattedDate = record.startTime ? dayjs(record.startTime).format("DD/MM/YYYY") : "";
-        return <span>{formattedDate}</span>;
+      title: "Báo giá xưởng",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
       },
-      sorter: (a, b) => dateSort(a.startTime, b.startTime),
     },
     {
-      title: "Thời gian kết thúc",
-      dataIndex: "endTime",
-      key: "endTime",
-      align: "center",
-      render: (_, record) => {
-        const formattedDate = record.endTime ? dayjs(record.endTime).format("DD/MM/YYYY") : "";
-        return <span>{formattedDate}</span>;
-      },
-      sorter: (a, b) => dateSort(a.endTime, b.endTime),
+      title: "Ngày tạo đơn",
+      dataIndex: "createTime",
+      key: "createTime",
+      render: (_, { createTime }) => createTime ? <span>{dayjs(createTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+
+      sorter: (a, b) => dateSort(a.createTime, b.createTime),
     },
+    // {
+    //   title: "Ngày nghiệm thu",
+    //   dataIndex: "quoteTime",
+    //   key: "quoteTime",
+    //   render: (_, { quoteTime }) =>
+    //     quoteTime ? <span>{dayjs(quoteTime).format("DD/MM/YYYY")}</span> : <span>-</span>,
+    //   sorter: (a, b) => dateSort(a?.quoteTime, b?.quoteTime),
+    // },
     {
-      title: "Trạng thái",
+      title: "Tình trạng",
       dataIndex: "status",
       key: "status",
-      align: "center",
-      render: (_, record) => {
-        return (
-          <span style={{ color: getTaskStatusColor(record.status) }}>
-            {getTaskStatus(record.status)}
-          </span>
-        );
-      },
+      render: (_, { status }) => (
+        <span style={{ color: orderColors[status], fontWeight: "bold" }}>
+          {orderLabels[status]}
+        </span>
+      ),
       sorter: (a, b) => a.status - b.status,
     },
     {
@@ -215,68 +128,34 @@ const LeaderTaskList = () => {
     },
   ];
 
-  const dateSort = (dateA, dateB) => {
-    return dayjs(dateA).isAfter(dayjs(dateB)) ? 1 : dayjs(dateA).isBefore(dayjs(dateB)) ? -1 : 0;
-  }
-
-  const getTaskStatus = (status) => {
-    return enumTaskStatuses[status]?.name || "Không Xác Định";
-  };
-
-  const getTaskStatusColor = (status) => {
-    return enumTaskStatuses[status]?.color || "#FF0000";
-  };
-
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
   };
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          className="btn-primary app-bg-primary font-semibold text-white"
-          type="primary"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Thêm vật liệu
-      </Button>
-      </Space>
       <BaseTable
-        title="Danh sách công việc"
-        dataSource={orderList}
+        title="Danh sách đơn hàng"
+        dataSource={orderList?.data}
         columns={columns}
         loading={loading}
-        pagination={true}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.LEADER_TASK_ORDER_LIST,
+          total: orderList?.total,
+        }}
+        rowKey={(record) => record.id}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm công việc...",
+          placeholder: "Tìm kiếm đơn hàng...",
           onSearch: handleSearch,
           width: 300,
         }}
-      />
-      
-      <LeaderTaskModal
-        open={showCreateModal}
-        onCancel={() => {
-          setShowCreateModal(false);
-          taskRef.current = null;
-        }}
-        onSubmit={handleSubmitCreate}
-        confirmLoading={taskCreateLoading}
-        mode="1"
-      />
-      <LeaderTaskModal
-        open={showUpdateModal}
-        onCancel={() => {
-          setShowUpdateModal(false);
-          taskRef.current = null;
-        }}
-        onSubmit={handleSubmitUpdate}
-        confirmLoading={taskUpdateLoading}
-        dataSource={taskRef.current}
-        mode="2"
       />
     </>
   );

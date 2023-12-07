@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import MaterialCategoryApi from "../../../apis/material-category";
 
 export const MaterialSelect = ({
+  style,
   value,
   onChange,
   allowClear,
@@ -28,14 +29,15 @@ export const MaterialSelect = ({
   }, []);
 
   const meterialOptions = material.map((e) => {
-  	return {
-  		value: e.id,
-  		label: e.name,
-  	};
+    return {
+      value: e.id,
+      label: e.name,
+    };
   });
 
   return (
     <Select
+      style={style}
       className={meterialName}
       showSearch
       value={value}

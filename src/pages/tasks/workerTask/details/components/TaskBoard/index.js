@@ -1,28 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
 import { TaskColumn } from "./TaskColumn";
 import { Col, Row, message } from "antd";
-// import { TeamContext } from "../../../../../providers/team";
-// import TaskApi from "../../../../../apis/task";
-import { TaskColumnId } from "../../../../../../constants/app";
+import { TaskColumnId, roles } from "../../../../../../constants/app";
 import { TaskStatus } from "../../../../../../constants/enum";
 import { UserContext } from "../../../../../../providers/user";
-import { TeamContext } from "../../../../../../providers/team";
-import AuthApi from "../../../../../../apis/auth";
+import WorkerTasksApi from "../../../../../../apis/worker-task";
+import { TaskContext } from "../../../../../../providers/task";
 
-export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
+export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
 
-	// const [user, setUser] = useState([]);
 	const { user } = useContext(UserContext);
-	const { team, reload } = useContext(TeamContext);
+	const { tasks, reload } = useContext(TaskContext);
 
-	console.log("team");
-	console.log(team);
-	console.log("reload");
-	
-	console.log(reload);
-
-	// const isLeader = user?.userId === team?.leader?.id;
+	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 
 	const [columns, setColumns] = useState([
 		{
@@ -32,7 +23,12 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		},
 		{
 			id: TaskColumnId.IN_PROGRESS,
-			title: "Đang làm",
+			title: "Trong tiến độ",
+			tasks: [],
+		},
+		{
+			id: TaskColumnId.IN_APPROVE,
+			title: "Chờ duyệt",
 			tasks: [],
 		},
 		{
@@ -58,16 +54,15 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		) {
 			return;
 		}
-
 		var canDrop = true;
 		const taskId = draggableId;
-		const task = dataSource?.tasks.find((e) => e.id === taskId);
+		const task = tasks?.find((e) => e.id === taskId);
 		const ownedTask =
-			dataSource?.members.find((e) => e.id === user?.userId) !== undefined;
+			task?.members.find((e) => e.id === user?.id) !== undefined;
 
-		// if (!isLeader && !ownedTask) {
-		// 	canDrop = false;
-		// }
+		if (!isLeader && !ownedTask) {
+			canDrop = false;
+		}
 
 		if (!canDrop) {
 			message.info(
@@ -77,77 +72,105 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, dataSource }) => {
 		}
 
 		const finish = columns.find((e) => e.id === destination.droppableId);
+
+		if (!isLeader) {
+			if (finish.id === TaskColumnId.IN_APPROVE
+				|| finish.id === TaskColumnId.COMPLETED) {
+					message.info(
+						"Chỉ trưởng nhóm mới được chuyển trạng thái công việc này"
+					);
+					return;
+				}
+		}
+
+		// TODO
+		// const sourceTask = columns.find((e) => e.id === source.droppableId);
+		// if (sourceTask.id === TaskColumnId.COMPLETED) {
+		// 	message.error(
+		// 		"Không thể chuyển trạng thái công việc đã hoàn thành"
+		// 	);
+		// 	return;
+		// }
+
 		let taskStatus;
 		switch (finish.id) {
 			case TaskColumnId.TODO:
-				taskStatus = TaskStatus.new;
+				taskStatus = TaskStatus.New;
 				break;
 			case TaskColumnId.IN_PROGRESS:
-				taskStatus = TaskStatus.inProgress;
+				taskStatus = TaskStatus.InProgress;
+				break;
+			case TaskColumnId.IN_APPROVE:
+				taskStatus = TaskStatus.Pending;
 				break;
 			case TaskColumnId.COMPLETED:
-				taskStatus = TaskStatus.completed;
+				taskStatus = TaskStatus.Completed;
 				break;
 			default:
-				taskStatus = TaskStatus.new;
+				taskStatus = TaskStatus.New;
 				break;
 		}
 
 		if (taskId !== undefined && taskStatus !== undefined) {
-			//Todo: call api. if success reload column
-			AuthApi.login("0123456789", "123456").then((success) => {
-				if(success) {
+			console.log("drag drop", taskId, taskStatus)
+			WorkerTasksApi.updateWorkerTasksStatus(taskId, taskStatus).then((success) => {
+				if (success?.code === 0) {
 					console.log("success")
-					message.success("Đã cập nhật công việc");
-					task.status = taskStatus;
-					loadColumn(dataSource?.tasks);
 					reload(false);
+				} else {
+					message?.error(success?.message);
 				}
-			})
+			});
 		}
 	};
 
-	function loadColumn(tasks) {
-		console.log("test reload")
-		const todoTasks = tasks?.filter((e) => e.status === TaskStatus.new);
+	function loadColumn(allTasks) {
 
-		const inProgressTasks = tasks?.filter(
-			(e) => e.status === TaskStatus.inProgress
+		const todoTasks = allTasks?.filter(
+			(e) => e.status === TaskStatus.New
 		);
-		const completedTasks = tasks?.filter(
-			(e) => e.status === TaskStatus.completed
+		const inProgressTasks = allTasks?.filter(
+			(e) => e.status === TaskStatus.InProgress
+		);
+		const inApproveTasks = allTasks?.filter(
+			(e) => e.status === TaskStatus.Pending
+		);
+		const completedTasks = allTasks?.filter(
+			(e) => e.status === TaskStatus.Completed
 		);
 		const newColumns = [...columns];
 		for (let i = 0; i < newColumns.length; i++) {
 			const column = newColumns[i];
 			if (column.id === TaskColumnId.TODO) {
-				column.tasks = todoTasks;
+				column.tasks = todoTasks || [];
 			}
 			if (column.id === TaskColumnId.IN_PROGRESS) {
-				column.tasks = inProgressTasks;
+				column.tasks = inProgressTasks || [];
+			}
+			if (column.id === TaskColumnId.IN_APPROVE) {
+				column.tasks = inApproveTasks || [];
 			}
 			if (column.id === TaskColumnId.COMPLETED) {
-				column.tasks = completedTasks;
+				column.tasks = completedTasks || [];
 			}
 		}
 		setColumns(newColumns);
 	}
 
 	useEffect(() => {
-		const tasks = dataSource?.tasks;
 		loadColumn(tasks);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [dataSource]);
+	}, [tasks]);
 
 	return (
 		<DragDropContext onDragEnd={onDragEnd}>
 			<Row gutter={16}>
 				{columns.map((column) => (
-					<Col key={column.id} span={8}>
+					<Col key={column.id} span={6}>
 						<TaskColumn
 							column={column}
 							onViewTask={onViewTask}
 							onDeleteTask={onDeleteTask}
+							onChatTask={onChatTask}
 						/>
 					</Col>
 				))}

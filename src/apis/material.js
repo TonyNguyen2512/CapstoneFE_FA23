@@ -17,7 +17,7 @@ const getAllMaterial = async (search, pageIndex, pageSize) => {
       if (pageSize) {
         params = { ...params, pageSize };
       }
-      const response = await BaseApi.get(`/${resource}/GetAllMaterial`, {
+      const response = await BaseApi.get(`/${resource}/GetAll`, {
         params: params,
       });
       return response.data;
@@ -64,7 +64,7 @@ const getMaterialById = async (id) => {
 
 const createMaterial = async (data) => {
   try {
-    const response = await BaseApi.post(`/${resource}/CreateMaterial`, data);
+    const response = await BaseApi.post(`/${resource}/Create`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error create item: ", error);

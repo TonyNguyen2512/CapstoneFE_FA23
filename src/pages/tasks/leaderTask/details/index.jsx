@@ -1,76 +1,159 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
-import { LeaderTaskMaterials } from "./components/LeaderTaskMaterials";
-import { LeaderTaskProcedure } from "./components/LeaderTaskProcedure";
-import { LeaderTaskProcedureOverview } from "./components/LeaderTaskProcedureOverview";
+import { LeaderTaskOrderDetails } from "./components/LeaderTaskOrderDetails";
 import { UserContext } from "../../../../providers/user";
 import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import OrderDetailApi from "../../../../apis/order-detail";
-import { Space } from "antd";
-
+import { Button, Space, Spin, message } from "antd";
+import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import routes from "../../../../constants/routes";
+import { TaskProvider } from "../../../../providers/task";
+import { PageSize } from "../../../../constants/enum";
+import OrderDetailApi from "../../../../apis/order-details";
 
 export const LeaderTaskDetailsPage = () => {
-
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
-  const [orderDetail, setOrderDetail] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
+  const [allTasks, setAllTasks] = useState([]);
   const [orderDetailInfo, setOrderDetailInfo] = useState();
 
-  const userRef = useRef();
-  const rolesRef = useRef();
+  const { getMaterial, setMaterial } = useState([]);
+  const { getQuote, setQuote } = useState([]);
 
-  const getData = async (id, handleLoading) => {
+  const [assignTo, setAssignTo] = useState([]);
+
+  const navigate = useNavigate();
+
+  const getMaterials = async () => {
+    const assignTo = await OrderApi.updateQuote(id);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
+    setAssignTo(assignTo);
+  };
+
+  const getOrderStatus = async () => {
+    const assignTo = await OrderApi.updateOrderStatus(1, id);
+    if (assignTo) {
+      message.success(`Cập nhật thành công`);
+      getData(true);
+    } else {
+      message.error(`Cập nhật thất bại`);
+    }
+    setAssignTo(assignTo);
+  };
+
+  // const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
+  //   if (handleLoading) {
+  //     setLoading(true);
+  //   }
+  //   // retrieve leader task by order id
+  //   try {
+  //     let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
+  //       id,
+  //       search,
+  //       pageIndex,
+  //       PageSize.LEADER_TASK_PROCEDURE_LIST
+  //     );
+  //     if (dataLeaderTasks.code === 0) {
+  //       setTaskInfo(dataLeaderTasks?.data);
+  //     } else {
+  //       message.error(dataLeaderTasks.message);
+  //     }
+  //     dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
+  //     if (dataLeaderTasks.code === 0) {
+  //       setAllTasks(dataLeaderTasks?.data);
+  //     } else {
+  //       message.error(dataLeaderTasks.message);
+  //     }
+  //   } catch (e) {
+  //     console.log(e);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const getData = (handleLoading, pageIndex, search) => {
     if (handleLoading) {
       setLoading(true);
     }
-    console.log("test detail")
+
+    if (!id) return;
+
     // retrieve order data by id
-    const dataOrder = await OrderApi.getOrderById(id);
-    
-    console.log(dataOrder)
-      // retrieve order detail by order id
-    const dataOrderDetails = await OrderDetailApi.getOrderDetailById(dataOrder?.id);
-    // // retrieve leader task by order id
-    const dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(dataOrder?.id);
-
-    setOrderInfo(dataOrder);
-
-    setOrderDetailInfo(dataOrderDetails)
-
-    setTaskInfo(dataLeaderTasks);
-
+    OrderApi.getOrderById(id).then((dataOrder) => {
+      setOrderInfo(dataOrder);
+      getDataOrderDetail(handleLoading, dataOrder?.id, 1);
+    });
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (id) {
-      getData(id, true);
+  const getDataOrderDetail = (handleLoading, orderId, pageIndex, search) => {
+    if (handleLoading) {
+      setLoading(true);
     }
+
+    if (!orderId) return;
+
+    OrderDetailApi.getListByOrderId(orderId, search, pageIndex, PageSize.LEADER_TASK_ORDER_DETAIL_LIST).then((dataOrderDetails) => {
+      setOrderDetailInfo(dataOrderDetails);
+    });
+
+    setLoading(false);
+  }
+
+  useEffect(() => {
+    getData(true);
   }, [id]);
 
   return (
-    <Space direction="vertical" className="w-full gap-6">
-      <LeaderTaskInfo
-        dataSource={orderInfo}
-        loading={loading}
-      />
-      <LeaderTaskMaterials
-        title="Danh sách vật liệu"
-        dataSource={orderDetailInfo}
-      />
-      <LeaderTaskProcedureOverview
-        title="Tiến độ quy trình"
-        dataSource={taskInfo}
-      />
-      <LeaderTaskProcedure
-        title="Danh sách quy trình"
-        dataSource={taskInfo}
-      />
-    </Space>
+    <BasePageContent
+      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.managersTasks}`)}
+    >
+      <Spin spinning={loading}>
+        <Space direction="vertical" className="w-full gap-6">
+          <Button
+            type="primay"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => getMaterials()}
+          >
+            Cập nhật nguyên vật liệu
+          </Button>
+          <Button
+            type="primay"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => getOrderStatus()}
+          >
+            Báo giá đơn hàng
+          </Button>
+          <TaskProvider
+            tasks={taskInfo}
+            allTasks={allTasks}
+            info={orderInfo}
+            orderDetails={orderDetailInfo}
+            onReload={(handleLoading) => {
+              getDataOrderDetail(handleLoading, orderInfo?.id, 1);
+            }}
+            onFilterTask={(pageIndex, search) => {
+              getDataOrderDetail(true, orderInfo?.id, pageIndex, search);
+            }}
+          >
+            <div className="mt-4">
+              <LeaderTaskInfo loading={loading} />
+            </div>
+            <div className="mt-4">
+              <LeaderTaskOrderDetails title="Danh sách vật liệu" />
+            </div>
+          </TaskProvider>
+        </Space>
+      </Spin>
+    </BasePageContent>
   );
 };
