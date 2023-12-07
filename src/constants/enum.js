@@ -65,6 +65,13 @@ export const ETaskStatus = {
   Completed: 4,
 };
 
+export const wTaskStatus = {
+  New: 0,
+  InProgress: 1,
+  Pending: 2,
+  Completed: 3,
+};
+
 export const TaskMap = {
   [TaskStatus.New]: {
     color: "#BEBB6D",
@@ -102,6 +109,25 @@ export const ETaskMap = {
     label: "Không hoàn thành",
   },
   [ETaskStatus.Completed]: {
+    color: "#29CB00",
+    label: "Hoàn thành",
+  },
+}
+
+export const wTaskMap = {
+  [wTaskStatus.New]: {
+    color: "#BEBB6D",
+    label: "Mới tạo",
+  },
+  [wTaskStatus.InProgress]: {
+    color: "#CB7A00",
+    label: "Đang tiến hành",
+  },
+  [wTaskStatus.Pending]: {
+    color: "#FBD305",
+    label: "Chờ duyệt",
+  },
+  [wTaskStatus.Completed]: {
     color: "#29CB00",
     label: "Hoàn thành",
   },
@@ -152,6 +178,8 @@ export const PageSize = {
   ITEM_CATEGORY_LIST: 10,
   ITEM_LIST: 10,
   EMPLOYEES_LIST: 10,
+  GROUP_LIST: 10,
+  WORKER_IN_GROUP_LIST: 10,
 };
 
 export const NotificationType = {

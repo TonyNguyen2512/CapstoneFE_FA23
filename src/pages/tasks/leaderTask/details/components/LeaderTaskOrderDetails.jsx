@@ -65,7 +65,7 @@ export const LeaderTaskOrderDetails = ({
       sorter: (a, b) => a.itemName.localeCompare(b.itemName),
     },
     {
-      title: "Mã vật liệu",
+      title: "Mã sản phẩm",
       dataIndex: "itemCode",
       key: "itemCode",
       sorter: (a, b) => a.itemCode.localeCompare(b.itemCode),
@@ -155,7 +155,7 @@ export const LeaderTaskOrderDetails = ({
         sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
-        title: "Nhóm trưởng",
+        title: "Tổ trưởng",
         dataIndex: "leaderName",
         key: "leaderName",
         sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),

@@ -19,13 +19,13 @@ export const WorkerTaskInfo = ({
 	const { user } = useContext(UserContext);
 	const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
 
-	const [taskReportLoading, setTaskReportLoading] = useState([]);
-	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState([]);
+	const [taskReportLoading, setTaskReportLoading] = useState(false);
+	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState(false);
 
 	const [showReportModal, setShowReportModal] = useState(false);
 	const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
 
-	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+	const isLeader = user?.role?.name === roles.LEADER;
 
 	const { name, leaderName, status, startTime, endTime, item } = info || [];
 
@@ -88,7 +88,7 @@ export const WorkerTaskInfo = ({
 								Báo cáo vấn đề
 							</Button>
 						</Col>
-						{isCompletedTasks &&
+						{isCompletedTasks && 
 							<Col span={2} offset={1}>
 								<Button
 									type="primary"

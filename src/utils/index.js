@@ -27,18 +27,18 @@ export const getTitle = (route) => {
 };
 
 export const getRoleName = (role) => {
-  switch (role) {
-    case roles.ADMIN:
-      return "Quản trị viên";
-    case roles.FOREMAN:
-      return "Quản đốc";
-    case roles.LEADER:
-      return "Tổ trưởng";
-    case roles.WORKER:
-      return "Công nhân";
-    default:
-      return "";
-  }
+	switch (role) {
+		case roles.ADMIN:
+			return "Quản trị viên";
+		case roles.FOREMAN:
+			return "Quản đốc";
+		case roles.LEADER:
+			return "Tổ trưởng";
+		case roles.WORKER:
+			return "Công nhân";
+		default:
+			return "";
+	}
 };
 
 export const getStatusName = (status) => {

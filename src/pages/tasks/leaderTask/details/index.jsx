@@ -1,11 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
 import { LeaderTaskOrderDetails } from "./components/LeaderTaskOrderDetails";
 import { UserContext } from "../../../../providers/user";
-import LeaderTasksApi from "../../../../apis/leader-task";
 import OrderApi from "../../../../apis/order";
-import { Button, Space, Spin, message } from "antd";
+import { Button, Row, Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
@@ -13,7 +12,6 @@ import { OrderStatus, PageSize, ETaskStatus } from "../../../../constants/enum";
 import OrderDetailApi from "../../../../apis/order-details";
 
 export const LeaderTaskDetailsPage = () => {
-  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
@@ -21,33 +19,33 @@ export const LeaderTaskDetailsPage = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [orderDetailInfo, setOrderDetailInfo] = useState();
 
-  const { getMaterial, setMaterial } = useState([]);
-  const { getQuote, setQuote } = useState([]);
-
-  const [assignTo, setAssignTo] = useState([]);
-
   const navigate = useNavigate();
 
-  const getMaterials = async () => {
-    const assignTo = await OrderApi.updateQuote(id);
-    if (assignTo) {
-      message.success(`Cập nhật thành công`);
-      getData(true);
+  const syncMaterials = async () => {
+    setLoading(true);
+    const syncMaterial = await OrderApi.updateQuote(id);
+    if (syncMaterial) {
+      message.success(`Cập nhật nguyên vât liệu thành công`);
+      getData(id, true);
     } else {
       message.error(`Cập nhật thất bại`);
     }
-    setAssignTo(assignTo);
+    setLoading(false);
+    // setMaterial(syncMaterial);
   };
 
   const getOrderStatus = async () => {
-    const assignTo = await OrderApi.updateOrderStatus(1, id);
-    if (assignTo) {
-      message.success(`Cập nhật thành công`);
-      getData(true);
+    setLoading(true);
+    const getOrderStatus = await OrderApi.updateOrderStatus(1, id);
+    if (getOrderStatus) {
+      message.success(`Báo giá thành công`);
+      getData(id, true);
     } else {
-      message.error(`Cập nhật thất bại`);
+      message.error(`Báo giá thất bại`);
     }
-    setAssignTo(assignTo);
+    setLoading(false);
+
+    // setOrderStatus(getOrderStatus);
   };
 
   // const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
@@ -120,11 +118,11 @@ export const LeaderTaskDetailsPage = () => {
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
           {(orderInfo.status === OrderStatus.Pending || orderInfo.status === OrderStatus.Reject || orderInfo.status === OrderStatus.Request) &&
-            <>
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 type="primay"
                 className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => getMaterials()}
+                onClick={() => syncMaterials()}
               >
                 Cập nhật nguyên vật liệu
               </Button>
@@ -135,7 +133,7 @@ export const LeaderTaskDetailsPage = () => {
               >
                 Báo giá đơn hàng
               </Button>
-            </>
+            </div>
           }
           <TaskProvider
             tasks={taskInfo}

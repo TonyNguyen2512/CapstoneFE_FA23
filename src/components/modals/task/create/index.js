@@ -8,12 +8,17 @@ import locale from "antd/es/date-picker/locale/vi_VN";
 import { WTaskStatusOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
 
-export const TaskCreateModal = ({ open, onCancel, onSubmit, confirmLoading }) => {
-  const { user } = useContext(UserContext);
-  const { team, info } = useContext(TaskContext);
+export const TaskCreateModal = ({
+	open,
+	onCancel,
+	onSubmit,
+	confirmLoading,
+}) => {
+	const { user } = useContext(UserContext);
+	const { team, info } = useContext(TaskContext);
 
-  const formRef = useRef();
-  const descRef = useRef();
+	const formRef = useRef();
+	const descRef = useRef();
 
   return (
     <BaseModal
@@ -105,47 +110,51 @@ export const TaskCreateModal = ({ open, onCancel, onSubmit, confirmLoading }) =>
           </Col>
         </Row>
 
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="assignees"
-              label="Thành viên được phân công"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn ít nhất 1 thành viên để phân công",
-                },
-              ]}
-            >
-              <Select
-                options={team?.map((e) => {
-                  const isLeader = user?.id === e.id;
-                  return {
-                    label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
-                    value: e.id,
-                  };
-                })}
-                mode="multiple"
-                placeholder="Chọn thành viên"
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="priority"
-              label="Độ ưu tiên"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng thêm độ ưu tiên",
-                },
-              ]}
-            >
-              <InputNumber min={0} max={10} placeholder="Độ ưu tiên" />
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </BaseModal>
-  );
+				<Row gutter={16}>
+					<Col span={12}>
+						<Form.Item
+							name="assignees"
+							label="Thành viên được phân công"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng chọn ít nhất 1 thành viên để phân công",
+								},
+							]}
+						>
+							<Select
+								options={team?.map((e) => {
+									const isLeader = user?.id === e.id;
+									return {
+										label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
+										value: e.id,
+									};
+								})}
+								mode="multiple"
+								placeholder="Chọn thành viên"
+							/>
+						</Form.Item>
+					</Col>
+					<Col span={12}>
+						<Form.Item
+							name="priority"
+							label="Độ ưu tiên"
+							rules={[
+								{
+									required: true,
+									message: "Vui lòng thêm độ ưu tiên",
+								},
+							]}
+						>
+							<InputNumber
+								min={0}
+								max={10}
+								placeholder="Độ ưu tiên"
+							/>
+						</Form.Item>
+					</Col>
+				</Row>
+			</Form>
+		</BaseModal >
+	);
 };

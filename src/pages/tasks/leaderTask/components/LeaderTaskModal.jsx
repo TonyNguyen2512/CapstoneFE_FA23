@@ -117,17 +117,17 @@ export const LeaderTaskModal = ({
 							</Form.Item>
 							<Form.Item
 								name="leaderId"
-								label={<Text strong>Nhóm trưởng</Text>}
+								label={<Text strong>Tổ trưởng</Text>}
 								rules={[
 									{
 										required: true,
-										message: "Vui lòng chọn nhóm trưởng",
+										message: "Vui lòng chọn Tổ trưởng",
 									},
 								]}
 							>
 								<Select
 									className="w-full"
-									placeholder="Chọn nhóm trưởng"
+									placeholder="Chọn Tổ trưởng"
 									options={leadersData?.map((e) => {
 										return {
 											label: e.fullName,
@@ -162,8 +162,7 @@ export const LeaderTaskModal = ({
 											format="HH:mm DD/MM/YYYY"
 											disabledDate={(date) => {
 												return (
-													date.isBefore(info.startTime) ||
-													date.isAfter(info.endTime)
+													date.isBefore(info.startTime)
 												);
 											}}
 										/>
