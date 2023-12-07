@@ -83,11 +83,11 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
         </Form.Item>
         <Form.Item
           name="leaderId"
-          label="Nhóm trưởng"
+          label="Tổ trưởng"
           rules={[
             {
               required: true,
-              message: "Vui lòng chọn nhóm trưởng",
+              message: "Vui lòng chọn tổ trưởng",
             }, 
           ]}
         >

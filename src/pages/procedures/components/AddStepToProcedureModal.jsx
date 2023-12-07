@@ -48,13 +48,10 @@ export const AddStepToProcedureModal = ({
   const onDragEnd = (result) => {
     // console.log("onDragEnd");
     // console.log(result);
-
     // const { destination, source, draggableId } = result;
-
     // if (!destination) {
     //   return;
     // }
-
     // if (destination.droppableId === source.droppableId && destination.index === source.index) {
     //   return;
     // }
@@ -62,23 +59,19 @@ export const AddStepToProcedureModal = ({
     // const taskId = draggableId;
     // // const task = tasks?.find((e) => e.id === taskId);
     // const ownedTask = task?.members.find((e) => e.id === user?.id) !== undefined;
-
     // if (!isLeader && !ownedTask) {
     //   canDrop = false;
     // }
-
     // if (!canDrop) {
     //   message.info(
-    //     "Chỉ trưởng nhóm hoặc những thành viên được phân công mới được chuyển trạng thái công việc này"
+    //     "Chỉ tổ trưởng hoặc những thành viên được phân công mới được chuyển trạng thái công việc này"
     //   );
     //   return;
     // }
-
     // const finish = columns.find((e) => e.id === destination.droppableId);
-
     // if (!isLeader) {
     //   if (finish.id === TaskColumnId.IN_APPROVE || finish.id === TaskColumnId.COMPLETED) {
-    //     message.info("Chỉ trưởng nhóm mới được chuyển trạng thái công việc này");
+    //     message.info("Chỉ tổ trưởng mới được chuyển trạng thái công việc này");
     //     return;
     //   }
     // }
@@ -112,30 +105,33 @@ export const AddStepToProcedureModal = ({
         <div className="mb-2"></div>
         <DragDropContext onDragEnd={onDragEnd}>
           {/* <Form.List name={"A"}> */}
-            <Droppable droppableId={"a"}>
-              {(provided) => (
-                <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {[{key:1,  a: "abc", b: "ABC" },{key: 2, a: "809", b: "ABC" }]?.map((task, index) => (
-                    <Draggable key={`abc${task.key}`} draggableId={`ab${task.key}`} index={index}>
-                      {(provided) => (
-                        <Card
-                          hoverable={true}
-                          className="mb-2"
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                          title={"ABC"}
-                          headStyle={{ fontSize: "small" }}
-                        >
-                          <div>{task.a}</div>
-                        </Card>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
+          <Droppable droppableId={"a"}>
+            {(provided) => (
+              <div ref={provided.innerRef} {...provided.droppableProps}>
+                {[
+                  { key: 1, a: "abc", b: "ABC" },
+                  { key: 2, a: "809", b: "ABC" },
+                ]?.map((task, index) => (
+                  <Draggable key={`abc${task.key}`} draggableId={`ab${task.key}`} index={index}>
+                    {(provided) => (
+                      <Card
+                        hoverable={true}
+                        className="mb-2"
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        ref={provided.innerRef}
+                        title={"ABC"}
+                        headStyle={{ fontSize: "small" }}
+                      >
+                        <div>{task.a}</div>
+                      </Card>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
           {/* </Form.List> */}
         </DragDropContext>
       </Form>

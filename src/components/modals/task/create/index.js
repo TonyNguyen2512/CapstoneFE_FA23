@@ -118,7 +118,7 @@ export const TaskCreateModal = ({
 								options={team?.map((e) => {
 									const isLeader = user?.id === e.id;
 									return {
-										label: `${e.fullName}${isLeader ? " (Trưởng nhóm)" : ""}`,
+										label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
 										value: e.id,
 									};
 								})}

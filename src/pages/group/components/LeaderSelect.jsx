@@ -38,7 +38,7 @@ export const LeaderSelect = ({
       showSearch
       value={value}
       options={leaderOptions}
-      placeholder="Chọn nhóm trưởng..."
+      placeholder="Chọn tổ trưởng..."
       optionFilterProp="children"
       loading={loading}
       onChange={onChange}

@@ -72,7 +72,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
                 placeholder="Chọn vai trò..."
                 onChange={(val) => {
                   console.log(roleOptions.find((role) => role.value === val).key);
-                  formRef.current.roleId = val;
+                  formRef.current.id = val;
                   setRoleName(roleOptions.find((role) => role.value === val).key);
                 }}
               />

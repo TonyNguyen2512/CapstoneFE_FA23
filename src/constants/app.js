@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus } from "./enum";
+import { SupplyLabel, SupplyStatus, TaskMap, TaskStatus, wTaskMap, wTaskStatus } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -7,10 +7,8 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 
 export const roles = {
   ADMIN: "Admin",
-  FACTORY: "Factory",
   FOREMAN: "Foreman",
   LEADER: "Leader",
-  MANAGER: "Manager",
   WORKER: "Worker",
 };
 
@@ -154,13 +152,23 @@ export const USER_PERMISSIONS = {
     // items
     ALL_PERMISSIONS.items.sider,
     ALL_PERMISSIONS.items.view,
+    // // procedures
+    // ALL_PERMISSIONS.procedures.sider,
+    // ALL_PERMISSIONS.procedures.view,
+    // // steps
+    // ALL_PERMISSIONS.steps.sider,
+    // ALL_PERMISSIONS.steps.view,
+    // item categories
+    ALL_PERMISSIONS.itemCategories.sider,
+    ALL_PERMISSIONS.itemCategories.view,
+    // materials
+    ALL_PERMISSIONS.materials.sider,
+    ALL_PERMISSIONS.materials.view,
+    // materialTypes
+    ALL_PERMISSIONS.materialTypes.sider,
+    ALL_PERMISSIONS.materialTypes.view,
   ],
   [roles.FOREMAN]: [
-    // ACCOUNTS
-    ALL_PERMISSIONS.accounts.sider,
-    ALL_PERMISSIONS.accounts.view,
-    ALL_PERMISSIONS.accounts.create,
-    ALL_PERMISSIONS.accounts.update,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,
@@ -278,20 +286,20 @@ export const ETaskStatusOptions = [
 
 export const WTaskStatusOptions = [
   {
-    value: TaskStatus.New,
-    label: TaskMap[TaskStatus.New].label,
+    value: wTaskStatus.New,
+    label: wTaskMap[wTaskStatus.New].label,
   },
   {
-    value: TaskStatus.InProgress,
-    label: TaskMap[TaskStatus.InProgress].label,
+    value: wTaskStatus.InProgress,
+    label: wTaskMap[wTaskStatus.InProgress].label,
   },
   {
-    value: TaskStatus.Pending,
-    label: TaskMap[TaskStatus.Pending].label,
+    value: wTaskStatus.Pending,
+    label: wTaskMap[wTaskStatus.Pending].label,
   },
   {
-    value: TaskStatus.Completed,
-    label: TaskMap[TaskStatus.Completed].label,
+    value: wTaskStatus.Completed,
+    label: wTaskMap[wTaskStatus.Completed].label,
   },
 ];
 
@@ -307,7 +315,7 @@ export const OrderStatus = {
   PENDING: 0,
   REQUEST: 1,
   REJECT: 2,
-  APPROVE: 3, 
+  APPROVE: 3,
   IN_PROGRESS: 4,
   CANCEL: 5,
   COMPLETED: 6,
@@ -427,4 +435,4 @@ export const SupplyOptions = [
     value: SupplyStatus.RejectByCustomer,
     label: SupplyLabel[3],
   },
-]
+];

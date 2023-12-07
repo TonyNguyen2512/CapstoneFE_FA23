@@ -2,15 +2,15 @@ import { Plus } from "@icon-park/react";
 import { Button, Row, Select, Typography, message } from "antd";
 import React, { useContext, useRef, useState } from "react";
 import { UserContext } from "../../../../../providers/user";
-import { TaskBoard } from "./TaskBoard";
 import { TaskCreateModal } from "../../../../../components/modals/task/create";
 import WorkerTasksApi from "../../../../../apis/worker-task";
 import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import { TaskStatus } from "../../../../../constants/enum";
+import { wTaskStatus } from "../../../../../constants/enum";
 import { TaskChatModal } from "../../components/TaskChatModal";
+import { TaskBoard } from "./TaskBoard";
 
 const { Title } = Typography;
 
@@ -20,7 +20,7 @@ export const WorkerTaskManagement = () => {
 	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === TaskStatus.InProgress;
+	const isInProgress = info.status === wTaskStatus.InProgress;
 	
 	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
 	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
@@ -75,7 +75,7 @@ export const WorkerTaskManagement = () => {
 		console.log("handleSubmitUpdate")
 		setTaskUpdateLoading(true);
 		let resp = null;
-		if (values.status !== TaskStatus.Pending) {
+		if (values.status !== wTaskStatus.Pending) {
 			console.log("update task: ", values);
 			resp = await WorkerTasksApi.updateWorkerTask(values);
 		} else {

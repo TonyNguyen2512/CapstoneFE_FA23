@@ -3,7 +3,7 @@ import { Col, Descriptions, Row } from "antd/lib";
 import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { TaskStatus } from "../../../../../constants/enum";
+import { wTaskStatus } from "../../../../../constants/enum";
 import { useContext } from "react";
 import { TaskContext } from "../../../../../providers/task";
 
@@ -23,15 +23,15 @@ export const WorkerTaskOverview = ({
   console.log("allTasks", allTasks)
   const allWTasks = allTasks;
   const completedTasks = allWTasks?.filter(
-    (e) => e.status === TaskStatus.Completed
+    (e) => e.status === wTaskStatus.Completed
   );
 
   const inProgressTasks = allWTasks?.filter(
-    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.InProgress
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === wTaskStatus.InProgress
   )
 
   const expireTasks = allWTasks?.filter(
-    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.Completed
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== wTaskStatus.Completed
   )
 
   return (

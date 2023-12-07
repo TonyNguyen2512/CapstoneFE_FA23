@@ -329,6 +329,16 @@ const searchGetByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) =
 	}
 };
 
+const getRoleLeaderAndWorker = async (id) => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetRoleLeaderAndWorker`);
+		return response.data;
+	} catch (error) {
+		console.log("Error ban user: ", error);
+		return false;
+	}
+};
+
 const UserApi = {
 	searchUsers,
 	banUser,
@@ -347,6 +357,7 @@ const UserApi = {
 	getByForemanRole,
 	getByLeaderRole,
 	getByLeaderRoleAndWorkerRole,
+	getRoleLeaderAndWorker,
 };
 
 export default UserApi;

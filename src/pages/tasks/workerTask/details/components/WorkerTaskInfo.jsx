@@ -2,7 +2,7 @@ import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "an
 import React, { useContext, useState } from "react";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { TaskStatus } from "../../../../../constants/enum";
+import { wTaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
@@ -19,18 +19,18 @@ export const WorkerTaskInfo = ({
 	const { user } = useContext(UserContext);
 	const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
 
-	const [taskReportLoading, setTaskReportLoading] = useState([]);
-	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState([]);
+	const [taskReportLoading, setTaskReportLoading] = useState(false);
+	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState(false);
 
 	const [showReportModal, setShowReportModal] = useState(false);
 	const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
 
-	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+	const isLeader = user?.role?.name === roles.LEADER;
 
 	const { name, leaderName, status, startTime, endTime } = info || [];
 
 	const completedTasks = tasks?.filter(
-		(e) => e.status === TaskStatus.completed
+		(e) => e.status === wTaskStatus.Completed
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 
@@ -86,7 +86,7 @@ export const WorkerTaskInfo = ({
 								Báo cáo vấn đề
 							</Button>
 						</Col>
-						{isCompletedTasks &&
+						{isCompletedTasks && 
 							<Col span={2} offset={1}>
 								<Button
 									type="primary"

@@ -16,7 +16,7 @@ import { TextTile } from "../../../../../../components/TextTile";
 import { formatDate } from "../../../../../../utils";
 import moment, { now } from "moment";
 import { UserContext } from "../../../../../../providers/user";
-import { TaskStatus, eTaskStatus } from "../../../../../../constants/enum";
+import { wTaskStatus, eTaskStatus } from "../../../../../../constants/enum";
 import { attitudeTaskOptions, qualityTaskOptions } from "../../../../../../constants/app";
 import { TaskContext } from "../../../../../../providers/task";
 import { WechatOutlined } from "@ant-design/icons";
@@ -28,9 +28,9 @@ export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
-	const isCompleted = status === TaskStatus.completed;
+	const isCompleted = status === wTaskStatus.Completed;
 
-	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
+	const overdue = moment(task?.endTime).isBefore(now()) && status !== wTaskStatus.Completed;
 
 	const handbleDropdown = () => {
 		let items = [
