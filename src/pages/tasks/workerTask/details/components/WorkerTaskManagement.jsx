@@ -8,7 +8,7 @@ import { roles } from "../../../../../constants/app";
 import { TaskContext } from "../../../../../providers/task";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal";
-import { wTaskStatus } from "../../../../../constants/enum";
+import { TaskStatus, wTaskStatus } from "../../../../../constants/enum";
 import { TaskChatModal } from "../../components/TaskChatModal";
 import { TaskBoard } from "./TaskBoard";
 
@@ -20,8 +20,8 @@ export const WorkerTaskManagement = () => {
 	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === wTaskStatus.InProgress;
-	
+	const isInProgress = info.status === TaskStatus.InProgress;
+
 	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
 	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
 	const [taskChatLoading, setTaskChatLoading] = useState(false);
@@ -116,21 +116,25 @@ export const WorkerTaskManagement = () => {
 							onClick={() => setShowCreateModal(true)}
 						/>
 					)}
-					<span className="ml-10 mr-2">Thành viên: </span>
-					<Select
-						allowClear
-						placeholder="Chọn thành viên"
-						options={team?.map((e) => {
-							return {
-								label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
-								value: e.id,
-							};
-						})}
-						onChange={(value) => {
-							filterTask && filterTask(value);
-						}}
-						style={{ width: 250 }}
-					/>
+					{isLeader &&
+						<>
+							<span className="ml-10 mr-2">Thành viên: </span>
+							<Select
+								allowClear
+								placeholder="Chọn thành viên"
+								options={team?.map((e) => {
+									return {
+										label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
+										value: e.id,
+									};
+								})}
+								onChange={(value) => {
+									filterTask && filterTask(value);
+								}}
+								style={{ width: 250 }}
+							/>
+						</>
+					}
 				</Row>
 			</Row>
 			<TaskBoard
@@ -166,7 +170,7 @@ export const WorkerTaskManagement = () => {
 				onCancel={() => setShowDeleteModal(false)}
 				onOk={() => handleDeleteTask()}
 			/>
-			<TaskChatModal 
+			<TaskChatModal
 				title={`Chat gi do`}
 				open={showChatModal}
 				onCancel={() => setShowChatModal(false)}

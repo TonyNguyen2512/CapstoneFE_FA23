@@ -14,7 +14,7 @@ import { TaskContext } from "../../../../../../../providers/task";
 import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
 import ReportApi from "../../../../../../../apis/task-report";
 import { LeaderTaskReportModal } from "../../../../components/LeaderTaskReportModal";
-import { getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
+import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
@@ -149,7 +149,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       key: "startTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.startTime).format("DD/MM/YYYY");
+        const formattedDate = formatDate(record.startTime, "DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
       sorter: (a, b) => a.startTime.localeCompare(b.startTime),
@@ -160,7 +160,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       key: "endTime",
       align: "center",
       render: (_, record) => {
-        const formattedDate = dayjs(record.endTime).format("DD/MM/YYYY");
+        const formattedDate = formatDate(record.endTime, "DD/MM/YYYY");
         return <span>{formattedDate}</span>;
       },
       sorter: (a, b) => a.endTime.localeCompare(b.endTime),

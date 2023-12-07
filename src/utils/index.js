@@ -2,16 +2,15 @@ import moment from "moment/moment";
 import { roles } from "../constants/app";
 import routes from "../constants/routes";
 import dayjs from "dayjs";
-import { eTaskColors, eTaskLabels } from "../constants/enum";
 import { orderLabels } from "../constants/enum";
 import { TaskMap } from "../constants/enum";
 
-export const formatDate = (date, pattern) => {
+export const formatDate = (date, pattern, defaultValue) => {
   let result = "";
   if (date) {
     result = moment(date).format(pattern);
   }
-  return result;
+  return defaultValue ?? result;
 };
 
 export const getTitle = (route) => {

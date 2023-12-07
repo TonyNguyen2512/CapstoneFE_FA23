@@ -8,7 +8,7 @@ import { Button, Row, Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
-import { PageSize } from "../../../../constants/enum";
+import { OrderStatus, PageSize, TaskStatus } from "../../../../constants/enum";
 import OrderDetailApi from "../../../../apis/order-details";
 
 export const LeaderTaskDetailsPage = () => {
@@ -117,24 +117,24 @@ export const LeaderTaskDetailsPage = () => {
     >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Space>
+          {(orderInfo.status === OrderStatus.Pending || orderInfo.status === OrderStatus.Reject || orderInfo.status === OrderStatus.Request) &&
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
-                type="primary"
+                type="primay"
                 className="btn-primary app-bg-primary font-semibold text-white"
                 onClick={() => syncMaterials()}
               >
                 Cập nhật nguyên vật liệu
               </Button>
               <Button
-                type="primary"
+                type="primay"
                 className="btn-primary app-bg-primary font-semibold text-white"
                 onClick={() => getOrderStatus()}
               >
                 Báo giá đơn hàng
               </Button>
-            </Space>
-          </div>
+            </div>
+          }
           <TaskProvider
             tasks={taskInfo}
             allTasks={allTasks}

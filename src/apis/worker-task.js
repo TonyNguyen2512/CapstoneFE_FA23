@@ -115,7 +115,7 @@ const getWorkerTaskByUserId = async (memberId, leaderTaskId, searchName, pageInd
 		if (pageSize) {
 		  params = { ...params, pageSize };
 		}
-		const response = await BaseApi.get(`/${resource}/GetByUserId/${memberId}/${leaderTaskId}`, {
+		const response = await BaseApi.get(`/${resource}/GetByLeaderTaskIdAndUserId/${memberId}/${leaderTaskId}`, {
 			params:params
 		});
 		return successComposer(retrieveDataSuccessCode, response.data);

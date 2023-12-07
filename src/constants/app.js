@@ -427,12 +427,12 @@ export const SupplyOptions = [
     value: SupplyStatus.Missing,
     label: SupplyLabel[1],
   },
-  {
-    value: SupplyStatus.AcceptByCustomer,
-    label: SupplyLabel[2],
-  },
-  {
-    value: SupplyStatus.RejectByCustomer,
-    label: SupplyLabel[3],
-  },
+  // {
+  //   value: SupplyStatus.AcceptByCustomer,
+  //   label: SupplyLabel[2],
+  // },
+  // {
+  //   value: SupplyStatus.RejectByCustomer,
+  //   label: SupplyLabel[3],
+  // },
 ];

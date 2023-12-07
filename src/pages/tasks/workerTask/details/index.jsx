@@ -21,6 +21,7 @@ export const WorkerTaskDetailsPage = () => {
   const { user } = useContext(UserContext);
   const isLeader = user?.role?.name === roles.LEADER;
   const isForeman = user?.role?.name === roles.FOREMAN;
+  const isWorker = user?.role?.name === roles.WORKER;
 
   const [loading, setLoading] = useState(false);
   const [acceptance, setAcceptance] = useState(false);
@@ -36,7 +37,7 @@ export const WorkerTaskDetailsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleRetrieveWorkerTaskList = async (leaderTaskId, memberId, handleLoading) => {
+  const handleRetrieveWorkerTaskList = async (handleLoading, leaderTaskId, memberId) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -47,7 +48,7 @@ export const WorkerTaskDetailsPage = () => {
       dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
     }
     if (dataWorkerTasks.code !== 0) {
-      message.error = dataWorkerTasks.message;
+      message.error(dataWorkerTasks.message);
       return;
     }
 
@@ -93,7 +94,11 @@ export const WorkerTaskDetailsPage = () => {
       }
       setGroupMemberList(dataGroupMembers?.data);
 
-      handleRetrieveWorkerTaskList(leaderTaskId, null, true);
+      if (isWorker) {
+        handleRetrieveWorkerTaskList(true, leaderTaskId, user?.id);
+      } else {
+        handleRetrieveWorkerTaskList(true, leaderTaskId, null);
+      }
 
       setLoading(false);
     }
@@ -104,7 +109,6 @@ export const WorkerTaskDetailsPage = () => {
   useEffect(() => {
     if (location?.state) {
       setState(location.state);
-      console.log(location.state)
     }
   }, [location]);
 
@@ -152,10 +156,10 @@ export const WorkerTaskDetailsPage = () => {
             team={groupMemberList}
             acceptance={acceptance}
             onReload={(handleLoading) => {
-              handleRetrieveWorkerTaskList(leaderTaskId, null, handleLoading);
+              handleRetrieveWorkerTaskList(handleLoading, leaderTaskId);
             }}
             onFilterTask={(memberId) => {
-              handleRetrieveWorkerTaskList(leaderTaskId, memberId, false);
+              handleRetrieveWorkerTaskList(false, leaderTaskId, memberId);
             }}
             onAcceptanceTask={() => {
               setAcceptance(true);

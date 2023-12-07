@@ -5,10 +5,10 @@ export const TeamRequestStatus = {
 };
 
 // export const TaskStatus = {
-// 	new: 0,
-// 	inProgress: 1,
-// 	pending: 2,
-// 	completed: 3,
+//   New: 0,
+//   InProgress: 1,
+//   Pending: 2,
+//   Completed: 3,
 // };
 
 export const ReportFeedbackStatus = {
@@ -34,6 +34,11 @@ export const orderLabels = [
   "Đang tiến hành",
   "Đã huỷ",
   "Hoàn thành",
+];
+export const genderLabels = [
+  "Nam",
+  "Nữ",
+  "Khác"
 ];
 
 export const orderColors = [

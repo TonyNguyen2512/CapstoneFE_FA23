@@ -2,7 +2,7 @@ import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "an
 import React, { useContext, useState } from "react";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { wTaskStatus } from "../../../../../constants/enum";
+import { TaskStatus, wTaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskReportModal } from "../../components/TaskReportModal";
@@ -27,10 +27,12 @@ export const WorkerTaskInfo = ({
 
 	const isLeader = user?.role?.name === roles.LEADER;
 
-	const { name, leaderName, status, startTime, endTime } = info || [];
+	const { name, leaderName, status, startTime, endTime, item } = info || [];
+
+	const isInProgress = status === TaskStatus.InProgress;
 
 	const completedTasks = tasks?.filter(
-		(e) => e.status === wTaskStatus.Completed
+		(e) => e.status === TaskStatus.Completed
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 
@@ -74,7 +76,7 @@ export const WorkerTaskInfo = ({
 						Chi tiết việc làm {name}
 					</Title>
 				</Col>
-				{isLeader &&
+				{isLeader && isInProgress &&
 					<>
 						<Col span={2} offset={isCompletedTasks ? 10 : 14}>
 							<Button
@@ -116,24 +118,47 @@ export const WorkerTaskInfo = ({
 									{getTaskStatusName(status)}</strong></span>
 							</Col>
 						</Row>
+						{isLeader &&
+							<Row gutter={[16, 16]}>
+								<Col className="gutter-row" span={24}>
+									<Collapse
+										ghost
+										items={[
+											{
+												label: `Thành viên nhóm (${team?.length ?? 0})`,
+												children: (
+													<Row gutter={[16, 16]}>
+														{team?.map((item, index) => (
+															<Col className="gutter-row" span={4} key={item.id}>
+																<Button type="text" >{index + 1}. {item.fullName}
+																	{user?.id === item.id && (
+																		<span className="ml-2" style={{ fontWeight: "bold" }}>
+																			(Tôi)
+																		</span>
+																	)}
+																</Button>
+															</Col>
+														))}
+													</Row>
+												),
+											},
+										]}
+									/>
+								</Col>
+							</Row>
+						}
 						<Row gutter={[16, 16]}>
 							<Col className="gutter-row" span={24}>
 								<Collapse
 									ghost
 									items={[
 										{
-											label: `Thành viên nhóm (${team?.length ?? 0})`,
+											label: `Danh sách vật liệu (${item?.itemMaterials?.length ?? 0})`,
 											children: (
 												<Row gutter={[16, 16]}>
-													{team?.map((item, index) => (
-														<Col className="gutter-row" span={4} key={item.id}>
-															<Button type="text" >{index + 1}. {item.fullName}
-																{user?.id === item.id && (
-																	<span className="ml-2" style={{ fontWeight: "bold" }}>
-																		(Tôi)
-																	</span>
-																)}
-															</Button>
+													{item?.itemMaterials?.map((item, index) => (
+														<Col className="gutter-row" span={24} key={item.materialId}>
+															{index + 1}. {item.materialName}
 														</Col>
 													))}
 												</Row>
