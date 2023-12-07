@@ -8,7 +8,7 @@ import { UserContext } from "../../../../../../providers/user";
 import WorkerTasksApi from "../../../../../../apis/worker-task";
 import { TaskContext } from "../../../../../../providers/task";
 
-export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
+export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
   const { user } = useContext(UserContext);
   const { tasks, reload } = useContext(TaskContext);
 
@@ -149,7 +149,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
       <Row gutter={16}>
         {columns.map((column) => (
           <Col key={column.id} span={6}>
-            <TaskColumn column={column} onViewTask={onViewTask} onDeleteTask={onDeleteTask} />
+            <TaskColumn column={column} onViewTask={onViewTask} onChatTask={onChatTask} onDeleteTask={onDeleteTask} />
           </Col>
         ))}
       </Row>
