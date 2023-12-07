@@ -1,14 +1,17 @@
-import { Avatar, Col, Form, Input, Row, Space, Typography } from "antd";
+import { Avatar, Col, DatePicker, Form, Input, Row, Space, Typography } from "antd";
 import React, { useContext } from "react";
 import { UserContext } from "../../providers/user";
 import { getRoleName } from "../../utils";
 import { Container } from "react-bootstrap";
 import { UserOutlined } from "@ant-design/icons";
+import dayjs from "dayjs";
+import { genderLabels } from "../../constants/enum";
 
 const { Title } = Typography;
 
 const ProfilePage = () => {
   const { user } = useContext(UserContext);
+  console.log(user);
 
   return (
     <Container className="w-full ">
@@ -28,33 +31,40 @@ const ProfilePage = () => {
               layout="horizontal"
               labelCol={{ span: 6 }}
               wrapperCol={{ span: 16 }}
-              initialValues={user}
+              initialValues={{
+                ...user,
+                dob: user?.dob ? dayjs(user.dob) : null,
+                genderLabel: genderLabels[user?.gender],
+              }}
             >
               <Form.Item name="id" label="ID" hidden>
                 <Input disabled readOnly />
               </Form.Item>
+              <Form.Item name="userName" label="Số điện thoại">
+                <Input placeholder="Số điện thoại..." readOnly />
+              </Form.Item>
               <Form.Item name="email" label="Email">
-                <Input placeholder="Email..." value={user?.email} readOnly />
+                <Input placeholder="Email..." readOnly />
               </Form.Item>
               {/* <Form.Item name="password" label="Mật khẩu">
                 <Input.Password placeholder="Mật khẩu..." value={user?.password} />
               </Form.Item> */}
               <Form.Item name="fullName" label="Họ và tên">
-                <Input placeholder="Họ và tên..." defaultValue={user?.fullName} />
+                <Input placeholder="Họ và tên..." readOnly />
               </Form.Item>
               <Form.Item name="dob" label="Sinh nhật">
-                <Input placeholder="Sinh nhật..." defaultValue={user?.dob} />
+                {user?.dob && (
+                  <DatePicker className="w-full" format="DD/MM/YYYY" showTime={false} disabled />
+                )}
+              </Form.Item>
+              <Form.Item name="genderLabel" label="Giới tính">
+                <Input placeholder="Giới tính..." readOnly />
               </Form.Item>
               <Form.Item name="address" label="Địa chỉ">
-                <Input placeholder="Địa chỉ..." defaultValue={user?.address} />
+                <Input placeholder="Địa chỉ..." readOnly />
               </Form.Item>
-              <Form.Item name="role" label="Vai trò">
-                <Input
-                  placeholder="Vai trò..."
-                  defaultValue={getRoleName(user?.role)}
-                  disabled
-                  readOnly
-                />
+              <Form.Item name="roleId" label="Vai trò">
+                <b>{getRoleName(user.role?.name)}</b>
               </Form.Item>
             </Form>
           </Space>

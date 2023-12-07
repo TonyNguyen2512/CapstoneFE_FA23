@@ -11,17 +11,19 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
   const formRef = useRef();
 
   const [roleName, setRoleName] = useState();
+  const [gender, setGender] = useState();
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (val) => {
+    const payload = { ...val, phoneNumber: val.phoneNumber, gender };
     setLoading(true);
     console.log(roleName);
     const response = isCreate
-      ? await UserApi.createUser(roleName, val)
-      : await UserApi.updateUserInfo(val);
+      ? await UserApi.createUser(roleName, payload)
+      : await UserApi.updateUserInfo(payload);
     if (!response || !response.errorMessage) {
       message.success(`${typeMessage} thành công`);
-      onSuccess()
+      onSuccess();
     } else {
       message.error(`${typeMessage} thất bại. ${response.errorMessage}`);
     }
@@ -40,18 +42,15 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
       <Form
         layout="vertical"
         ref={formRef}
-        initialValues={{ ...data, data, dob: data?.dob ? dayjs(data.dob) : null }}
+        initialValues={{
+          ...data,
+          dob: data?.dob ? dayjs(data.dob) : null,
+          phoneNumber: data?.phoneNumber || data?.userName,
+        }}
         onFinish={handleSubmit}
       >
         {isCreate ? (
           <>
-            <Form.Item
-              name="phoneNumber"
-              label="Số điện thoại"
-              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
-            >
-              <Input placeholder="Nhập số điện thoại..." />
-            </Form.Item>
             <Form.Item
               name="password"
               label="Mật Khẩu"
@@ -83,9 +82,6 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
             <Form.Item name="id" hidden>
               <Input />
             </Form.Item>
-            <Form.Item name="phoneNumber" hidden>
-              <Input />
-            </Form.Item>
             <Form.Item name="userName" hidden>
               <Input />
             </Form.Item>
@@ -94,6 +90,13 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
             </Form.Item>
           </>
         )}
+        <Form.Item
+          name="phoneNumber"
+          label="Số điện thoại"
+          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+        >
+          <Input placeholder="Nhập số điện thoại..." />
+        </Form.Item>
         <Form.Item
           name="email"
           label="Email"
@@ -121,6 +124,17 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
             placeholder="Chọn ngày sinh..."
             format="DD/MM/YYYY"
             showTime={false}
+          />
+        </Form.Item>
+        <Form.Item name="gender" label="Giới tính">
+          <Select
+            placeholder="Giới tính..."
+            onChange={(e) => setGender(e)}
+            options={[
+              { label: "Nam", value: 0 },
+              { label: "Nữ", value: 1 },
+              { label: "Khác", value: 2 },
+            ]}
           />
         </Form.Item>
       </Form>

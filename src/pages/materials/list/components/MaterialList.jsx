@@ -8,7 +8,7 @@ import confirm from "antd/es/modal/confirm";
 import { MaterialModal } from "../../components/MaterialModal";
 import { formatMoney, formatNum } from "../../../../utils";
 
-const MaterialList = () => {
+const MaterialList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
   const [showUpdateMaterialModal, setShowUpdateMaterialModal] = useState(false);
   const [materialList, setMaterialList] = useState([]);
@@ -27,7 +27,7 @@ const MaterialList = () => {
     setPreviewUrl("");
     setIsModalOpen(false);
   };
-  
+
   useEffect(() => {
     getData();
   }, []);
@@ -66,7 +66,7 @@ const MaterialList = () => {
       //     setShowUpdateMaterialModal(true);
       //   },
       // },
-      {
+      canModify.canUpdate && {
         key: "SET_STATUS",
         label: isDeleted ? "Mở khóa" : "Khóa",
         danger: !isDeleted,
@@ -180,7 +180,10 @@ const MaterialList = () => {
       align: "center",
       render: (_, record) => {
         return (
-          <Dropdown menu={{ items: getActionItems(record) }}>
+          <Dropdown
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+            menu={{ items: getActionItems(record) }}
+          >
             <Button className="mx-auto flex-center" icon={<More />} />
           </Dropdown>
         );
@@ -197,6 +200,7 @@ const MaterialList = () => {
       <Space className="w-full flex justify-between mb-6">
         <div></div>
         <Button
+          disabled={!canModify.canCreate || !canModify.canUpdate}
           className="btn-primary app-bg-primary font-semibold text-white"
           type="primary"
           onClick={() => setShowUpdateMaterialModal(true)}

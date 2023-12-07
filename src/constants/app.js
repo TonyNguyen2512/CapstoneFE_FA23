@@ -7,10 +7,10 @@ export { logoUrlBig, logoUrlMedium, logoUrl };
 
 export const roles = {
   ADMIN: "Admin",
-  FACTORY: "Factory",
+  // FACTORY: "Factory",
   FOREMAN: "Foreman",
   LEADER: "Leader",
-  MANAGER: "Manager",
+  // MANAGER: "Manager",
   WORKER: "Worker",
 };
 
@@ -154,6 +154,21 @@ export const USER_PERMISSIONS = {
     // items
     ALL_PERMISSIONS.items.sider,
     ALL_PERMISSIONS.items.view,
+    // // procedures
+    // ALL_PERMISSIONS.procedures.sider,
+    // ALL_PERMISSIONS.procedures.view,
+    // // steps
+    // ALL_PERMISSIONS.steps.sider,
+    // ALL_PERMISSIONS.steps.view,
+    // item categories
+    ALL_PERMISSIONS.itemCategories.sider,
+    ALL_PERMISSIONS.itemCategories.view,
+    // materials
+    ALL_PERMISSIONS.materials.sider,
+    ALL_PERMISSIONS.materials.view,
+    // materialTypes
+    ALL_PERMISSIONS.materialTypes.sider,
+    ALL_PERMISSIONS.materialTypes.view,
   ],
   [roles.FOREMAN]: [
     // ACCOUNTS
@@ -307,7 +322,7 @@ export const OrderStatus = {
   PENDING: 0,
   REQUEST: 1,
   REJECT: 2,
-  APPROVE: 3, 
+  APPROVE: 3,
   IN_PROGRESS: 4,
   CANCEL: 5,
   COMPLETED: 6,
@@ -427,4 +442,4 @@ export const SupplyOptions = [
     value: SupplyStatus.RejectByCustomer,
     label: SupplyLabel[3],
   },
-]
+];
