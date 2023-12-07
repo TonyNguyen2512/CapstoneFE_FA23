@@ -144,9 +144,9 @@ const TaskDetailModal = ({
 				ref={taskFormRef}
 				initialValues={{
 					description: task?.description,
-					dates: [dayjs(task?.startTime), dayjs(task?.endTime)],
+					dates: [task?.startTime ? dayjs(task?.startTime) : "", task?.startTime ? dayjs(task?.endTime) : ""],
 					assignees: task?.members?.map((e) => e.memberId),
-					status: task?.status || TaskStatus.new,
+					status: task?.status || TaskStatus.New,
 					...task,
 					resource: task?.resource?.[0],
 				}}

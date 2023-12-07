@@ -87,19 +87,19 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
     let taskStatus;
     switch (finish.id) {
       case TaskColumnId.TODO:
-        taskStatus = TaskStatus.new;
+        taskStatus = TaskStatus.New;
         break;
       case TaskColumnId.IN_PROGRESS:
-        taskStatus = TaskStatus.inProgress;
+        taskStatus = TaskStatus.InProgress;
         break;
       case TaskColumnId.IN_APPROVE:
-        taskStatus = TaskStatus.pending;
+        taskStatus = TaskStatus.Pending;
         break;
       case TaskColumnId.COMPLETED:
-        taskStatus = TaskStatus.completed;
+        taskStatus = TaskStatus.Completed;
         break;
       default:
-        taskStatus = TaskStatus.new;
+        taskStatus = TaskStatus.New;
         break;
     }
 
@@ -117,10 +117,10 @@ export const TaskBoard = ({ onViewTask, onDeleteTask }) => {
   };
 
   function loadColumn(allTasks) {
-    const todoTasks = allTasks?.filter((e) => e.status === TaskStatus.new);
-    const inProgressTasks = allTasks?.filter((e) => e.status === TaskStatus.inProgress);
-    const inApproveTasks = allTasks?.filter((e) => e.status === TaskStatus.pending);
-    const completedTasks = allTasks?.filter((e) => e.status === TaskStatus.completed);
+    const todoTasks = allTasks?.filter((e) => e.status === TaskStatus.New);
+    const inProgressTasks = allTasks?.filter((e) => e.status === TaskStatus.InProgress);
+    const inApproveTasks = allTasks?.filter((e) => e.status === TaskStatus.Pending);
+    const completedTasks = allTasks?.filter((e) => e.status === TaskStatus.Completed);
     const newColumns = [...columns];
     for (let i = 0; i < newColumns.length; i++) {
       const column = newColumns[i];

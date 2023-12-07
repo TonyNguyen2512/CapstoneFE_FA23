@@ -21,7 +21,7 @@ export const WorkerTaskManagement = () => {
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 	const isInProgress = info.status === TaskStatus.InProgress;
-	
+
 	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
 	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
 	const [taskChatLoading, setTaskChatLoading] = useState(false);
@@ -116,21 +116,25 @@ export const WorkerTaskManagement = () => {
 							onClick={() => setShowCreateModal(true)}
 						/>
 					)}
-					<span className="ml-10 mr-2">Thành viên: </span>
-					<Select
-						allowClear
-						placeholder="Chọn thành viên"
-						options={team?.map((e) => {
-							return {
-								label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
-								value: e.id,
-							};
-						})}
-						onChange={(value) => {
-							filterTask && filterTask(value);
-						}}
-						style={{ width: 250 }}
-					/>
+					{isLeader &&
+						<>
+							<span className="ml-10 mr-2">Thành viên: </span>
+							<Select
+								allowClear
+								placeholder="Chọn thành viên"
+								options={team?.map((e) => {
+									return {
+										label: `${e.fullName}${e.id === user?.id ? " (Tôi)" : ""}`,
+										value: e.id,
+									};
+								})}
+								onChange={(value) => {
+									filterTask && filterTask(value);
+								}}
+								style={{ width: 250 }}
+							/>
+						</>
+					}
 				</Row>
 			</Row>
 			<TaskBoard
@@ -166,7 +170,7 @@ export const WorkerTaskManagement = () => {
 				onCancel={() => setShowDeleteModal(false)}
 				onOk={() => handleDeleteTask()}
 			/>
-			<TaskChatModal 
+			<TaskChatModal
 				title={`Chat gi do`}
 				open={showChatModal}
 				onCancel={() => setShowChatModal(false)}

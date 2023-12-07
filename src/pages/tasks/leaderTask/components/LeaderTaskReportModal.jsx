@@ -54,13 +54,13 @@ export const LeaderTaskReportModal = ({
 	};
 
 	const handleValidateUpload = () => {
-		if (!leadReportFormRef.current?.getFieldValue('resource')) {
-			setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
-			return false;
-		} else {
+		// if (!leadReportFormRef.current?.getFieldValue('resource')) {
+		// 	setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
+		// 	return false;
+		// } else {
 			setResourceErrorMsg("");
 			return true;
-		}
+		// }
 	}
 
 	return (

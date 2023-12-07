@@ -62,7 +62,8 @@ export const UploadFile = ({
 				<Input />
 			</Form.Item>
 			<Form.Item
-				label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
+				// label={<><Text type="danger">*</Text>&nbsp;<Text strong>Tải ảnh</Text></>}
+				label={<Text strong>Tải ảnh</Text>}
 				valuePropName="fileList"
 				getValueFromEvent={normFile}
 				// validateStatus="error"

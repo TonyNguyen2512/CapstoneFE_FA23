@@ -4,12 +4,12 @@ export const TeamRequestStatus = {
   denied: 2,
 };
 
-export const TaskStatus = {
-  new: 0,
-  inProgress: 1,
-  pending: 2,
-  completed: 3,
-};
+// export const TaskStatus = {
+//   New: 0,
+//   InProgress: 1,
+//   Pending: 2,
+//   Completed: 3,
+// };
 
 export const ReportFeedbackStatus = {
   passed: 0,
@@ -57,7 +57,7 @@ export const modalModes = {
   DETAIL: "3",
 };
 
-export const ETaskStatus = {
+export const TaskStatus = {
   New: 0,
   InProgress: 1,
   Pending: 2,
@@ -66,23 +66,23 @@ export const ETaskStatus = {
 };
 
 export const TaskMap = {
-  [ETaskStatus.New]: {
+  [TaskStatus.New]: {
     color: "#BEBB6D",
     label: "Mới tạo",
   },
-  [ETaskStatus.InProgress]: {
+  [TaskStatus.InProgress]: {
     color: "#CB7A00",
     label: "Đang tiến hành",
   },
-  [ETaskStatus.Pending]: {
+  [TaskStatus.Pending]: {
     color: "#FBD305",
     label: "Chờ duyệt",
   },
-  [ETaskStatus.NotAchived]: {
+  [TaskStatus.NotAchived]: {
     color: "#FF0000",
     label: "Không hoàn thành",
   },
-  [ETaskStatus.Completed]: {
+  [TaskStatus.Completed]: {
     color: "#29CB00",
     label: "Hoàn thành",
   },

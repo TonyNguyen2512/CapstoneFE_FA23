@@ -28,9 +28,9 @@ export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 	const { info } = useContext(TaskContext);
 	// const isLeader = user?.userId === team?.leader?.id;
 	const { id, name, members, startTime, endTime, status } = task;
-	const isCompleted = status === TaskStatus.completed;
+	const isCompleted = status === TaskStatus.Completed;
 
-	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.completed;
+	const overdue = moment(task?.endTime).isBefore(now()) && status !== TaskStatus.Completed;
 
 	const handbleDropdown = () => {
 		let items = [
