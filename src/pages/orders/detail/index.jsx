@@ -133,21 +133,21 @@ const OrderDetailPage = () => {
           setShowItemModal(true);
         },
       },
-      // {
-      //   key: "CANCEL_ORDER",
-      //   label: "Huỷ đơn",
-      //   danger: true,
-      //   icon: <Error />,
-      //   onClick: async () => {
-      //     let success = await OrderApi.deleteOrder(record.id);
-      //     if (success) {
-      //       message.success(`Huỷ đơn hàng thành công!`);
-      //     } else {
-      //       message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
-      //     }
-      //     handleSearch();
-      //   },
-      // },
+      {
+        key: "CANCEL_ORDER",
+        label: "Hủy sản phẩm",
+        danger: true,
+        icon: <Error />,
+        onClick: async () => {
+          let success = await OrderDetailApi.deleteOrderDetail(record.id);
+          if (success) {
+            message.success(`Hủy sản phẩm thành công!`);
+          } else {
+            message.error(`Huỷ sản phẩm thất bại! Vui lòng thử lại sau.`);
+          }
+          handleSearch();
+        },
+      },
     ];
   };
 
