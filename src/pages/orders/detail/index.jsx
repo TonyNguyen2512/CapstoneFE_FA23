@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ItemOrderModal } from "./components/ItemOrderModal";
 import ItemApi from "../../../apis/item";
 import { UpdateStatus } from "../components/UpdateStatus";
+import { PageSize } from "../../../constants/enum";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -21,22 +22,26 @@ const OrderDetailPage = () => {
 
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState();
-  const [itemList, setItemList] = useState();
+  const [itemList, setItemList] = useState([]);
   const [listItemSelect, setListItemSelect] = useState();
   const [showItemModal, setShowItemModal] = useState(false);
   const [updateModal, setUpdateModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState();
 
   const itemRef = useRef();
   const orderRef = useRef();
 
-  const getDetails = async () => {
+  const getDetails = async (search, pageIndex, handleLoading = true) => {
     if (!id) return;
-    setLoading(true);
+    if (handleLoading) {
+      setLoading(true);
+    }
     let data = await OrderApi.getOrderById(id);
     setDetails(data);
-    data = await OrderDetailApi.getListByOrderId(id);
+    data = await OrderDetailApi.getListByOrderId(id, search, pageIndex, PageSize.ORDER_LIST);
     setItemList(data);
+    console.log(itemList);
     data = await UserApi.getAll();
     setUsers(data);
     data = await ItemApi.getAllItem();
@@ -63,16 +68,17 @@ const OrderDetailPage = () => {
     }
   };
 
-  const handleSearch = async (search) => {
-    setLoading(true);
-    let data = await OrderDetailApi.getListByOrderId(id, search);
-    setItemList(data);
-    data = await UserApi.getAll();
-    setUsers(data);
-    setLoading(false);
-  };
-
   const columns = [
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ORDER_LIST}</span>;
+      },
+    },
     {
       title: "Tên sản phẩm",
       dataIndex: "itemName",
@@ -151,6 +157,15 @@ const OrderDetailPage = () => {
     ];
   };
 
+  const handleSearch = async (value) => {
+    getDetails(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getDetails(null, current, false);
+  };
+
   useEffect(() => {
     getDetails();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -161,7 +176,7 @@ const OrderDetailPage = () => {
       <Spin spinning={loading}>
         <OrderDetailsProvider
           details={details}
-          list={itemList}
+          list={itemList?.data}
           users={users}
           reload={() => getDetails()}
         >
@@ -200,10 +215,14 @@ const OrderDetailPage = () => {
             </Space>
             <BaseTable
               title="Danh sách sản phẩm"
-              dataSource={itemList}
+              dataSource={itemList?.data}
               columns={columns}
               loading={loading}
-              pagination={{ pageSize: 5, pageSizeOptions: [] }}
+              pagination={{
+                onChange: onPageChange,
+                pageSize: PageSize.ORDER_LIST,
+                total: itemList?.total,
+              }}
               searchOptions={{
                 visible: true,
                 placeholder: "Tìm kiếm sản phẩm...",
