@@ -62,8 +62,18 @@ const ApiCodes = {
 	104: "Không thể xoá sản phẩm, sản phẩm đang trong đơn hàng!",
 	105: "Sản phẩm đã đi vào sản xuất, không thể chỉnh sửa sản phẩm!",
 	//Order
+	6: "Tên sản phẩm không được trống!",
 	35: "Không tìm thấy thông tin đơn hàng!",
 	36: "Template lỗi!",
+	62: "Vui lòng thêm file báo giá để tạo đơn đặt hàng",
+	63: "Vui lòng thêm sản phẩm vào file báo giá để tạo đơn đặt hàng!",
+	64: "Không thể đọc file báo giá!",
+	66: "Đơn vị không được trống!",
+	67: "Đơn hàng không có sản phẩm không thể tạo file báo giá!",
+	68: "Những mã sản phẩm không tìm thấy trong hệ thống:",
+	69: "Ngày giờ bắt đầu phải lớn hơn hoặc bằng hiện tại!",
+	74: "Vui lòng nhập ngày giờ bắt đầu trước khi thêm/sửa ngày kết thúc!",
+	75: "Ngày giờ kết thúc phải lớn hơn ngày giờ bắt đầu!",
 	//OrderDetail
 	37: "Lỗi API 37: Tài khoản không đủ khả năng mở rộng",
 	//LeaderTask
@@ -106,17 +116,6 @@ const ApiCodes = {
 	61: "Báo cáo này đã hoàn thành!",
 	65: "Không tìm thấy thông tin quản đốc",
 	100: "Đã quá hạn chỉnh sửa báo cáo!",
-	//Order
-	62: "Vui lòng thêm file báo giá để tạo đơn đặt hàng",
-	63: "Vui lòng thêm sản phẩm vào file báo giá để tạo đơn đặt hàng!",
-	64: "Không thể đọc file báo giá!",
-	6: "Tên sản phẩm không được trống!",
-	66: "Đơn vị không được trống!",
-	67: "Đơn hàng không có sản phẩm không thể tạo file báo giá!",
-	68: "Những mã sản phẩm không tìm thấy trong hệ thống:",
-	69: "Ngày giờ bắt đầu phải lớn hơn hoặc bằng hiện tại!",
-	74: "Vui lòng nhập ngày giờ bắt đầu trước khi thêm/sửa ngày kết thúc!",
-	75: "Ngày giờ kết thúc phải lớn hơn ngày giờ bắt đầu!",
 	//Procedure
 	70: "Tên quy trình này đã tồn tại!",
 	71: "Không tìm thấy thông tin quy trình!",

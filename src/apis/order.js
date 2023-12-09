@@ -83,9 +83,9 @@ const createOrder = async (data) => {
   }
 };
 
-const updateOrder = async (id, status) => {
+const updateOrder = async (data) => {
   try {
-    const response = await BaseApi.put(`/${resource}/UpdateStatus/${status}/${id}`);
+    const response = await BaseApi.put(`/${resource}/UpdateOrder`, data);
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);
