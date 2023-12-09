@@ -8,6 +8,7 @@ import { getRoleName } from "../../../utils";
 import storage, { contractsRef, quotesRef } from "../../../middleware/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { locale } from "dayjs";
+import dayjs from "dayjs";
 import { Progress } from "antd/lib";
 
 export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess }) => {
@@ -113,7 +114,10 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
       <Form
         ref={formRef}
         layout="vertical"
-        initialValues={{ ...(data || {}) }}
+        initialValues={{
+          ...data,
+          dates: [dayjs(data?.startTime), dayjs(data?.endTime)] || {},
+        }}
         onFinish={handleSubmit}
       >
         {!isCreate && (

@@ -1,5 +1,5 @@
 import { Edit, Error, Forbid, Lightning, More, Unlock, ViewList } from "@icon-park/react";
-import { orderColors, orderLabels } from "../../../../constants/enum";
+import { PageSize, orderColors, orderLabels } from "../../../../constants/enum";
 import { Button, Dropdown, Space, Tag, message } from "antd";
 import { BaseTable } from "../../../../components/BaseTable";
 import React, { useEffect, useRef, useState } from "react";
@@ -11,6 +11,7 @@ import OrderApi from "../../../../apis/order";
 import UserApi from "../../../../apis/user";
 import dayjs from "dayjs";
 import { UpdateStatus } from "../../components/UpdateStatus";
+import { formatMoney, formatNum } from "../../../../utils";
 
 const OrderList = () => {
   const navigate = useNavigate();
@@ -19,10 +20,13 @@ const OrderList = () => {
   const [updateModal, setUpdateModal] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [total, setTotal] = useState([]);
+  const [totalOrder, setTotalOrder] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const orderRef = useRef();
 
-  const getData = async (keyword) => {
+  const getData = async (keyword, pageIndex) => {
     setLoading(true);
     const data = await UserApi.getAll();
     data.sort((a, b) => {
@@ -45,8 +49,9 @@ const OrderList = () => {
     //     };
     //   })
     // );
-    const response = await OrderApi.getAllOrders(keyword);
+    const response = await OrderApi.getAllOrders(keyword, pageIndex, PageSize.ORDER_LIST);
     setOrders(response.data || []);
+    setTotal(response.total || []);
     setLoading(false);
   };
 
@@ -56,8 +61,13 @@ const OrderList = () => {
   // };
 
   useEffect(() => {
-    getData();
+    getData(null, 1);
   }, []);
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current);
+  };
 
   const getActionItems = (record) => {
     return [
@@ -110,29 +120,43 @@ const OrderList = () => {
 
   const columns = [
     {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ORDER_LIST}</span>;
+      },
+    },
+    {
       title: "Tên đơn hàng",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => a.name - b.name,
     },
     {
       title: "Khách hàng",
       dataIndex: "customerName",
       key: "customerName",
-      sorter: (a, b) => a.customerName.localeCompare(b.customerName),
+      sorter: (a, b) => a.customerName - b.customerName,
     },
     {
       title: "Báo giáo xưởng",
       dataIndex: "totalPrice",
       key: "totalPrice",
-      sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
+      },
     },
     {
       title: "Ngày tạo đơn",
       dataIndex: "orderDate",
       key: "orderDate",
       render: (_, { orderDate }) => <span>{dayjs(orderDate).format("DD/MM/YYYY")}</span>,
-      sorter: (a, b) => a.orderDate.localeCompare(b.orderDate),
+      sorter: (a, b) => a.orderDate - b.orderDate,
     },
     // {
     //   title: "Ngày nghiệm thu",
@@ -178,7 +202,7 @@ const OrderList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1);
   };
 
   return (
@@ -196,9 +220,14 @@ const OrderList = () => {
       <BaseTable
         title="Quản lý đơn đặt hàng"
         dataSource={orders}
+        totalList={total}
         columns={columns}
         loading={loading}
-        pagination={{ pageSize: 8 }}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.ORDER_LIST,
+          total: total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm đơn đặt hàng...",

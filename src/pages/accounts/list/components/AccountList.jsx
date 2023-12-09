@@ -145,7 +145,7 @@ const AccountList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.ACCOUNTS_LIST))}</span>;
+        return <span>{index + 1}</span>;
       },
     },
     {

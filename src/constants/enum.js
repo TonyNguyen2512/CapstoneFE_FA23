@@ -172,7 +172,7 @@ export const SupplyLabel = [
 ];
 
 export const PageSize = {
-  ORDER_LIST: 4,
+  ORDER_LIST: 10,
   LEADER_TASK_ORDER_LIST: 10,
   LEADER_TASK_PROCEDURE_LIST: 3,
   LEADER_TASK_ORDER_DETAIL_LIST: 3,
