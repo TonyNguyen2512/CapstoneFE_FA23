@@ -153,6 +153,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
             rules={[
               {
                 required: true,
+                message: "Vui lòng thêm bảng báo giá",
               },
             ]}
           >
@@ -200,7 +201,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên khách hàng",
+              message: "Vui lòng chọn người báo giá",
             },
           ]}
         >
@@ -227,7 +228,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           rules={[
             {
               required: true,
-              message: "Vui lòng nhập tên khách hàng",
+              message: "Vui lòng thời gian đơn hàng",
             },
           ]}
         >
