@@ -40,6 +40,7 @@ export const UpdateStatus = ({ data, open, onCancel, onSuccess }) => {
         )}
         <Form.Item
           name="status"
+          label="Trạng thái"
           rules={[
             {
               required: true,
@@ -55,7 +56,7 @@ export const UpdateStatus = ({ data, open, onCancel, onSuccess }) => {
           />
         </Form.Item>
         {data?.status < orderLabels.length && (
-          <Button onClick={() => handleSubmit({ status: nextStep })}>
+          <Button label="Cập nhật nhanh" onClick={() => handleSubmit({ status: nextStep })}>
             Cập nhật thành <b> "{orderLabels[nextStep]}"</b>
           </Button>
         )}

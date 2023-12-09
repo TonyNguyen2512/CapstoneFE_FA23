@@ -125,7 +125,8 @@ const updateQuote = async (id) => {
 
 const deleteOrder = async (id) => {
   try {
-    const success = await updateOrder(id, 5);
+    // const success = await updateOrder(id, 5);
+    const success = await updateOrderStatus(5, id);
     return success;
   } catch (error) {
     console.log("Error delete item: ", error);
