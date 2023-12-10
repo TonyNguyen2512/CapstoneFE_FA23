@@ -11,6 +11,7 @@ import {
   Space,
   Spin,
   Typography,
+  Upload,
 } from "antd";
 import BaseModal from "../../../../components/BaseModal";
 import CommentApi from "../../../../apis/comment";
@@ -35,8 +36,7 @@ import { ROLE_MAP } from "../../../../constants/app";
 
 const { Title, Text } = Typography;
 
-export const TaskChatModal = ({ open, onCancel, onSubmit, confirmLoading, title, dataSource }) => {
-  const formChatRef = useRef();
+export const TaskChatModal = ({ open, onCancel, dataSource }) => {
   const formChatUpdateRef = useRef();
   const { user } = useContext(UserContext);
   const { createMicrosoftSignalrConnection, ECommentHub } = useMicrosoftSignalR();
@@ -47,6 +47,7 @@ export const TaskChatModal = ({ open, onCancel, onSubmit, confirmLoading, title,
   const [hoveringCmt, setHoveringCmt] = useState();
   const [editingCmt, setEditingCmt] = useState();
   const [connection, setConnection] = useState();
+  const [newCmtContent, setNewCmtContent] = useState();
 
   useEffect(() => {
     console.log({ open, id });
@@ -73,27 +74,21 @@ export const TaskChatModal = ({ open, onCancel, onSubmit, confirmLoading, title,
     })();
   }, [open]);
 
-  // useEffect(() => {
-  //   console.log({ id, state: connection?.state });
-  //   if (id && connection?.state === HubConnectionState.Connected) {
-  //   } else {
-  //     console.log("not connected");
-  //   }
-  // }, [connection?.state]);
-
   const getComments = async () => {
     const res = await CommentApi.getCommentByWorkerTaskId(id);
     setListComment(res);
   };
-
-  const addComment = async (obj) => {
-    if (obj?.commentContent) return;
+  const addComment = async () => {
+    if (!newCmtContent) return;
     try {
       setLoading(true);
-      await CommentApi.createComment(obj);
-      formChatRef.current.setFieldValue("commentContent", undefined);
+      await CommentApi.createComment({
+        workerTaskId: id,
+        commentContent: newCmtContent,
+      });
     } catch (error) {
     } finally {
+      setNewCmtContent();
       setLoading(false);
     }
   };
@@ -274,39 +269,35 @@ export const TaskChatModal = ({ open, onCancel, onSubmit, confirmLoading, title,
           )}
           {!editingCmt?.length && (
             <Col span={24}>
-              <Form ref={formChatRef} onFinish={addComment} initialValues={{ workerTaskId: id }}>
-                <div className="flex items-center gap-x-3  w-full">
-                  <div className="w-[50px] h-[50px]">
-                    <Image
-                      preview={false}
-                      className="rounded-full"
-                      src={user?.image}
-                      fallback={ErrorImage}
-                      width={50}
-                      height={50}
-                    />
-                  </div>
-                  <Form.Item name="workerTaskId" hidden>
-                    <Input />
-                  </Form.Item>
-                  <Form.Item name="commentContent" className="w-full m-0">
-                    <Input
-                      placeholder="Nhập bình luận..."
-                      allowClear
-                      onPressEnter={(e) => {
-                        formChatRef.current?.submit();
-                      }}
-                    />
-                  </Form.Item>
-                  <SendOne
-                    theme="outline"
-                    size="30"
-                    fill="#DDB850"
-                    onClick={() => formChatRef.current?.submit()}
+              <div className="flex items-center gap-x-3  w-full">
+                <div className="w-[50px] h-[50px]">
+                  <Image
+                    preview={false}
+                    className="rounded-full"
+                    src={user?.image}
+                    fallback={ErrorImage}
+                    width={50}
+                    height={50}
                   />
-                  <UploadPicture theme="outline" size="30" fill="#DDB850" />
                 </div>
-              </Form>
+                <Input
+                  placeholder="Nhập bình luận..."
+                  allowClear
+                  value={newCmtContent}
+                  onPressEnter={addComment}
+                  onChange={(e) => {
+                    setNewCmtContent(e.target.value);
+                  }}
+                />
+                <SendOne theme="outline" size="30" fill="#DDB850" onClick={addComment} />
+                <Upload
+                  multiple={true}
+                  showUploadList={false}
+                  onChange={(infoFile) => console.log({ infoFile })}
+                >
+                  <UploadPicture theme="outline" size="30" fill="#DDB850" />
+                </Upload>
+              </div>
             </Col>
           )}
         </Row>

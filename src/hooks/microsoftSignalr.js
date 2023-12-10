@@ -1,7 +1,7 @@
 const useMicrosoftSignalR = () => {
   const microsoftSignalR = require("@microsoft/signalr");
 
-  const host = process.env.REACT_APP_BE_URL;
+  const host = process.env.REACT_APP_SIGNALR_ENDPOINT;
   const token = localStorage.getItem("jwt");
 
   const createMicrosoftSignalrConnection = (hubEndPoint) => {
