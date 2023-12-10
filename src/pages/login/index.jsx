@@ -39,7 +39,7 @@ export const LoginPage = () => {
     setLoading(false);
     if (success) {
       message.success(`Đăng nhập thành công!`);
-      navigate(routes.dashboard.root);
+      navigate(routes.root);
     } else {
       message.error("Sai tài khoản hoặc mật khẩu. Vui lòng nhập lại.");
     }

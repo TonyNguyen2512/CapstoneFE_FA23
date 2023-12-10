@@ -17,8 +17,10 @@ const login = async (username, password) => {
 		if (response.status === 200) {
 			const jwt = response.data.result["access_token"];
 			const userId = response.data.result["userId"];
+			const role = response.data.result["role"];
 			localStorage.setItem("jwt", jwt);
 			localStorage.setItem("userId", userId);
+			localStorage.setItem("userRole", JSON.stringify(role));
 			return true;
 		}
 		return false

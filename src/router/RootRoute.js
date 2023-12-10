@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/auth";
 import routes, { UnauthorizedRoutes } from "../constants/routes";
+import { useAuth } from "../hooks/auth";
+import { roles } from "../constants/app";
 
 const RootRoute = () => {
 	const navigate = useNavigate();
@@ -9,22 +10,28 @@ const RootRoute = () => {
 	const isAuthenticated = useAuth();
 
 	useEffect(() => {
-		const path = pathname;
-		// navigate(routes.dashboard.root);
+		let path = pathname;
 
 		if (UnauthorizedRoutes.includes(path)) {
 			if (isAuthenticated) {
-				navigate(routes.dashboard.root);
+				navigate(`${routes.dashboard.root}/${routes.dashboard.home}`);
 			}
 		} else {
 			if (!isAuthenticated) {
 				navigate(routes.login);
 			} else {
 				if (path === routes.root) {
-					navigate(routes.dashboard.root);
-				} else {
-					navigate(path);
+					path = routes.dashboard.root;
+					const role = JSON.parse(localStorage.getItem("userRole"));
+					if (role?.name === roles.LEADER) {
+						path += `/${routes.dashboard.workersTasks}`;
+					}
+					else if (role?.name === roles.WORKER) {
+						path += `/${routes.dashboard.tasks}`;
+					}
+					else path += `/${routes.dashboard.home}`;
 				}
+				navigate(path);
 			}
 		}
 
