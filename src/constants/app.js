@@ -12,6 +12,13 @@ export const roles = {
   WORKER: "Worker",
 };
 
+export const ROLE_MAP = {
+  [roles.ADMIN]: "Quản trị viên",
+  [roles.FOREMAN]: "Quản đốc",
+  [roles.LEADER]: "Tổ trưởng",
+  [roles.WORKER]: "Công nhân",
+};
+
 export const ALL_PERMISSIONS = {
   accounts: {
     view: "accounts.view",

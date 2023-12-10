@@ -36,6 +36,10 @@ const useMicrosoftSignalR = () => {
       console.log(`${hubEndPoint} reconnected`);
     });
 
+    connection.onclose(() => {
+      console.log(`${hubEndPoint} close`);
+    });
+
     return connection;
   };
 
@@ -47,9 +51,18 @@ const useMicrosoftSignalR = () => {
     },
   };
 
+  // enum comment hub
+  const ECommentHub = {
+    EndPoint: "/commentHub",
+    Method: {
+      ChangeComment: "changeComment",
+    },
+  };
+
   return {
     createMicrosoftSignalrConnection,
     ENotificationHub,
+    ECommentHub,
   };
 };
 export default useMicrosoftSignalR;
