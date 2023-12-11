@@ -47,6 +47,16 @@ const searchItem = async (search, pageIndex, pageSize) => {
   }
 };
 
+const getItemNotExistsInOrder = async (orderId) => {
+  try {
+    const response = await BaseApi.get(`/${resource}/GetItemNotExistsInOrder/${orderId}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error get item by id: ", error);
+    return undefined;
+  }
+};
+
 const getItemById = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/GetById/${id}`);
@@ -99,6 +109,7 @@ const deleteItem = async (id) => {
 
 const ItemApi = {
   getAllItem,
+  getItemNotExistsInOrder,
   getItemById,
   createItem,
   duplicateItem,

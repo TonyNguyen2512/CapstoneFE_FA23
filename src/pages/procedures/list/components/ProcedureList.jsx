@@ -46,14 +46,16 @@ const ProcedureList = () => {
   };
 
   const columns = [
-    // {
-    //   title: "ID",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   align: "center",
-    //   width: "25%",
-    //   sorter: (a, b) => a.id.localeCompare(b.id),
-    // },
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
+    },
     {
       title: "Tên quy trình",
       dataIndex: "name",
@@ -64,6 +66,7 @@ const ProcedureList = () => {
       title: "Danh sách bước",
       dataIndex: "listStep",
       key: "listStep",
+      width: "50%",
       render: (_, { listStep }) =>
         listStep?.map((e, i) => (
           <p>
@@ -75,6 +78,7 @@ const ProcedureList = () => {
       title: "Thao tác",
       dataIndex: "action",
       key: "action",
+      width: "10%",
       align: "center",
       render: (_, record) => {
         return (

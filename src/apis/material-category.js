@@ -16,6 +16,9 @@ const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
     if (pageSize) {
       params = { ...params, pageSize };
     }
+    if (search) {
+      params = { ...params, search };
+    }
     const response = await BaseApi.get(`/${resource}/GetAll`, {
       params: params,
     });

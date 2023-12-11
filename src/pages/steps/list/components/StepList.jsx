@@ -42,12 +42,14 @@ const StepList = () => {
 
   const columns = [
     {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      align: "center",
-      width: "30%",
-      sorter: (a, b) => a?.id.localeCompare(b?.id),
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
     },
     {
       title: "Tên bước",
