@@ -203,7 +203,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderDetailId: values?.id,
+      orderId: orderId,
     }
     console.log("create", data)
     try {
