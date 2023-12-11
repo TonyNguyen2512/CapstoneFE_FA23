@@ -4,12 +4,12 @@ import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import { modalModes } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
-import { leaderTaskReportsRef } from "../../../../middleware/firebase";
+import { leaderTaskTaskReportsRef, taskAcceptanceReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../../components/UploadFile";
 
 const { Text } = Typography;
 
-export const LeaderTaskReportModal = ({
+export const TaskAcceptanceReportModal = ({
 	open,
 	onCancel,
 	onSubmit,
@@ -134,7 +134,7 @@ export const LeaderTaskReportModal = ({
 							</Form.Item>
 							<UploadFile 
 								formRef={leadReportFormRef}
-								imageRef={leaderTaskReportsRef}
+								imageRef={taskAcceptanceReportsRef}
 								itemName="resource"
 								onChange={handleChangeUploadImage}
 								fileAccept=".jpg,.jepg,.png,.svg,.bmp"

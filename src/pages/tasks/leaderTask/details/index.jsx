@@ -1,23 +1,32 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskInfo } from "./components/LeaderTaskInfo";
 import { LeaderTaskOrderDetails } from "./components/LeaderTaskOrderDetails";
 import { UserContext } from "../../../../providers/user";
 import OrderApi from "../../../../apis/order";
-import { Button, Row, Space, Spin, message } from "antd";
+import { Button, Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
-import { OrderStatus, PageSize, ETaskStatus } from "../../../../constants/enum";
+import { OrderStatus, PageSize } from "../../../../constants/enum";
 import OrderDetailApi from "../../../../apis/order-details";
+import { roles } from "../../../../constants/app";
+import OrderReportApi from "../../../../apis/order-report";
+import ApiCodes from "../../../../constants/apiCode";
+import { LeaderTaskOrderReportModal } from "../components/LeaderTaskOrderReportModal";
 
 export const LeaderTaskDetailsPage = () => {
+  const { user } = useContext(UserContext);
+
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const [orderInfo, setOrderInfo] = useState([]);
   const [taskInfo, setTaskInfo] = useState([]);
   const [allTasks, setAllTasks] = useState([]);
   const [orderDetailInfo, setOrderDetailInfo] = useState();
+  const [managerOrder, setManagerOrder] = useState([]);
+  const [showOrderReportModal, setShowOrderReportModal] = useState(false);
+  const [orderReportLoading, setOrderReportLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -89,6 +98,8 @@ export const LeaderTaskDetailsPage = () => {
     OrderApi.getOrderById(id).then((dataOrder) => {
       setOrderInfo(dataOrder);
       getDataOrderDetail(handleLoading, dataOrder?.id, 1);
+
+      setManagerOrder(user?.role?.name === roles.FOREMAN && user?.id === dataOrder?.assignToId);
     });
     setLoading(false);
   };
@@ -100,11 +111,28 @@ export const LeaderTaskDetailsPage = () => {
 
     if (!orderId) return;
 
-    OrderDetailApi.getListByOrderId(orderId, search, pageIndex, PageSize.LEADER_TASK_ORDER_DETAIL_LIST).then((dataOrderDetails) => {
+    OrderDetailApi.getListByOrderId(
+      orderId,
+      search,
+      pageIndex,
+      PageSize.LEADER_TASK_ORDER_DETAIL_LIST
+    ).then((dataOrderDetails) => {
       setOrderDetailInfo(dataOrderDetails);
     });
 
     setLoading(false);
+  }
+  
+  const handleSubmitOrderReport = async (values) => {
+    setOrderReportLoading(true);
+    console.log("send order report", values);
+    const resp = await OrderReportApi.createOrderReport(values);
+    if (resp) {
+      message.info("Tạo báo cáo thành công");
+    } else {
+      message.error("Tạo báo cáo thất bại");
+    }
+    setOrderReportLoading(false);
   }
 
   useEffect(() => {
@@ -117,16 +145,19 @@ export const LeaderTaskDetailsPage = () => {
     >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
-          {(orderInfo.status === OrderStatus.Pending || orderInfo.status === OrderStatus.Reject || orderInfo.status === OrderStatus.Request) &&
+          {(orderInfo.status === OrderStatus.Pending ||
+            orderInfo.status === OrderStatus.Reject ||
+            orderInfo.status === OrderStatus.Request) && (
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
-                type="primay"
+                type="primary"
                 className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => syncMaterials()}
+                onClick={() => setShowOrderReportModal(true)}
               >
-                Cập nhật nguyên vật liệu
+                Báo cáo tiến độ
               </Button>
               <Button
+                style={{ marginLeft: "10px" }}
                 type="primay"
                 className="btn-primary app-bg-primary font-semibold text-white"
                 onClick={() => getOrderStatus()}
@@ -134,7 +165,7 @@ export const LeaderTaskDetailsPage = () => {
                 Báo giá đơn hàng
               </Button>
             </div>
-          }
+          )}
           <TaskProvider
             tasks={taskInfo}
             allTasks={allTasks}
@@ -153,6 +184,16 @@ export const LeaderTaskDetailsPage = () => {
             <div className="mt-4">
               <LeaderTaskOrderDetails title="Danh sách vật liệu" />
             </div>
+            <LeaderTaskOrderReportModal
+              open={showOrderReportModal}
+              onCancel={() => {
+                setShowOrderReportModal(false);
+              }}
+              onSubmit={handleSubmitOrderReport}
+              confirmLoading={orderReportLoading}
+              message={message}
+              title="Báo cáo công việc"
+            />
           </TaskProvider>
         </Space>
       </Spin>

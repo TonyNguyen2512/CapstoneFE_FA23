@@ -76,7 +76,7 @@ export const LeaderTaskOrderDetailProcedureOverview = ({
             children: inprocessTasks?.length,
           },
           {
-            label: "Quy trình đang chờ duyệt hành",
+            label: "Quy trình đang chờ duyệt",
             children: pendingTasks?.length,
           },
           {

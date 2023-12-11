@@ -146,7 +146,7 @@ const createProgressReport = async (data) => {
     const response = await BaseApi.post(`/${resource}/CreateProgressReport`, data);
     return successComposer(response);
   } catch (error) {
-    console.log("Error send acceptance report: ", error);
+    console.log("Error send progress report: ", error);
     return errorComposer(error);;
   }
 };

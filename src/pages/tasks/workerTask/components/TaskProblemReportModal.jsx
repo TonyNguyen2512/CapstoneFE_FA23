@@ -6,13 +6,13 @@ import { modalModes } from "../../../../constants/enum";
 import { SupplyOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { workerTaskReportsRef } from "../../../../middleware/firebase";
+import { taskProblemReportsRef, workerTaskReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../../components/UploadFile";
 import MaterialApi from "../../../../apis/material";
 
 const { Text } = Typography;
 
-export const TaskReportModal = ({
+export const TaskProblemReportModal = ({
 	open,
 	onCancel,
 	onSubmit,
@@ -114,32 +114,32 @@ export const TaskReportModal = ({
 							</Form.Item>
 							<Form.Item
 								name="title"
-								label={<Text strong>Tên vấn đề</Text>}
+								label={<Text strong>Tên báo cáo</Text>}
 								rules={[
 									{
 										required: true,
-										message: "Vui lòng nhập tên vấn đề",
+										message: "Vui lòng nhập tên báo cáo",
 									},
 								]}
 							>
 								<Input
 									showCount
 									maxLength={255}
-									placeholder="Tên vấn đề"
+									placeholder="Tên báo cáo"
 								/>
 							</Form.Item>
 							<Form.Item
-								label={<Text strong>Mô tả vấn đề</Text>}
+								label={<Text strong>Mô tả báo cáo</Text>}
 								name="content"
 								rules={[
 									{
 										required: true,
-										message: "Vui lòng thêm mô tả vấn đề",
+										message: "Vui lòng thêm mô tả báo cáo",
 									},
 								]}
 							>
 								<RichTextEditor
-									placeholder="Mô tả vấn đề..."
+									placeholder="Mô tả báo cáo..."
 								/>
 							</Form.Item>
 							<Row gutter={16}>
@@ -166,7 +166,7 @@ export const TaskReportModal = ({
 								<Col span={8}>
 									<UploadFile 
 										formRef={worderReportFormRef}
-										imageRef={workerTaskReportsRef}
+										imageRef={taskProblemReportsRef}
 										itemName="resource"
 										onChange={handleChangeUploadImage}
 										fileAccept=".jpg,.jepg,.png,.svg,.bmp"

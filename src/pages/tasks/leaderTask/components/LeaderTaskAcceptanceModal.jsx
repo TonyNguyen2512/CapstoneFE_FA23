@@ -1,12 +1,13 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { DatePicker, Form, Input, Select, Typography } from "antd";
 import BaseModal from "../../../../components/BaseModal";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
+import UserApi from "../../../../apis/user";
 
 const { Text } = Typography;
 
-export const TaskAcceptanceModal = ({
+export const LeaderTaskAcceptanceModal = ({
   open,
   onCancel,
   onSubmit,
@@ -15,6 +16,7 @@ export const TaskAcceptanceModal = ({
 }) => {
   const formAcceptanceRef = useRef();
   const { info } = useContext(TaskContext);
+	const [leadersData, setLeadersData] = useState([]);
 
   const onFinish = async (values) => {
     const datas = {
@@ -26,6 +28,19 @@ export const TaskAcceptanceModal = ({
     }
     await onSubmit({ ...datas });
   }
+
+	const initLeaderInfo = async () => {
+		UserApi.getByLeaderRole().then((resp) => {
+			setLeadersData(resp?.data);
+		});
+	}
+
+	useEffect(() => {
+		const initialData = () => {
+			initLeaderInfo();
+		}
+		initialData();
+	}, []);
 
   return (
     <BaseModal
@@ -39,7 +54,7 @@ export const TaskAcceptanceModal = ({
         ref={formAcceptanceRef}
         initialValues={{
           leaderId: info?.leaderId,
-          orderId: info?.orderId,
+          orderDetailId: info?.id,
           startTime: info?.startTime,
           endTime: info?.endTime,
           description: "",
@@ -47,21 +62,39 @@ export const TaskAcceptanceModal = ({
         onFinish={onFinish}
         layout="vertical"
       >
-        <Form.Item name="leaderId" hidden>
+        <Form.Item name="orderDetailId" hidden>
           <Input />
         </Form.Item>
-        <Form.Item name="orderId" hidden>
-          <Input />
+        <Form.Item
+          name="leaderId"
+          label={<Text strong>Tổ trưởng</Text>}
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn Tổ trưởng",
+            },
+          ]}
+        >
+          <Select
+            className="w-full"
+            placeholder="Chọn Tổ trưởng"
+            options={leadersData?.map((e) => {
+              return {
+                label: e.fullName,
+                value: e.id,
+              };
+            })}
+          />
         </Form.Item>
         <Form.Item
           name="dates"
           label={<Text strong>Thời hạn công việc</Text>}
-					rules={[
-						{
-							required: true,
-							message: "Vui lòng chọn ngày bắt đầu & kết thúc",
-						},
-					]}
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng chọn ngày bắt đầu & kết thúc",
+            },
+          ]}
         >
           <DatePicker.RangePicker
             showNow
@@ -80,12 +113,12 @@ export const TaskAcceptanceModal = ({
         <Form.Item
           name="description"
           label={<Text strong>Mô tả báo cáo</Text>}
-					rules={[
-						{
-							required: true,
-							message: "Vui lòng thêm mô tả báo cáo",
-						},
-					]}
+          rules={[
+            {
+              required: true,
+              message: "Vui lòng thêm mô tả báo cáo",
+            },
+          ]}
         >
           <RichTextEditor
             // onChange={(value) => (descRef.current = value)}
