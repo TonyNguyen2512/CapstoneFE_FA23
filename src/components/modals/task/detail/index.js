@@ -12,7 +12,7 @@ import { ErrorImage, ETaskStatus, TaskStatus } from "../../../../constants/enum"
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
-import { workerTaskReportsRef } from "../../../../middleware/firebase";
+import { taskFeedbackReportsRef, workerTaskReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../UploadFile";
 
 dayjs.extend(weekday);
@@ -360,7 +360,7 @@ const TaskDetailModal = ({
 								</Form.Item>
 								<UploadFile
 									formRef={taskFormRef}
-									imageRef={workerTaskReportsRef}
+									imageRef={taskFeedbackReportsRef}
 									itemName="resource"
 									onChange={handleChangeUploadImage}
 									fileAccept=".jpg,.jepg,.png,.svg,.bmp"

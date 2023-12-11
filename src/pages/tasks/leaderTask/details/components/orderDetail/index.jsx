@@ -7,7 +7,7 @@ import { Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../../../layouts/containers/BasePageContent";
 import { TaskProvider } from "../../../../../../providers/task";
 import LeaderTasksApi from "../../../../../../apis/leader-task";
-import { PageSize } from "../../../../../../constants/enum";
+import { ETaskStatus, PageSize } from "../../../../../../constants/enum";
 import routes from "../../../../../../constants/routes";
 import OrderDetailApi from "../../../../../../apis/order-detail";
 import OrderDetailMaterialApi from "../../../../../../apis/order-details-material";
@@ -24,6 +24,7 @@ export const LeaderTaskOrderDetailsPage = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const [state, setState] = useState([]);
+  const [acceptance, setAcceptance] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,6 +49,13 @@ export const LeaderTaskOrderDetailsPage = () => {
       dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(orderDetailId);
       if (dataLeaderTasks.code === 0) {
         setAllTasks(dataLeaderTasks?.data);
+
+        const completedTasks = dataLeaderTasks?.data?.data?.filter(
+          (e) => e.status === ETaskStatus.Completed
+        );
+        if (completedTasks.length !== dataLeaderTasks?.data?.total) {
+          setAcceptance(true);
+        }
       } else {
         message.error(dataLeaderTasks.message);
       }
@@ -119,6 +127,7 @@ export const LeaderTaskOrderDetailsPage = () => {
             allTasks={allTasks}
             info={orderDetailInfo}
             materials={materialInfo}
+            acceptance={acceptance}
             onReload={(handleLoading) => {
               getOrderDetailData(handleLoading, 1);
             }}

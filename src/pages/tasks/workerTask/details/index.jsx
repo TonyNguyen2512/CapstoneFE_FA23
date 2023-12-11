@@ -65,8 +65,6 @@ export const WorkerTaskDetailsPage = () => {
 
       if (!leaderTaskId) return;
 
-      console.log("leaderTaskId", leaderTaskId)
-
       // retrieve leader task data by id
       const dataLeaderTask = await LeaderTasksApi.getLeaderTaskById(leaderTaskId);
       if (dataLeaderTask.code !== 0) {
@@ -106,7 +104,7 @@ export const WorkerTaskDetailsPage = () => {
     }
 
     getData(leaderTaskId, true);
-  }, [leaderTaskId]);
+  }, [isWorker, leaderTaskId, user]);
 
   useEffect(() => {
     if (location?.state) {

@@ -13,10 +13,11 @@ import routes from "../../../../../constants/routes";
 import confirm from "antd/es/modal/confirm";
 import { Button } from "antd/lib";
 import { LeaderTaskModal } from "../../components/LeaderTaskModal";
-import { LeaderTaskReportModal } from "../../components/LeaderTaskReportModal";
+import { LeaderTaskTaskReportModal } from "../../../workerTask/components/TaskAcceptanceReportModal";
 import ReportApi from "../../../../../apis/task-report";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import WorkerTasksApi from "../../../../../apis/worker-task";
+import { TaskProgressReportModal } from "../../../workerTask/components/TaskProgressReportModal";
 
 export const LeaderTaskOrderDetails = ({
   title,
@@ -27,10 +28,10 @@ export const LeaderTaskOrderDetails = ({
   const [loading, setLoading] = useState(false);
   const [showETaskCreateModal, setShowETaskCreateModal] = useState(false);
   const [showETaskUpdateModal, setShowETaskUpdateModal] = useState(false);
-  const [showETaskReportModal, setShowETaskReportModal] = useState(false);
+  const [showETaskProgressReportModal, setShowETaskProgressReportModal] = useState(false);
   const [eTaskCreateLoading, setETaskCreateLoading] = useState(false);
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
-  const [eTaskReportLoading, setETaskReportLoading] = useState(false);
+  const [eTaskProgressReportLoading, setETaskReportLoading] = useState(false);
 
   const [showWTaskDetailModal, setShowWTaskDetailModal] = useState(false);
   const [wTaskDetailLoading, setWTaskDetaiLoading] = useState(false);
@@ -257,14 +258,6 @@ export const LeaderTaskOrderDetails = ({
         },
       },
       {
-        key: "REPORT_ROLE",
-        label: "Báo cáo công việc",
-        icon: <Edit />,
-        onClick: () => {
-          handleShowETaskReportModal(record?.id);
-        },
-      },
-      {
         key: "SET_STATUS",
         label: isActive ? "Mở khóa" : "Khóa",
         danger: !isActive,
@@ -370,30 +363,6 @@ export const LeaderTaskOrderDetails = ({
       console.log(e);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleShowETaskReportModal = async (eTaskId) => {
-    if (!eTaskId) return;
-    setShowETaskReportModal(true);
-  }
-
-  const handleSubmitETaskReport = async (values) => {
-    setETaskReportLoading(true);
-    console.log("update task: ", values);
-    try {
-      const report = await ReportApi.sendAcceptanceReport(values);
-      if (report.code === 0) {
-        message.success(report.message);
-        setShowETaskReportModal(false);
-        reload(false);
-      } else {
-        message.error(report.message);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setETaskReportLoading(false);
     }
   };
 
@@ -616,17 +585,6 @@ export const LeaderTaskOrderDetails = ({
         dataSource={eTaskInfoRef.current}
         mode={modalModes.UPDATE}
         message={message}
-      />
-      <LeaderTaskReportModal
-        open={showETaskReportModal}
-        onCancel={() => {
-          eTaskInfoRef.current = null;
-          setShowETaskReportModal(false);
-        }}
-        onSubmit={handleSubmitETaskReport}
-        confirmLoading={eTaskReportLoading}
-        message={message}
-        title="Báo cáo công việc"
       />
       <TaskDetailModal
         open={showWTaskDetailModal}

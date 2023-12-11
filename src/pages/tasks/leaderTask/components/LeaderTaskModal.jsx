@@ -82,7 +82,7 @@ export const LeaderTaskModal = ({
 					drawings2D: dataSource?.item?.drawings2D,
 					drawings3D: dataSource?.item?.drawings3D,
 					drawingsTechnical: dataSource?.item?.drawingsTechnical,
-					dates: [dayjs(dataSource?.startTime), dayjs(dataSource?.endTime)],
+					dates: [dataSource?.startTime ? dayjs(dataSource?.startTime) : "", dataSource?.endTime ? dayjs(dataSource?.endTime) : ""],
 				}}
 			>
 				<Row gutter={16}>

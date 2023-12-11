@@ -1,5 +1,5 @@
 import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
-import { Typography, Row, message } from "antd";
+import { Typography, Row, message, Col } from "antd";
 import dayjs from "dayjs";
 import React, { useContext, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,26 +13,28 @@ import routes from "../../../../../../../constants/routes";
 import { TaskContext } from "../../../../../../../providers/task";
 import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
 import ReportApi from "../../../../../../../apis/task-report";
-import { LeaderTaskReportModal } from "../../../../components/LeaderTaskReportModal";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
+import { LeaderTaskAcceptanceModal } from "../../../../components/LeaderTaskAcceptanceModal";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
   orderId,
 }) => {
 
-  const { tasks, info, reload, filterTask } = useContext(TaskContext);
+  const { tasks, info, reload, filterTask, acceptance } = useContext(TaskContext);
 
   const { Title } = Typography;
   const titleInfo = title + ` (${tasks?.total ? tasks.total : 0})`;
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
+
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [showReportModal, setShowReportModal] = useState(false);
+  const [showAcceptanceReportModal, setShowAcceptanceReportModal] = useState(false);
   const [eTaskCreateLoading, setETaskCreateLoading] = useState(false);
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
-  const [eTaskReportLoading, setETaskReportLoading] = useState(false);
+  const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
 
   const [searchData, setSearchData] = useState("")
 
@@ -64,14 +66,6 @@ export const LeaderTaskOrderDetailProcedure = ({
           handleShowModal(record?.id);
         },
       },
-      // {
-      //   key: "REPORT_ROLE",
-      //   label: "Báo cáo công việc",
-      //   icon: <Edit />,
-      //   onClick: () => {
-      //     handleShowReportModal(record?.id);
-      //   },
-      // },
       {
         key: "SET_STATUS",
         label: isActive ? "Mở khóa" : "Khóa",
@@ -91,11 +85,6 @@ export const LeaderTaskOrderDetailProcedure = ({
       },
     ];
   };
-
-  const handleShowReportModal = async (eTaskId) => {
-    if (!eTaskId) return;
-    setShowReportModal(true);
-  }
 
   const handleShowModal = async (eTaskId) => {
     if (!eTaskId) return;
@@ -214,7 +203,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: orderId,
+      orderDetailId: values?.id,
     }
     console.log("create", data)
     try {
@@ -263,25 +252,6 @@ export const LeaderTaskOrderDetailProcedure = ({
     }
   };
 
-  const handleSubmitReport = async (values) => {
-    setETaskReportLoading(true);
-    console.log("update task: ", values);
-    try {
-      const report = await ReportApi.sendAcceptanceReport(values);
-      if (report.code === 0) {
-        message.success(report.message);
-        setShowReportModal(false);
-        reload(false);
-      } else {
-        message.error(report.message);
-      }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setETaskReportLoading(false);
-    }
-  };
-
   const deleteTaskProcedure = async (value) => {
     setLoading(true);
     try {
@@ -299,6 +269,18 @@ export const LeaderTaskOrderDetailProcedure = ({
     }
   };
 
+  const handleSubmitAcceptanceReportCreate = async (values) => {
+    console.log("create task acceptance", values)
+    setAcceptanceReportLoading(true);
+    const resp = await LeaderTasksApi.createAcceptanceTasks(values);
+    if (resp) {
+      message.success(resp.message);
+      setAcceptanceReportLoading(false);
+    } else {
+      message.error(resp.message);
+    }
+  }
+
   return (
     <>
       <Row align="middle" className="mb-3" justify="space-between">
@@ -314,6 +296,17 @@ export const LeaderTaskOrderDetailProcedure = ({
               type="primary"
               onClick={() => setShowCreateModal(true)}
             />
+          }
+          {acceptance &&
+            <Col>
+              <Button
+                className="flex-center ml-3"
+                type="primary"
+                onClick={() => setShowAcceptanceReportModal(true)}
+              >
+                Thêm công việc nghiệm thu
+              </Button>
+            </Col>
           }
         </Row>
       </Row>
@@ -357,16 +350,15 @@ export const LeaderTaskOrderDetailProcedure = ({
         mode={modalModes.UPDATE}
         message={message}
       />
-      <LeaderTaskReportModal
-        open={showReportModal}
+      <LeaderTaskAcceptanceModal
+        open={showAcceptanceReportModal}
         onCancel={() => {
           leaderTaskInfo.current = null;
-          setShowReportModal(false);
+          setShowAcceptanceReportModal(false)
         }}
-        onSubmit={handleSubmitReport}
-        confirmLoading={eTaskReportLoading}
-        message={message}
-        title="Báo cáo công việc"
+        onSubmit={handleSubmitAcceptanceReportCreate}
+        confirmLoading={acceptanceReportLoading}
+        title={"Thêm công việc nghiệm thu"}
       />
     </>
   );

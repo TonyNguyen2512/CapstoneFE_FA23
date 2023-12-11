@@ -5,10 +5,11 @@ import { UserContext } from "../../../../../providers/user";
 import { ETaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
-import { TaskReportModal } from "../../components/TaskReportModal";
+import { TaskProblemReportModal, TaskReportModal } from "../../components/TaskProblemReportModal";
 import { roles } from "../../../../../constants/app";
-import { TaskAcceptanceModal } from "../../components/TaskAcceptanceModal";
+import { TaskAcceptanceModal, TaskProgressReportModal } from "../../components/TaskProgressReportModal";
 import LeaderTasksApi from "../../../../../apis/leader-task";
+import { LeaderTaskTaskReportModal, TaskAcceptanceReportModal } from "../../components/TaskAcceptanceReportModal";
 
 const { Text } = Typography;
 
@@ -19,11 +20,13 @@ export const WorkerTaskInfo = ({
 	const { user } = useContext(UserContext);
 	const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
 
-	const [taskReportLoading, setTaskReportLoading] = useState(false);
-	const [taskAcceptanceLoading, setTaskAcceptanceLoading] = useState(false);
+	const [problemReportLoading, setProblemReportLoading] = useState(false);
+	const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
+	const [progressReportLoading, setProgressReportLoading] = useState(false);
 
-	const [showReportModal, setShowReportModal] = useState(false);
-	const [showAcceptanceModal, setShowAcceptanceModal] = useState(false);
+	const [showProblemReportModal, setShowProblemReportModal] = useState(false);
+	const [showAcceptanceModal, setShowAcceptanceReportModal] = useState(false);
+	const [showProgressReportModal, setShowProgressReportModal] = useState(false);
 
 	const isLeader = user?.role?.name === roles.LEADER;
 
@@ -36,32 +39,45 @@ export const WorkerTaskInfo = ({
 	);
 	const isCompletedTasks = tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 
-	const handleReportCreate = async (values) => {
-		setTaskReportLoading(true);
+	const handleProblemReportCreate = async (values) => {
+		setProblemReportLoading(true);
 		values.createdDate = new Date();
 		console.log("create report: ", values);
 		const report = await ReportApi.sendProblemReport(values);
 		if (report.code === 0) {
-			setShowReportModal(false);
+			setShowProblemReportModal(false);
 			message.info(report.message);
 		} else {
 			message.error(report.message);
 		}
-		setTaskReportLoading(false);
+		setProblemReportLoading(false);
 	}
 
-	const handleAcceptanceCreate = async (values) => {
-		setTaskAcceptanceLoading(true);
-		console.log("create acceptance: ", values);
-		const report = await LeaderTasksApi.createAcceptanceTasks(values);
+	const handleAcceptanceReportCreate = async (values) => {
+		setAcceptanceReportLoading(true);
+		console.log("create acceptance report: ", values);
+		const report = await ReportApi.sendAcceptanceReport(values);
 		if (report.code === 0) {
-			setShowAcceptanceModal(false);
+			setShowAcceptanceReportModal(false);
 			message.info(report.message);
 			acceptanceTask();
 		} else {
 			message.error(report.message);
 		}
-		setTaskAcceptanceLoading(false);
+		setAcceptanceReportLoading(false);
+	}
+
+	const handleProgressReportCreate = async (values) => {
+		setProgressReportLoading(true);
+		console.log("create progress report: ", values);
+		const report = await ReportApi.createProgressReport(values);
+		if (report.code === 0) {
+			setProgressReportLoading(false);
+			message.info(report.message);
+		} else {
+			message.error(report.message);
+		}
+		setProgressReportLoading(false);
 	}
 
 	const defaultValue = (value) => {
@@ -78,28 +94,38 @@ export const WorkerTaskInfo = ({
 				</Col>
 				{isLeader && isInProgress &&
 					<>
-						<Col span={2} offset={isCompletedTasks ? 10 : 14}>
+						<Col span={2} offset={1}>
 							<Button
 								type="primary"
 								className="btn-primary app-bg-primary font-semibold text-white"
-								onClick={() => setShowReportModal(true)}
+								onClick={() => setShowProblemReportModal(true)}
 								disabled={acceptance}
 							>
 								Báo cáo vấn đề
 							</Button>
 						</Col>
-						{isCompletedTasks && 
+						{isCompletedTasks &&
 							<Col span={2} offset={1}>
 								<Button
 									type="primary"
 									className="btn-primary app-bg-success font-semibold text-white"
-									onClick={() => setShowAcceptanceModal(true)}
+									onClick={() => setShowAcceptanceReportModal(true)}
 									disabled={acceptance}
 								>
 									Báo cáo nghiệm thu
 								</Button>
 							</Col>
 						}
+						<Col span={2} offset={1}>
+							<Button
+								type="primary"
+								className="btn-primary app-bg-primary font-semibold text-white"
+								onClick={() => setShowProgressReportModal(true)}
+							// disabled={acceptance}
+							>
+								Báo cáo công việc
+							</Button>
+						</Col>
 					</>
 				}
 			</Row>
@@ -173,24 +199,35 @@ export const WorkerTaskInfo = ({
 			</Row>
 			{isLeader &&
 				(<>
-					<TaskReportModal
-						open={showReportModal}
+					<TaskProblemReportModal
+						open={showProblemReportModal}
 						title="Thêm báo cáo vấn đề"
 						onCancel={() => {
-							setShowReportModal(false);
+							setShowProblemReportModal(false);
 						}}
-						onSubmit={handleReportCreate}
-						confirmLoading={taskReportLoading}
+						onSubmit={handleProblemReportCreate}
+						confirmLoading={problemReportLoading}
 					/>
 
-					<TaskAcceptanceModal
+					<TaskAcceptanceReportModal
 						open={showAcceptanceModal}
 						title="Thêm báo cáo nghiệm thu"
 						onCancel={() => {
-							setShowAcceptanceModal(false);
+							setShowAcceptanceReportModal(false);
 						}}
-						onSubmit={handleAcceptanceCreate}
-						confirmLoading={taskAcceptanceLoading}
+						onSubmit={handleAcceptanceReportCreate}
+						confirmLoading={acceptanceReportLoading}
+					/>
+
+					<TaskProgressReportModal
+						open={showProgressReportModal}
+						onCancel={() => {
+							setShowProgressReportModal(false);
+						}}
+						onSubmit={handleProgressReportCreate}
+						confirmLoading={progressReportLoading}
+						message={message}
+						title="Báo cáo công việc"
 					/>
 				</>)
 			}
