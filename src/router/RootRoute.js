@@ -27,7 +27,7 @@ const RootRoute = () => {
 						path += `/${routes.dashboard.workersTasks}`;
 					}
 					else if (role?.name === roles.WORKER) {
-						path += `/${routes.dashboard.tasks}`;
+						path += `/${routes.dashboard.workersTasks}`;
 					}
 					else path += `/${routes.dashboard.home}`;
 				}
