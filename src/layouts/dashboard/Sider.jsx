@@ -170,11 +170,11 @@ export const AppSider = () => {
           icon: <EveryUser size={iconSize - 4} />,
           label: <Link to={routes.dashboard.groups}>Tổ</Link>,
         },
-        canViewWorkers && {
-          key: itemKeys.WORKERS,
-          icon: <FileDoneOutlined size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.root}>Công nhân</Link>,
-        },
+        // canViewWorkers && {
+        //   key: itemKeys.WORKERS,
+        //   icon: <FileDoneOutlined size={iconSize - 4} />,
+        //   label: <Link to={routes.dashboard.root}>Công nhân</Link>,
+        // },
       ],
     },
     canViewLeadersTasks && {
