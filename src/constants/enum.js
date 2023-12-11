@@ -134,9 +134,14 @@ export const wTaskMap = {
 }
 
 export const EReport = {
-  Uncomplete: 0,
-  Complete: 1,
-  NotAchieved: 2,
+  Uncomplete: 1,
+  Complete: 2,
+  NotAchieved: 3,
+  Achieved: 4,
+  Pending: 5,
+  Reject: 6,
+  Approve: 7,
+  Provided: 8,
 };
 
 export const ReportMap = {
@@ -151,6 +156,26 @@ export const ReportMap = {
   [EReport.NotAchieved]: {
     color: "text-red-500",
     label: "Không đạt",
+  },
+  [EReport.Achieved]: {
+    color: "text-red-500",
+    label: "Đạt",
+  },
+  [EReport.Pending]: {
+    color: "text-green-500",
+    label: "Chờ duyệt",
+  },
+  [EReport.Reject]: {
+    color: "text-red-500",
+    label: "Từ chối",
+  },
+  [EReport.Approve]: {
+    color: "text-green-500",
+    label: "Duyệt",
+  },
+  [EReport.Provided]: {
+    color: "text-red-500",
+    label: "Đã cung cấp",
   },
 };
 

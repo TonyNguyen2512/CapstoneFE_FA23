@@ -100,12 +100,17 @@ export const LeaderTaskDetailsPage = () => {
 
     if (!orderId) return;
 
-    OrderDetailApi.getListByOrderId(orderId, search, pageIndex, PageSize.LEADER_TASK_ORDER_DETAIL_LIST).then((dataOrderDetails) => {
+    OrderDetailApi.getListByOrderId(
+      orderId,
+      search,
+      pageIndex,
+      PageSize.LEADER_TASK_ORDER_DETAIL_LIST
+    ).then((dataOrderDetails) => {
       setOrderDetailInfo(dataOrderDetails);
     });
 
     setLoading(false);
-  }
+  };
 
   useEffect(() => {
     getData(true);
@@ -117,7 +122,9 @@ export const LeaderTaskDetailsPage = () => {
     >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
-          {(orderInfo.status === OrderStatus.Pending || orderInfo.status === OrderStatus.Reject || orderInfo.status === OrderStatus.Request) &&
+          {(orderInfo.status === OrderStatus.Pending ||
+            orderInfo.status === OrderStatus.Reject ||
+            orderInfo.status === OrderStatus.Request) && (
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 type="primay"
@@ -127,6 +134,7 @@ export const LeaderTaskDetailsPage = () => {
                 Cập nhật nguyên vật liệu
               </Button>
               <Button
+                style={{ marginLeft: "10px" }}
                 type="primay"
                 className="btn-primary app-bg-primary font-semibold text-white"
                 onClick={() => getOrderStatus()}
@@ -134,7 +142,7 @@ export const LeaderTaskDetailsPage = () => {
                 Báo giá đơn hàng
               </Button>
             </div>
-          }
+          )}
           <TaskProvider
             tasks={taskInfo}
             allTasks={allTasks}
