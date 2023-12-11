@@ -1,4 +1,4 @@
-import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap } from "./enum";
+import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap, OrderReportStatus, OrderReportStatusLabel } from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -448,3 +448,14 @@ export const SupplyOptions = [
   //   label: SupplyLabel[3],
   // },
 ];
+
+export const OrderReportStatusOptions = [
+  {
+    value: OrderReportStatus.Uncomplete,
+    label: OrderReportStatusLabel[0],
+  },
+  {
+    value: OrderReportStatus.Complete,
+    label: OrderReportStatusLabel[1],
+  }
+]

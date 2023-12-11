@@ -215,3 +215,13 @@ export const NotificationType = {
   TaskReport: 3,
   OrderReport: 4,
 };
+
+export const OrderReportStatus = {
+  Uncomplete: 1,
+  Complete: 2,
+};
+
+export const OrderReportStatusLabel = [
+  "Thất bại",
+  "Hoàn thành",
+];

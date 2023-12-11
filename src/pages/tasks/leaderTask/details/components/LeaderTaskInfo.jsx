@@ -1,11 +1,9 @@
-import { Typography, Col, Row, Space, Card, Button } from "antd";
+import { Typography, Col, Row, Space, Card } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { formatDate } from "../../../../../utils";
 import UserApi from "../../../../../apis/user";
 import { orderColors, orderLabels } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
-import OrderApi from "../../../../../apis/order";
-import { useParams } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -15,8 +13,6 @@ export const LeaderTaskInfo = ({ loading }) => {
   const { Title } = Typography;
 
   const { info } = useContext(TaskContext);
-
-  const id = useParams();
 
   const { name, customerName, startTime, endTime, status, assignToId } = info || [];
 

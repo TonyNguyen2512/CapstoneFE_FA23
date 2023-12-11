@@ -51,7 +51,7 @@ const WorkerTaskList = () => {
 
   useEffect(() => {
     getData(true, searchParams.get("taskName"));
-  }, []);
+  }, [searchParams]);
 
   const onView = (task) => {
     const leaderTaskId = isWorker ? task?.leaderTaskId : task?.id

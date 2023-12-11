@@ -55,11 +55,22 @@ const updateOrderReport = async (data) => {
   }
 };
 
+const createOrderReport = async (data) => {
+  try {
+    const response = await BaseApi.post(`/${resoure}/Create`, data);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error create order report: ", error);
+    return false;
+  }
+};
+
 const OrderReportApi = {
   getAll,
   getByForemanId,
   getOrderReportById,
   updateOrderReport,
+  createOrderReport,
 };
 
 export default OrderReportApi;
