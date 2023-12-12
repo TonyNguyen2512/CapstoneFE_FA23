@@ -18,7 +18,7 @@ const GroupList = () => {
   const groupRef = useRef();
   const navigate = useNavigate();
 
-  const getData = async (search, pageIndex, handleLoading = true) => {
+  const getData = async (search, pageIndex, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -212,7 +212,15 @@ const GroupList = () => {
           width: 300,
         }}
       />
-    
+     <GroupModal
+        data={groupRef.current}
+        open={showUpdateGroupModal}
+        onCancel={() => {
+          setShowUpdateGroupModal(false);
+          groupRef.current = null;
+        }}
+        onSuccess={() => getData()}
+      />
     </>
   );
 };

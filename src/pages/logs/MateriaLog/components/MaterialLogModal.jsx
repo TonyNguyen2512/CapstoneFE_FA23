@@ -55,9 +55,8 @@ const MaterialLogModal = () => {
     },
     {
       title: "Tên nguyên vật liệu",
-      dataIndex: "material?.name",
-      key: "material?.name",
-      width: "30%",
+      dataIndex: "materialName",
+      key: "materialName",
       render: (_, record) => {
         return (
           <span
@@ -65,11 +64,28 @@ const MaterialLogModal = () => {
               //   showModal(record)
             }}
           >
-            {record.material?.name}
+            {record.materialName}
           </span>
         );
       },
-      sorter: (a, b) => a.material?.name.localeCompare(b.material?.name),
+      sorter: (a, b) => a.materialName.localeCompare(b.materialName),
+    },
+    {
+      title: "Người chỉnh sửa",
+      dataIndex: "userName",
+      key: "userName",
+      render: (_, record) => {
+        return (
+          <span
+            onClick={() => {
+              //   showModal(record)
+            }}
+          >
+            {record.userName}
+          </span>
+        );
+      },
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
     },
     {
       title: "Ngày chỉnh sửa",

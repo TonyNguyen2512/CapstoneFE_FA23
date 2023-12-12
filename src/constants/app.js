@@ -32,12 +32,6 @@ export const ALL_PERMISSIONS = {
     update: "orders.update",
     sider: "orders.sider",
   },
-  quotes: {
-    view: "quotes.view",
-    create: "quotes.create",
-    update: "quotes.update",
-    sider: "quotes.sider",
-  },
   //
   materials: {
     view: "materials.view",
@@ -169,11 +163,6 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.orders.view,
     ALL_PERMISSIONS.orders.create,
     ALL_PERMISSIONS.orders.update,
-    // QUOTES
-    ALL_PERMISSIONS.quotes.sider,
-    ALL_PERMISSIONS.quotes.view,
-    ALL_PERMISSIONS.quotes.create,
-    ALL_PERMISSIONS.quotes.update,
     // items
     ALL_PERMISSIONS.items.sider,
     ALL_PERMISSIONS.items.view,

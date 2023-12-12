@@ -306,6 +306,16 @@ const searchGetAllLogOnGroup = async (search, pageIndex, pageSize) => {
 	}
 };
 
+const getAllLeaderNoHaveGroup = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAllLeaderNoHaveGroup`);
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error GetAllLeaderNoHaveGroup class: ", error);
+		return errorComposer(error);
+	}
+};
+
 const GroupApi = {
 	getAllUserByGroupId,
 	getAllUserNotInGroupId,
@@ -320,6 +330,7 @@ const GroupApi = {
 	addWorkersToGroup,
 	deleteGroup,
 	getAllLogOnGroup,
+	getAllLeaderNoHaveGroup,
 };
 
 export default GroupApi;

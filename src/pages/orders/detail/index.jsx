@@ -44,7 +44,7 @@ const OrderDetailPage = () => {
     console.log(itemList);
     data = await UserApi.getAll();
     setUsers(data);
-    data = await ItemApi.getAllItem();
+    data = await ItemApi.getItemNotExistsInOrder(id);
     setListItemSelect(
       data?.data?.map((e) => {
         return {

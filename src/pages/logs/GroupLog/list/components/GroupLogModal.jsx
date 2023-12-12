@@ -52,8 +52,8 @@ const GroupLogModal = () => {
     },
     {
       title: "Tên nhóm",
-      dataIndex: "group?.name",
-      key: "group?.name",
+      dataIndex: "groupName",
+      key: "groupName",
       render: (_, record) => {
         return (
           <span
@@ -61,11 +61,28 @@ const GroupLogModal = () => {
               //   showModal(record)
             }}
           >
-            {record.group?.name}
+            {record.groupName}
           </span>
         );
       },
-      sorter: (a, b) => a.group?.name.localeCompare(b.group?.name),
+      sorter: (a, b) => a.groupName.localeCompare(b.groupName),
+    },
+    {
+      title: "Người chỉnh sửa",
+      dataIndex: "userName",
+      key: "userName",
+      render: (_, record) => {
+        return (
+          <span
+            onClick={() => {
+              //   showModal(record)
+            }}
+          >
+            {record.userName}
+          </span>
+        );
+      },
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
     },
     {
       title: "Ngày chỉnh sửa",

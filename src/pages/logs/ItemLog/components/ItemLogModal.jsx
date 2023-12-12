@@ -51,8 +51,8 @@ const ItemLogModal = () => {
     },
     {
       title: "Tên sản phẩm",
-      dataIndex: "item?.name",
-      key: "item?.name",
+      dataIndex: "itemName",
+      key: "itemName",
       render: (_, record) => {
         return (
           <span
@@ -60,11 +60,28 @@ const ItemLogModal = () => {
               //   showModal(record)
             }}
           >
-            {record.item?.name}
+            {record.itemName}
           </span>
         );
       },
-      sorter: (a, b) => a.item?.name.localeCompare(b.item?.name),
+      sorter: (a, b) => a.itemName.localeCompare(b.itemName),
+    },
+    {
+      title: "Người chỉnh sửa",
+      dataIndex: "userName",
+      key: "userName",
+      render: (_, record) => {
+        return (
+          <span
+            onClick={() => {
+              //   showModal(record)
+            }}
+          >
+            {record.userName}
+          </span>
+        );
+      },
+      sorter: (a, b) => a.userName.localeCompare(b.userName),
     },
     {
       title: "Ngày chỉnh sửa",

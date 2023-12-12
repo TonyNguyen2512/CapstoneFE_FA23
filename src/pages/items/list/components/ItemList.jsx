@@ -39,7 +39,7 @@ const ItemList = ({ canModify }) => {
     response = await ItemCategoryApi.getAllItem();
     setItemCategoryList(response.data);
     setLoading(false);
-    response = await ProcedureApi.getAllItem();
+    response = await ProcedureApi.getAll();
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);

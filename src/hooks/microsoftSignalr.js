@@ -1,16 +1,16 @@
-const useMicrosoftSignalR = () => {
-  const microsoftSignalR = require("@microsoft/signalr");
+import { HubConnectionBuilder, HttpTransportType } from "@microsoft/signalr";
 
+const useMicrosoftSignalR = () => {
   const host = process.env.REACT_APP_BE_URL;
   const token = localStorage.getItem("jwt");
 
   const createMicrosoftSignalrConnection = (hubEndPoint) => {
     // setup/create connection for a hub
-    let connection = new microsoftSignalR.HubConnectionBuilder()
+    let connection = new HubConnectionBuilder()
       .withUrl(`${host}${hubEndPoint}`, {
         accessTokenFactory: () => token?.toString(),
         skipNegotiation: true,
-        transport: microsoftSignalR.HttpTransportType.WebSockets,
+        transport: HttpTransportType.WebSockets,
       })
       .withAutomaticReconnect()
       .build();
