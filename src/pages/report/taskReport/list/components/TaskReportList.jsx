@@ -4,13 +4,13 @@ import { useNavigate } from "react-router";
 import moment from "moment";
 import OrderReportApi from "../../../../../apis/order-report";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { PageSize, ReportMap, orderReportMap } from "../../../../../constants/enum";
+import { ReportMap, orderReportMap } from "../../../../../constants/enum";
 import { UserContext } from "../../../../../providers/user";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
-import OrderReportUpdateModal from "../../components/OrderReportUpdateModal";
+import OrderReportUpdateModal from "../../../orderReport/components/OrderReportUpdateModal";
 
-export const OrderReportList = () => {
+export const TaskReportList = () => {
   const navigate = useNavigate();
 
   const { user } = useContext(UserContext);

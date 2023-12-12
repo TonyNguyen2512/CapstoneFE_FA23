@@ -3,7 +3,7 @@ import { Card, Col, Image, Row, Space } from "antd";
 import { ErrorImage, ReportMap, orderReportMap } from "../../../../../constants/enum";
 import { formatDate } from "../../../../../utils";
 
-const OrderReportDetail = ({ data }) => {
+const LeaderReportDetail = ({ data }) => {
   return (
     <Space direction="vertical" className="w-full gap-6">
       <Row gutter={[16, 16]}>
@@ -70,4 +70,4 @@ const OrderReportDetail = ({ data }) => {
   );
 };
 
-export default OrderReportDetail;
+export default LeaderReportDetail;

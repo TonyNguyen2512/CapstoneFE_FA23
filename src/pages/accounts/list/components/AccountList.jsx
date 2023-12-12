@@ -145,7 +145,7 @@ const AccountList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ACCOUNTS_LIST}</span>;
       },
     },
     {
@@ -273,7 +273,7 @@ const AccountList = () => {
       <BaseTable
         title="Quản lý tài khoản"
         loading={loading}
-        dataSource={users.data}
+        dataSource={users?.data}
         columns={columns}
         pagination={{
           onChange: onPageChange,

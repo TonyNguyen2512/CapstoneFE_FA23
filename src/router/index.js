@@ -28,6 +28,12 @@ import QuoteDetailPage from "../pages/quotes/detail";
 import { EmployeeListPage } from "../pages/employee/list";
 import ProfilePage from "../pages/profile";
 import { LeaderTaskOrderDetailsPage } from "../pages/tasks/leaderTask/details/components/orderDetail";
+import { TaskReportList } from "../pages/report/taskReport/list/components/TaskReportList";
+import { LeaderReportList } from "../pages/report/leaderReport/list/components/LeaderReportList";
+import LeaderReportDetailPage from "../pages/report/leaderReport/detail";
+import { GroupLogListPage } from "../pages/logs/GroupLog/list";
+import MaterialLogModal from "../pages/logs/MateriaLog/components/MaterialLogModal";
+import { ItemLogListPage } from "../pages/logs/ItemLog";
 
 export const router = createBrowserRouter([
   {
@@ -141,12 +147,36 @@ export const router = createBrowserRouter([
             element: <GroupDetailPage />,
           },
           {
+            path: `${routes.dashboard.groupsLog}`,
+            element: <GroupLogListPage />,
+          },
+          {
+            path: `${routes.dashboard.materialsLog}`,
+            element: <MaterialLogModal />,
+          },
+          {
+            path: `${routes.dashboard.itemsLog}`,
+            element: <ItemLogListPage />,
+          },
+          {
             path: routes.dashboard.orderReports,
             element: <OrderReportListPage />,
           },
           {
             path: `${routes.dashboard.orderReports}/:id`,
             element: <OrderReportDetailPage />,
+          },
+          {
+            path: routes.dashboard.taskReports,
+            element: <TaskReportList />,
+          },
+          {
+            path: routes.dashboard.leaderReports,
+            element: <LeaderReportList />,
+          },
+          {
+            path: `${routes.dashboard.leaderReports}/:id`,
+            element: <LeaderReportDetailPage />,
           },
           {
             path: routes.dashboard.employees,

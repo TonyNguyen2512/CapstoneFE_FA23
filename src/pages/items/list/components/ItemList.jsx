@@ -11,7 +11,8 @@ import ProcedureApi from "../../../../apis/procedure";
 import { PageSize } from "../../../../constants/enum";
 import MaterialApi from "../../../../apis/material";
 import StepApi from "../../../../apis/step";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import routes from "../../../../constants/routes";
 
 const ItemList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -25,9 +26,8 @@ const ItemList = ({ canModify }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [listRowExpand, setListRowExpand] = useState([]);
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const itemRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading = true) => {
@@ -43,7 +43,7 @@ const ItemList = ({ canModify }) => {
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
-    response = await StepApi.getAllItem();
+    response = await StepApi.getAll();
     setStepList(response.data);
   };
 
@@ -225,16 +225,26 @@ const ItemList = ({ canModify }) => {
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          disabled={!canModify.canCreate || !canModify.canUpdate}
-          type="primay"
-          className="btn-primary app-bg-primary font-semibold text-white"
-          onClick={() => setShowItemModal(true)}
-        >
-          Thêm sản phẩm
-        </Button>
+      <Space direction="vertical" className="w-full gap-6">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            type="primary"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => navigate(`${routes.dashboard.root}/${routes.dashboard.itemsLog}`)}
+          >
+            Lịch sử chỉnh sửa
+          </Button>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+            type="primay"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => setShowItemModal(true)}
+          >
+            Thêm sản phẩm
+          </Button>
+        </div>
       </Space>
       <BaseTable
         title="Danh sách sản phẩm"

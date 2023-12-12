@@ -7,6 +7,8 @@ import dayjs from "dayjs";
 import confirm from "antd/es/modal/confirm";
 import { MaterialModal } from "../../components/MaterialModal";
 import { formatMoney, formatNum } from "../../../../utils";
+import routes from "../../../../constants/routes";
+import { useNavigate } from "react-router-dom";
 
 const MaterialList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -14,6 +16,7 @@ const MaterialList = ({ canModify }) => {
   const [materialList, setMaterialList] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
+  const navigate = useNavigate();
   const materialRef = useRef();
 
   const getData = async (keyword) => {
@@ -197,16 +200,26 @@ const MaterialList = ({ canModify }) => {
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          disabled={!canModify.canCreate || !canModify.canUpdate}
-          className="btn-primary app-bg-primary font-semibold text-white"
-          type="primary"
-          onClick={() => setShowUpdateMaterialModal(true)}
-        >
-          Thêm vật liệu
-        </Button>
+      <Space direction="vertical" className="w-full gap-6">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            type="primary"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => navigate(`${routes.dashboard.root}/${routes.dashboard.materialsLog}`)}
+          >
+            Lịch sử chỉnh sửa
+          </Button>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            disabled={!canModify.canCreate || !canModify.canUpdate}
+            className="btn-primary app-bg-primary font-semibold text-white"
+            type="primary"
+            onClick={() => setShowUpdateMaterialModal(true)}
+          >
+            Thêm vật liệu
+          </Button>
+        </div>
       </Space>
       <BaseTable
         title="Danh sách vật liệu"

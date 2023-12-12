@@ -26,7 +26,7 @@ const successComposer = (messageId, data) => {
 }
 
 // not implement
-const getAllReport = async (search, pageIndex, pageSize) => {
+const getReportByLeaderId = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
       return await searchReport(search, pageIndex, pageSize);
@@ -40,7 +40,7 @@ const getAllReport = async (search, pageIndex, pageSize) => {
       if (pageSize) {
         params = { ...params, pageSize };
       }
-      const response = await BaseApi.get(`/${resource}/GetAllReport`, {
+      const response = await BaseApi.get(`/${resource}/GetReportByLeaderId`, {
         params: params,
       });
       return response.data;
@@ -63,7 +63,7 @@ const searchReport = async (search, pageIndex, pageSize) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/SearchReport`, {
+    const response = await BaseApi.post(`/${resource}/GetReportByLeaderId`, {
       params: params,
     });
 
@@ -172,7 +172,7 @@ const sendProblemReport = async (data) => {
 };
 
 const ReportApi = {
-  getAllReport,
+  getReportByLeaderId,
   searchReport,
   getReportByReportId,
   updateReport,

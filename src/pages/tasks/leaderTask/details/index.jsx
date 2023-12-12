@@ -98,7 +98,6 @@ export const LeaderTaskDetailsPage = () => {
     OrderApi.getOrderById(id).then((dataOrder) => {
       setOrderInfo(dataOrder);
       getDataOrderDetail(handleLoading, dataOrder?.id, 1);
-
       setManagerOrder(user?.role?.name === roles.FOREMAN && user?.id === dataOrder?.assignToId);
     });
     setLoading(false);
@@ -121,8 +120,8 @@ export const LeaderTaskDetailsPage = () => {
     });
 
     setLoading(false);
-  }
-  
+  };
+
   const handleSubmitOrderReport = async (values) => {
     setOrderReportLoading(true);
     console.log("send order report", values);
@@ -133,7 +132,7 @@ export const LeaderTaskDetailsPage = () => {
       message.error("Tạo báo cáo thất bại");
     }
     setOrderReportLoading(false);
-  }
+  };
 
   useEffect(() => {
     getData(true);
@@ -145,27 +144,44 @@ export const LeaderTaskDetailsPage = () => {
     >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">
-          {(orderInfo.status === OrderStatus.Pending ||
-            orderInfo.status === OrderStatus.Reject ||
-            orderInfo.status === OrderStatus.Request) && (
+          {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <Button
-                type="primary"
-                className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => setShowOrderReportModal(true)}
-              >
-                Báo cáo tiến độ
-              </Button>
-              <Button
-                style={{ marginLeft: "10px" }}
-                type="primay"
-                className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => getOrderStatus()}
-              >
-                Báo giá đơn hàng
-              </Button>
+              {(orderInfo.status !== OrderStatus.Completed ||
+                orderInfo.status !== OrderStatus.Cancel) && (
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    type="primary"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => setShowOrderReportModal(true)}
+                  >
+                    Báo cáo tiến độ đơn hàng
+                  </Button>
+                </div>
+              )}
+              {(orderInfo.status === OrderStatus.Pending ||
+                orderInfo.status === OrderStatus.Reject ||
+                orderInfo.status === OrderStatus.Request) && (
+                <>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    type="primay"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => syncMaterials()}
+                  >
+                    Cập nhật nguyên vật liệu
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    type="primay"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => getOrderStatus()}
+                  >
+                    Báo giá đơn hàng
+                  </Button>
+                </>
+              )}
             </div>
-          )}
+          }
           <TaskProvider
             tasks={taskInfo}
             allTasks={allTasks}

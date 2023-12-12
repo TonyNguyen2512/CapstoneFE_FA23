@@ -134,6 +134,12 @@ export const wTaskMap = {
 }
 
 export const EReport = {
+  Pending: 5,
+  Reject: 6,
+  Approve: 7,
+};
+
+export const WReport = {
   Uncomplete: 1,
   Complete: 2,
   NotAchieved: 3,
@@ -144,25 +150,9 @@ export const EReport = {
   Provided: 8,
 };
 
-export const ReportMap = {
-  [EReport.Uncomplete]: {
-    color: "text-red-500",
-    label: "Chưa hoàn thành",
-  },
-  [EReport.Complete]: {
-    color: "text-green-500",
-    label: "Hoàn thành",
-  },
-  [EReport.NotAchieved]: {
-    color: "text-red-500",
-    label: "Không đạt",
-  },
-  [EReport.Achieved]: {
-    color: "text-red-500",
-    label: "Đạt",
-  },
+export const orderReportMap = {
   [EReport.Pending]: {
-    color: "text-green-500",
+    color: "text-yellow-500",
     label: "Chờ duyệt",
   },
   [EReport.Reject]: {
@@ -173,7 +163,38 @@ export const ReportMap = {
     color: "text-green-500",
     label: "Duyệt",
   },
-  [EReport.Provided]: {
+};
+
+export const ReportMap = {
+  [WReport.Uncomplete]: {
+    color: "text-red-500",
+    label: "Chưa hoàn thành",
+  },
+  [WReport.Complete]: {
+    color: "text-green-500",
+    label: "Hoàn thành",
+  },
+  [WReport.NotAchieved]: {
+    color: "text-red-500",
+    label: "Không đạt",
+  },
+  [WReport.Achieved]: {
+    color: "text-red-500",
+    label: "Đạt",
+  },
+  [WReport.Pending]: {
+    color: "text-green-500",
+    label: "Chờ duyệt",
+  },
+  [WReport.Reject]: {
+    color: "text-red-500",
+    label: "Từ chối",
+  },
+  [WReport.Approve]: {
+    color: "text-green-500",
+    label: "Duyệt",
+  },
+  [WReport.Provided]: {
     color: "text-red-500",
     label: "Đã cung cấp",
   },
@@ -197,6 +218,7 @@ export const SupplyLabel = [
 ];
 
 export const PageSize = {
+  ACCOUNTS_LIST: 10,
   ORDER_LIST: 10,
   LEADER_TASK_ORDER_LIST: 10,
   LEADER_TASK_PROCEDURE_LIST: 3,
@@ -206,6 +228,13 @@ export const PageSize = {
   EMPLOYEES_LIST: 10,
   GROUP_LIST: 10,
   WORKER_IN_GROUP_LIST: 10,
+  LEADER_REPORT_LIST: 10,
+  ORDER_REPORT_LIST: 10,
+  LOG_GROUP_LIST: 10,
+  LOG_ITEM_LIST: 10,
+  LOG_MATERIAL_LIST: 10,
+  STEP_LIST: 10, 
+  PROCEDURE_LIST: 10,
 };
 
 export const NotificationType = {

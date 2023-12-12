@@ -8,9 +8,10 @@ import { PageSize, ReportMap, orderReportMap } from "../../../../../constants/en
 import { UserContext } from "../../../../../providers/user";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
-import OrderReportUpdateModal from "../../components/OrderReportUpdateModal";
+import OrderReportUpdateModal from "../../../orderReport/components/OrderReportUpdateModal";
+import ReportApi from "../../../../../apis/task-report";
 
-export const OrderReportList = () => {
+export const LeaderReportList = () => {
   const navigate = useNavigate();
 
   const { user } = useContext(UserContext);
@@ -20,29 +21,32 @@ export const OrderReportList = () => {
   const [pageSize, setPageSize] = useState(5);
   const [search, setSearch] = useState(null);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectingOrderReport, setSelectingOrderReport] = useState();
 
-  const getReports = async () => {
-    setLoading(true);
+  const getReports = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
     // const data = await OrderReportApi.getAll(pageIndex, pageSize, search);
-    const data = await OrderReportApi.getByForemanId(user?.id, pageIndex, pageSize, search);
+    const data = await ReportApi.getReportByLeaderId(search, pageIndex, PageSize.LEADER_REPORT_LIST);
     setReports(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (user?.id) {
-      getReports();
-    }
-  }, [user?.id, pageSize, pageIndex]);
+    getReports(null, 1, true);
+  }, []);
 
-  useEffect(() => {
-    if (pageIndex != 1) {
-      setPageIndex(1);
-    } else {
-      getReports();
-    }
-  }, [search]);
+  const handleSearch = (value) => {
+    getReports(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getReports(null, current, false);
+  };
+
 
   const getActionOrderReports = (record) => {
     return [
@@ -51,7 +55,7 @@ export const OrderReportList = () => {
         label: "Xem thông tin chi tiết",
         icon: <ViewList />,
         onClick: () => {
-          navigate(record?.id);
+          navigate(record?.taskId);
         },
       },
 
@@ -73,21 +77,30 @@ export const OrderReportList = () => {
 
   const columns = [
     {
-      key: "title",
-      title: "Tên báo cáo",
-      render: (_, record) => {
-        return record?.title ?? "";
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.LEADER_REPORT_LIST}</span>;
       },
-      sorter: (a, b) => a.title.localeCompare(b.title),
     },
     {
-      key: "ordername",
-      title: "Tên đơn",
+      key: "orderName",
+      title: "Tên đơn hàng",
       render: (_, record) => {
-        return record?.order?.name ?? "";
+        return record?.orderName ?? "";
       },
-      sorter: (a, b) => a.order?.name.localeCompare(b.order?.name),
-      
+      sorter: (a, b) => a.orderName.localeCompare(b.orderName),
+    },
+    {
+      key: "taskName",
+      title: "Tên công việc",
+      render: (_, record) => {
+        return record?.taskName ?? "";
+      },
+      sorter: (a, b) => a.taskName.localeCompare(b.taskName),
     },
     {
       key: "createdDate",
@@ -104,7 +117,7 @@ export const OrderReportList = () => {
         let data = orderReportMap[record?.status];
         return <strong className={data?.color}>{data ? data.label : ""}</strong>;
       },
-      sorter: (a, b) => a.status - (b.status),
+      sorter: (a, b) => a.status - b.status,
     },
     {
       key: "action",
@@ -127,10 +140,9 @@ export const OrderReportList = () => {
         columns={columns}
         loading={loading}
         pagination={{
-          current: pageIndex,
-          pageSize: pageSize, //<= reports?.total ? pageSize : reports?.total,
+          onChange: onPageChange,
+          pageSize: PageSize.LEADER_REPORT_LIST,
           total: reports?.total,
-          onChange: setPageIndex,
         }}
         searchOptions={{
           visible: true,

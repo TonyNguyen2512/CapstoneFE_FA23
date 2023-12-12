@@ -17,7 +17,7 @@ const ProcedureList = () => {
 
   const getData = async (keyword) => {
     setLoading(true);
-    let response = await StepApi.getAllItem();
+    let response = await StepApi.getAll();
     setStepList(response.data);
     response = await ProcedureApi.getAllItem(keyword);
     setProcedureList(response.data);

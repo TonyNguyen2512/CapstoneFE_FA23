@@ -87,11 +87,23 @@ export const ALL_PERMISSIONS = {
     update: "groups.update",
     sider: "groups.sider",
   },
-  squads: {
-    view: "squads.view",
-    create: "squads.create",
-    update: "squads.update",
-    sider: "squads.sider",
+  groupsLog: {
+    view: "groupsLog.view",
+    create: "groupsLog.create",
+    update: "groupsLog.update",
+    sider: "groupsLog.sider",
+  },
+  materialLog: {
+    view: "materialLog.view",
+    create: "materialLog.create",
+    update: "materialLog.update",
+    sider: "materialLog.sider",
+  },
+  itemLog: {
+    view: "itemLog.view",
+    create: "itemLog.create",
+    update: "itemLog.update",
+    sider: "itemLog.sider",
   },
   leadersTasks: {
     view: "leadersTasks.view",
@@ -111,6 +123,18 @@ export const ALL_PERMISSIONS = {
     update: "orderReports.update",
     sider: "orderReports.sider",
   },
+  taskReports: {
+    view: "taskReports.view",
+    create: "taskReports.create",
+    update: "taskReports.update",
+    sider: "taskReports.sider",
+  },
+  leaderReports: {
+    view: "leaderReports.view",
+    create: "leaderReports.create",
+    update: "leaderReports.update",
+    sider: "leaderReports.sider",
+  },
   //
   workers: {
     view: "workers.view",
@@ -123,12 +147,6 @@ export const ALL_PERMISSIONS = {
     create: "workersTasks.create",
     update: "workersTasks.update",
     sider: "workersTasks.sider",
-  },
-  workersReports: {
-    view: "workersReports.view",
-    create: "workersReports.create",
-    update: "workersReports.update",
-    sider: "workersReports.sider",
   },
   //
   tasks: {
@@ -174,6 +192,21 @@ export const USER_PERMISSIONS = {
     // materialTypes
     ALL_PERMISSIONS.materialTypes.sider,
     ALL_PERMISSIONS.materialTypes.view,
+    // groupsLog
+    ALL_PERMISSIONS.groupsLog.sider,
+    ALL_PERMISSIONS.groupsLog.view,
+    ALL_PERMISSIONS.groupsLog.create,
+    ALL_PERMISSIONS.groupsLog.update,
+    // materialLog
+    ALL_PERMISSIONS.materialLog.sider,
+    ALL_PERMISSIONS.materialLog.view,
+    ALL_PERMISSIONS.materialLog.create,
+    ALL_PERMISSIONS.materialLog.update,
+    // itemLog
+    ALL_PERMISSIONS.itemLog.sider,
+    ALL_PERMISSIONS.itemLog.view,
+    ALL_PERMISSIONS.itemLog.create,
+    ALL_PERMISSIONS.itemLog.update,
   ],
   [roles.FOREMAN]: [
     // materials
@@ -216,11 +249,21 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.groups.view,
     ALL_PERMISSIONS.groups.create,
     ALL_PERMISSIONS.groups.update,
-    // workers squad
-    ALL_PERMISSIONS.squads.sider,
-    ALL_PERMISSIONS.squads.view,
-    ALL_PERMISSIONS.squads.create,
-    ALL_PERMISSIONS.squads.update,
+    // groupsLog
+    ALL_PERMISSIONS.groupsLog.sider,
+    ALL_PERMISSIONS.groupsLog.view,
+    ALL_PERMISSIONS.groupsLog.create,
+    ALL_PERMISSIONS.groupsLog.update,
+    // materialLog
+    ALL_PERMISSIONS.materialLog.sider,
+    ALL_PERMISSIONS.materialLog.view,
+    ALL_PERMISSIONS.materialLog.create,
+    ALL_PERMISSIONS.materialLog.update,
+    // itemLog
+    ALL_PERMISSIONS.itemLog.sider,
+    ALL_PERMISSIONS.itemLog.view,
+    ALL_PERMISSIONS.itemLog.create,
+    ALL_PERMISSIONS.itemLog.update,
     // leadersTasks
     ALL_PERMISSIONS.leadersTasks.sider,
     ALL_PERMISSIONS.leadersTasks.view,
@@ -236,13 +279,13 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.orderReports.view,
     ALL_PERMISSIONS.orderReports.create,
     ALL_PERMISSIONS.orderReports.update,
+    // task reports
+    ALL_PERMISSIONS.taskReports.sider,
+    ALL_PERMISSIONS.taskReports.view,
+    ALL_PERMISSIONS.taskReports.create,
+    ALL_PERMISSIONS.taskReports.update,
   ],
   [roles.LEADER]: [
-    // workers squad
-    ALL_PERMISSIONS.squads.sider,
-    ALL_PERMISSIONS.squads.view,
-    ALL_PERMISSIONS.squads.create,
-    ALL_PERMISSIONS.squads.update,
     // workers
     ALL_PERMISSIONS.workers.sider,
     ALL_PERMISSIONS.workers.view,
@@ -253,11 +296,11 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.workersTasks.view,
     ALL_PERMISSIONS.workersTasks.create,
     ALL_PERMISSIONS.workersTasks.update,
-    // workersReports
-    ALL_PERMISSIONS.workersReports.sider,
-    ALL_PERMISSIONS.workersReports.view,
-    ALL_PERMISSIONS.workersReports.create,
-    ALL_PERMISSIONS.workersReports.update,
+    // leaderReports
+    ALL_PERMISSIONS.leaderReports.sider,
+    ALL_PERMISSIONS.leaderReports.view,
+    ALL_PERMISSIONS.leaderReports.create,
+    ALL_PERMISSIONS.leaderReports.update,
   ],
   [roles.WORKER]: [
     // tasks

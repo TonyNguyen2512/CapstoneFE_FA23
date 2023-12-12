@@ -35,7 +35,7 @@ export const TaskProgressReportModal = ({
       <Form
         ref={formProgressRef}
         initialValues={{
-          leaderTaskId: info?.leaderId,
+          leaderTaskId: info?.leaderTaskId,
           itemFailed: 0,
           resource: "",
         }}
@@ -74,12 +74,6 @@ export const TaskProgressReportModal = ({
             <Form.Item
               label={<Text strong>Mô tả báo cáo</Text>}
               name="content"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng thêm mô tả báo cáo",
-                },
-              ]}
             >
               <RichTextEditor
                 placeholder="Mô tả báo cáo..."
