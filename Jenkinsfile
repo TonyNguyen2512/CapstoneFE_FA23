@@ -33,10 +33,8 @@ pipeline {
             steps {
                 script {
                     try {
-			sh 'docker rmi $(docker images -f "dangling=true" -q)'
-                    } catch (Exception e) {
-                        echo "Cannot find container workshop-management-system-jama-fe"
-                    }
+						sh 'docker rmi $(docker images -f "dangling=true" -q)'
+                    } catch (Exception e) { }
                 }
             }
         }
