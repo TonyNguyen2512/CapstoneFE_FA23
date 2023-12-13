@@ -12,6 +12,7 @@ import {
   Spin,
   Typography,
   Upload,
+  message,
 } from "antd";
 import BaseModal from "../../../../components/BaseModal";
 import CommentApi from "../../../../apis/comment";
@@ -33,6 +34,8 @@ import { ErrorImage } from "../../../../constants/enum";
 import useMicrosoftSignalR from "../../../../hooks/microsoftSignalr";
 import { HubConnectionState } from "@microsoft/signalr";
 import { ROLE_MAP } from "../../../../constants/app";
+import { imagesCommentRef } from "../../../../middleware/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
 const { Title, Text } = Typography;
 
@@ -43,11 +46,14 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
   const { id, name, createByName, startTime, endTime, members } = dataSource || [];
 
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(-1);
   const [listComment, setListComment] = useState([]);
   const [hoveringCmt, setHoveringCmt] = useState();
   const [editingCmt, setEditingCmt] = useState();
   const [connection, setConnection] = useState();
   const [newCmtContent, setNewCmtContent] = useState();
+  const countRef = useRef(0);
+  const imageUrlsRef = useRef([]);
 
   useEffect(() => {
     console.log({ open, id });
@@ -79,17 +85,24 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
     setListComment(res);
   };
   const addComment = async () => {
-    if (!newCmtContent) return;
+    if (!newCmtContent && !imageUrlsRef.current.length) return;
     try {
       setLoading(true);
-      await CommentApi.createComment({
+      const resp = await CommentApi.createComment({
         workerTaskId: id,
-        commentContent: newCmtContent,
+        commentContent: newCmtContent || "",
+        resource: imageUrlsRef.current,
       });
+      if (resp) {
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
     } catch (error) {
     } finally {
+      imageUrlsRef.current = [];
+      countRef.current = 0;
       setNewCmtContent();
-      setLoading(false);
     }
   };
 
@@ -136,6 +149,42 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
         onClick: () => deleteComment(comment?.id),
       },
     ];
+  };
+
+  const handleUploadImages = (event) => {
+    setLoading(true);
+    const file = event.file;
+    const fileName = event.file?.name;
+    const uploadTask = uploadBytesResumable(ref(imagesCommentRef, fileName), file);
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const percent = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        // update progress
+        setProgress(percent);
+      },
+      (err) => {
+        console.log(err);
+        message.error(`Failed to upload '${fileName}'`);
+        setLoading(false);
+      },
+      () => {
+        setProgress(-1);
+        // download url
+        getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+          // do something with the download url
+          imageUrlsRef.current.push(url);
+          countRef.current += 1;
+          console.log(event.fileList.length);
+          if (countRef.current === event.fileList.length) {
+            console.log(countRef);
+            console.log(imageUrlsRef);
+            addComment();
+          }
+        });
+      }
+    );
+    setLoading(false);
   };
 
   return (
@@ -289,11 +338,20 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
                     setNewCmtContent(e.target.value);
                   }}
                 />
-                <SendOne theme="outline" size="30" fill="#DDB850" onClick={addComment} />
+                <SendOne
+                  role="button"
+                  theme="outline"
+                  size="30"
+                  fill="#DDB850"
+                  onClick={addComment}
+                />
                 <Upload
+                  role="button"
                   multiple={true}
                   showUploadList={false}
-                  onChange={(infoFile) => console.log({ infoFile })}
+                  beforeUpload={() => false}
+                  accept=".jpg,.jepg,.png,.svg,.bmp"
+                  onChange={handleUploadImages}
                 >
                   <UploadPicture theme="outline" size="30" fill="#DDB850" />
                 </Upload>
