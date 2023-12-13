@@ -57,7 +57,7 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
               <Col className="gutter-row" span={8}>
                 Số lượng:{" "}
                 <strong>
-                  {formatMoney(quantity) || defaultValue("Chưa thêm số lượng")}
+                  {quantity || defaultValue("Chưa thêm số lượng")}
                 </strong>
               </Col>
               <Col className="gutter-row" span={8}>

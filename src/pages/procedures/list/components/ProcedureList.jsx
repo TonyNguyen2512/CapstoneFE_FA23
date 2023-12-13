@@ -5,22 +5,25 @@ import { BaseTable } from "../../../../components/BaseTable";
 import { ProcedureModal } from "../../components/ProcedureModal";
 import ProcedureApi from "../../../../apis/procedure";
 import StepApi from "../../../../apis/step";
-import { AddStepToProcedureModal } from "../../components/AddStepToProcedureModal";
+import { PageSize } from "../../../../constants/enum";
 
 const ProcedureList = () => {
   const [loading, setLoading] = useState(false);
   const [showStepModal, setShowStepModal] = useState(false);
   const [procedureList, setProcedureList] = useState([]);
   const [stepList, setStepList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const categoryRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    let response = await StepApi.getAllItem();
+  const getData = async (search, pageIndex, handleLoading ) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    let response = await StepApi.getAll(search, pageIndex, 100);
     setStepList(response.data);
-    response = await ProcedureApi.getAllItem(keyword);
-    setProcedureList(response.data);
+    response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
+    setProcedureList(response);
     setLoading(false);
   };
 
@@ -53,7 +56,7 @@ const ProcedureList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.PROCEDURE_LIST}</span>;
       },
     },
     {
@@ -91,8 +94,14 @@ const ProcedureList = () => {
   ];
 
   const handleSearch = (value) => {
-    getData(value);
+    getData(value, 1, true);
   };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
+  };
+
 
   useEffect(() => {
     getData();
@@ -112,11 +121,13 @@ const ProcedureList = () => {
       </Space>
       <BaseTable
         title="Danh sách quy trình"
-        dataSource={procedureList}
+        dataSource={procedureList?.data}
         columns={columns}
         loading={loading}
         pagination={{
-          pageSize: 5,
+          onChange: onPageChange,
+          pageSize: PageSize.PROCEDURE_LIST,
+          total: procedureList?.total,
         }}
         searchOptions={{
           visible: true,

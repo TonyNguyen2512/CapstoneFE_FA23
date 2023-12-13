@@ -2,7 +2,6 @@
 import BaseApi from ".";
 import ApiCodes from "../constants/apiCode";
 
-
 const retrieveDataSuccessCode = 300;
 const createSuccessCode = 302;
 const updateSuccessCode = 303;
@@ -261,6 +260,62 @@ const deleteGroup = async (id) => {
 	}
 };
 
+const getAllLogOnGroup = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetAllLogOnGroup(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetAllLogOnGroup`, {
+				params: params,
+			});
+			return successComposer(retrieveDataSuccessCode, response.data);;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return errorComposer(error);
+	}
+};
+
+const searchGetAllLogOnGroup = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetAllLogOnGroup`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return errorComposer(error);
+	}
+};
+
+const getAllLeaderNoHaveGroup = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAllLeaderNoHaveGroup`);
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error GetAllLeaderNoHaveGroup class: ", error);
+		return errorComposer(error);
+	}
+};
+
 const GroupApi = {
 	getAllUserByGroupId,
 	getAllUserNotInGroupId,
@@ -274,6 +329,8 @@ const GroupApi = {
 	removeWorkerFromGroup,
 	addWorkersToGroup,
 	deleteGroup,
+	getAllLogOnGroup,
+	getAllLeaderNoHaveGroup,
 };
 
 export default GroupApi;

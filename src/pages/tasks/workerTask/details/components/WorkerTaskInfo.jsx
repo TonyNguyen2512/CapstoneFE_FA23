@@ -28,7 +28,7 @@ export const WorkerTaskInfo = ({
 	const [showAcceptanceModal, setShowAcceptanceReportModal] = useState(false);
 	const [showProgressReportModal, setShowProgressReportModal] = useState(false);
 
-	const isLeader = user?.role?.name === roles.LEADER;
+	const isAllowed = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 
 	const { name, leaderName, status, startTime, endTime, item } = info || [];
 
@@ -87,23 +87,13 @@ export const WorkerTaskInfo = ({
 	return (
 		<Space direction="vertical" className="w-full gap-6">
 			<Row justify="middle">
-				<Col span={8}>
+				<Col span={16}>
 					<Title level={4} style={{ margin: 0 }} ellipsis>
 						Chi tiết việc làm {name}
 					</Title>
 				</Col>
-				{isLeader && isInProgress &&
+				{isAllowed && isInProgress &&
 					<>
-						<Col span={2} offset={1}>
-							<Button
-								type="primary"
-								className="btn-primary app-bg-primary font-semibold text-white"
-								onClick={() => setShowProblemReportModal(true)}
-								disabled={acceptance}
-							>
-								Báo cáo vấn đề
-							</Button>
-						</Col>
 						{isCompletedTasks &&
 							<Col span={2} offset={1}>
 								<Button
@@ -116,7 +106,18 @@ export const WorkerTaskInfo = ({
 								</Button>
 							</Col>
 						}
-						<Col span={2} offset={1}>
+						<Col span={1} offset={1}>
+							<Button
+								type="primary"
+								className="btn-primary app-bg-primary font-semibold text-white"
+								onClick={() => setShowProblemReportModal(true)}
+								disabled={acceptance}
+							>
+								Báo cáo vấn đề
+							</Button>
+						</Col>
+						
+						<Col span={1} offset={1}>
 							<Button
 								type="primary"
 								className="btn-primary app-bg-primary font-semibold text-white"
@@ -144,7 +145,7 @@ export const WorkerTaskInfo = ({
 									{getTaskStatusName(status)}</strong></span>
 							</Col>
 						</Row>
-						{isLeader &&
+						{isAllowed &&
 							<Row gutter={[16, 16]}>
 								<Col className="gutter-row" span={24}>
 									<Collapse
@@ -197,7 +198,7 @@ export const WorkerTaskInfo = ({
 					</Card>
 				</Col>
 			</Row>
-			{isLeader &&
+			{isAllowed &&
 				(<>
 					<TaskProblemReportModal
 						open={showProblemReportModal}

@@ -46,6 +46,50 @@ const searchItem = async (search, pageIndex, pageSize) => {
     return false;
   }
 };
+const getAllLogOnItem = async (search, pageIndex, pageSize = 1000) => {
+  try {
+    if (search) {
+      return await searchGetAllLogOnItem(search, pageIndex, pageSize);
+    } else {
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAllLogOnItem`, {
+        params: params,
+      });
+      return response.data;
+    }
+  } catch (error) {
+    console.log("Error enroll item: ", error);
+    return false;
+  }
+};
+
+const searchGetAllLogOnItem = async (search, pageIndex, pageSize) => {
+  try {
+    var params = {};
+    if (search) {
+      params = { ...params, search };
+    }
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+    const response = await BaseApi.get(`/${resource}/GetAllLogOnItem`, {
+      params: params,
+    });
+    return response.data;
+  } catch (error) {
+    console.log("Error get item: ", error);
+    return false;
+  }
+};
 
 const getItemNotExistsInOrder = async (orderId) => {
   try {
@@ -115,6 +159,7 @@ const ItemApi = {
   duplicateItem,
   updateItem,
   deleteItem,
+  getAllLogOnItem,
 };
 
 export default ItemApi;

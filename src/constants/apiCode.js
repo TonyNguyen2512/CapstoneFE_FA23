@@ -101,9 +101,9 @@ const ApiCodes = {
 	108: "Công việc này đã hoàn thành!",
 	//TaskReport
 	50: "Người dùng không phải tổ trưởng!",
-	51: "Không tìm thấy thông tin công việc nghiệm thu!",
+	51: "Không tìm thấy thông tin công việc tổ trưởng!",
 	52: "Báo cáo nghiệm thu cho công việc này đã được thực hiện!",
-	53: "Chưa thể gửi báo cáo vào lúc này!",
+	53: "Đã qua ngày kết thúc công việc, không thể gửi báo cáo vào lúc này!",
 	54: "Không tìm thấy thông tin báo cáo tiến độ!",
 	55: "Báo cáo này đã hoàn thành!",
 	111: "Báo cáo đã phản hồi không thể chỉnh sửa!",
@@ -125,6 +125,7 @@ const ApiCodes = {
 	73: "Không tìm thấy thông tin bước!",
 	76: "Bước này đang tồn tại trong quy trình, hãy xoá ra khỏi trước khi xoá bước!",
 	//Report
+	23: "Không tìm thấy thông tin công việc nghiệm thu!",
 	98: "Số lượng mặt hàng thất bại không lớn hơn số lượng mặt hàng!",
 	101: "Đã quá hạn chỉnh sửa báo cáo!",
 	//Notification
@@ -139,7 +140,6 @@ const ApiCodes = {
 	109: "Sản phẩm đã tồn tại trong đơn hàng!",
 	110: "Không tìm thấy thông tin vật liệu!",
 	//Not used
-	23: "",
 	86: "",
 };
 

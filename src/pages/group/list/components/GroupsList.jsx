@@ -12,12 +12,13 @@ import { PageSize } from "../../../../constants/enum";
 const GroupList = () => {
   const [loading, setLoading] = useState(false);
   const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
+  const [logGroupModal, setLogGroupModal] = useState(false);
   const [groupList, setGroupTypeList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const groupRef = useRef();
   const navigate = useNavigate();
 
-  const getData = async (search, pageIndex, handleLoading = true) => {
+  const getData = async (search, pageIndex, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
@@ -174,15 +175,25 @@ const GroupList = () => {
 
   return (
     <>
-      <Space className="w-full flex justify-between mb-6">
-        <div></div>
-        <Button
-          type="primary"
-          className="btn-primary app-bg-primary font-semibold text-white"
-          onClick={() => setShowUpdateGroupModal(true)}
-        >
-          Thêm nhóm
-        </Button>
+      <Space direction="vertical" className="w-full gap-6">
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            type="primary"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => navigate(`${routes.dashboard.root}/${routes.dashboard.groupsLog}`)}
+          >
+            Lịch sử chỉnh sửa
+          </Button>
+          <Button
+            style={{ marginLeft: "10px", marginBottom: "10px" }}
+            type="primary"
+            className="btn-primary app-bg-primary font-semibold text-white"
+            onClick={() => setShowUpdateGroupModal(true)}
+          >
+            Thêm nhóm
+          </Button>
+        </div>
       </Space>
       <BaseTable
         title="Danh sách nhóm"
@@ -201,7 +212,7 @@ const GroupList = () => {
           width: 300,
         }}
       />
-      <GroupModal
+     <GroupModal
         data={groupRef.current}
         open={showUpdateGroupModal}
         onCancel={() => {

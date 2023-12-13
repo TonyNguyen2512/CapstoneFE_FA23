@@ -1,12 +1,12 @@
 version: '2.2'
 services:
 
-  workshop-management-system-jama-fe:
-    image: workshop-management-system-jama-fe
+  jama-fe:
+    image: jama-fe
     build: 
       context: ./
       dockerfile: Dockerfile
-    container_name: workshop-management-system-jama-fe
+    container_name: jama-fe
     ports:
      - "8006:3000"
     restart: "always"

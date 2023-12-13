@@ -13,9 +13,7 @@ import { PageSize } from "../../../../constants/enum";
 
 const roleColors = {
   ADMIN: "#FF7777",
-  FACTORY: "#4ECA69",
   FOREMAN: "#4ECA69",
-  MANAGER: "#F1CA7F",
   LEADER: "#F1CA5A",
   WORKER: "#59A7DE",
 };

@@ -52,6 +52,55 @@ const searchMaterial = async (search, pageIndex, pageSize) => {
   }
 };
 
+const getAllLogOnMaterial = async (search, pageIndex, pageSize) => {
+  try {
+    if (search) {
+      return await searchGetAllLogOnMaterial(search, pageIndex, pageSize);
+    }
+    else {
+
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAllLogOnMaterial`, {
+        params: params,
+      });
+      return response.data;
+    }
+  } catch (error) {
+    console.log("Error get items: ", error);
+    return false;
+  }
+};
+
+const searchGetAllLogOnMaterial = async (search, pageIndex, pageSize) => {
+  try {
+    var params = {};
+    if (search) {
+      params = { ...params, search };
+    }
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+
+    const response = await BaseApi.post(`/${resource}/GetAllLogOnMaterial`, {
+      params: params,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.log("Error search item: ", error);
+    return [];
+  }
+};
+
 const getMaterialById = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/GetMaterialById/${id}`);
@@ -99,6 +148,7 @@ const MaterialApi = {
   createMaterial,
   updateMaterial,
   deleteMaterial,
+  getAllLogOnMaterial,
 };
 
 export default MaterialApi;

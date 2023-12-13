@@ -120,13 +120,7 @@ export const TaskAcceptanceReportModal = ({
 							</Form.Item>
 							<Form.Item
 								label={<Text strong>Mô tả báo cáo</Text>}
-								name="content"
-								rules={[
-									{
-										required: true,
-										message: "Vui lòng thêm mô tả báo cáo",
-									},
-								]}
+								name="content"							
 							>
 								<RichTextEditor
 									placeholder="Mô tả báo cáo..."

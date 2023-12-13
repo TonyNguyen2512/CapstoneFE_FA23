@@ -4,18 +4,22 @@ import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { StepModal } from "../../components/StepModal";
 import StepApi from "../../../../apis/step";
+import { PageSize } from "../../../../constants/enum";
 
 const StepList = () => {
   const [loading, setLoading] = useState(false);
   const [showItemCategoryModal, setShowItemCategoryModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [stepList, setStepList] = useState([]);
 
   const stepRef = useRef();
 
-  const getData = async (keyword) => {
-    setLoading(true);
-    const response = await StepApi.getAllItem();
-    setStepList(response.data);
+  const getData = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
+    setStepList(response);
     setLoading(false);
   };
 
@@ -48,7 +52,7 @@ const StepList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.STEP_LIST}</span>;
       },
     },
     {
@@ -73,9 +77,7 @@ const StepList = () => {
     },
   ];
 
-  const handleSearch = (value) => {
-    getData(value);
-  };
+  
   const handleRemove = async (id) => {
     const success = await StepApi.deleteItem(id);
     if (success) {
@@ -89,6 +91,15 @@ const StepList = () => {
   useEffect(() => {
     getData();
   }, []);
+
+  const handleSearch = (value) => {
+    getData(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current, false);
+  };
 
   return (
     <>
@@ -104,11 +115,13 @@ const StepList = () => {
       </Space>
       <BaseTable
         title="Danh sách bước"
-        dataSource={stepList}
+        dataSource={stepList?.data}
         columns={columns}
         loading={loading}
         pagination={{
-          pageSize: 5,
+          onChange: onPageChange,
+          pageSize: PageSize.STEP_LIST,
+          total: stepList?.total,
         }}
         searchOptions={{
           visible: true,
