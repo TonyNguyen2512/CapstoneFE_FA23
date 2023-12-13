@@ -25,6 +25,7 @@ const storage = getStorage(app);
 // Initialize something else
 export const analytics = getAnalytics(app);
 // Create a child reference
+export const imagesCommentRef = ref(storage, "Comment");
 export const imagesItemRef = ref(storage, "Items/Images");
 export const drawingsRef = ref(storage, "Items/Drawings");
 export const imagesMaterialRef = ref(storage, "Materials/Images");
