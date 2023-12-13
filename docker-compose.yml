@@ -1,0 +1,19 @@
+version: '2.2'
+services:
+
+  jama-fe:
+    image: jama-fe
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    container_name: jama-fe
+    ports:
+     - "8006:3000"
+    restart: "always"
+    networks:
+      - nginx-network
+
+networks:
+  nginx-network:
+    external:
+      name: nginx-network

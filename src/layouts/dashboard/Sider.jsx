@@ -296,11 +296,11 @@ export const AppSider = () => {
       case routes.dashboard.leaderReports:
         return itemKeys.LEADER_REPORTS;
       case routes.dashboard.groupsLog:
-        return itemKeys.GROUPS_LOG;
+        return itemKeys.GROUPS;
       case routes.dashboard.materialsLog:
-        return itemKeys.MATERIALS_LOG;
+        return itemKeys.MATERIALS;
       case routes.dashboard.itemsLog:
-        return itemKeys.ITEMS_LOG;
+        return itemKeys.ITEMS;
     }
 
     return undefined;
