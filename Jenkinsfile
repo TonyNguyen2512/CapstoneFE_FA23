@@ -34,7 +34,9 @@ pipeline {
                 script {
                     try {
 						sh 'docker rmi $(docker images -f "dangling=true" -q)'
-                    } catch (Exception e) { }
+                    } catch (Exception e) {
+                        echo "Warning: Cannot del old image"
+					}
                 }
             }
         }
