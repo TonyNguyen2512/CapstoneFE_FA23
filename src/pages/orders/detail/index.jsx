@@ -202,7 +202,7 @@ const OrderDetailPage = () => {
                   className="btn-primary app-bg-primary font-semibold text-white"
                   onClick={syncPrice}
                 >
-                  Cập nhật giá
+                  Đồng bộ sản phẩm
                 </Button>
                 <Button
                   type="primary"
