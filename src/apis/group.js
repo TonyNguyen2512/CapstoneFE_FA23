@@ -315,6 +315,21 @@ const getAllLeaderNoHaveGroup = async () => {
 		return errorComposer(error);
 	}
 };
+const getWorkersNotAtWorkByGroupId = async (groupId, search) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		const response = await BaseApi.get(`/${resource}/GetWorkersNotAtWorkByGroupId/${groupId}`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error GetWorkersNotAtWorkByGroupId class: ", error);
+		return errorComposer(error);
+	}
+};
 
 const GroupApi = {
 	getAllUserByGroupId,
@@ -331,6 +346,7 @@ const GroupApi = {
 	deleteGroup,
 	getAllLogOnGroup,
 	getAllLeaderNoHaveGroup,
+	getWorkersNotAtWorkByGroupId,
 };
 
 export default GroupApi;

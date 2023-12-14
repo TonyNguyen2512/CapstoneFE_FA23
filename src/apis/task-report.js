@@ -4,25 +4,25 @@ import ApiCodes from "../constants/apiCode";
 const resource = "TaskReport";
 
 const errorComposer = (error) => {
-	if (error?.response?.data) {
-		const { code } = error?.response?.data
-		return {
-			code,
-			message: ApiCodes[code],
-		}
-	}
-	return {
-		code: -1,
-		message: "Có lỗi xảy ra",
-	};
+  if (error?.response?.data) {
+    const { code } = error?.response?.data
+    return {
+      code,
+      message: ApiCodes[code],
+    }
+  }
+  return {
+    code: -1,
+    message: "Có lỗi xảy ra",
+  };
 }
 
 const successComposer = (messageId, data) => {
-	return {
-		code: 0,
-		message: ApiCodes[messageId],
-		data: data?.data || data,
-	}
+  return {
+    code: 0,
+    message: ApiCodes[messageId],
+    data: data?.data || data,
+  }
 }
 
 // not implement
@@ -171,6 +171,26 @@ const sendProblemReport = async (data) => {
   }
 };
 
+const getReportByLeaderIdAndLeaderTaskId = async (leaderTaskId, pageIndex, pageSize) => {
+  try {
+    var params = {};
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+    const response = await BaseApi.get(`/${resource}/GetReportByLeaderIdAndLeaderTaskId?leaderTaskId=${leaderTaskId}`, {
+      params: params,
+    });
+    return response.data;
+
+  } catch (error) {
+    console.log("Error get items: ", error);
+    return false;
+  }
+};
+
 const ReportApi = {
   getReportByLeaderId,
   searchReport,
@@ -183,7 +203,8 @@ const ReportApi = {
   createProgressReport,
   sendProgressReportFeedback,
   sendProblemReportFeedback,
-  updateProblemTaskReport
+  updateProblemTaskReport,
+  getReportByLeaderIdAndLeaderTaskId,
 };
 
 export default ReportApi;
