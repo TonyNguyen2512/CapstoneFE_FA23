@@ -1,4 +1,13 @@
-import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap, OrderReportStatus, OrderReportStatusLabel } from "./enum";
+import {
+  SupplyLabel,
+  SupplyStatus,
+  ETaskMap,
+  ETaskStatus,
+  TaskStatus,
+  TaskMap,
+  OrderReportStatus,
+  OrderReportStatusLabel,
+} from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -198,6 +207,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.itemLog.update,
   ],
   [roles.FOREMAN]: [
+    // ACCOUNTS
+    ALL_PERMISSIONS.accounts.sider,
+    ALL_PERMISSIONS.accounts.view,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,
@@ -489,5 +501,5 @@ export const OrderReportStatusOptions = [
   {
     value: OrderReportStatus.Complete,
     label: OrderReportStatusLabel[1],
-  }
-]
+  },
+];
