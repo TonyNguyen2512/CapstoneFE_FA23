@@ -72,6 +72,15 @@ const OrderList = () => {
   const getActionItems = (record) => {
     return [
       {
+        key: "VIEW_ORDER_DETAIL",
+        label: "Xem chi tiết",
+        color: "blue",
+        icon: <ViewList />,
+        onClick: () => {
+          navigate(record?.id);
+        },
+      },
+      {
         key: "UPDATE_ORDER",
         label: "Cập nhật đơn hàng",
         icon: <Edit />,
@@ -87,15 +96,6 @@ const OrderList = () => {
         onClick: () => {
           orderRef.current = record;
           setUpdateModal(true);
-        },
-      },
-      {
-        key: "VIEW_ORDER_DETAIL",
-        label: "Xem chi tiết",
-        color: "blue",
-        icon: <ViewList />,
-        onClick: () => {
-          navigate(record?.id);
         },
       },
       {

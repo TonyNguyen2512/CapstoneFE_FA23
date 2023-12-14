@@ -7,6 +7,8 @@ import { drawingsRef, imagesItemRef } from "../../../middleware/firebase";
 import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import { InputNumber } from "antd/lib";
+import { BaseTable } from "../../../components/BaseTable";
+import { Plus } from "@icon-park/react";
 
 export const ItemModal = ({
   data,
@@ -27,9 +29,14 @@ export const ItemModal = ({
   const [drawings2D, setDrawings2D] = useState(data?.drawings2D ?? "");
   const [drawings3D, setDrawings3D] = useState(data?.drawings3D ?? "");
   const [drawingsTechnical, setDrawingsTechnical] = useState(data?.drawingsTechnical ?? "");
-  const [listProcedure, setListProcedure] = useState([]);
+  const [listProcedure, setListProcedure] = useState(
+    (data?.listProcedure || []).map((e, i) => {
+      return { ...e, index: i };
+    })
+  );
   const [listMaterial, setListMaterial] = useState([]);
   const [progress, setProgress] = useState(-1);
+  const [tableKey, setTableKey] = useState(0);
 
   const handleUploadImage = (event) => {
     setLoading(true);
@@ -172,22 +179,12 @@ export const ItemModal = ({
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    // const updatedMaterials = Array.isArray(values.listMaterial)
-    // ? values.listMaterial.map((material) => ({
-    //     materialId: material.materialId,
-    //     quantity: material.quantity,
-    //   }))
-    // : [];
     const updatedMaterials = listMaterial.map((material) => ({
       materialId: material.materialId,
       quantity: values.listMaterial.map((m) => m.materialId).includes(material.materialId)
         ? values.listMaterial.find((m) => m.materialId === material.materialId).quantity
         : material.quantity,
     }));
-
-    console.log(listMaterial);
-    console.log(updatedMaterials);
-
     // Update the values with the correct listMaterial
     const updatedValues = {
       ...values,
@@ -223,9 +220,80 @@ export const ItemModal = ({
     onCancel();
   };
 
+  const changeProcedurePriority = (event, index) => {
+    let tmp = listProcedure;
+    tmp[index].priority = parseInt(event.target.value);
+    setListProcedure(tmp);
+    console.log(listProcedure);
+  };
+
+  const handleChangeProcedure = (value, index) => {
+    let tmp = listProcedure;
+    tmp[index].procedureId = value;
+    setListProcedure(tmp);
+    console.log(listProcedure);
+  };
+
+  const addNewProcedure = () => {
+    setListProcedure((prevList) => [
+      ...prevList,
+      { index: prevList.length, procedureId: "", priority: 0 },
+    ]);
+    // Increment the key to force re-render the table
+    setTableKey((prevKey) => prevKey + 1);
+  };
+
+  const columns = [
+    {
+      title: "Độ ưu tiên",
+      dataIndex: "priority",
+      key: "priority",
+      width: "40%",
+      // align: "center",
+      render: (_, record, index) => {
+        return (
+          <Input
+            type="number"
+            defaultValue={record?.priority}
+            onInput={(value) => changeProcedurePriority(value, index)}
+          />
+        );
+      },
+    },
+    {
+      title: "Tên quy trình",
+      dataIndex: "procedureId",
+      key: "procedureId",
+      render: (_, record, index) => {
+        return (
+          <Select
+            style={{ width: "100%" }}
+            placeholder="Chọn quy trình cần thực hiện..."
+            defaultValue={record?.procedureId}
+            onChange={(value) => handleChangeProcedure(value, index)}
+            optionLabelProp="label"
+            options={listProcedures}
+          />
+        );
+      },
+    },
+    // {
+    //   title: "",
+    //   dataIndex: "_",
+    //   key: "procedureId",
+    //   render: (_, record, index) => {
+    //     return index === listProcedure.length - 1 ? (
+    //       <Plus role="button" onClick={addNewProcedure} />
+    //     ) : (
+    //       <></>
+    //     );
+    //   },
+    // },
+  ];
+
   return (
     <BaseModal
-      width={"60%"}
+      width={"80%"}
       open={open}
       onCancel={onCancel}
       confirmLoading={loading}
@@ -291,36 +359,21 @@ export const ItemModal = ({
               >
                 <Select options={listCategories} placeholder="Chọn loại sản phẩm..." />
               </Form.Item>
-              <Form.Item
-                name="listProcedure"
-                label="Danh sách quy trình"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn quy trình cần thực hiện",
-                  },
-                ]}
-              >
-                <Select
-                  mode="multiple"
-                  style={{ width: "100%" }}
-                  placeholder="Chọn quy trình cần thực hiện..."
-                  defaultValue={data?.listProcedure}
-                  onChange={handleChangeProcedures}
-                  optionLabelProp="label"
-                  options={listProcedures}
+              <Form.Item name="listProcedure" label="Danh sách quy trình">
+                <BaseTable
+                  key={tableKey}
+                  columns={columns}
+                  pagination={false}
+                  searchOptions={{ visible: false }}
+                  dataSource={listProcedure}
+                  addButton={
+                    <div className="mb-2">
+                      <Plus role="button" onClick={addNewProcedure} />
+                    </div>
+                  }
                 />
               </Form.Item>
-              <Form.Item
-                name="image"
-                label="Ảnh sản phẩm"
-                // rules={[
-                //   {
-                //     required: !priceImage,
-                //     message: "Vui lòng chọn bảng báo giá",
-                //   },
-                // ]}
-              >
+              <Form.Item name="image" label="Ảnh sản phẩm">
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
@@ -332,16 +385,7 @@ export const ItemModal = ({
                 </Upload>
               </Form.Item>
               {/*  */}
-              <Form.Item
-                name="drawings2D"
-                label="Bản vẽ 2D"
-                // rules={[
-                //   {
-                //     required: !drawings2D,
-                //     message: "Vui lòng chọn bản vẽ 2D",
-                //   },
-                // ]}
-              >
+              <Form.Item name="drawings2D" label="Bản vẽ 2D">
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
@@ -353,16 +397,7 @@ export const ItemModal = ({
                 </Upload>
               </Form.Item>
               {/*  */}
-              <Form.Item
-                name="drawings3D"
-                label="Bản vẽ 3D"
-                // rules={[
-                //   {
-                //     required: !drawings3D,
-                //     message: "Vui lòng chọn bản vẽ 3D",
-                //   },
-                // ]}
-              >
+              <Form.Item name="drawings3D" label="Bản vẽ 3D">
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
@@ -372,16 +407,7 @@ export const ItemModal = ({
                   <Button icon={<UploadOutlined />}>Upload</Button>
                 </Upload>
               </Form.Item>
-              <Form.Item
-                name="drawingsTechnical"
-                label="Bảng vẽ kỹ thuật"
-                // rules={[
-                //   {
-                //     required: !drawingsTechnical,
-                //     message: "Vui lòng chọn bản vẽ kỹ thuật",
-                //   },
-                // ]}
-              >
+              <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
                 <Upload
                   listType="picture"
                   beforeUpload={() => false}
