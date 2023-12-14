@@ -1,18 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Input,
-  Progress,
-  Row,
-  Select,
-  Space,
-  Upload,
-  message,
-} from "antd";
+import { Button, Card, Col, Form, Input, Progress, Row, Select, Upload, message } from "antd";
 import ItemApi from "../../../apis/item";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { drawingsRef, imagesItemRef } from "../../../middleware/firebase";
