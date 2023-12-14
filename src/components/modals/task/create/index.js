@@ -9,6 +9,7 @@ import { WTaskStatusOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
 import GroupApi from "../../../../apis/group";
 import { disabledDateTime } from "../../../../utils";
+import dayjs from "dayjs";
 
 export const TaskCreateModal = ({
   open,
@@ -49,7 +50,7 @@ export const TaskCreateModal = ({
         initialValues={{
           taskName: "",
           status: ETaskStatus.New,
-          dates: ["", ""],
+          dates: [dayjs(), dayjs()],
           assignees: [],
           priority: "",
         }}

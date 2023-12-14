@@ -120,9 +120,8 @@ export const LeaderTaskDetailsPage = () => {
         PageSize.LEADER_TASK_ORDER_DETAIL_LIST
       );
       console.log("orderDetailData", orderDetailData)
-      if (orderDetailData && orderDetailData?.data?.length > 0) {
+      if (index == 1 || orderDetailData && orderDetailData?.data?.length > 0) {
         setOrderDetailInfo(orderDetailData);
-        console.log("break")
         break;
       }
     }

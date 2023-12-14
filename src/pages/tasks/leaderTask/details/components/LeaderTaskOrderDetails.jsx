@@ -391,11 +391,16 @@ export const LeaderTaskOrderDetails = ({
         sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
-        title: "Nhóm trưởng",
-        dataIndex: "leaderName",
-        key: "naleaderNameme",
+        title: "Nhân viên",
+        dataIndex: "members",
+        key: "members",
         width: "15.5%",
-        sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
+        render: (_, { members }) =>
+          members?.map((e, index) => (
+            <p>
+              {index + 1}. {e?.memberFullName}
+            </p>
+          )),
       },
       {
         title: "Ngày bắt đầu",
@@ -532,16 +537,16 @@ export const LeaderTaskOrderDetails = ({
     setWTaskDetaiLoading(false);
   };
 
-	const handleDeleteWorkerTask = async (wTaskId) => {
+  const handleDeleteWorkerTask = async (wTaskId) => {
     console.log("handleDeleteWorkerTask", wTaskId);
-		const resp = await WorkerTasksApi.deleteWorkerTask(wTaskId);
-		if (resp?.code === 0) {
-			message.success(resp?.message);
-			handleReload();
-		} else {
-			message.error(resp?.message);
-		}
-	};
+    const resp = await WorkerTasksApi.deleteWorkerTask(wTaskId);
+    if (resp?.code === 0) {
+      message.success(resp?.message);
+      handleReload();
+    } else {
+      message.error(resp?.message);
+    }
+  };
 
   /**
    * TABLE

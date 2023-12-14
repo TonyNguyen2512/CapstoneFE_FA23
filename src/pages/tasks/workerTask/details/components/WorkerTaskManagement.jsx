@@ -108,6 +108,7 @@ export const WorkerTaskManagement = () => {
 		console.log("fetch workers create");
 		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
 		if (dataWorkers.code === 0) {
+			console.log(dataWorkers)
 			setWorkers(dataWorkers.data);
 		} else {
 			message.error(dataWorkers.message);

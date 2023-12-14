@@ -207,7 +207,7 @@ export const WorkerTaskInfo = ({ loading }) => {
                         <Row gutter={[16, 16]}>
                           {item?.itemMaterials?.map((item, index) => (
                             <Col className="gutter-row" span={24} key={item.materialId}>
-                              {index + 1}. {item.materialName}
+                              {index + 1}. {item.materialName} ({item.quantity})
                             </Col>
                           ))}
                         </Row>
