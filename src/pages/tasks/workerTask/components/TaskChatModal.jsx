@@ -56,7 +56,6 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
   const imageUrlsRef = useRef([]);
 
   useEffect(() => {
-    console.log({ open, id });
     (async () => {
       if (open) {
         setLoading(true);
@@ -64,8 +63,9 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
         setConnection(newConnect);
 
         newConnect?.on(id?.toString(), async (res) => {
-          console.log({ res });
-          await getComments();
+          if (user?.id != res.userId) {
+            await getComments();
+          }
         });
 
         await getComments();
@@ -84,30 +84,28 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
     const res = await CommentApi.getCommentByWorkerTaskId(id);
     setListComment(res);
   };
+
   const addComment = async () => {
     if (!newCmtContent && !imageUrlsRef.current.length) return;
     try {
       setLoading(true);
-      const resp = await CommentApi.createComment({
+      await CommentApi.createComment({
         workerTaskId: id,
         commentContent: newCmtContent || "",
         resource: imageUrlsRef.current,
       });
-      if (resp) {
-        setLoading(false);
-      } else {
-        setLoading(false);
-      }
     } catch (error) {
+      //
     } finally {
       imageUrlsRef.current = [];
       countRef.current = 0;
       setNewCmtContent();
+      await getComments();
+      setLoading(false);
     }
   };
 
   const updateComment = async (obj) => {
-    console.log({ obj, formChatUpdateRef });
     try {
       setLoading(true);
       await CommentApi.updateComment(obj);
@@ -115,6 +113,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
       setEditingCmt();
     } catch (error) {
     } finally {
+      await getComments();
       setLoading(false);
     }
   };
@@ -125,6 +124,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
       await CommentApi.deleteComment(id);
     } catch (error) {
     } finally {
+      await getComments();
       setLoading(false);
     }
   };
@@ -151,7 +151,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
     ];
   };
 
-  const handleUploadImages = (event) => {
+  const handleUploadImages = async (event) => {
     setLoading(true);
     const file = event.file;
     const fileName = event.file?.name;
@@ -184,6 +184,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
         });
       }
     );
+    await getComments();
     setLoading(false);
   };
 
@@ -237,7 +238,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
                   >
                     <Image
                       preview={false}
-                      className="rounded-full"
+                      className="rounded-full min-w-[50px] min-h-[50px]"
                       src={x.user?.image}
                       fallback={ErrorImage}
                       width={50}
@@ -291,8 +292,22 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
                               <CloseSmall size="30" fill="red" onClick={() => setEditingCmt()} />
                             </div>
                           </Form>
-                        ) : (
+                        ) : x.commentContent?.length > 0 ? (
                           <span>{x.commentContent}</span>
+                        ) : x.resource?.length > 0 ? (
+                          <div className="flex gap-2.5 flex-wrap py-1">
+                            {x.resource?.map((r) => (
+                              <Image
+                                className="rounded-lg object-cover"
+                                width={150}
+                                height={150}
+                                src={r}
+                                fallback={ErrorImage}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          " "
                         )}
                       </Space>
                       <small>{x.commentTime ? moment(x.commentTime)?.fromNow() : ""}</small>
