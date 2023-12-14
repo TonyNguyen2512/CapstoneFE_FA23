@@ -19,6 +19,7 @@ export const BaseTable = ({
 	loading,
 	rowKey,
 	reload,
+	addButton,
 }) => {
 	const all = useRef();
 
@@ -105,6 +106,9 @@ export const BaseTable = ({
 				</Col>
 				<Col span={12}>
 					<Row gutter={8} justify="end">
+						<Col>
+							{addButton}
+						</Col>
 						<Col>
 							{visible && (
 								<Input.Search
