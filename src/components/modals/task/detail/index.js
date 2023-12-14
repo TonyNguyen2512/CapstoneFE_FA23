@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import BaseModal from "../../../BaseModal";
 import { EditableInput } from "../../../EditableInput";
-import { Button, Card, Col, DatePicker, Form, Image, Input, InputNumber, Row, Select, Typography } from "antd";
+import { Button, Card, Col, DatePicker, Form, Image, Input, InputNumber, Row, Select, Typography, message } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
 import { UserContext } from "../../../../providers/user";
 import dayjs from "dayjs";
@@ -14,6 +14,8 @@ import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
 import { taskFeedbackReportsRef, workerTaskReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../UploadFile";
+import GroupApi from "../../../../apis/group";
+import { disabledDateTime } from "../../../../utils";
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
@@ -26,6 +28,7 @@ const TaskDetailModal = ({
 	onSubmit,
 	confirmLoading,
 	task,
+	team,
 }) => {
 	const taskFormRef = useRef();
 	const nameRef = useRef();
@@ -33,7 +36,7 @@ const TaskDetailModal = ({
 	const contentRef = useRef();
 
 	const { user } = useContext(UserContext);
-	const { team, info } = useContext(TaskContext);
+	const { info } = useContext(TaskContext);
 
 	const [resourceImage] = useState(task?.resource?.[0] ?? "");
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
@@ -144,7 +147,7 @@ const TaskDetailModal = ({
 				ref={taskFormRef}
 				initialValues={{
 					description: task?.description,
-					dates: [task?.startTime ? dayjs(task?.startTime) : "", task?.startTime ? dayjs(task?.endTime) : ""],
+					dates: [task?.startTime ? dayjs(task?.startTime) : dayjs(), task?.startTime ? dayjs(task?.endTime) : dayjs()],
 					assignees: task?.members?.map((e) => e.memberId),
 					status: task?.status || ETaskStatus.New,
 					...task,
@@ -187,15 +190,17 @@ const TaskDetailModal = ({
 										name="dates"
 										label={<Text strong>Thời hạn công việc</Text>}
 										rules={[
-										  {
-											required: true,
-											message: "Vui lòng nhập thời hạn công việc",
-										  },
+											{
+												required: true,
+												message: "Vui lòng nhập thời hạn công việc",
+											},
 										]}
 									>
 										<DatePicker.RangePicker
 											showNow
-											showTime
+											showTime={{
+												hideDisabledOptions: true,
+											}}
 											placeholder={["Bắt đầu", "Kết thúc"]}
 											className="w-full"
 											format="HH:mm DD/MM/YYYY"
@@ -206,6 +211,7 @@ const TaskDetailModal = ({
 													date.isBefore(info.startTime, "day")
 												);
 											}}
+											disabledTime={disabledDateTime}
 										/>
 									</Form.Item>
 								</Col>
@@ -214,10 +220,10 @@ const TaskDetailModal = ({
 										name="status"
 										label={<Text strong>Trạng thái</Text>}
 										rules={[
-										  {
-											required: true,
-											message: "Vui lòng nhập trạng thái",
-										  },
+											{
+												required: true,
+												message: "Vui lòng nhập trạng thái",
+											},
 										]}
 									>
 										<Select

@@ -103,22 +103,29 @@ export const LeaderTaskDetailsPage = () => {
     setLoading(false);
   };
 
-  const getDataOrderDetail = (handleLoading, orderId, pageIndex, search) => {
+  const getDataOrderDetail = async (handleLoading, orderId, pageIndex, search) => {
     if (handleLoading) {
       setLoading(true);
     }
 
     if (!orderId) return;
 
-    OrderDetailApi.getListByOrderId(
-      orderId,
-      search,
-      pageIndex,
-      PageSize.LEADER_TASK_ORDER_DETAIL_LIST
-    ).then((dataOrderDetails) => {
-      setOrderDetailInfo(dataOrderDetails);
-    });
-
+    let orderDetailData = [];
+    console.log("pageIndex", pageIndex)
+    for (let index = pageIndex; index >= 1; index--) {
+      orderDetailData = await OrderDetailApi.getListByOrderId(
+        orderId,
+        search,
+        index,
+        PageSize.LEADER_TASK_ORDER_DETAIL_LIST
+      );
+      console.log("orderDetailData", orderDetailData)
+      if (orderDetailData && orderDetailData?.data?.length > 0) {
+        setOrderDetailInfo(orderDetailData);
+        console.log("break")
+        break;
+      }
+    }
     setLoading(false);
   };
 
@@ -148,38 +155,38 @@ export const LeaderTaskDetailsPage = () => {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               {(orderInfo.status !== OrderStatus.Completed ||
                 orderInfo.status !== OrderStatus.Cancel) && (
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                  <Button
-                    type="primary"
-                    className="btn-primary app-bg-primary font-semibold text-white"
-                    onClick={() => setShowOrderReportModal(true)}
-                  >
-                    Báo cáo tiến độ đơn hàng
-                  </Button>
-                </div>
-              )}
+                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button
+                      type="primary"
+                      className="btn-primary app-bg-primary font-semibold text-white"
+                      onClick={() => setShowOrderReportModal(true)}
+                    >
+                      Báo cáo tiến độ đơn hàng
+                    </Button>
+                  </div>
+                )}
               {(orderInfo.status === OrderStatus.Pending ||
                 orderInfo.status === OrderStatus.Reject ||
                 orderInfo.status === OrderStatus.Request) && (
-                <>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    type="primay"
-                    className="btn-primary app-bg-primary font-semibold text-white"
-                    onClick={() => syncMaterials()}
-                  >
-                    Cập nhật nguyên vật liệu
-                  </Button>
-                  <Button
-                    style={{ marginLeft: "10px" }}
-                    type="primay"
-                    className="btn-primary app-bg-primary font-semibold text-white"
-                    onClick={() => getOrderStatus()}
-                  >
-                    Báo giá đơn hàng
-                  </Button>
-                </>
-              )}
+                  <>
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      type="primay"
+                      className="btn-primary app-bg-primary font-semibold text-white"
+                      onClick={() => syncMaterials()}
+                    >
+                      Cập nhật nguyên vật liệu
+                    </Button>
+                    <Button
+                      style={{ marginLeft: "10px" }}
+                      type="primay"
+                      className="btn-primary app-bg-primary font-semibold text-white"
+                      onClick={() => getOrderStatus()}
+                    >
+                      Báo giá đơn hàng
+                    </Button>
+                  </>
+                )}
             </div>
           }
           <TaskProvider
@@ -191,7 +198,7 @@ export const LeaderTaskDetailsPage = () => {
               getDataOrderDetail(handleLoading, orderInfo?.id, 1);
             }}
             onFilterTask={(pageIndex, search) => {
-              getDataOrderDetail(true, orderInfo?.id, pageIndex, search);
+              getDataOrderDetail(false, orderInfo?.id, pageIndex, search);
             }}
           >
             <div className="mt-4">

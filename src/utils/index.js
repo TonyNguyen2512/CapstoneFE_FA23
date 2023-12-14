@@ -27,18 +27,18 @@ export const getTitle = (route) => {
 };
 
 export const getRoleName = (role) => {
-	switch (role) {
-		case roles.ADMIN:
-			return "Quản trị viên";
-		case roles.FOREMAN:
-			return "Quản đốc";
-		case roles.LEADER:
-			return "Tổ trưởng";
-		case roles.WORKER:
-			return "Công nhân";
-		default:
-			return "";
-	}
+  switch (role) {
+    case roles.ADMIN:
+      return "Quản trị viên";
+    case roles.FOREMAN:
+      return "Quản đốc";
+    case roles.LEADER:
+      return "Tổ trưởng";
+    case roles.WORKER:
+      return "Công nhân";
+    default:
+      return "";
+  }
 };
 
 export const getStatusName = (status) => {
@@ -76,29 +76,51 @@ export const dateSort = (dateA, dateB) => {
 };
 
 export const formatMoney = (money) => {
-	if (!money) money = 0;
-	return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+  if (!money) money = 0;
+  return money.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
 }
 
 export const getTaskStatusName = (status) => {
-	return ETaskMap[status]?.label || "Không Xác Định";
+  return ETaskMap[status]?.label || "Không Xác Định";
 };
 
 export const getTaskStatusColor = (status) => {
-	return ETaskMap[status]?.color || "#FF0000";
+  return ETaskMap[status]?.color || "#FF0000";
 };
 
 export const handleDownloadFile = async (url, filename, message) => {
-	if (!url) message.warning("Không có bản vẽ");
-	try {
-		var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
-		var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
-		var fileURL = window.URL.createObjectURL(downloadFile);
-		var a = document.createElement("a");
-		a.download = fileName;
-		a.href = fileURL;
-		a.click();
-	} catch (err) {
-		console.log(err);
-	}
+  if (!url) message.warning("Không có bản vẽ");
+  try {
+    var fileName = formatDate(new Date(), "DDMMYYYYHHmmss") + "_" + filename + ".png";
+    var downloadFile = new Blob([url], { type: "image/jpeg (.jpg, .jpeg, .jfif, .pjpeg, .pjp)" });
+    var fileURL = window.URL.createObjectURL(downloadFile);
+    var a = document.createElement("a");
+    a.download = fileName;
+    a.href = fileURL;
+    a.click();
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const range = (start, end) => {
+  const result = [];
+  for (let i = start; i < end; i++) {
+    result.push(i);
+  }
+  return result;
+};
+
+export const disabledDateTime = () => ({
+  disabledHours: () => range(0, dayjs().hour()),
+});
+
+export const handleRetrieveWorkerOnTask = (members) => {
+  if (!members) return [];
+  return members?.map((e) => {
+    return {
+      id: e.memberId,
+      fullname: e.memberFullName
+    }
+  })
 }

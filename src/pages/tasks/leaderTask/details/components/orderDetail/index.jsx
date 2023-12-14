@@ -35,16 +35,22 @@ export const LeaderTaskOrderDetailsPage = () => {
     }
     // retrieve order detail by id
     try {
-      let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(
-        orderDetailId,
-        search,
-        pageIndex,
-        PageSize.LEADER_TASK_PROCEDURE_LIST
-      );
-      if (dataLeaderTasks.code === 0) {
-        setTaskInfo(dataLeaderTasks?.data);
-      } else {
-        message.error(dataLeaderTasks.message);
+      let dataLeaderTasks = [];
+      for (let index = pageIndex; index >= 1; index--) {
+        dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(
+          orderDetailId,
+          search,
+          index,
+          PageSize.LEADER_TASK_PROCEDURE_LIST
+        );
+        if (dataLeaderTasks.code === 0) {
+          if (dataLeaderTasks?.data?.data?.length > 0) {
+            setTaskInfo(dataLeaderTasks?.data);
+            break;
+          }
+        } else {
+          message.error(dataLeaderTasks.message);
+        }
       }
       dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderDetailId(orderDetailId);
       if (dataLeaderTasks.code === 0) {

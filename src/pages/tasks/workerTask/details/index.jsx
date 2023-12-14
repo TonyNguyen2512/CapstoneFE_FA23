@@ -28,6 +28,7 @@ export const WorkerTaskDetailsPage = () => {
   const { leaderTaskId } = useParams();
 
   const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
+  const [leaderInfo, setLeaderInfo] = useState([]);
   const [groupMemberList, setGroupMemberList] = useState([]);
   const [workderTaskList, setWorkerTaskList] = useState([]);
   const [state, setState] = useState([]);
@@ -81,7 +82,10 @@ export const WorkerTaskDetailsPage = () => {
 
       if (!dataLeaderUser) {
         message.error("Không tìm thấy thông tin quản lý");
+      } else {
+        setLeaderInfo(dataLeaderUser);
       }
+      console.log("dataLeaderUser", dataLeaderUser)
 
       let dataGroupMembers = [];
       if (dataLeaderUser?.groupId) {
@@ -154,6 +158,7 @@ export const WorkerTaskDetailsPage = () => {
             allTasks={workderTaskList}
             info={leaderTaskInfo}
             team={groupMemberList}
+            leader={leaderInfo}
             acceptance={acceptance}
             onReload={(handleLoading) => {
               handleRetrieveWorkerTaskList(handleLoading, leaderTaskId);

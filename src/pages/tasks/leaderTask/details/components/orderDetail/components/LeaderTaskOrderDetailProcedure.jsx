@@ -1,4 +1,4 @@
-import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
+import { Edit, Forbid, More, Unlock, Plus, PreviewOpen, FileExcel } from "@icon-park/react";
 import { Typography, Row, message, Col } from "antd";
 import dayjs from "dayjs";
 import React, { useContext, useRef, useState } from "react";
@@ -15,6 +15,7 @@ import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
 import ReportApi from "../../../../../../../apis/task-report";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 import { LeaderTaskAcceptanceModal } from "../../../../components/LeaderTaskAcceptanceModal";
+import UserApi from "../../../../../../../apis/user";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
@@ -36,7 +37,9 @@ export const LeaderTaskOrderDetailProcedure = ({
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
   const [searchData, setSearchData] = useState("")
+  const [leadersData, setLeadersData] = useState([]);
 
   const leaderTaskInfo = useRef();
 
@@ -68,7 +71,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       },
       {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
+        label: isActive ? "Mở khóa" : "Xoá",
         danger: !isActive,
         icon: !isActive ? <Forbid /> : <Unlock />,
         onClick: () => {
@@ -182,13 +185,23 @@ export const LeaderTaskOrderDetailProcedure = ({
     },
   ];
 
-  const handleSearch = (value) => {
+  const handleReload = (value = searchData, current = currentPage) => {
+    setLoading(true);
     setSearchData(value);
-    filterTask(1, value);
+    filterTask(current, value);
+    setLoading(false);
+  };
+
+  const handleSearch = (value) => {
+    setLoading(true);
+    // setCurrentPage(1);
+    handleReload(value);
+    setLoading(false);
   };
 
   const onPageChange = (current) => {
-    filterTask(current, searchData);
+    setCurrentPage(current);
+    handleReload(searchData, current);
   };
 
   const handleSubmitCreate = async (values) => {
@@ -211,7 +224,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       if (create.code === 0) {
         message.success(create.message);
         setShowCreateModal(false);
-        reload(false);
+        handleReload();
       } else {
         message.error(create.message);
       }
@@ -241,7 +254,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       if (update.code === 0) {
         message.success(update.message);
         setShowUpdateModal(false);
-        reload(false);
+        handleReload();
       } else {
         message.error(update.message);
       }
@@ -253,12 +266,13 @@ export const LeaderTaskOrderDetailProcedure = ({
   };
 
   const deleteTaskProcedure = async (value) => {
+    console.log("deleteTaskProcedure", value)
     setLoading(true);
     try {
       const success = await LeaderTasksApi.deleteLeaderTasks(value);
       if (success) {
         message.success(success.message);
-        reload(false);
+        handleReload();
       } else {
         message.error(success.message);
       }
@@ -276,9 +290,15 @@ export const LeaderTaskOrderDetailProcedure = ({
     if (resp) {
       message.success(resp.message);
       setAcceptanceReportLoading(false);
+      handleReload();
     } else {
       message.error(resp.message);
     }
+  }
+
+  const handleRetrieveLeaderInfo = async () => {
+    const resp = await UserApi.getByLeaderRole();
+    setLeadersData(resp?.data);
   }
 
   return (
@@ -294,7 +314,11 @@ export const LeaderTaskOrderDetailProcedure = ({
               className="flex-center ml-3"
               shape="circle"
               type="primary"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => {
+                handleRetrieveLeaderInfo();
+                setShowCreateModal(true);
+              }
+              }
             />
           }
           {acceptance &&
@@ -302,9 +326,12 @@ export const LeaderTaskOrderDetailProcedure = ({
               <Button
                 className="flex-center ml-3"
                 type="primary"
-                onClick={() => setShowAcceptanceReportModal(true)}
+                onClick={() => {
+                  handleRetrieveLeaderInfo();
+                  setShowAcceptanceReportModal(true);
+                }}
               >
-                Thêm công việc nghiệm thu
+                <Plus style={{ display: "flex" }} /> Nghiệm thu
               </Button>
             </Col>
           }
@@ -337,6 +364,7 @@ export const LeaderTaskOrderDetailProcedure = ({
         confirmLoading={eTaskCreateLoading}
         dataSource={[]}
         mode={modalModes.CREATE}
+        leadersData={leadersData}
       />
       <LeaderTaskModal
         open={showUpdateModal}
@@ -349,6 +377,7 @@ export const LeaderTaskOrderDetailProcedure = ({
         dataSource={leaderTaskInfo.current}
         mode={modalModes.UPDATE}
         message={message}
+        leadersData={leadersData}
       />
       <LeaderTaskAcceptanceModal
         open={showAcceptanceReportModal}
@@ -359,6 +388,7 @@ export const LeaderTaskOrderDetailProcedure = ({
         onSubmit={handleSubmitAcceptanceReportCreate}
         confirmLoading={acceptanceReportLoading}
         title={"Thêm công việc nghiệm thu"}
+        leadersData={leadersData}
       />
     </>
   );
