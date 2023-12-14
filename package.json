@@ -2,7 +2,6 @@
   "name": "jama-decor-fe",
   "version": "0.1.2",
   "private": true,
-  "homepage": "https://TonyNguyen2512.github.io/CapstoneFE_FA23/",
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@icon-park/react": "^1.4.2",
