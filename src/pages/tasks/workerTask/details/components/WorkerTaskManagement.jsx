@@ -116,15 +116,14 @@ export const WorkerTaskManagement = () => {
 	}
 
 	const handleRetrieveWorkersUpdate = async (task) => {
-		console.log("fetch workers update");
+		console.log("fetch workers update", task);
 		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
+		const dataWorkerOnTask = handleRetrieveWorkerOnTask(task?.members);
 		if (dataWorkers.code === 0) {
-			const dataWorkerTask = handleRetrieveWorkerOnTask(task?.members);
-			const dataTeam = [...dataWorkers.data, ...dataWorkerTask];
+			const dataTeam = [...dataWorkers.data, ...dataWorkerOnTask];
 			setWorkers(dataTeam);
 		} else {
-			const dataWorkerTask = handleRetrieveWorkerOnTask(task?.members);
-			setWorkers(dataWorkerTask);
+			setWorkers(dataWorkerOnTask);
 		}
 	}
 

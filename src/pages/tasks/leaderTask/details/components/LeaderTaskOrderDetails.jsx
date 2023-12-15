@@ -13,11 +13,8 @@ import routes from "../../../../../constants/routes";
 import confirm from "antd/es/modal/confirm";
 import { Button } from "antd/lib";
 import { LeaderTaskModal } from "../../components/LeaderTaskModal";
-import { LeaderTaskTaskReportModal } from "../../../workerTask/components/TaskAcceptanceReportModal";
-import ReportApi from "../../../../../apis/task-report";
 import TaskDetailModal from "../../../../../components/modals/task/detail";
 import WorkerTasksApi from "../../../../../apis/worker-task";
-import { TaskProgressReportModal } from "../../../workerTask/components/TaskProgressReportModal";
 import UserApi from "../../../../../apis/user";
 import GroupApi from "../../../../../apis/group";
 

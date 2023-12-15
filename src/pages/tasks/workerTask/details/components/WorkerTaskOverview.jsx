@@ -3,7 +3,7 @@ import { Col, Descriptions, Row } from "antd/lib";
 import { useNavigate } from "react-router-dom";
 import { ProgressIndicator } from "../../../../../components/ProgressIndicator";
 import moment, { now } from "moment";
-import { ETaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
 import { useContext } from "react";
 import { TaskContext } from "../../../../../providers/task";
 
@@ -22,17 +22,20 @@ export const WorkerTaskOverview = ({
   const { allTasks } = useContext(TaskContext);
   const allWTasks = allTasks;
   const completedTasks = allWTasks?.filter(
-    (e) => e.status === ETaskStatus.Completed
+    (e) => e.status === TaskStatus.Completed
   );
 
   const inProgressTasks = allWTasks?.filter(
-    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === ETaskStatus.InProgress
+    (e) => moment(now()).isSameOrBefore(e.endTime) && e.status === TaskStatus.InProgress
   )
 
   const expireTasks = allWTasks?.filter(
-    (e) => moment(now()).isAfter(e.endTime) && e.status !== ETaskStatus.Completed
+    (e) => moment(now()).isAfter(e.endTime) && e.status !== TaskStatus.Completed
   )
 
+  const pendingTasks = allWTasks?.filter(
+    (e) => e.status === TaskStatus.Pending
+  )
   return (
     <Space direction="vertical" className="w-full gap-6">
       <Row justify="middle">
@@ -56,12 +59,10 @@ export const WorkerTaskOverview = ({
             label: "Công việc đạt",
             children: completedTasks?.length,
           },
-          // {
-          //   label: "Công việc không đạt",
-          //   children: allWTasks?.filter(
-          //     (e) => e.status === TaskStatus.inProgress
-          //   )?.length,
-          // },
+          {
+            label: "Công việc chờ duyệt",
+            children: pendingTasks?.length,
+          },
           {
             label: "Công việc trong tiến độ",
             children: inProgressTasks?.length,

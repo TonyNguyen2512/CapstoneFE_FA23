@@ -75,8 +75,8 @@ export const WorkerTaskInfo = ({ loading }) => {
     console.log("create progress report: ", values);
     const report = await ReportApi.createProgressReport(values);
     if (report.code === 0) {
-      setProgressReportLoading(false);
-      message.info(report.message);
+      setShowProgressReportModal(false);
+      message.info("Tạo báo cáo thành công!");
     } else {
       message.error(report.message);
     }

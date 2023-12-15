@@ -134,6 +134,7 @@ export const LeaderTaskDetailsPage = () => {
     const resp = await OrderReportApi.createOrderReport(values);
     if (resp) {
       message.info("Tạo báo cáo thành công");
+      setShowOrderReportModal(false);
     } else {
       message.error("Tạo báo cáo thất bại");
     }
