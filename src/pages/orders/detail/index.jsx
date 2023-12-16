@@ -145,13 +145,15 @@ const OrderDetailPage = () => {
         danger: true,
         icon: <Error />,
         onClick: async () => {
-          let success = await OrderDetailApi.deleteOrderDetail(record.id);
-          if (success) {
-            message.success(`Hủy sản phẩm thành công!`);
-          } else {
-            message.error(`Huỷ sản phẩm thất bại! Vui lòng thử lại sau.`);
+          if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+            let success = await OrderDetailApi.deleteOrderDetail(record.id);
+            if (success) {
+              message.success(`Hủy sản phẩm thành công!`);
+            } else {
+              message.error(`Huỷ sản phẩm thất bại! Vui lòng thử lại sau.`);
+            }
+            handleSearch();
           }
-          handleSearch();
         },
       },
     ];

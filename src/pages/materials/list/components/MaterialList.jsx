@@ -36,15 +36,17 @@ const MaterialList = ({ canModify }) => {
   }, []);
 
   const deleteMaterialCategory = async (value) => {
-    setLoading(true);
-    const success = await MaterialApi.deleteMaterial(value);
-    if (success) {
-      message.success("Xoá thành công");
-    } else {
-      message.error("Xoá thất bại");
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      const success = await MaterialApi.deleteMaterial(value);
+      if (success) {
+        message.success("Xoá thành công");
+      } else {
+        message.error("Xoá thất bại");
+      }
+      getData();
+      setLoading(false);
     }
-    getData();
-    setLoading(false);
   };
 
   const getActionItems = (record) => {

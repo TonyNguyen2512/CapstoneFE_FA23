@@ -29,6 +29,12 @@ export const ROLE_MAP = {
 };
 
 export const ALL_PERMISSIONS = {
+  dashboard: {
+    view: "dashboard.view",
+    create: "dashboard.create",
+    update: "dashboard.update",
+    sider: "dashboard.sider",
+  },
   accounts: {
     view: "accounts.view",
     create: "accounts.create",
@@ -162,6 +168,9 @@ export const ALL_PERMISSIONS = {
 
 export const USER_PERMISSIONS = {
   [roles.ADMIN]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // ACCOUNTS
     ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
@@ -207,6 +216,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.itemLog.update,
   ],
   [roles.FOREMAN]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // ACCOUNTS
     ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
@@ -287,6 +299,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.taskReports.update,
   ],
   [roles.LEADER]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // workers
     ALL_PERMISSIONS.workers.sider,
     ALL_PERMISSIONS.workers.view,
@@ -304,6 +319,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.leaderReports.update,
   ],
   [roles.WORKER]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // tasks
     ALL_PERMISSIONS.workers.sider,
     ALL_PERMISSIONS.workers.view,

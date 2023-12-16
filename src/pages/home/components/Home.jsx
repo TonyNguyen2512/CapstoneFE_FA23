@@ -1,17 +1,16 @@
 import { Card, Col, Row, Typography, Space, Spin } from "antd";
-import React, { useEffect, useRef, useState } from "react";
-import RoleApi from "../../../apis/role";
-import { roles } from "../../../constants/app";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { getRoleName, getStatusName, reduceNumber } from "../../../utils";
-import { mockOverview } from "../../../__mocks__/jama/dashboard";
-import { TrendingDown, TrendingUp } from "@icon-park/react";
 import ReactECharts from "echarts-for-react";
-import { mockAccounts } from "../../../__mocks__/accounts";
 import DashboardApi from "../../../apis/dashboard";
+import { UserContext } from "../../../providers/user";
+import { roles } from "../../../constants/app";
 
 const { Title } = Typography;
 
 const Home = () => {
+  const { user } = useContext(UserContext);
+
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState();
   const [orderData, setOrderData] = useState();
@@ -23,20 +22,31 @@ const Home = () => {
     setLoading(true);
     let data = await DashboardApi.UserDashboard();
     setUserData(data);
-    data = await DashboardApi.OrderDashboard();
-    setOrderData(data);
     data = await DashboardApi.OrderByMonthDashboard();
     setOrderByMonthData(data);
     data = await DashboardApi.LeaderTaskDashboard();
     setLeaderTaskData(data);
-    data = await DashboardApi.WorkerTaskDashboard();
-    setWorkerTaskData(data);
+
+    if (user?.role?.name === roles.FOREMAN) {
+      data = await DashboardApi.OrderAssignDashboardByForemanId(user.id);
+      setOrderData(data);
+    } else if (user?.role?.name === roles.ADMIN) {
+      data = await DashboardApi.OrderDashboard();
+      setOrderData(data);
+    }
+
+    if (user?.role?.name === roles.LEADER) {
+      data = await DashboardApi.WorkerTaskDashboardByLeaderId(user.id);
+      setWorkerTaskData(data);
+    } else {
+      data = await DashboardApi.WorkerTaskDashboard();
+      setWorkerTaskData(data);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
     getHomeData();
-    console.log(userData, orderData, orderByMonthData, leaderTaskData, workerTaskData);
   }, []);
 
   const getUsersStatistics = () => {
@@ -244,117 +254,66 @@ const Home = () => {
       <Title level={4}>Tổng quan</Title>
       <Space direction="vertical" className="w-full gap-6">
         <Row gutter={32}>
-          <Col span={6}>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
-              <Row>
-                <Space className="w-full" direction="vertical">
-                  <Row>
-                    <Title level={5}>Tổng số người dùng</Title>
-                  </Row>
-                  <Row>
-                    <Col span={16} className="flex items-center">
-                      <Title level={1} className="!mb-0">
-                        {reduceNumber(userData?.reduce((p, c) => p + c.totalUser, 0) || 0)}
-                      </Title>
-                    </Col>
-                    {/* <Col span={8} className="flex items-center">
-                      <span>{mockOverview.views.percenatge > 0 ? "+" : ""}</span>
-                      <span>{mockOverview.views.percenatge}</span>
-                      {mockOverview.views.percenatge > 0 ? (
-                        <TrendingUp
-                          theme="outline"
-                          size="20"
-                          fill="#080"
-                          className="relative top-1"
-                        />
-                      ) : (
-                        <TrendingDown
-                          theme="outline"
-                          size="20"
-                          fill="#f00"
-                          className="relative top-1"
-                        />
-                      )}
-                    </Col> */}
-                  </Row>
-                </Space>
-              </Row>
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#E5ECF6" }} loading={loading}>
-              <Row>
-                <Space className="w-full" direction="vertical">
-                  <Row>
-                    <Title level={5}>Tổng số đơn hàng</Title>
-                  </Row>
-                  <Row>
-                    <Col span={16} className="flex items-center">
-                      <Title level={1} className="!mb-0">
-                        {reduceNumber(orderData?.reduce((p, c) => p + c.total, 0) || 0)}
-                      </Title>
-                    </Col>
-                    {/* <Col span={8} className="flex items-center">
-                      <span>{mockOverview.visits.percenatge > 0 ? "+" : ""}</span>
-                      <span>{mockOverview.visits.percenatge}</span>
-                      {mockOverview.visits.percenatge > 0 ? (
-                        <TrendingUp
-                          theme="outline"
-                          size="20"
-                          fill="#080"
-                          className="relative top-1"
-                        />
-                      ) : (
-                        <TrendingDown
-                          theme="outline"
-                          size="20"
-                          fill="#f00"
-                          className="relative top-1"
-                        />
-                      )}
-                    </Col> */}
-                  </Row>
-                </Space>
-              </Row>
-            </Card>
-          </Col>
-          <Col span={6}>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
-              <Row>
-                <Space className="w-full" direction="vertical">
-                  <Row>
-                    <Title level={5}>Tổng công việc (tổ trưởng)</Title>
-                  </Row>
-                  <Row>
-                    <Col span={16} className="flex items-center">
-                      <Title level={1} className="!mb-0">
-                        {reduceNumber(leaderTaskData?.reduce((p, c) => p + c.total, 0) || 0)}
-                      </Title>
-                    </Col>
-                    {/* <Col span={8} className="flex items-center">
-                      <span>{mockOverview.newUsers.percenatge > 0 ? "+" : ""}</span>
-                      <span>{mockOverview.newUsers.percenatge}</span>
-                      {mockOverview.newUsers.percenatge > 0 ? (
-                        <TrendingUp
-                          theme="outline"
-                          size="20"
-                          fill="#080"
-                          className="relative top-1"
-                        />
-                      ) : (
-                        <TrendingDown
-                          theme="outline"
-                          size="20"
-                          fill="#f00"
-                          className="relative top-1"
-                        />
-                      )}
-                    </Col> */}
-                  </Row>
-                </Space>
-              </Row>
-            </Card>
-          </Col>
+          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+            <Col span={6}>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
+                <Row>
+                  <Space className="w-full" direction="vertical">
+                    <Row>
+                      <Title level={5}>Tổng số người dùng</Title>
+                    </Row>
+                    <Row>
+                      <Col span={16} className="flex items-center">
+                        <Title level={1} className="!mb-0">
+                          {reduceNumber(userData?.reduce((p, c) => p + c.totalUser, 0) || 0)}
+                        </Title>
+                      </Col>
+                    </Row>
+                  </Space>
+                </Row>
+              </Card>
+            </Col>
+          )}
+          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+            <Col span={6}>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#E5ECF6" }} loading={loading}>
+                <Row>
+                  <Space className="w-full" direction="vertical">
+                    <Row>
+                      <Title level={5}>Tổng số đơn hàng</Title>
+                    </Row>
+                    <Row>
+                      <Col span={16} className="flex items-center">
+                        <Title level={1} className="!mb-0">
+                          {reduceNumber(orderData?.reduce((p, c) => p + c.total, 0) || 0)}
+                        </Title>
+                      </Col>
+                    </Row>
+                  </Space>
+                </Row>
+              </Card>
+            </Col>
+          )}
+          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+            <Col span={6}>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
+                <Row>
+                  <Space className="w-full" direction="vertical">
+                    <Row>
+                      <Title level={5}>Tổng công việc (tổ trưởng)</Title>
+                    </Row>
+                    <Row>
+                      <Col span={16} className="flex items-center">
+                        <Title level={1} className="!mb-0">
+                          {reduceNumber(leaderTaskData?.reduce((p, c) => p + c.total, 0) || 0)}
+                        </Title>
+                      </Col>
+                    </Row>
+                  </Space>
+                </Row>
+              </Card>
+            </Col>
+          )}
           <Col span={6}>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#E5ECF6" }} loading={loading}>
               <Row>
@@ -368,53 +327,38 @@ const Home = () => {
                         {reduceNumber(workerTaskData?.reduce((p, c) => p + c.total, 0) || 0)}
                       </Title>
                     </Col>
-                    {/* <Col span={8} className="flex items-center">
-                      <span>{mockOverview.activeUsers.percenatge > 0 ? "+" : ""}</span>
-                      <span>{mockOverview.activeUsers.percenatge}</span>
-                      {mockOverview.activeUsers.percenatge > 0 ? (
-                        <TrendingUp
-                          theme="outline"
-                          size="20"
-                          fill="#080"
-                          className="relative top-1"
-                        />
-                      ) : (
-                        <TrendingDown
-                          theme="outline"
-                          size="20"
-                          fill="#f00"
-                          className="relative top-1"
-                        />
-                      )}
-                    </Col> */}
                   </Row>
                 </Space>
               </Row>
             </Card>
           </Col>
         </Row>
+        {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+          <Row gutter={32}>
+            <Col span={12}>
+              <Title level={4}>Thống kê người dùng</Title>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
+                <ReactECharts className="!h-[420px]" option={userOptions} />
+              </Card>
+            </Col>
+            <Col span={12}>
+              <Title level={4}>Thống kê đơn đặt hàng</Title>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
+                <ReactECharts className="!h-[420px]" option={orderOptions} />
+              </Card>
+            </Col>
+          </Row>
+        )}
         <Row gutter={32}>
-          <Col span={12}>
-            <Title level={4}>Thống kê người dùng</Title>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
-              <ReactECharts className="!h-[420px]" option={userOptions} />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Title level={4}>Thống kê đơn đặt hàng</Title>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
-              <ReactECharts className="!h-[420px]" option={orderOptions} />
-            </Card>
-          </Col>
-        </Row>
-        <Row gutter={32}>
-          <Col span={12}>
-            <Title level={4}>Thống kê công việc (tổ trưởng)</Title>
-            <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
-              <ReactECharts className="!h-[420px]" option={leaderTaskOptions} />
-            </Card>
-          </Col>
-          <Col span={12}>
+          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+            <Col span={12}>
+              <Title level={4}>Thống kê công việc (tổ trưởng)</Title>
+              <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
+                <ReactECharts className="!h-[420px]" option={leaderTaskOptions} />
+              </Card>
+            </Col>
+          )}
+          <Col span={[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) ? 12 : 24}>
             <Title level={4}>Thống kê công việc (công nhân)</Title>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
               <ReactECharts className="!h-[420px]" option={workerTaskOptions} />

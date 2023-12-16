@@ -104,15 +104,15 @@ const OrderList = () => {
         danger: true,
         icon: <Error />,
         onClick: async () => {
-          // if (confirm('')) {
-          let success = await OrderApi.deleteOrder(record.id);
-          if (success) {
-            message.success(`Huỷ đơn hàng thành công!`);
-          } else {
-            message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
+          if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+            let success = await OrderApi.deleteOrder(record.id);
+            if (success) {
+              message.success(`Huỷ đơn hàng thành công!`);
+            } else {
+              message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
+            }
+            getData();
           }
-          getData();
-          // }
         },
       },
     ];

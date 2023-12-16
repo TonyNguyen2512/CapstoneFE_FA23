@@ -1,6 +1,13 @@
 import React, { useContext, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { dateSort, formatDate, formatMoney, formatNum, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
+import {
+  dateSort,
+  formatDate,
+  formatMoney,
+  formatNum,
+  getTaskStatusColor,
+  getTaskStatusName,
+} from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
 import { OrderStatus, PageSize, ETaskStatus, modalModes } from "../../../../../constants/enum";
 import { Table, message } from "antd";
@@ -19,9 +26,7 @@ import TaskDetailModal from "../../../../../components/modals/task/detail";
 import WorkerTasksApi from "../../../../../apis/worker-task";
 import { TaskProgressReportModal } from "../../../workerTask/components/TaskProgressReportModal";
 
-export const LeaderTaskOrderDetails = ({
-  title,
-}) => {
+export const LeaderTaskOrderDetails = ({ title }) => {
   const { info, orderDetails, reload, filterTask } = useContext(TaskContext);
   const isInProgress = info.status === OrderStatus.InProgress;
 
@@ -35,7 +40,7 @@ export const LeaderTaskOrderDetails = ({
 
   const [showWTaskDetailModal, setShowWTaskDetailModal] = useState(false);
   const [wTaskDetailLoading, setWTaskDetaiLoading] = useState(false);
-  
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchData, setSearchData] = useState("");
 
@@ -56,7 +61,9 @@ export const LeaderTaskOrderDetails = ({
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * ( PageSize.LEADER_TASK_ORDER_DETAIL_LIST))}</span>;
+        return (
+          <span>{index + 1 + (currentPage - 1) * PageSize.LEADER_TASK_ORDER_DETAIL_LIST}</span>
+        );
       },
     },
     {
@@ -125,11 +132,15 @@ export const LeaderTaskOrderDetails = ({
         icon: <PreviewOpen />,
         onClick: () => {
           eTaskInfoRef.current = record;
-          navigate(routes.dashboard.taskOrderDetails + "/" + id, {
-            state: {
-              orderId: info?.id,
-            }
-          }, {replace: true});
+          navigate(
+            routes.dashboard.taskOrderDetails + "/" + id,
+            {
+              state: {
+                orderId: info?.id,
+              },
+            },
+            { replace: true }
+          );
         },
       },
       isInProgress && {
@@ -138,7 +149,7 @@ export const LeaderTaskOrderDetails = ({
         icon: <Edit />,
         onClick: () => {
           orderDetailRef.current = record;
-          setShowETaskCreateModal(true)
+          setShowETaskCreateModal(true);
         },
       },
     ];
@@ -187,7 +198,7 @@ export const LeaderTaskOrderDetails = ({
         title: "Độ ưu tiên",
         dataIndex: "priority",
         key: "priority",
-        defaultSortOrder: 'ascend',
+        defaultSortOrder: "ascend",
         // align: "center",
         width: "10%",
         render: (_, record) => {
@@ -223,13 +234,15 @@ export const LeaderTaskOrderDetails = ({
       },
     ];
 
-    return <Table
-      expandable={{ expandedRowRender: handleWorkerTaskRowRender }}
-      columns={columns}
-      dataSource={row.leaderTasks}
-      rowKey={(record) => record.id}
-      pagination={false}
-    />;
+    return (
+      <Table
+        expandable={{ expandedRowRender: handleWorkerTaskRowRender }}
+        columns={columns}
+        dataSource={row.leaderTasks}
+        rowKey={(record) => record.id}
+        pagination={false}
+      />
+    );
   };
 
   const getETaskActionItems = (record) => {
@@ -242,11 +255,15 @@ export const LeaderTaskOrderDetails = ({
         icon: <PreviewOpen />,
         onClick: () => {
           eTaskInfoRef.current = record;
-          navigate(routes.dashboard.workersTasks + "/" + id, {
-            state: {
-              orderId: info.id
-            }
-          }, { replace: true });
+          navigate(
+            routes.dashboard.workersTasks + "/" + id,
+            {
+              state: {
+                orderId: info.id,
+              },
+            },
+            { replace: true }
+          );
         },
       },
       {
@@ -269,7 +286,7 @@ export const LeaderTaskOrderDetails = ({
             type: "confirm",
             cancelText: "Hủy",
             onOk: () => deleteETaskProcedure(record.id),
-            onCancel: () => { },
+            onCancel: () => {},
             closable: true,
           });
         },
@@ -286,7 +303,7 @@ export const LeaderTaskOrderDetails = ({
     } else {
       message.error(data.message);
     }
-  }
+  };
 
   const handleSubmitETaskCreate = async (values) => {
     setETaskCreateLoading(true);
@@ -300,9 +317,9 @@ export const LeaderTaskOrderDetails = ({
       endTime: values.dates?.[1],
       description: values?.description,
       orderId: info.id,
-    }
-    console.log("orderDetailRef", orderDetailRef)
-    console.log("create", data)
+    };
+    console.log("orderDetailRef", orderDetailRef);
+    console.log("create", data);
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
@@ -331,7 +348,7 @@ export const LeaderTaskOrderDetails = ({
       endTime: values.dates?.[1],
       description: values?.description,
       status: values?.status,
-    }
+    };
     try {
       console.log("update task: ", data);
       const update = await LeaderTasksApi.updateLeaderTasks(data);
@@ -350,19 +367,21 @@ export const LeaderTaskOrderDetails = ({
   };
 
   const deleteETaskProcedure = async (value) => {
-    setLoading(true);
-    try {
-      const success = await LeaderTasksApi.deleteLeaderTasks(value);
-      if (success) {
-        message.success(success.message);
-        reload(false);
-      } else {
-        message.error(success.message);
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      try {
+        const success = await LeaderTasksApi.deleteLeaderTasks(value);
+        if (success) {
+          message.success(success.message);
+          reload(false);
+        } else {
+          message.error(success.message);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -413,7 +432,7 @@ export const LeaderTaskOrderDetails = ({
         title: "Độ ưu tiên",
         dataIndex: "priority",
         key: "priority",
-        defaultSortOrder: 'ascend',
+        defaultSortOrder: "ascend",
         // align: "center",
         width: "10.3%",
         render: (_, record) => {
@@ -450,13 +469,15 @@ export const LeaderTaskOrderDetails = ({
       },
     ];
 
-    return <Table
-      columns={columns}
-      dataSource={row.workerTask}
-      rowKey={(record) => record.id}
-      pagination={false}
-      showHeader={false}
-    />;
+    return (
+      <Table
+        columns={columns}
+        dataSource={row.workerTask}
+        rowKey={(record) => record.id}
+        pagination={false}
+        showHeader={false}
+      />
+    );
   };
 
   const getWTaskActionItems = (record) => {
@@ -532,7 +553,7 @@ export const LeaderTaskOrderDetails = ({
     } else {
       orderDetailRef.current = null;
     }
-  }
+  };
 
   const onPageChange = (current) => {
     setCurrentPage(current);

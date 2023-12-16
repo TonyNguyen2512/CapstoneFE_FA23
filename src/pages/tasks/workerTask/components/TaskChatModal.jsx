@@ -119,13 +119,15 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
   };
 
   const deleteComment = async (id) => {
-    try {
-      setLoading(true);
-      await CommentApi.deleteComment(id);
-    } catch (error) {
-    } finally {
-      await getComments();
-      setLoading(false);
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      try {
+        setLoading(true);
+        await CommentApi.deleteComment(id);
+      } catch (error) {
+      } finally {
+        await getComments();
+        setLoading(false);
+      }
     }
   };
 

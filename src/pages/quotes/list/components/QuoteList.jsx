@@ -82,15 +82,15 @@ const QuoteList = () => {
         danger: true,
         icon: <Error />,
         onClick: async () => {
-          // if (confirm('')) {
-          let success = await QuoteApi.deleteQuote(record.id);
-          if (success) {
-            message.success(`Huỷ báo giá thành công!`);
-          } else {
-            message.error(`Huỷ báo giá thất bại! Vui lòng thử lại sau.`);
+          if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+            let success = await QuoteApi.deleteQuote(record.id);
+            if (success) {
+              message.success(`Huỷ báo giá thành công!`);
+            } else {
+              message.error(`Huỷ báo giá thất bại! Vui lòng thử lại sau.`);
+            }
+            getData();
           }
-          getData();
-          // }
         },
       },
     ];

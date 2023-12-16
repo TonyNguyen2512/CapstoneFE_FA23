@@ -16,11 +16,7 @@ import ReportApi from "../../../../../../../apis/task-report";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 import { LeaderTaskAcceptanceModal } from "../../../../components/LeaderTaskAcceptanceModal";
 
-export const LeaderTaskOrderDetailProcedure = ({
-  title,
-  orderId,
-}) => {
-
+export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
   const { tasks, info, reload, filterTask, acceptance } = useContext(TaskContext);
 
   const { Title } = Typography;
@@ -36,7 +32,7 @@ export const LeaderTaskOrderDetailProcedure = ({
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
 
-  const [searchData, setSearchData] = useState("")
+  const [searchData, setSearchData] = useState("");
 
   const leaderTaskInfo = useRef();
 
@@ -50,12 +46,16 @@ export const LeaderTaskOrderDetailProcedure = ({
         icon: <PreviewOpen />,
         onClick: () => {
           leaderTaskInfo.current = record;
-          navigate(routes.dashboard.workersTasks + "/" + id, {
-            state: {
-              orderId: orderId,
-              orderDetailId: info.id,
-            }
-          }, { replace: true });
+          navigate(
+            routes.dashboard.workersTasks + "/" + id,
+            {
+              state: {
+                orderId: orderId,
+                orderDetailId: info.id,
+              },
+            },
+            { replace: true }
+          );
         },
       },
       {
@@ -78,7 +78,7 @@ export const LeaderTaskOrderDetailProcedure = ({
             type: "confirm",
             cancelText: "Hủy",
             onOk: () => deleteTaskProcedure(record.id),
-            onCancel: () => { },
+            onCancel: () => {},
             closable: true,
           });
         },
@@ -90,20 +90,20 @@ export const LeaderTaskOrderDetailProcedure = ({
     if (!eTaskId) return;
     const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
     if (data.code === 0) {
-      console.log("data detail", data.data)
+      console.log("data detail", data.data);
       leaderTaskInfo.current = data.data;
       setShowUpdateModal(true);
     } else {
       message.error(data.message);
     }
-  }
+  };
 
   const columns = [
     {
       title: "Độ ưu tiên",
       dataIndex: "priority",
       key: "priority",
-      defaultSortOrder: 'ascend',
+      defaultSortOrder: "ascend",
       // align: "center",
       width: "10%",
       render: (_, record) => {
@@ -204,8 +204,8 @@ export const LeaderTaskOrderDetailProcedure = ({
       endTime: values.dates?.[1],
       description: values?.description,
       orderId: orderId,
-    }
-    console.log("create", data)
+    };
+    console.log("create", data);
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
@@ -234,7 +234,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       endTime: values.dates?.[1],
       description: values?.description,
       status: values?.status,
-    }
+    };
     try {
       console.log("update task: ", data);
       const update = await LeaderTasksApi.updateLeaderTasks(data);
@@ -253,24 +253,26 @@ export const LeaderTaskOrderDetailProcedure = ({
   };
 
   const deleteTaskProcedure = async (value) => {
-    setLoading(true);
-    try {
-      const success = await LeaderTasksApi.deleteLeaderTasks(value);
-      if (success) {
-        message.success(success.message);
-        reload(false);
-      } else {
-        message.error(success.message);
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      try {
+        const success = await LeaderTasksApi.deleteLeaderTasks(value);
+        if (success) {
+          message.success(success.message);
+          reload(false);
+        } else {
+          message.error(success.message);
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setLoading(false);
       }
-    } catch (e) {
-      console.log(e);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleSubmitAcceptanceReportCreate = async (values) => {
-    console.log("create task acceptance", values)
+    console.log("create task acceptance", values);
     setAcceptanceReportLoading(true);
     const resp = await LeaderTasksApi.createAcceptanceTasks(values);
     if (resp) {
@@ -279,7 +281,7 @@ export const LeaderTaskOrderDetailProcedure = ({
     } else {
       message.error(resp.message);
     }
-  }
+  };
 
   return (
     <>
@@ -288,7 +290,7 @@ export const LeaderTaskOrderDetailProcedure = ({
           <Title level={4} style={{ margin: 0 }}>
             {titleInfo}
           </Title>
-          {info?.status === OrderStatus.InProgress &&
+          {info?.status === OrderStatus.InProgress && (
             <Button
               icon={<Plus />}
               className="flex-center ml-3"
@@ -296,8 +298,8 @@ export const LeaderTaskOrderDetailProcedure = ({
               type="primary"
               onClick={() => setShowCreateModal(true)}
             />
-          }
-          {acceptance &&
+          )}
+          {acceptance && (
             <Col>
               <Button
                 className="flex-center ml-3"
@@ -307,7 +309,7 @@ export const LeaderTaskOrderDetailProcedure = ({
                 Thêm công việc nghiệm thu
               </Button>
             </Col>
-          }
+          )}
         </Row>
       </Row>
       <BaseTable
@@ -354,7 +356,7 @@ export const LeaderTaskOrderDetailProcedure = ({
         open={showAcceptanceReportModal}
         onCancel={() => {
           leaderTaskInfo.current = null;
-          setShowAcceptanceReportModal(false)
+          setShowAcceptanceReportModal(false);
         }}
         onSubmit={handleSubmitAcceptanceReportCreate}
         confirmLoading={acceptanceReportLoading}

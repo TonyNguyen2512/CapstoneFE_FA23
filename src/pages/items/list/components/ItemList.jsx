@@ -3,7 +3,6 @@ import { Button, Dropdown, Modal, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemModal } from "../../components/ItemModal";
-import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
 import { ItemDuplicateModal } from "../../components/ItemDuplicate";
 import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
@@ -86,8 +85,10 @@ const ItemList = ({ canModify }) => {
         danger: !isActive,
         icon: !isActive ? <Forbid /> : <Unlock />,
         onClick: ({ id }) => {
-          const success = ItemApi.deleteItem(id);
-          success && getData();
+          if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+            const success = ItemApi.deleteItem(id);
+            success && getData();
+          }
         },
       },
     ];
@@ -242,6 +243,20 @@ const ItemList = ({ canModify }) => {
             </p>
           )),
       },
+      {
+        title: "Thao tác",
+        dataIndex: "action",
+        key: "action",
+        width: "10%",
+        align: "center",
+        render: (_, record) => {
+          return (
+            <Dropdown menu={{ items: getActionItems(record) }}>
+              <Button className="mx-auto flex-center" icon={<More />} />
+            </Dropdown>
+          );
+        },
+      },
     ];
     return (
       <Table
@@ -272,8 +287,6 @@ const ItemList = ({ canModify }) => {
   useEffect(() => {
     getData(null, 1, true);
   }, []);
-
-  console.log(itemList);
 
   return (
     <>
