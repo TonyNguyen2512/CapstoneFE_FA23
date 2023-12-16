@@ -106,21 +106,6 @@ const QuoteDetailPage = () => {
           // setShowOrderModal(true);
         },
       },
-      // {
-      //   key: "CANCEL_ORDER",
-      //   label: "Huỷ đơn",
-      //   danger: true,
-      //   icon: <Error />,
-      //   onClick: async () => {
-      //     let success = await OrderApi.deleteOrder(record.id);
-      //     if (success) {
-      //       message.success(`Huỷ báo giá thành công!`);
-      //     } else {
-      //       message.error(`Huỷ báo giá thất bại! Vui lòng thử lại sau.`);
-      //     }
-      //     handleSearch();
-      //   },
-      // },
     ];
   };
 

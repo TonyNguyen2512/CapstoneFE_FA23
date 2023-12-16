@@ -77,15 +77,18 @@ const StepList = () => {
     },
   ];
 
-  
   const handleRemove = async (id) => {
-    const success = await StepApi.deleteItem(id);
-    if (success) {
-      message.success(`Xoá thành công`);
-    } else {
-      message.error(`Xoá thất bại`);
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      const success = await StepApi.deleteItem(id);
+      if (success) {
+        message.success(`Xoá thành công`);
+      } else {
+        message.error(`Xoá thất bại`);
+      }
+      getData();
+      setLoading(false);
     }
-    getData();
   };
 
   useEffect(() => {

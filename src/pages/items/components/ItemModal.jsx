@@ -34,7 +34,7 @@ export const ItemModal = ({
       return { ...e, index: i };
     })
   );
-  const [listMaterial, setListMaterial] = useState([]);
+  const [listMaterial, setListMaterial] = useState(data?.listMaterial || []);
   const [progress, setProgress] = useState(-1);
   const [tableKey, setTableKey] = useState(0);
 
@@ -381,7 +381,7 @@ export const ItemModal = ({
                   onChange={handleUploadImage}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               {/*  */}
@@ -391,9 +391,8 @@ export const ItemModal = ({
                   beforeUpload={() => false}
                   onChange={handleUploadDrawing2D}
                   maxCount={1}
-                  defaultValue=""
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               {/*  */}
@@ -404,7 +403,7 @@ export const ItemModal = ({
                   onChange={handleUploadDrawing3D}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
@@ -414,7 +413,7 @@ export const ItemModal = ({
                   onChange={handleUploadDrawingTechnical}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
 

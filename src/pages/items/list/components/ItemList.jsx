@@ -1,9 +1,8 @@
 import { Edit, Lightning, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space, Table } from "antd";
+import { Button, Dropdown, Modal, Space, Table, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemModal } from "../../components/ItemModal";
-import { mockItemTypes, mockItems } from "../../../../__mocks__/jama/items";
 import { ItemDuplicateModal } from "../../components/ItemDuplicate";
 import ItemApi from "../../../../apis/item";
 import ItemCategoryApi from "../../../../apis/item-category";
@@ -86,8 +85,10 @@ const ItemList = ({ canModify }) => {
         danger: !isActive,
         icon: !isActive ? <Forbid /> : <Unlock />,
         onClick: ({ id }) => {
-          const success = ItemApi.deleteItem(id);
-          success && getData();
+          if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+            const success = ItemApi.deleteItem(id);
+            success && getData();
+          }
         },
       },
     ];
@@ -108,30 +109,80 @@ const ItemList = ({ canModify }) => {
       title: "Mã sản phẩm",
       dataIndex: "code",
       key: "code",
+      width: "10%",
       render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.code}</span>;
+        return <span>{record?.code || "-"}</span>;
       },
-      sorter: (a, b) => a?.code.localeCompare(b?.code),
+      sorter: (a, b) => a.code - b.code,
     },
     {
       title: "Tên sản phẩm",
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
-        return <span onClick={() => showModal(record)}>{record.name}</span>;
+        return (
+          <Tooltip title={() => <img src={record.image} className="w-full" />}>
+            {record.name}
+          </Tooltip>
+        );
       },
-      sorter: (a, b) => a?.name.localeCompare(b?.name),
+      sorter: (a, b) => a.name - b.name,
     },
     {
       title: "Loại sản phẩm",
       dataIndex: "itemCategoryName",
       key: "itemCategoryName",
-      width: "35%",
+      width: "20%",
       align: "center",
       render: (_, record) => {
         return <span>{record?.itemCategoryName || "-"}</span>;
       },
       sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
+    },
+    {
+      title: "Dài",
+      dataIndex: "length",
+      key: "length",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.length || "-"}</span>;
+      },
+      sorter: (a, b) => a?.length.localeCompare(b?.length),
+    },
+
+    {
+      title: "Sâu",
+      dataIndex: "depth",
+      key: "depth",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.depth || "-"}</span>;
+      },
+      sorter: (a, b) => a?.depth.localeCompare(b?.depth),
+    },
+    {
+      title: "Cao",
+      dataIndex: "height",
+      key: "height",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.height || "-"}</span>;
+      },
+      sorter: (a, b) => a?.height.localeCompare(b?.height),
+    },
+    {
+      title: "Đơn vị",
+      dataIndex: "unit",
+      key: "unit",
+      width: "7%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.unit || "-"}</span>;
+      },
+      sorter: (a, b) => a?.unit.localeCompare(b?.unit),
     },
     {
       title: "Đơn giá",
@@ -190,6 +241,20 @@ const ItemList = ({ canModify }) => {
             </p>
           )),
       },
+      {
+        title: "Thao tác",
+        dataIndex: "action",
+        key: "action",
+        width: "10%",
+        align: "center",
+        render: (_, record) => {
+          return (
+            <Dropdown menu={{ items: getActionItems(record) }}>
+              <Button className="mx-auto flex-center" icon={<More />} />
+            </Dropdown>
+          );
+        },
+      },
     ];
     return (
       <Table
@@ -220,8 +285,6 @@ const ItemList = ({ canModify }) => {
   useEffect(() => {
     getData(null, 1, true);
   }, []);
-
-  console.log(itemList);
 
   return (
     <>

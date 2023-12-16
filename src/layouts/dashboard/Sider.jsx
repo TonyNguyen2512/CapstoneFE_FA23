@@ -1,47 +1,37 @@
 import {
-  DegreeHat,
-  User,
-  Classroom,
-  Analysis,
-  Hourglass,
   EveryUser,
   HourglassNull,
   ListView,
   DataUser,
   CategoryManagement,
   AdjacentItem,
-  FileEditing,
   ProcessLine,
   ListOne,
   TableReport,
   DataFile,
   DocSuccess,
-  History,
 } from "@icon-park/react";
-import { Menu, Typography } from "antd";
+import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import routes from "../../constants/routes";
 import { usePermissions } from "../../hooks/permission";
 import { ALL_PERMISSIONS, logoUrl } from "../../constants/app";
 import {
   BuildOutlined,
   CodeSandboxOutlined,
-  DashboardOutlined,
   FileDoneOutlined,
   FormOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
-const { Title } = Typography;
-
 export const AppSider = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
   const permissions = usePermissions();
 
+  const canViewDashboard = permissions?.includes(ALL_PERMISSIONS.dashboard?.sider);
   const canViewAccounts = permissions?.includes(ALL_PERMISSIONS.accounts?.sider);
   const canViewOrders = permissions?.includes(ALL_PERMISSIONS.orders?.sider);
   const canViewQuotes = permissions?.includes(ALL_PERMISSIONS.quotes?.sider);
@@ -100,15 +90,37 @@ export const AppSider = () => {
   };
   const iconSize = 20;
   const items = [
-    {
+    canViewDashboard && {
       key: itemKeys.DASHBOARD,
       icon: <DataFile size={iconSize - 4} />,
       label: <Link to={routes.dashboard.home}>Tổng quan</Link>,
     },
-    canViewAccounts && {
-      key: itemKeys.ACCOUNTS,
-      icon: <UserOutlined size={iconSize - 2} />,
-      label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+    // canViewAccounts && {
+    //   key: itemKeys.ACCOUNTS,
+    //   icon: <UserOutlined size={iconSize - 2} />,
+    //   label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+    // },
+    (canViewEmployees || canViewGroups || canViewAccounts) && {
+      key: itemKeys.P_EMPLOYEES,
+      icon: <DataUser size={iconSize - 2} />,
+      label: "Quản lý nhân sự",
+      children: [
+        canViewAccounts && {
+          key: itemKeys.ACCOUNTS,
+          icon: <UserOutlined size={iconSize - 2} />,
+          label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+        },
+        canViewEmployees && {
+          key: itemKeys.EMPLOYEES,
+          icon: <UserOutlined size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.employees}>Nhân viên</Link>,
+        },
+        canViewGroups && {
+          key: itemKeys.GROUPS,
+          icon: <EveryUser size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
+        },
+      ],
     },
     canViewOrders && {
       key: itemKeys.ORDERS,
@@ -174,25 +186,7 @@ export const AppSider = () => {
         },
       ],
     },
-    (canViewEmployees || canViewGroups) && {
-      key: itemKeys.P_EMPLOYEES,
-      icon: <DataUser size={iconSize - 2} />,
-      label: "Quản lý nhân sự",
-      children: [
-        canViewEmployees && {
-          key: itemKeys.EMPLOYEES,
-          icon: <UserOutlined size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.employees}>Nhân viên</Link>,
-        },
-        canViewGroups && {
-          key: itemKeys.GROUPS,
-          icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
-        },
-      ],
-    },
-    
-    
+
     canViewOrderReports && {
       key: itemKeys.ORDER_REPORTS,
       icon: <TableReport size={iconSize - 2} />,
@@ -204,11 +198,10 @@ export const AppSider = () => {
           label: <Link to={routes.dashboard.taskReports}>Tiến độ</Link>,
         },
         canViewOrderReports && {
-          key: itemKeys.ORDER_REPORTS,
+          key: `${itemKeys.ORDER_REPORTS}_CHILD`,
           icon: <HourglassNull size={iconSize - 4} />,
           label: <Link to={routes.dashboard.orderReports}>Đơn hàng</Link>,
         },
-        
       ],
     },
     canViewLeaderReports && {

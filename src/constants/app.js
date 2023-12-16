@@ -1,4 +1,13 @@
-import { SupplyLabel, SupplyStatus, ETaskMap, ETaskStatus, TaskStatus, TaskMap, OrderReportStatus, OrderReportStatusLabel } from "./enum";
+import {
+  SupplyLabel,
+  SupplyStatus,
+  ETaskMap,
+  ETaskStatus,
+  TaskStatus,
+  TaskMap,
+  OrderReportStatus,
+  OrderReportStatusLabel,
+} from "./enum";
 import logoUrlBig from "../assets/images/logo.png";
 import logoUrlMedium from "../assets/images/logo-256.png";
 import logoUrl from "../assets/images/logo-128.png";
@@ -20,6 +29,12 @@ export const ROLE_MAP = {
 };
 
 export const ALL_PERMISSIONS = {
+  dashboard: {
+    view: "dashboard.view",
+    create: "dashboard.create",
+    update: "dashboard.update",
+    sider: "dashboard.sider",
+  },
   accounts: {
     view: "accounts.view",
     create: "accounts.create",
@@ -153,6 +168,9 @@ export const ALL_PERMISSIONS = {
 
 export const USER_PERMISSIONS = {
   [roles.ADMIN]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // ACCOUNTS
     ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
@@ -163,24 +181,81 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.orders.view,
     ALL_PERMISSIONS.orders.create,
     ALL_PERMISSIONS.orders.update,
-    // items
-    ALL_PERMISSIONS.items.sider,
-    ALL_PERMISSIONS.items.view,
-    // // procedures
-    // ALL_PERMISSIONS.procedures.sider,
-    // ALL_PERMISSIONS.procedures.view,
-    // // steps
-    // ALL_PERMISSIONS.steps.sider,
-    // ALL_PERMISSIONS.steps.view,
-    // item categories
-    ALL_PERMISSIONS.itemCategories.sider,
-    ALL_PERMISSIONS.itemCategories.view,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,
+    ALL_PERMISSIONS.materials.create,
+    ALL_PERMISSIONS.materials.update,
     // materialTypes
     ALL_PERMISSIONS.materialTypes.sider,
     ALL_PERMISSIONS.materialTypes.view,
+    ALL_PERMISSIONS.materialTypes.create,
+    ALL_PERMISSIONS.materialTypes.update,
+    // items
+    ALL_PERMISSIONS.items.sider,
+    ALL_PERMISSIONS.items.view,
+    ALL_PERMISSIONS.items.create,
+    ALL_PERMISSIONS.items.update,
+    // procedures
+    ALL_PERMISSIONS.procedures.sider,
+    ALL_PERMISSIONS.procedures.view,
+    ALL_PERMISSIONS.procedures.create,
+    ALL_PERMISSIONS.procedures.update,
+    // steps
+    ALL_PERMISSIONS.steps.sider,
+    ALL_PERMISSIONS.steps.view,
+    ALL_PERMISSIONS.steps.create,
+    ALL_PERMISSIONS.steps.update,
+    // item categories
+    ALL_PERMISSIONS.itemCategories.sider,
+    ALL_PERMISSIONS.itemCategories.view,
+    ALL_PERMISSIONS.itemCategories.create,
+    ALL_PERMISSIONS.itemCategories.update,
+    // employees
+    ALL_PERMISSIONS.employees.sider,
+    ALL_PERMISSIONS.employees.view,
+    ALL_PERMISSIONS.employees.create,
+    ALL_PERMISSIONS.employees.update,
+    // groups
+    ALL_PERMISSIONS.groups.sider,
+    ALL_PERMISSIONS.groups.view,
+    ALL_PERMISSIONS.groups.create,
+    ALL_PERMISSIONS.groups.update,
+    // groupsLog
+    ALL_PERMISSIONS.groupsLog.sider,
+    ALL_PERMISSIONS.groupsLog.view,
+    ALL_PERMISSIONS.groupsLog.create,
+    ALL_PERMISSIONS.groupsLog.update,
+    // materialLog
+    ALL_PERMISSIONS.materialLog.sider,
+    ALL_PERMISSIONS.materialLog.view,
+    ALL_PERMISSIONS.materialLog.create,
+    ALL_PERMISSIONS.materialLog.update,
+    // itemLog
+    ALL_PERMISSIONS.itemLog.sider,
+    ALL_PERMISSIONS.itemLog.view,
+    ALL_PERMISSIONS.itemLog.create,
+    ALL_PERMISSIONS.itemLog.update,
+    // // leadersTasks
+    // ALL_PERMISSIONS.leadersTasks.sider,
+    // ALL_PERMISSIONS.leadersTasks.view,
+    // ALL_PERMISSIONS.leadersTasks.create,
+    // ALL_PERMISSIONS.leadersTasks.update,
+    // leadersReports
+    ALL_PERMISSIONS.leadersReports.sider,
+    ALL_PERMISSIONS.leadersReports.view,
+    ALL_PERMISSIONS.leadersReports.create,
+    ALL_PERMISSIONS.leadersReports.update,
+    // // order reports
+    // ALL_PERMISSIONS.orderReports.sider,
+    // ALL_PERMISSIONS.orderReports.view,
+    // ALL_PERMISSIONS.orderReports.create,
+    // ALL_PERMISSIONS.orderReports.update,
+    // // task reports
+    // ALL_PERMISSIONS.taskReports.sider,
+    // ALL_PERMISSIONS.taskReports.view,
+    // ALL_PERMISSIONS.taskReports.create,
+    // ALL_PERMISSIONS.taskReports.update,
     // groupsLog
     ALL_PERMISSIONS.groupsLog.sider,
     ALL_PERMISSIONS.groupsLog.view,
@@ -198,6 +273,12 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.itemLog.update,
   ],
   [roles.FOREMAN]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
+    // ACCOUNTS
+    ALL_PERMISSIONS.accounts.sider,
+    ALL_PERMISSIONS.accounts.view,
     // materials
     ALL_PERMISSIONS.materials.sider,
     ALL_PERMISSIONS.materials.view,
@@ -275,6 +356,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.taskReports.update,
   ],
   [roles.LEADER]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // workers
     ALL_PERMISSIONS.workers.sider,
     ALL_PERMISSIONS.workers.view,
@@ -292,6 +376,9 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.leaderReports.update,
   ],
   [roles.WORKER]: [
+    // DASHBOARD
+    ALL_PERMISSIONS.dashboard.sider,
+    ALL_PERMISSIONS.dashboard.view,
     // tasks
     ALL_PERMISSIONS.workers.sider,
     ALL_PERMISSIONS.workers.view,
@@ -489,5 +576,5 @@ export const OrderReportStatusOptions = [
   {
     value: OrderReportStatus.Complete,
     label: OrderReportStatusLabel[1],
-  }
-]
+  },
+];

@@ -16,12 +16,13 @@ const ProcedureList = () => {
 
   const categoryRef = useRef();
 
-  const getData = async (search, pageIndex, handleLoading ) => {
+  const getData = async (search, pageIndex, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
     let response = await StepApi.getAll(search, pageIndex, 100);
     setStepList(response.data);
+    console.log(stepList);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
     setProcedureList(response);
     setLoading(false);
@@ -101,7 +102,6 @@ const ProcedureList = () => {
     setCurrentPage(current);
     getData(null, current, false);
   };
-
 
   useEffect(() => {
     getData();
