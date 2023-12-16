@@ -34,6 +34,7 @@ import LeaderReportDetailPage from "../pages/report/leaderReport/detail";
 import { GroupLogListPage } from "../pages/logs/GroupLog/list";
 import MaterialLogModal from "../pages/logs/MateriaLog/components/MaterialLogModal";
 import { ItemLogListPage } from "../pages/logs/ItemLog";
+import TaskReportDetailPage from "../pages/report/taskReport/detail";
 
 export const router = createBrowserRouter([
   {
@@ -169,6 +170,10 @@ export const router = createBrowserRouter([
           {
             path: routes.dashboard.taskReports,
             element: <TaskReportList />,
+          },
+          {
+            path: `${routes.dashboard.taskReports}/:id`,
+            element: <TaskReportDetailPage />,
           },
           {
             path: routes.dashboard.leaderReports,
