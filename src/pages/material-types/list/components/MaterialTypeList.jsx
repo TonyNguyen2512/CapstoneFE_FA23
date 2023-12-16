@@ -6,17 +6,25 @@ import { MaterialTypeModal } from "../../components/MaterialTypeModal";
 import MaterialCategoryApi from "../../../../apis/material-category";
 import { ConfirmDeleteModal } from "../../../../components/ConfirmDeleteModal";
 import confirm from "antd/es/modal/confirm";
+import { PageSize } from "../../../../constants/enum";
+
 const MaterialTypeList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
   const [showUpdateMaterialTypeModal, setShowUpdateMaterialTypeModal] = useState(false);
   const [materialTypeList, setMaterialTypeList] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState([]);
 
   const materialTypeRef = useRef();
 
-  const getData = async (keyword) => {
+  const getData = async (keyword, pageIndex) => {
     setLoading(true);
-    const response = await MaterialCategoryApi.getAllMaterialCategory(keyword);
-
+    const response = await MaterialCategoryApi.getAllMaterialCategory(
+      keyword,
+      pageIndex,
+      PageSize.ORDER_LIST
+    );
+    setTotal(response.total || []);
     setMaterialTypeList(response.data);
     setLoading(false);
   };
@@ -24,6 +32,14 @@ const MaterialTypeList = ({ canModify }) => {
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    getData(null, 1);
+  }, []);
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current);
+  };
 
   const getActionItems = (record) => {
     const { isDeleted } = record;
@@ -75,7 +91,7 @@ const MaterialTypeList = ({ canModify }) => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ORDER_LIST}</span>;
       },
     },
     {
@@ -196,7 +212,11 @@ const MaterialTypeList = ({ canModify }) => {
         dataSource={materialTypeList}
         columns={columns}
         loading={loading}
-        pagination={true}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.ORDER_LIST,
+          total: total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm loại vật liệu...",
