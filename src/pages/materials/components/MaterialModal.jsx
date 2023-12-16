@@ -20,21 +20,6 @@ import dayjs from "dayjs";
 import storage, { imagesMaterialRef } from "../../../middleware/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 
-// const initValues = {
-//   id: "",
-//   name: "",
-//   color: "",
-//   price: 0,
-//   thickness: 0,
-//   supplier: "",
-//   importDate: null,
-//   importPlace: "",
-//   image: "",
-//   unit: "",
-//   amount: 0,
-//   materialCategoryId: "",
-// };
-
 export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [color, setColor] = useState(data?.color);
@@ -43,6 +28,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
 
+  const [updateField, setUpdate] = useState(0);
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState(-1);
   const [materialImage, setMaterialImage] = useState(data?.image ?? "");
@@ -84,7 +70,6 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    console.log("asdsdgafhgdjf", values);
     const body = {
       ...values,
       color: typeof color === "string" ? color : color?.toHexString(),
@@ -105,6 +90,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
   };
 
   const handleChangeMaterial = (id) => {
+    setUpdate((prev) => prev + 1);
     setSearchParams({
       material: id,
     });
@@ -168,9 +154,11 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
         </Form.Item>
         <Form.Item name="color" label="Màu vật liệu">
           <ColorPicker
+            key={updateField}
             onChange={(value) => {
               setColor(value.toHexString());
               form.setFieldValue("color", value.toHexString());
+              setUpdate((prev) => prev + 1);
             }}
           >
             <Button
