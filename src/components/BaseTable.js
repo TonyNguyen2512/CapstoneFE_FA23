@@ -125,7 +125,7 @@ export const BaseTable = ({
 			</Row>
 			<Table
 				rowKey={rowKey}
-				pagination={pagination}
+				pagination={{ ...pagination, showSizeChanger: false }}
 				dataSource={list}
 				columns={columns}
 				loading={loading}

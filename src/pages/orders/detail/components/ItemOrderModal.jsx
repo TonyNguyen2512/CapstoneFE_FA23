@@ -196,7 +196,7 @@ export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSucc
                 maxCount={1}
                 defaultValue=""
               >
-                <Button icon={<UploadOutlined />}>Upload</Button>
+                <Button icon={<UploadOutlined />}>Tải lên</Button>
               </Upload>
             </Form.Item>
             <Form.Item name="drawings3D" label="Bản vẽ 3D">
@@ -206,7 +206,7 @@ export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSucc
                 onChange={handleUploadDrawing3D}
                 maxCount={1}
               >
-                <Button icon={<UploadOutlined />}>Upload</Button>
+                <Button icon={<UploadOutlined />}>Tải lên</Button>
               </Upload>
             </Form.Item>
             <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
@@ -216,7 +216,7 @@ export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSucc
                 onChange={handleUploadDrawingTechnical}
                 maxCount={1}
               >
-                <Button icon={<UploadOutlined />}>Upload</Button>
+                <Button icon={<UploadOutlined />}>Tải lên</Button>
               </Upload>
             </Form.Item>
           </>

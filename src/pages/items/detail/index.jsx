@@ -105,21 +105,6 @@ const OrderDetailPage = () => {
       //     // setShowOrderModal(true);
       //   },
       // },
-      // {
-      //   key: "CANCEL_ORDER",
-      //   label: "Huỷ đơn",
-      //   danger: true,
-      //   icon: <Error />,
-      //   onClick: async () => {
-      //     let success = await ItemApi.deleteOrder(record.id);
-      //     if (success) {
-      //       message.success(`Huỷ đơn hàng thành công!`);
-      //     } else {
-      //       message.error(`Huỷ đơn hàng thất bại! Vui lòng thử lại sau.`);
-      //     }
-      //     handleSearch();
-      //   },
-      // },
     ];
   };
 

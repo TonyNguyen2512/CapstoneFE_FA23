@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskOrderDetailInfo } from "./components/LeaderTaskOrderDetailInfo";
-import { LeaderTaskOrderDetailProcedure } from "./components/LeaderTaskOrderDetailProcedure";
-import { LeaderTaskOrderDetailProcedureOverview } from "./components/LeaderTaskOrderDetailProcedureOverview";
 import { Space, Spin, message } from "antd";
 import { BasePageContent } from "../../../../../../layouts/containers/BasePageContent";
 import { TaskProvider } from "../../../../../../providers/task";
@@ -12,6 +10,8 @@ import routes from "../../../../../../constants/routes";
 import OrderDetailApi from "../../../../../../apis/order-detail";
 import OrderDetailMaterialApi from "../../../../../../apis/order-details-material";
 import OrderApi from "../../../../../../apis/order";
+import { LeaderTaskOrderDetailProcedureOverview } from "./components/LeaderTaskOrderDetailProcedureOverview";
+import { LeaderTaskOrderDetailProcedure } from "./components/LeaderTaskOrderDetailProcedure";
 
 export const LeaderTaskOrderDetailsPage = () => {
   // const { user } = useContext(UserContext);

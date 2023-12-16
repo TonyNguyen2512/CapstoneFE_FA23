@@ -10,7 +10,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
 
-  const [listStep, setListStep] = useState([]);
+  const [listStep, setListStep] = useState(data?.listStep || []);
   const [loading, setLoading] = useState(false);
   const [addWorkerToGroupModal, setAddWorkerToGroupModal] = useState(false);
 
@@ -51,7 +51,6 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
   useEffect(() => {
     handleWorkerNotInGroup();
   }, []);
-  
 
   return (
     <BaseModal
@@ -93,11 +92,11 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
             mode="multiple"
             style={{ width: "100%" }}
             placeholder="Chọn các bước cần thực hiện..."
-            defaultValue={data?.listStep}
+            defaultValue={listStep}
+            fieldNames={{ value: "stepId", label: "stepName" }}
             onChange={handleChange}
             optionLabelProp="label"
             options={options}
-
           />
         </Form.Item>
       </Form>

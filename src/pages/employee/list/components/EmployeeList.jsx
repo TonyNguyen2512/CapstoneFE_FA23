@@ -31,14 +31,12 @@ const EmployeeList = () => {
 
   const userRef = useRef();
 
-  const getUsers = async (search, pageIndex, handleLoading) => {
+  const getUsers = async (search, handleLoading) => {
     if (handleLoading) {
       setLoading(true);
     }
     const data = await UserApi.getByLeaderRoleAndWorkerRole(
       search,
-      pageIndex,
-      PageSize.EMPLOYEES_LIST
     );
     console.log(data);
     setEmployees(data);

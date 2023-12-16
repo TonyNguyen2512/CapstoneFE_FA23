@@ -94,7 +94,7 @@ export const WorkerTaskDetailsPage = () => {
           message.error("Không tìm thấy thông tin các thành viên trong tổ");
         }
       } else {
-        message.error("Quản lý không có tổ phụ trách");
+        message.error("Tổ trưởng chưa có tổ phụ trách");
       }
       setGroupMemberList(dataGroupMembers?.data);
 

@@ -51,10 +51,10 @@ export const OrderDetail = () => {
         </Title>
         <Row className="mt-4" gutter={[16, 16]}>
           <Col className="gutter-row" span={9}>
-            Người tạo đơn: <strong>{details?.createdBy}</strong>
+            Người tạo đơn: <strong>{details?.createdBy?.fullName}</strong>
           </Col>
           <Col className="gutter-row" span={9}>
-            Người được giao: <strong>{details?.assignTo}</strong>
+            Người được giao: <strong>{details?.assignTo?.fullName}</strong>
           </Col>
           <Col className="gutter-row" span={6}>
             Trạng thái: <strong>{orderLabels[details?.status]}</strong>

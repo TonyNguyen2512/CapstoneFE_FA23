@@ -230,72 +230,30 @@ const searchGetByForemanRole = async (search, pageIndex, pageSize) => {
 		const response = await BaseApi.get(`/${resource}/GetByForemanRole`, {
 			params: params,
 		});
-		return response.data;
+		return response;
 	} catch (error) {
 		console.log("Error get group: ", error);
 		return false;
 	}
 };
 
-const getByLeaderRole = async (search, pageIndex, pageSize) => {
+const getByLeaderRole = async () => {
 	try {
-		if (search) {
-			return await searchGetByLeaderRole(search, pageIndex, pageSize);
-		}
-		else {
-			var params = {};
-			if (pageIndex) {
-				params = { ...params, pageIndex };
-			}
-			if (pageSize) {
-				params = { ...params, pageSize };
-			}
-			const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
-				params: params,
-			});
-			return response.data;
-		}
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRole`)
+		return response.data;
 	} catch (error) {
 		console.log("Error enroll group: ", error);
 		return false;
 	}
 };
 
-const searchGetByLeaderRole = async (search, pageIndex, pageSize) => {
-	try {
-		var params = {};
-		if (search) {
-			params = { ...params, search };
-		}
-		if (pageIndex) {
-			params = { ...params, pageIndex };
-		}
-		if (pageSize) {
-			params = { ...params, pageSize };
-		}
-		const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
-			params: params,
-		});
-		return response.data;
-	} catch (error) {
-		console.log("Error get group: ", error);
-		return false;
-	}
-};
-
-const getByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
+const getByLeaderRoleAndWorkerRole = async (search) => {
 	try {
 		if (search) {
-			return await searchGetByLeaderRoleAndWorkerRole(search, pageIndex, pageSize);
+			return await searchGetByLeaderRoleAndWorkerRole(search);
 		}
 		else {
 			var params = {};
-			if (pageIndex) {
-				params = { ...params, pageIndex };
-			}
-			if (pageSize) {
-				params = { ...params, pageSize };
-			}
 			const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
 				params: params,
 			});
@@ -307,17 +265,11 @@ const getByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
 	}
 };
 
-const searchGetByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
+const searchGetByLeaderRoleAndWorkerRole = async (search) => {
 	try {
 		var params = {};
 		if (search) {
 			params = { ...params, search };
-		}
-		if (pageIndex) {
-			params = { ...params, pageIndex };
-		}
-		if (pageSize) {
-			params = { ...params, pageSize };
 		}
 		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
 			params: params,

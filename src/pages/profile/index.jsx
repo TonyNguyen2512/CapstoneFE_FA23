@@ -1,4 +1,4 @@
-import { Avatar, Col, DatePicker, Form, Input, Row, Space, Typography } from "antd";
+import { Avatar, Button, Col, DatePicker, Form, Input, Row, Space, Typography } from "antd";
 import React, { useContext } from "react";
 import { UserContext } from "../../providers/user";
 import { getRoleName } from "../../utils";
@@ -66,6 +66,8 @@ const ProfilePage = () => {
               <Form.Item name="roleId" label="Vai trò">
                 <b>{getRoleName(user.role?.name)}</b>
               </Form.Item>
+
+              <Button icon={null}>Cập nhật</Button>
             </Form>
           </Space>
         </Col>
