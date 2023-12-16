@@ -88,8 +88,7 @@ const ItemCategoryList = ({ canModify }) => {
       title: "Số lượng sản phẩm",
       dataIndex: "quantityItem",
       key: "quantityItem",
-      width: "15%",
-      align: "center",
+      // align: "center",
       // render: (_, record) => {
       //   return (
       //     <span>{itemCategoryList?.find((e) => e.id === record.quantityItem)?.name || "-"}</span>

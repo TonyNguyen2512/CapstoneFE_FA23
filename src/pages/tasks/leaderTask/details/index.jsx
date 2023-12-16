@@ -34,10 +34,10 @@ export const LeaderTaskDetailsPage = () => {
     setLoading(true);
     const syncMaterial = await OrderApi.updateQuote(id);
     if (syncMaterial) {
-      message.success(`Cập nhật nguyên vât liệu thành công`);
+      message.success(`Đồng bộ sản phẩm thành công`);
       getData(id, true);
     } else {
-      message.error(`Cập nhật thất bại`);
+      message.error(`Đồng bộ thất bại`);
     }
     setLoading(false);
     // setMaterial(syncMaterial);
@@ -168,7 +168,7 @@ export const LeaderTaskDetailsPage = () => {
                     className="btn-primary app-bg-primary font-semibold text-white"
                     onClick={() => syncMaterials()}
                   >
-                    Cập nhật nguyên vật liệu
+                    Đồng bộ sản phẩm
                   </Button>
                   <Button
                     style={{ marginLeft: "10px" }}
