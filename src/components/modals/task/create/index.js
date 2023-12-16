@@ -1,5 +1,5 @@
-import { Col, DatePicker, Form, Input, InputNumber, Row, Select } from "antd";
-import React, { useContext, useRef } from "react";
+import { Col, DatePicker, Form, Input, InputNumber, Row, Select, message } from "antd";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { ETaskStatus } from "../../../../constants/enum";
 import { UserContext } from "../../../../providers/user";
 import BaseModal from "../../../BaseModal";
@@ -7,18 +7,22 @@ import { RichTextEditor } from "../../../RichTextEditor";
 import locale from "antd/es/date-picker/locale/vi_VN";
 import { WTaskStatusOptions } from "../../../../constants/app";
 import { TaskContext } from "../../../../providers/task";
+import GroupApi from "../../../../apis/group";
+import { disabledDateTime } from "../../../../utils";
+import dayjs from "dayjs";
 
 export const TaskCreateModal = ({
-	open,
-	onCancel,
-	onSubmit,
-	confirmLoading,
+  open,
+  onCancel,
+  onSubmit,
+  confirmLoading,
+  team,
 }) => {
-	const { user } = useContext(UserContext);
-	const { team, info } = useContext(TaskContext);
+  const { user } = useContext(UserContext);
+  const { info } = useContext(TaskContext);
 
-	const formRef = useRef();
-	const descRef = useRef();
+  const formRef = useRef();
+  const descRef = useRef();
 
   return (
     <BaseModal
@@ -46,7 +50,7 @@ export const TaskCreateModal = ({
         initialValues={{
           taskName: "",
           status: ETaskStatus.New,
-          dates: ["", ""],
+          dates: [dayjs(), dayjs()],
           assignees: [],
           priority: "",
         }}
@@ -86,12 +90,13 @@ export const TaskCreateModal = ({
                 placeholder={["Bắt đầu", "Kết thúc"]}
                 format="HH:mm DD/MM/YYYY"
                 showTime={{
-                  format: "HH:mm",
+                  hideDisabledOptions: true,
                 }}
                 locale={locale}
                 disabledDate={(date) => {
                   return date.isBefore(info.startTime, "day");
                 }}
+                disabledTime={disabledDateTime}
               />
             </Form.Item>
           </Col>
@@ -110,51 +115,51 @@ export const TaskCreateModal = ({
           </Col>
         </Row>
 
-				<Row gutter={16}>
-					<Col span={12}>
-						<Form.Item
-							name="assignees"
-							label="Thành viên được phân công"
-							rules={[
-								{
-									required: true,
-									message: "Vui lòng chọn ít nhất 1 thành viên để phân công",
-								},
-							]}
-						>
-							<Select
-								options={team?.map((e) => {
-									const isLeader = user?.id === e.id;
-									return {
-										label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
-										value: e.id,
-									};
-								})}
-								mode="multiple"
-								placeholder="Chọn thành viên"
-							/>
-						</Form.Item>
-					</Col>
-					<Col span={12}>
-						<Form.Item
-							name="priority"
-							label="Độ ưu tiên"
-							rules={[
-								{
-									required: true,
-									message: "Vui lòng thêm độ ưu tiên",
-								},
-							]}
-						>
-							<InputNumber
-								min={0}
-								max={10}
-								placeholder="Độ ưu tiên"
-							/>
-						</Form.Item>
-					</Col>
-				</Row>
-			</Form>
-		</BaseModal >
-	);
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="assignees"
+              label="Thành viên được phân công"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn ít nhất 1 thành viên để phân công",
+                },
+              ]}
+            >
+              <Select
+                options={team?.map((e) => {
+                  const isLeader = user?.id === e.id;
+                  return {
+                    label: `${e.fullName}${isLeader ? " (Tổ trưởng)" : ""}`,
+                    value: e.id,
+                  };
+                })}
+                mode="multiple"
+                placeholder="Chọn thành viên"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="priority"
+              label="Độ ưu tiên"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng thêm độ ưu tiên",
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                max={10}
+                placeholder="Độ ưu tiên"
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Form>
+    </BaseModal >
+  );
 };

@@ -11,13 +11,15 @@ import { ConfirmDeleteModal } from "../../../../../components/ConfirmDeleteModal
 import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
 import { TaskChatModal } from "../../components/TaskChatModal";
 import { TaskBoard } from "./TaskBoard";
+import GroupApi from "../../../../../apis/group";
+import { handleRetrieveWorkerOnTask } from "../../../../../utils";
 
 const { Title } = Typography;
 
 export const WorkerTaskManagement = () => {
 
 	const { user } = useContext(UserContext);
-	const { filterTask, reload, tasks, info, team, acceptance } = useContext(TaskContext);
+	const { filterTask, reload, tasks, info, team, acceptance, leader } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
 	const isInProgress = info.status === ETaskStatus.InProgress;
@@ -34,6 +36,7 @@ export const WorkerTaskManagement = () => {
 	// TODO Chat
 	const [taskChatData, setTaskChatData] = useState([]);
 
+	const [workers, setWorkers] = useState([]);
 	const taskRef = useRef();
 
 	const handleSubmitCreate = async (values) => {
@@ -101,6 +104,29 @@ export const WorkerTaskManagement = () => {
 		setTaskChatLoading(false);
 	}
 
+	const handleRetrieveWorkersCreate = async () => {
+		console.log("fetch workers create");
+		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
+		if (dataWorkers.code === 0) {
+			console.log(dataWorkers)
+			setWorkers(dataWorkers.data);
+		} else {
+			message.error(dataWorkers.message);
+		}
+	}
+
+	const handleRetrieveWorkersUpdate = async (task) => {
+		console.log("fetch workers update", task);
+		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
+		const dataWorkerOnTask = handleRetrieveWorkerOnTask(task?.members);
+		if (dataWorkers.code === 0) {
+			const dataTeam = [...dataWorkers.data, ...dataWorkerOnTask];
+			setWorkers(dataTeam);
+		} else {
+			setWorkers(dataWorkerOnTask);
+		}
+	}
+
 	return (
 		<div>
 			<Row align="middle" className="mb-3" justify="space-between">
@@ -114,7 +140,10 @@ export const WorkerTaskManagement = () => {
 							className="flex-center ml-3"
 							shape="circle"
 							type="primary"
-							onClick={() => setShowCreateModal(true)}
+							onClick={() => {
+								handleRetrieveWorkersCreate();
+								setShowCreateModal(true);
+							}}
 						/>
 					)}
 					{isLeader &&
@@ -141,6 +170,7 @@ export const WorkerTaskManagement = () => {
 			<TaskBoard
 				onViewTask={(task) => {
 					taskRef.current = task;
+					handleRetrieveWorkersUpdate(task);
 					setShowDetailModal(true);
 				}}
 				onDeleteTask={(task) => {
@@ -157,6 +187,7 @@ export const WorkerTaskManagement = () => {
 				onCancel={() => setShowCreateModal(false)}
 				onSubmit={handleSubmitCreate}
 				confirmLoading={taskCreateLoading}
+				team={workers}
 			/>
 			<TaskDetailModal
 				open={showDetailModal}
@@ -164,6 +195,7 @@ export const WorkerTaskManagement = () => {
 				onSubmit={handleSubmitUpdate}
 				confirmLoading={taskUpdateLoading}
 				task={taskRef.current}
+				team={workers}
 			/>
 			<ConfirmDeleteModal
 				title={`Bạn muốn xóa công việc ${taskRef?.current?.name} ?`}

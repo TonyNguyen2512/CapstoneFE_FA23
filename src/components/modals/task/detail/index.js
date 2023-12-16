@@ -4,21 +4,18 @@ import { EditableInput } from "../../../EditableInput";
 import { Button, Card, Col, DatePicker, Form, Image, Input, InputNumber, Row, Select, Typography } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
 import { UserContext } from "../../../../providers/user";
-import dayjs from "dayjs";
-import weekday from "dayjs/plugin/weekday";
-import localeData from "dayjs/plugin/localeData";
 import { WTaskStatusOptions } from "../../../../constants/app";
-import { ErrorImage, ETaskStatus, TaskStatus } from "../../../../constants/enum";
+import { ErrorImage, TaskMap, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
 import { UploadOutlined } from "@ant-design/icons";
-import { taskFeedbackReportsRef, workerTaskReportsRef } from "../../../../middleware/firebase";
+import { taskFeedbackReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../UploadFile";
-
-dayjs.extend(weekday);
-dayjs.extend(localeData);
+import { disabledDateTime, formatDate } from "../../../../utils";
 
 const { Text } = Typography;
+const FORMAT_DATE_TIME = "HH:mm DD/MM/YYYY";
+const imgResourceNm = "resource";
 
 const TaskDetailModal = ({
 	open,
@@ -26,6 +23,7 @@ const TaskDetailModal = ({
 	onSubmit,
 	confirmLoading,
 	task,
+	team,
 }) => {
 	const taskFormRef = useRef();
 	const nameRef = useRef();
@@ -33,13 +31,17 @@ const TaskDetailModal = ({
 	const contentRef = useRef();
 
 	const { user } = useContext(UserContext);
-	const { team, info } = useContext(TaskContext);
+	const { info } = useContext(TaskContext);
 
 	const [resourceImage] = useState(task?.resource?.[0] ?? "");
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 	// const [fileListUrl, setFileListUrl] = useState([]);
 
-	const isLeader = user?.userId === task?.leader?.id;
+	const isLeader = user?.userId === task?.leaderTaskId;
+
+	const WTaskStsOpts = isLeader ? WTaskStatusOptions : WTaskStatusOptions.filter((x) => x.value !== TaskStatus.Completed);
+	const startDate = formatDate(task?.startTime, FORMAT_DATE_TIME);
+	const endDate = formatDate(task?.endTime, FORMAT_DATE_TIME);
 	// const ownedTask =
 	// 	task?.members?.find((e) => e.id === user?.userId) !== undefined;
 
@@ -48,7 +50,7 @@ const TaskDetailModal = ({
 
 	const onFinish = async (values) => {
 
-		const resourceImg = taskFormRef.current.getFieldValue('resource');
+		const resourceImg = taskFormRef.current.getFieldValue(imgResourceNm);
 		if (handleValidateUpload()) {
 			const dates = values.dates;
 			const id = task?.id;
@@ -88,7 +90,7 @@ const TaskDetailModal = ({
 
 	const handleValidateUpload = () => {
 		if (isPending) {
-			const resource = taskFormRef.current?.getFieldValue('resource');
+			const resource = taskFormRef.current?.getFieldValue(imgResourceNm);
 			if (!resource || resource.length === 0) {
 				setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
 				return false;
@@ -144,9 +146,9 @@ const TaskDetailModal = ({
 				ref={taskFormRef}
 				initialValues={{
 					description: task?.description,
-					dates: [task?.startTime ? dayjs(task?.startTime) : "", task?.startTime ? dayjs(task?.endTime) : ""],
+					dates: [startDate, endDate],
 					assignees: task?.members?.map((e) => e.memberId),
-					status: task?.status || ETaskStatus.New,
+					status: task?.status || TaskStatus.New,
 					...task,
 					resource: task?.resource?.[0],
 				}}
@@ -183,96 +185,140 @@ const TaskDetailModal = ({
 							/>
 							<Row gutter={16}>
 								<Col span={12}>
-									<Form.Item
-										name="dates"
-										label={<Text strong>Thời hạn công việc</Text>}
-										rules={[
-										  {
-											required: true,
-											message: "Vui lòng nhập thời hạn công việc",
-										  },
-										]}
-									>
-										<DatePicker.RangePicker
-											showNow
-											showTime
-											placeholder={["Bắt đầu", "Kết thúc"]}
-											className="w-full"
-											format="HH:mm DD/MM/YYYY"
-											rang
-											disabled={!isLeader || isCompleted}
-											disabledDate={(date) => {
-												return (
-													date.isBefore(info.startTime, "day")
-												);
-											}}
-										/>
-									</Form.Item>
+									{(isLeader && !isCompleted) &&
+										<Form.Item
+											name="dates"
+											label={<Text strong>Thời hạn công việc</Text>}
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng nhập thời hạn công việc",
+												},
+											]}
+										>
+											<DatePicker.RangePicker
+												showNow
+												showTime={{
+													hideDisabledOptions: true,
+												}}
+												placeholder={["Bắt đầu", "Kết thúc"]}
+												className="w-full"
+												format="HH:mm DD/MM/YYYY"
+												rang
+												// disabled={!isLeader || isCompleted}
+												disabledDate={(date) => {
+													return (
+														date.isBefore(info.startTime, "day")
+													);
+												}}
+												disabledTime={disabledDateTime}
+											/>
+										</Form.Item>
+									}
+									{(!isLeader || isCompleted) && (
+										<>
+											<Text strong>Thời hạn công việc</Text>
+											<p>
+												{startDate} - {endDate}
+											</p>
+										</>
+									)}
 								</Col>
 								<Col span={12}>
-									<Form.Item
-										name="status"
-										label={<Text strong>Trạng thái</Text>}
-										rules={[
-										  {
-											required: true,
-											message: "Vui lòng nhập trạng thái",
-										  },
-										]}
-									>
-										<Select
-											className="w-full"
-											placeholder="Chọn trạng thái"
-											options={WTaskStatusOptions}
-											disabled={!isLeader || isCompleted}
-										/>
-									</Form.Item>
+									{(!isCompleted) &&
+										<Form.Item
+											name="status"
+											label={<Text strong>Trạng thái</Text>}
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng nhập trạng thái",
+												},
+											]}
+										>
+											<Select
+												className="w-full"
+												placeholder="Chọn trạng thái"
+												options={WTaskStsOpts}
+											// disabled={!isLeader || isCompleted}
+											/>
+										</Form.Item>
+									}
+									{(isCompleted) && (
+										<>
+											<Text strong>Trạng thái</Text>
+											<p>{TaskMap[task?.status || TaskStatus.New].label}</p>
+										</>
+									)}
 								</Col>
 							</Row>
 							<Row gutter={16}>
 								<Col span={12}>
-									<Form.Item
-										name="assignees"
-										rules={[
-											{
-												required: true,
-												message: "Vui lòng chọn ít nhất 1 thành viên cho công việc",
-											},
-										]}
-										label={<Text strong>Thành viên được phân công</Text>}
-									>
-										<Select
-											mode="multiple"
-											className="w-full"
-											placeholder="Chọn thành viên"
-											options={team?.map((e) => {
-												return {
-													label: `${e.fullName}`,
-													value: e.id,
-												};
-											})}
-											disabled={!isLeader || isCompleted}
-										/>
-									</Form.Item>
+									{(isLeader && !isCompleted) &&
+										<Form.Item
+											name="assignees"
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng chọn ít nhất 1 thành viên cho công việc",
+												},
+											]}
+											label={<Text strong>Thành viên được phân công</Text>}
+										>
+											<Select
+												mode="multiple"
+												className="w-full"
+												placeholder="Chọn thành viên"
+												options={team?.map((e) => {
+													return {
+														label: `${e.fullname}`,
+														value: e.id,
+													};
+												})}
+											// disabled={!isLeader || isCompleted}
+											/>
+										</Form.Item>
+									}
+									{(!isLeader || isCompleted) && (
+										<>
+											<Text strong>Thành viên được phân công</Text>
+											{task?.members?.map((e, i) => (
+												<p>
+													{i + 1}. {e.memberFullName}
+												</p>
+											))}
+										</>
+									)}
 								</Col>
 								<Col span={12}>
-									<Form.Item
-										name="priority"
-										label={<Text strong>Độ ưu tiên</Text>}
-										rules={[
-											{
-												required: true,
-												message: "Vui lòng thêm độ ưu tiên",
-											},
-										]}
-									>
-										<InputNumber
-											min={0}
-											max={10}
-											placeholder="Độ ưu tiên"
-											disabled={!isLeader || isCompleted}
-										/>
-									</Form.Item>
+									{(isLeader && !isCompleted) &&
+										<Form.Item
+											name="priority"
+											label={<Text strong>Độ ưu tiên</Text>}
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng thêm độ ưu tiên",
+												},
+											]}
+										>
+											<InputNumber
+												min={0}
+												max={10}
+												placeholder="Độ ưu tiên"
+												disabled={!isLeader || isCompleted}
+											/>
+										</Form.Item>
+									}
+									{(!isLeader || isCompleted) && (
+										<>
+											<Text strong>Độ ưu tiên</Text>
+											<p>
+												task?.priority
+											</p>
+										</>
+									)
+									}
 								</Col>
 							</Row>
 							{(isPending || isCompleted) &&
@@ -361,7 +407,7 @@ const TaskDetailModal = ({
 								<UploadFile
 									formRef={taskFormRef}
 									imageRef={taskFeedbackReportsRef}
-									itemName="resource"
+									itemName={imgResourceNm}
 									onChange={handleChangeUploadImage}
 									fileAccept=".jpg,.jepg,.png,.svg,.bmp"
 									errorMessage={resourceErrorMsg}

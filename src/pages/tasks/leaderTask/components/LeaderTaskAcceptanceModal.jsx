@@ -4,6 +4,8 @@ import BaseModal from "../../../../components/BaseModal";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import UserApi from "../../../../apis/user";
+import { disabledDateTime } from "../../../../utils";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -13,10 +15,10 @@ export const LeaderTaskAcceptanceModal = ({
   onSubmit,
   confirmLoading,
   title,
+  leadersData,
 }) => {
   const formAcceptanceRef = useRef();
   const { info } = useContext(TaskContext);
-	const [leadersData, setLeadersData] = useState([]);
 
   const onFinish = async (values) => {
     const datas = {
@@ -28,19 +30,6 @@ export const LeaderTaskAcceptanceModal = ({
     }
     await onSubmit({ ...datas });
   }
-
-	const initLeaderInfo = async () => {
-		UserApi.getByLeaderRole().then((resp) => {
-			setLeadersData(resp?.data);
-		});
-	}
-
-	useEffect(() => {
-		const initialData = () => {
-			initLeaderInfo();
-		}
-		initialData();
-	}, []);
 
   return (
     <BaseModal
@@ -98,16 +87,19 @@ export const LeaderTaskAcceptanceModal = ({
         >
           <DatePicker.RangePicker
             showNow
-            showTime
+            showTime={{
+              hideDisabledOptions: true,
+            }}
             placeholder={["Bắt đầu", "Kết thúc"]}
             className="w-full"
             format="HH:mm DD/MM/YYYY"
             rang
             disabledDate={(date) => {
               return (
-                date.isBefore(info.startTime, "day")
+                date.isBefore(dayjs(), "day")
               );
             }}
+            disabledTime={disabledDateTime}
           />
         </Form.Item>
         <Form.Item
