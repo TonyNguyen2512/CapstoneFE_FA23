@@ -31,7 +31,7 @@ const TaskReportDetailPage = () => {
 
   return (
     <BasePageContent
-      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.orderReports}`)}
+      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.taskReports}`)}
     >
       <Spin spinning={loading}>
         <Space align="start" className="mt-3">
