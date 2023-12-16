@@ -32,19 +32,51 @@ const successComposer = (messageId, data) => {
 	}
 }
 
-const getAll = async (pageIndex, pageSize = 5, search = undefined) => {
+const getAll = async (search, pageIndex, pageSize) => {
   try {
-    const response = await BaseApi.get(`/${resource}/GetAll`, {
-      params: {
-        pageIndex,
-        pageSize,
-        search,
-      },
+    if (search) {
+      return await searchGetAll(search, pageIndex, pageSize);
+    }
+    else {
+
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAll`, {
+        params: params,
+      });
+      return response.data;
+    }
+  } catch (error) {
+    console.log("Error get items: ", error);
+    return false;
+  }
+};
+const searchGetAll = async (search, pageIndex, pageSize) => {
+  try {
+    var params = {};
+    if (search) {
+      params = { ...params, search };
+    }
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+
+    const response = await BaseApi.post(`/${resource}/GetAll`, {
+      params: params,
     });
+
     return response.data;
   } catch (error) {
-    console.log("Error get order reports: ", error);
-    message.error("Lấy danh sách báo cáo thất bại");
+    console.log("Error search item: ", error);
+    return [];
   }
 };
 

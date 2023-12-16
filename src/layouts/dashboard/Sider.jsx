@@ -10,6 +10,7 @@ import {
   TableReport,
   DataFile,
   DocSuccess,
+  History,
 } from "@icon-park/react";
 import { Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
@@ -52,6 +53,7 @@ export const AppSider = () => {
   const canViewTasks = permissions?.includes(ALL_PERMISSIONS.tasks?.sider);
   const canViewOrderReports = permissions?.includes(ALL_PERMISSIONS.orderReports?.sider);
   const canViewLeaderReports = permissions?.includes(ALL_PERMISSIONS.leaderReports?.sider);
+  const canVieAdminReports = permissions?.includes(ALL_PERMISSIONS.adminReports?.sider);
 
   const itemKeys = {
     DASHBOARD: "DASHBOARD",
@@ -80,6 +82,7 @@ export const AppSider = () => {
     ORDER_REPORTS: "MANAGE_ORDER_REPORTS",
     TASKS_REPORTS: "MANAGE_TASKS_REPORTS",
     LEADER_REPORTS: "MANAGE_LEADER_REPORTS",
+    ADMIN_REPORTS: "MANAGE_ADMIN_REPORTS",
     //
     WORKERS: "MANAGE_WORKERS",
     WORKERS_TASKS: "MANAGE_WORKERS_TASKS",
@@ -95,11 +98,11 @@ export const AppSider = () => {
       icon: <DataFile size={iconSize - 4} />,
       label: <Link to={routes.dashboard.home}>Tổng quan</Link>,
     },
-    // canViewAccounts && {
-    //   key: itemKeys.ACCOUNTS,
-    //   icon: <UserOutlined size={iconSize - 2} />,
-    //   label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
-    // },
+    canVieAdminReports && {
+      key: itemKeys.ADMIN_REPORTS,
+      icon: <UserOutlined size={iconSize - 2} />,
+      label: <Link to={routes.dashboard.adminReports}>Quản lý tiến độ</Link>,
+    },
     (canViewEmployees || canViewGroups || canViewAccounts) && {
       key: itemKeys.P_EMPLOYEES,
       icon: <DataUser size={iconSize - 2} />,
@@ -189,7 +192,7 @@ export const AppSider = () => {
 
     canViewOrderReports && {
       key: itemKeys.P_REPORT,
-      icon: <TableReport size={iconSize - 2} />,
+      icon: <TableReport size={iconSize - 4} />,
       label: "Báo cáo",
       children: [
         canViewOrderReports && {
@@ -214,28 +217,6 @@ export const AppSider = () => {
       icon: <ListView size={iconSize - 4} />,
       label: <Link to={routes.dashboard.tasks}>Công việc</Link>,
     },
-    // canViewGroupsLog && {
-    //   key: itemKeys.GROUPS_LOG,
-    //   icon: <History size={iconSize - 4} />,
-    //   label: "Lịch sử chỉnh sửa",
-    //   children: [
-    //     canViewGroupsLog && {
-    //       key: itemKeys.GROUPS_LOG,
-    //       icon: <EveryUser size={iconSize - 4} />,
-    //       label: <Link to={routes.dashboard.groupsLog}>Tổ</Link>,
-    //     },
-    //     canViewGroupsLog && {
-    //       key: itemKeys.MATERIALS_LOG,
-    //       icon: <FileDoneOutlined size={iconSize - 4} />,
-    //       label: <Link to={routes.dashboard.materialsLog}>Nguyên vật liệu</Link>,
-    //     },
-    //     canViewGroupsLog && {
-    //       key: itemKeys.ITEMS_LOG,
-    //       icon: <AdjacentItem size={iconSize - 4} />,
-    //       label: <Link to={routes.dashboard.itemsLog}>Sản phẩm</Link>,
-    //     },
-    //   ]
-    // },
   ];
 
   const getSelectedKey = () => {
@@ -294,6 +275,8 @@ export const AppSider = () => {
         return itemKeys.MATERIALS;
       case routes.dashboard.itemsLog:
         return itemKeys.ITEMS;
+      case routes.dashboard.adminReports:
+        return itemKeys.ADMIN_REPORTS;
     }
 
     return undefined;
