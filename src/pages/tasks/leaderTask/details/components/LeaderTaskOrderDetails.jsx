@@ -1,6 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { dateSort, formatDate, formatMoney, formatNum, getTaskStatusColor, getTaskStatusName, handleRetrieveWorkerOnTask } from "../../../../../utils";
+import {
+  dateSort,
+  formatDate,
+  formatMoney,
+  formatNum,
+  getTaskStatusColor,
+  getTaskStatusName,
+  handleRetrieveWorkerOnTask,
+} from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
 import { OrderStatus, PageSize, ETaskStatus, modalModes } from "../../../../../constants/enum";
 import { Table, message } from "antd";
@@ -18,9 +26,7 @@ import WorkerTasksApi from "../../../../../apis/worker-task";
 import UserApi from "../../../../../apis/user";
 import GroupApi from "../../../../../apis/group";
 
-export const LeaderTaskOrderDetails = ({
-  title,
-}) => {
+export const LeaderTaskOrderDetails = ({ title }) => {
   const { info, orderDetails, reload, filterTask } = useContext(TaskContext);
   const isInProgress = info.status === OrderStatus.InProgress;
 
@@ -58,7 +64,9 @@ export const LeaderTaskOrderDetails = ({
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{(index + 1) + (((currentPage) - 1) * (PageSize.LEADER_TASK_ORDER_DETAIL_LIST))}</span>;
+        return (
+          <span>{index + 1 + (currentPage - 1) * PageSize.LEADER_TASK_ORDER_DETAIL_LIST}</span>
+        );
       },
     },
     {
@@ -127,11 +135,15 @@ export const LeaderTaskOrderDetails = ({
         icon: <PreviewOpen />,
         onClick: () => {
           eTaskInfoRef.current = record;
-          navigate(routes.dashboard.taskOrderDetails + "/" + id, {
-            state: {
-              orderId: info?.id,
-            }
-          }, { replace: true });
+          navigate(
+            routes.dashboard.taskOrderDetails + "/" + id,
+            {
+              state: {
+                orderId: info?.id,
+              },
+            },
+            { replace: true }
+          );
         },
       },
       isInProgress && {
@@ -141,7 +153,7 @@ export const LeaderTaskOrderDetails = ({
         onClick: () => {
           orderDetailRef.current = record;
           handleRetrieveLeaderInfo();
-          setShowETaskCreateModal(true)
+          setShowETaskCreateModal(true);
         },
       },
     ];
@@ -190,7 +202,7 @@ export const LeaderTaskOrderDetails = ({
         title: "Độ ưu tiên",
         dataIndex: "priority",
         key: "priority",
-        defaultSortOrder: 'ascend',
+        defaultSortOrder: "ascend",
         // align: "center",
         width: "10%",
         render: (_, record) => {
@@ -226,19 +238,21 @@ export const LeaderTaskOrderDetails = ({
       },
     ];
 
-    return <Table
-      expandable={{
-        expandedRowRender: handleWorkerTaskRowRender,
-        onExpand: (expandable, record) => {
-          if (expandable) eTaskInfoRef.current = record;
-          else eTaskInfoRef.current = null;
-        },
-      }}
-      columns={columns}
-      dataSource={row.leaderTasks}
-      rowKey={(record) => record.id}
-      pagination={false}
-    />;
+    return (
+      <Table
+        expandable={{
+          expandedRowRender: handleWorkerTaskRowRender,
+          onExpand: (expandable, record) => {
+            if (expandable) eTaskInfoRef.current = record;
+            else eTaskInfoRef.current = null;
+          },
+        }}
+        columns={columns}
+        dataSource={row.leaderTasks}
+        rowKey={(record) => record.id}
+        pagination={false}
+      />
+    );
   };
 
   const getETaskActionItems = (record) => {
@@ -251,11 +265,15 @@ export const LeaderTaskOrderDetails = ({
         icon: <PreviewOpen />,
         onClick: () => {
           eTaskInfoRef.current = record;
-          navigate(routes.dashboard.workersTasks + "/" + id, {
-            state: {
-              orderId: info.id
-            }
-          }, { replace: true });
+          navigate(
+            routes.dashboard.workersTasks + "/" + id,
+            {
+              state: {
+                orderId: info.id,
+              },
+            },
+            { replace: true }
+          );
         },
       },
       {
@@ -279,7 +297,7 @@ export const LeaderTaskOrderDetails = ({
             type: "confirm",
             cancelText: "Hủy",
             onOk: () => deleteETaskProcedure(record.id),
-            onCancel: () => { },
+            onCancel: () => {},
             closable: true,
           });
         },
@@ -296,7 +314,7 @@ export const LeaderTaskOrderDetails = ({
     } else {
       message.error(data.message);
     }
-  }
+  };
 
   const handleSubmitETaskCreate = async (values) => {
     setETaskCreateLoading(true);
@@ -310,8 +328,8 @@ export const LeaderTaskOrderDetails = ({
       endTime: values.dates?.[1],
       description: values?.description,
       orderId: info.id,
-    }
-    console.log("orderDetailRef", orderDetailRef)
+    };
+    console.log("orderDetailRef", orderDetailRef);
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
@@ -340,7 +358,7 @@ export const LeaderTaskOrderDetails = ({
       endTime: values.dates?.[1],
       description: values?.description,
       status: values?.status,
-    }
+    };
     try {
       console.log("update task: ", data);
       const update = await LeaderTasksApi.updateLeaderTasks(data);
@@ -427,7 +445,7 @@ export const LeaderTaskOrderDetails = ({
         title: "Độ ưu tiên",
         dataIndex: "priority",
         key: "priority",
-        defaultSortOrder: 'ascend',
+        defaultSortOrder: "ascend",
         // align: "center",
         width: "10.3%",
         render: (_, record) => {
@@ -464,13 +482,15 @@ export const LeaderTaskOrderDetails = ({
       },
     ];
 
-    return <Table
-      columns={columns}
-      dataSource={row.workerTask}
-      rowKey={(record) => record.id}
-      pagination={false}
-      showHeader={false}
-    />;
+    return (
+      <Table
+        columns={columns}
+        dataSource={row.workerTask}
+        rowKey={(record) => record.id}
+        pagination={false}
+        showHeader={false}
+      />
+    );
   };
 
   const getWTaskActionItems = (record) => {
@@ -481,7 +501,7 @@ export const LeaderTaskOrderDetails = ({
         icon: <PreviewOpen />,
         onClick: () => {
           wTaskInfoRef.current = record;
-          console.log("worker task", eTaskInfoRef.current)
+          console.log("worker task", eTaskInfoRef.current);
           handleRetrieveWorkersUpdate(record);
           setShowWTaskDetailModal(true);
         },
@@ -506,7 +526,7 @@ export const LeaderTaskOrderDetails = ({
             type: "confirm",
             cancelText: "Hủy",
             onOk: () => handleDeleteWorkerTask(record.id),
-            onCancel: () => { },
+            onCancel: () => {},
             closable: true,
           });
         },
@@ -560,7 +580,7 @@ export const LeaderTaskOrderDetails = ({
     // setCurrentPage(1);
     handleReload(value);
     setLoading(false);
-  }
+  };
 
   const onExpand = (expanded, record) => {
     if (expanded) {
@@ -568,7 +588,7 @@ export const LeaderTaskOrderDetails = ({
     } else {
       orderDetailRef.current = null;
     }
-  }
+  };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
@@ -578,7 +598,7 @@ export const LeaderTaskOrderDetails = ({
   const handleRetrieveLeaderInfo = async () => {
     const resp = await UserApi.getByLeaderRole();
     setLeadersData(resp);
-  }
+  };
 
   useEffect(() => {
     handleRetrieveLeaderInfo();
@@ -600,7 +620,7 @@ export const LeaderTaskOrderDetails = ({
     } else {
       message.error("Tổ trưởng chưa có tổ phụ trách");
     }
-  }
+  };
 
   return (
     <>

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ItemOrderModal } from "./components/ItemOrderModal";
 import ItemApi from "../../../apis/item";
 import { UpdateStatus } from "../components/UpdateStatus";
-import { PageSize, modalModes } from "../../../constants/enum";
+import { ETaskStatus, PageSize, modalModes } from "../../../constants/enum";
 import OrderReportApi from "../../../apis/order-report";
 import { LeaderTaskOrderReportModal } from "../../tasks/leaderTask/components/LeaderTaskOrderReportModal";
 import LeaderTasksApi from "../../../apis/leader-task";
@@ -25,10 +25,14 @@ import {
   formatNum,
   getTaskStatusColor,
   getTaskStatusName,
+  handleRetrieveWorkerOnTask,
 } from "../../../utils";
 import confirm from "antd/es/modal/confirm";
 import { TaskContext } from "../../../providers/task";
 import { LeaderTaskModal } from "../../tasks/leaderTask/components/LeaderTaskModal";
+import TaskDetailModal from "../../../components/modals/task/detail";
+import WorkerTasksApi from "../../../apis/worker-task";
+import GroupApi from "../../../apis/group";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -49,6 +53,9 @@ const OrderDetailPage = () => {
   const [eTaskCreateLoading, setETaskCreateLoading] = useState(false);
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [eTaskProgressReportLoading, setETaskReportLoading] = useState(false);
+  const [leadersData, setLeadersData] = useState([]);
+  const [workers, setWorkers] = useState([]);
+  const [searchData, setSearchData] = useState("");
 
   const [showWTaskDetailModal, setShowWTaskDetailModal] = useState(false);
   const [wTaskDetailLoading, setWTaskDetaiLoading] = useState(false);
@@ -85,6 +92,15 @@ const OrderDetailPage = () => {
     );
     setLoading(false);
   };
+
+  const handleRetrieveLeaderInfo = async () => {
+    const resp = await UserApi.getByLeaderRole();
+    setLeadersData(resp);
+  };
+
+  useEffect(() => {
+    handleRetrieveLeaderInfo();
+  }, []);
 
   const deleteETaskProcedure = async (value) => {
     if (window.confirm("Bạn chắc chắn muốn xoá?")) {
@@ -131,6 +147,7 @@ const OrderDetailPage = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
+          handleRetrieveLeaderInfo();
           handleShowETaskModal(record?.id);
         },
       },
@@ -152,6 +169,33 @@ const OrderDetailPage = () => {
         },
       },
     ];
+  };
+
+  const handleSubmitWTaskUpdate = async (values) => {
+    setWTaskDetaiLoading(true);
+    let resp = null;
+    if (values.status !== ETaskStatus.Pending) {
+      console.log("update task: ", values);
+      resp = await WorkerTasksApi.updateWorkerTask(values);
+    } else {
+      console.log("send feedback task: ", values);
+      resp = await WorkerTasksApi.sendFeedback(values);
+    }
+    if (resp?.code === 0) {
+      message.success(resp?.message);
+      setShowWTaskDetailModal(false);
+      handleReload();
+    } else {
+      message.error(resp?.message);
+    }
+    setWTaskDetaiLoading(false);
+  };
+
+  const handleReload = (value = searchData, current = currentPage) => {
+    setLoading(true);
+    setSearchData(value);
+    filterTask(current, value);
+    setLoading(false);
   };
 
   const handleShowETaskModal = async (foremanTaskId) => {
@@ -193,6 +237,24 @@ const OrderDetailPage = () => {
       console.log(e);
     } finally {
       setETaskCreateLoading(false);
+    }
+  };
+
+  const handleRetrieveWorkersUpdate = async (task) => {
+    console.log("fetch workers update");
+    const dataLeaderUser = await UserApi.getUserById(eTaskInfoRef?.current?.leaderId);
+    if (dataLeaderUser?.groupId) {
+      const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(dataLeaderUser.groupId);
+      if (dataWorkers.code === 0) {
+        const dataWorkerTask = handleRetrieveWorkerOnTask(task?.members);
+        const dataTeam = [...dataWorkers.data, ...dataWorkerTask];
+        setWorkers(dataTeam);
+      } else {
+        const dataWorkerTask = handleRetrieveWorkerOnTask(task?.members);
+        setWorkers(dataWorkerTask);
+      }
+    } else {
+      message.error("Tổ trưởng chưa có tổ phụ trách");
     }
   };
 
@@ -277,7 +339,13 @@ const OrderDetailPage = () => {
 
     return (
       <Table
-        expandable={{ expandedRowRender: handleWorkerTaskRowRender }}
+        expandable={{
+          expandedRowRender: handleWorkerTaskRowRender,
+          onExpand: (expandable, record) => {
+            if (expandable) eTaskInfoRef.current = record;
+            else eTaskInfoRef.current = null;
+          },
+        }}
         columns={columns}
         dataSource={row.leaderTasks}
         rowKey={(record) => record.id}
@@ -770,6 +838,7 @@ const OrderDetailPage = () => {
             confirmLoading={eTaskCreateLoading}
             dataSource={[]}
             mode={modalModes.CREATE}
+            leadersData={leadersData}
           />
           <LeaderTaskModal
             open={showETaskUpdateModal}
@@ -782,6 +851,15 @@ const OrderDetailPage = () => {
             dataSource={eTaskInfoRef.current}
             mode={modalModes.UPDATE}
             message={message}
+            leadersData={leadersData}
+          />
+          <TaskDetailModal
+            open={showWTaskDetailModal}
+            onCancel={() => setShowWTaskDetailModal(false)}
+            onSubmit={handleSubmitWTaskUpdate}
+            confirmLoading={wTaskDetailLoading}
+            task={wTaskInfoRef.current}
+            team={workers}
           />
           <UpdateStatus
             data={orderRef.current}

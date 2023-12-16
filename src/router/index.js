@@ -80,6 +80,10 @@ export const router = createBrowserRouter([
             element: <WorkerTaskDetailsPage />,
           },
           {
+            path: `${routes.dashboard.orders}/:id/${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
+          },
+          {
             path: `${routes.dashboard.orders}/:id`,
             element: <OrderDetailPage />,
           },
