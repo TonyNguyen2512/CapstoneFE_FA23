@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { dateSort, formatDate, formatMoney, formatNum, getTaskStatusColor, getTaskStatusName, handleRetrieveWorkerOnTask } from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
@@ -577,8 +577,12 @@ export const LeaderTaskOrderDetails = ({
 
   const handleRetrieveLeaderInfo = async () => {
     const resp = await UserApi.getByLeaderRole();
-    setLeadersData(resp?.data);
+    setLeadersData(resp);
   }
+
+  useEffect(() => {
+    handleRetrieveLeaderInfo();
+  }, []);
 
   const handleRetrieveWorkersUpdate = async (task) => {
     console.log("fetch workers update");
@@ -594,7 +598,7 @@ export const LeaderTaskOrderDetails = ({
         setWorkers(dataWorkerTask);
       }
     } else {
-      message.error("Quản lý không có nhóm");
+      message.error("Tổ trưởng chưa có tổ phụ trách");
     }
   }
 

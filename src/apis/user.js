@@ -247,41 +247,17 @@ const getByLeaderRole = async () => {
 	}
 };
 
-const getByLeaderRoleAndWorkerRole = async (search) => {
+const getByLeaderRoleAndWorkerRole = async () => {
 	try {
-		if (search) {
-			return await searchGetByLeaderRoleAndWorkerRole(search);
-		}
-		else {
-			var params = {};
-			const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
-				params: params,
-			});
-			return response.data;
-		}
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`)
+		return response.data;
 	} catch (error) {
 		console.log("Error enroll group: ", error);
 		return false;
 	}
 };
 
-const searchGetByLeaderRoleAndWorkerRole = async (search) => {
-	try {
-		var params = {};
-		if (search) {
-			params = { ...params, search };
-		}
-		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
-			params: params,
-		});
-		return response.data;
-	} catch (error) {
-		console.log("Error get group: ", error);
-		return false;
-	}
-};
-
-const getRoleLeaderAndWorker = async (id) => {
+const getRoleLeaderAndWorker = async () => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetRoleLeaderAndWorker`);
 		return response.data;

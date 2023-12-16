@@ -201,7 +201,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
           </Col>
           <Col span={24}>
             <span>
-              <b className="pr-1">Quản lý:</b>
+              <b className="pr-1">Tổ trưởng:</b>
               <span>{createByName}</span>
             </span>
           </Col>

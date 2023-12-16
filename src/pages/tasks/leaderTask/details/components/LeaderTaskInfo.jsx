@@ -53,8 +53,8 @@ export const LeaderTaskInfo = ({ loading }) => {
                 <strong>{customerName || defaultValue("Không xác định được khách hàng")}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Tên quản lý:{" "}
-                <strong>{assignTo || defaultValue("Không xác định được quản lý")}</strong>
+                Tên tổ trưởng:{" "}
+                <strong>{assignTo || defaultValue("Không xác định được Tổ trưởng")}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
                 Ngày bắt đầu:{" "}

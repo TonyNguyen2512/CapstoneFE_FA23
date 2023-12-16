@@ -1,7 +1,7 @@
 import { Edit, Forbid, More, Unlock, Plus, PreviewOpen, FileExcel } from "@icon-park/react";
 import { Typography, Row, message, Col } from "antd";
 import dayjs from "dayjs";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
@@ -295,8 +295,12 @@ export const LeaderTaskOrderDetailProcedure = ({
 
   const handleRetrieveLeaderInfo = async () => {
     const resp = await UserApi.getByLeaderRole();
-    setLeadersData(resp?.data);
+    setLeadersData(resp);
   }
+
+  useEffect(() => {
+    handleRetrieveLeaderInfo();
+  }, []);
 
   return (
     <>
