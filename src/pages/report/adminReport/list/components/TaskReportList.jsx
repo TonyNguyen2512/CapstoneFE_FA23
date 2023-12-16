@@ -5,15 +5,11 @@ import moment from "moment";
 import OrderReportApi from "../../../../../apis/order-report";
 import { BaseTable } from "../../../../../components/BaseTable";
 import { PageSize, ReportMap, ReportTypeMap, orderReportMap } from "../../../../../constants/enum";
-import { UserContext } from "../../../../../providers/user";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
-import OrderReportUpdateModal from "../../../orderReport/components/OrderReportUpdateModal";
-import ReportApi from "../../../../../apis/task-report";
-import TaskReportDetail from "../../detail/components/TaslReportDetail";
 import TaskReportUpdateModal from "../../components/TaskReportUpdateModal";
 
-export const TaskReportList = () => {
+export const AdminReportList = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -26,8 +22,8 @@ export const TaskReportList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    const data = await ReportApi.getReportByForemanId(search, pageIndex, PageSize.ADMIN_REPORT_LIST);
-    setReports(data.data);
+    const data = await OrderReportApi.getAll(search, pageIndex, PageSize.ADMIN_REPORT_LIST);
+    setReports(data);
     setLoading(false);
   };
 
@@ -91,31 +87,13 @@ export const TaskReportList = () => {
       sorter: (a, b) => a.title.localeCompare(b.title),
     },
     {
-      key: "reportType",
-      title: "Loại báo cáo",
-      width: "8%",
-      render: (_, record) => {
-        let data = ReportTypeMap[record?.reportType];
-        return (
-          <Tag
-            className="text-center"
-            color={data?.color}
-            style={{ fontWeight: "bold" }}
-          >
-            {(data ? data?.label : "-")}
-          </Tag>
-        );
-      },
-      sorter: (a, b) => a.reportType - (b.reportType),
-    },
-    {
       key: "reporterName",
       title: "Người báo cáo",
       width: "15%",
       render: (_, record) => {
-        return record?.reporterName ?? "";
+        return record?.reporter.fullName ?? "";
       },
-      sorter: (a, b) => a.reporterName.localeCompare(b.reporterName),
+      sorter: (a, b) => a.record?.reporter.fullName.localeCompare(b.record?.reporter.fullName),
     },
     {
       key: "createdDate",

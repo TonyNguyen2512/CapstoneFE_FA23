@@ -246,7 +246,8 @@ export const PageSize = {
   LOG_MATERIAL_LIST: 10,
   STEP_LIST: 10, 
   PROCEDURE_LIST: 10,
-  TASK_REPORT_LIST: 10,
+  ADMIN_REPORT_LIST: 10,
+  ADMIN_REPORT_LIST: 10,
 };
 
 export const NotificationType = {

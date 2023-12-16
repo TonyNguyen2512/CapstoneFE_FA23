@@ -27,7 +27,6 @@ const EmployeeList = () => {
   const [roleOptions, setRoleOptions] = useState([]);
   const [roleCreateOptions, setRoleCreateOptions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [otp, setOtp] = useState('');
 
   const userRef = useRef();
 

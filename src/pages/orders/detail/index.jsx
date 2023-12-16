@@ -121,6 +121,7 @@ const OrderDetailPage = () => {
     }
   };
 
+
   const getETaskActionItems = (record) => {
     const { isActive, id } = record;
 
@@ -130,12 +131,15 @@ const OrderDetailPage = () => {
         label: "Xem thông tin chi tiết",
         icon: <PreviewOpen />,
         onClick: () => {
+  console.log("info: ", info.id)
+
           eTaskInfoRef.current = record;
           navigate(
             routes.dashboard.workersTasks + "/" + id,
             {
               state: {
-                orderId: info.id,
+                
+                orderDetailId: info.id,
               },
             },
             { replace: true }

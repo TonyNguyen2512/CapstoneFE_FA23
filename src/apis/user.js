@@ -247,12 +247,48 @@ const getByLeaderRole = async () => {
 	}
 };
 
-const getByLeaderRoleAndWorkerRole = async () => {
+const getByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
 	try {
-		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`)
-		return response.data;
+		if (search) {
+			return await searchGetByLeaderRoleAndWorkerRole(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
+				params: params,
+			});
+			return response.data;
+		}
 	} catch (error) {
 		console.log("Error enroll group: ", error);
+		return false;
+	}
+};
+
+const searchGetByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
+			params: params,
+		});
+		return response.data;
+	} catch (error) {
+		console.log("Error get group: ", error);
 		return false;
 	}
 };

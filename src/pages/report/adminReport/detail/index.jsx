@@ -9,7 +9,7 @@ import TaskReportDetail from "./components/TaslReportDetail";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 const { Title } = Typography;
 
-const TaskReportDetailPage = () => {
+const AdminReportDetailPage = () => {
   const urlParam = useParams();
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const TaskReportDetailPage = () => {
 
   return (
     <BasePageContent
-      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.taskReports}`)}
+      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.adminReports}`)}
     >
       <Spin spinning={loading}>
         <Space align="start" className="mt-3">
@@ -42,4 +42,4 @@ const TaskReportDetailPage = () => {
     </BasePageContent>
   );
 };
-export default TaskReportDetailPage;
+export default AdminReportDetailPage;

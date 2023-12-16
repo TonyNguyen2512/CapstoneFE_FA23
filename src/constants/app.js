@@ -144,6 +144,12 @@ export const ALL_PERMISSIONS = {
     update: "leaderReports.update",
     sider: "leaderReports.sider",
   },
+  adminReports: {
+    view: "adminReports.view",
+    create: "adminReports.create",
+    update: "adminReports.update",
+    sider: "adminReports.sider",
+  },
   //
   workers: {
     view: "workers.view",
@@ -171,6 +177,11 @@ export const USER_PERMISSIONS = {
     // DASHBOARD
     ALL_PERMISSIONS.dashboard.sider,
     ALL_PERMISSIONS.dashboard.view,
+    // ACCOUNTS
+    ALL_PERMISSIONS.adminReports.sider,
+    ALL_PERMISSIONS.adminReports.view,
+    ALL_PERMISSIONS.adminReports.create,
+    ALL_PERMISSIONS.adminReports.update,
     // ACCOUNTS
     ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
