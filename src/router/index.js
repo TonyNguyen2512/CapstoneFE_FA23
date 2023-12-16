@@ -57,10 +57,10 @@ export const router = createBrowserRouter([
             path: routes.dashboard.home,
             element: <HomePage />,
           },
-					{
-						path: routes.dashboard.profile,
-						element: <ProfilePage />,
-					},
+          {
+            path: routes.dashboard.profile,
+            element: <ProfilePage />,
+          },
           {
             path: routes.dashboard.accounts,
             element: <AccountListPage />,
@@ -68,6 +68,15 @@ export const router = createBrowserRouter([
           {
             path: routes.dashboard.orders,
             element: <OrderListPage />,
+          },
+          {
+            path: `${routes.dashboard.orders}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId`,
+            element: <LeaderTaskOrderDetailsPage />,
+          },
+
+          {
+            path: `${routes.dashboard.orders}/:id/${routes.dashboard.taskOrderDetails}/:orderDetailId/${routes.dashboard.workersTasks}/:leaderTaskId`,
+            element: <WorkerTaskDetailsPage />,
           },
           {
             path: `${routes.dashboard.orders}/:id`,

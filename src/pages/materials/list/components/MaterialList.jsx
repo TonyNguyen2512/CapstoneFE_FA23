@@ -9,6 +9,7 @@ import { MaterialModal } from "../../components/MaterialModal";
 import { formatMoney, formatNum } from "../../../../utils";
 import routes from "../../../../constants/routes";
 import { useNavigate } from "react-router-dom";
+import { PageSize } from "../../../../constants/enum";
 
 const MaterialList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -18,11 +19,14 @@ const MaterialList = ({ canModify }) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const navigate = useNavigate();
   const materialRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState([]);
 
-  const getData = async (keyword) => {
+  const getData = async (keyword, pageIndex) => {
     setLoading(true);
-    const response = await MaterialApi.getAllMaterial(keyword);
+    const response = await MaterialApi.getAllMaterial(keyword, pageIndex, PageSize.ORDER_LIST);
     setMaterialList(response.data);
+    setTotal(response.total || []);
     setLoading(false);
   };
 
@@ -47,6 +51,14 @@ const MaterialList = ({ canModify }) => {
       getData();
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    getData(null, 1);
+  }, []);
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current);
   };
 
   const getActionItems = (record) => {
@@ -100,7 +112,7 @@ const MaterialList = ({ canModify }) => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.ORDER_LIST}</span>;
       },
     },
     {
@@ -228,7 +240,11 @@ const MaterialList = ({ canModify }) => {
         dataSource={materialList}
         columns={columns}
         loading={loading}
-        pagination={false}
+        pagination={{
+          onChange: onPageChange,
+          pageSize: PageSize.ORDER_LIST,
+          total: total,
+        }}
         searchOptions={{
           visible: true,
           placeholder: "Tìm kiếm vật liệu...",

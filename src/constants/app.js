@@ -211,11 +211,11 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.itemCategories.view,
     ALL_PERMISSIONS.itemCategories.create,
     ALL_PERMISSIONS.itemCategories.update,
-    // employees
-    ALL_PERMISSIONS.employees.sider,
-    ALL_PERMISSIONS.employees.view,
-    ALL_PERMISSIONS.employees.create,
-    ALL_PERMISSIONS.employees.update,
+    // // employees
+    // ALL_PERMISSIONS.employees.sider,
+    // ALL_PERMISSIONS.employees.view,
+    // ALL_PERMISSIONS.employees.create,
+    // ALL_PERMISSIONS.employees.update,
     // groups
     ALL_PERMISSIONS.groups.sider,
     ALL_PERMISSIONS.groups.view,

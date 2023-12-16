@@ -47,7 +47,7 @@ const getAll = async (search, pageIndex, pageSize) => {
 			const response = await BaseApi.get(`/${resource}/GetAll`, {
 				params: params,
 			});
-			return successComposer(retrieveDataSuccessCode, response.data);;
+			return successComposer(retrieveDataSuccessCode, response);;
 		}
 	} catch (error) {
 		console.log("Error enroll group: ", error);

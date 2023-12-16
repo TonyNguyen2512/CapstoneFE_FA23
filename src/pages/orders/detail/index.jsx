@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { ItemOrderModal } from "./components/ItemOrderModal";
 import ItemApi from "../../../apis/item";
 import { UpdateStatus } from "../components/UpdateStatus";
-import { PageSize } from "../../../constants/enum";
+import { PageSize, modalModes } from "../../../constants/enum";
 import OrderReportApi from "../../../apis/order-report";
 import { LeaderTaskOrderReportModal } from "../../tasks/leaderTask/components/LeaderTaskOrderReportModal";
 import LeaderTasksApi from "../../../apis/leader-task";
@@ -28,6 +28,7 @@ import {
 } from "../../../utils";
 import confirm from "antd/es/modal/confirm";
 import { TaskContext } from "../../../providers/task";
+import { LeaderTaskModal } from "../../tasks/leaderTask/components/LeaderTaskModal";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -161,6 +162,37 @@ const OrderDetailPage = () => {
       setShowETaskUpdateModal(true);
     } else {
       message.error(data.message);
+    }
+  };
+
+  const handleSubmitETaskCreate = async (values) => {
+    setETaskCreateLoading(true);
+    const data = {
+      name: values?.name,
+      leaderId: values?.leaderId,
+      itemId: orderDetailRef.current?.itemId,
+      priority: values?.priority,
+      itemQuantity: values?.itemQuantity,
+      startTime: values.dates?.[0],
+      endTime: values.dates?.[1],
+      description: values?.description,
+      orderId: info.id,
+    };
+    console.log("orderDetailRef", orderDetailRef);
+    console.log("create", data);
+    try {
+      const create = await LeaderTasksApi.createLeaderTasks(data);
+      if (create.code === 0) {
+        message.success(create.message);
+        setShowETaskCreateModal(false);
+        reload(false);
+      } else {
+        message.error(create.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setETaskCreateLoading(false);
     }
   };
 
@@ -428,35 +460,7 @@ const OrderDetailPage = () => {
       render: (_, record) => <span>{record?.itemName}</span>,
       sorter: (a, b) => a?.itemName.localeCompare(b?.itemName),
     },
-    {
-      title: "Số lượng",
-      dataIndex: "quantity",
-      key: "quantity",
-      width: 120,
-      sorter: (a, b) => a?.quantity.localeCompare(b?.quantity),
-    },
-    {
-      title: "Đơn giá",
-      dataIndex: "price",
-      key: "price",
-      align: "center",
-      render: (price) => {
-        const money = formatNum(price);
-        return `${formatMoney(money)}`;
-      },
-      sorter: (a, b) => a?.price.localeCompare(b?.price),
-    },
-    {
-      title: "Thành tiền",
-      dataIndex: "totalPrice",
-      key: "totalPrice",
-      align: "center",
-      render: (totalPrice) => {
-        const money = formatNum(totalPrice);
-        return `${formatMoney(money)}`;
-      },
-      sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
-    },
+
     {
       title: "Dài",
       dataIndex: "itemLength",
@@ -503,6 +507,35 @@ const OrderDetailPage = () => {
       sorter: (a, b) => a?.itemUnit.localeCompare(b?.itemUnit),
     },
     {
+      title: "Số lượng",
+      dataIndex: "quantity",
+      key: "quantity",
+      width: 120,
+      sorter: (a, b) => a?.quantity.localeCompare(b?.quantity),
+    },
+    {
+      title: "Đơn giá",
+      dataIndex: "price",
+      key: "price",
+      align: "center",
+      render: (price) => {
+        const money = formatNum(price);
+        return `${formatMoney(money)}`;
+      },
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
+    },
+    {
+      title: "Thành tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      align: "center",
+      render: (totalPrice) => {
+        const money = formatNum(totalPrice);
+        return `${formatMoney(money)}`;
+      },
+      sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
+    },
+    {
       title: "Ghi chú",
       dataIndex: "description",
       key: "description",
@@ -524,7 +557,26 @@ const OrderDetailPage = () => {
   ];
 
   const getActionItems = (record) => {
+    const { id } = record;
+
     return [
+      {
+        key: "VIEW_DETAIL",
+        label: "Xem thông tin chi tiết",
+        icon: <PreviewOpen />,
+        onClick: () => {
+          eTaskInfoRef.current = record;
+          navigate(
+            routes.dashboard.taskOrderDetails + "/" + id,
+            {
+              state: {
+                orderId: info?.id,
+              },
+            },
+            { replace: true }
+          );
+        },
+      },
       {
         key: "UPDATE_ORDER",
         label: "Cập nhật sản phẩm",
@@ -557,6 +609,36 @@ const OrderDetailPage = () => {
 
   const handleSearch = async (value) => {
     getDetails(value, 1, true);
+  };
+
+  const handleSubmitETaskUpdate = async (values) => {
+    setETaskUpdateLoading(true);
+    const data = {
+      id: values?.id,
+      name: values?.name,
+      leaderId: values?.leaderId,
+      priority: values?.priority,
+      itemQuantity: values?.itemQuantity,
+      startTime: values.dates?.[0],
+      endTime: values.dates?.[1],
+      description: values?.description,
+      status: values?.status,
+    };
+    try {
+      console.log("update task: ", data);
+      const update = await LeaderTasksApi.updateLeaderTasks(data);
+      if (update.code === 0) {
+        message.success(update.message);
+        setShowETaskUpdateModal(false);
+        reload(false);
+      } else {
+        message.error(update.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setETaskUpdateLoading(false);
+    }
   };
 
   const handleSubmitOrderReport = async (values) => {
@@ -597,13 +679,13 @@ const OrderDetailPage = () => {
             <Space className="w-full flex justify-between mb-6">
               <div></div>
               <div className="flex gap-3">
-                <Button
+                {/* <Button
                   type="primary"
                   className="btn-primary app-bg-primary font-semibold text-white"
                   onClick={() => setShowOrderReportModal(true)}
                 >
                   Báo cáo tiến độ đơn hàng
-                </Button>
+                </Button> */}
                 <Button
                   type="primary"
                   className="btn-primary app-bg-primary font-semibold text-white"
@@ -678,6 +760,29 @@ const OrderDetailPage = () => {
               onSuccess={() => getDetails()}
             />
           </section>
+          <LeaderTaskModal
+            open={showETaskCreateModal}
+            onCancel={() => {
+              eTaskInfoRef.current = null;
+              setShowETaskCreateModal(false);
+            }}
+            onSubmit={handleSubmitETaskCreate}
+            confirmLoading={eTaskCreateLoading}
+            dataSource={[]}
+            mode={modalModes.CREATE}
+          />
+          <LeaderTaskModal
+            open={showETaskUpdateModal}
+            onCancel={() => {
+              eTaskInfoRef.current = null;
+              setShowETaskUpdateModal(false);
+            }}
+            onSubmit={handleSubmitETaskUpdate}
+            confirmLoading={eTaskUpdateLoading}
+            dataSource={eTaskInfoRef.current}
+            mode={modalModes.UPDATE}
+            message={message}
+          />
           <UpdateStatus
             data={orderRef.current}
             open={updateModal}

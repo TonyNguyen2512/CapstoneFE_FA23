@@ -13,6 +13,7 @@ const ProcedureList = () => {
   const [procedureList, setProcedureList] = useState([]);
   const [stepList, setStepList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState([]);
 
   const categoryRef = useRef();
 
@@ -20,11 +21,12 @@ const ProcedureList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    let response = await StepApi.getAll(search, pageIndex, 100);
+    let response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
     setStepList(response.data);
     console.log(stepList);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
-    setProcedureList(response);
+    setProcedureList(response.data);
+    setTotal(response.data.total || []);
     setLoading(false);
   };
 
@@ -98,14 +100,18 @@ const ProcedureList = () => {
     getData(value, 1, true);
   };
 
-  const onPageChange = (current) => {
-    setCurrentPage(current);
-    getData(null, current, false);
-  };
-
   useEffect(() => {
     getData();
   }, []);
+
+  useEffect(() => {
+    getData(null, 1);
+  }, []);
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getData(null, current);
+  };
 
   return (
     <>
@@ -127,7 +133,7 @@ const ProcedureList = () => {
         pagination={{
           onChange: onPageChange,
           pageSize: PageSize.PROCEDURE_LIST,
-          total: procedureList?.total,
+          total: total,
         }}
         searchOptions={{
           visible: true,
