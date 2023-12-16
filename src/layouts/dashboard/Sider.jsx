@@ -188,7 +188,7 @@ export const AppSider = () => {
     },
 
     canViewOrderReports && {
-      key: itemKeys.ORDER_REPORTS,
+      key: itemKeys.P_REPORT,
       icon: <TableReport size={iconSize - 2} />,
       label: "Báo cáo",
       children: [
@@ -281,7 +281,7 @@ export const AppSider = () => {
       case routes.dashboard.workers:
         return itemKeys.WORKERS;
       case routes.dashboard.orderReports:
-        return itemKeys.ORDER_REPORTS;
+        return `${itemKeys.ORDER_REPORTS}_CHILD`;
       case routes.dashboard.employees:
         return itemKeys.EMPLOYEES;
       case routes.dashboard.taskReports:

@@ -17,9 +17,6 @@ export const LeaderReportList = () => {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [search, setSearch] = useState(null);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectingOrderReport, setSelectingOrderReport] = useState();
@@ -28,14 +25,13 @@ export const LeaderReportList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    // const data = await OrderReportApi.getAll(pageIndex, pageSize, search);
     const data = await ReportApi.getReportByLeaderId(search, pageIndex, PageSize.LEADER_REPORT_LIST);
     setReports(data);
     setLoading(false);
   };
 
   useEffect(() => {
-    getReports(null, 1, true);
+    getReports();
   }, []);
 
   const handleSearch = (value) => {
@@ -146,8 +142,8 @@ export const LeaderReportList = () => {
         }}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm báo cáo...",
-          onSearch: setSearch,
+          placeholder: "Tìm kiếm đơn hàng...",
+          onSearch: handleSearch,
           width: 300,
         }}
       />

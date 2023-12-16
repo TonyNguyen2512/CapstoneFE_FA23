@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { modalModes } from "../../../../constants/enum";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
-import { handleDownloadFile } from "../../../../utils";
+import { disabledDateTime, handleDownloadFile } from "../../../../utils";
 import { TaskContext } from "../../../../providers/task";
 import { ETaskStatusOptions } from "../../../../constants/app";
 
@@ -19,11 +19,11 @@ export const LeaderTaskModal = ({
 	confirmLoading,
 	dataSource,
 	mode,
+	leadersData,
 }) => {
 	const { info } = useContext(TaskContext);
 
 	const [title, setTitle] = useState(false);
-	const [leadersData, setLeadersData] = useState([]);
 
 	const leadTaskFormRef = useRef();
 
@@ -32,23 +32,10 @@ export const LeaderTaskModal = ({
 	const isDrawingsTechnical = dataSource?.item?.drawingsTechnical;
 
 	const isCreate = mode === modalModes.CREATE;
-
+	
 	const onFinish = async (values) => {
 		await onSubmit({ ...values });
 	};
-
-	const initLeaderInfo = async () => {
-		UserApi.getByLeaderRole().then((resp) => {
-			setLeadersData(resp?.data);
-		});
-	}
-
-	useEffect(() => {
-		const initialData = () => {
-			initLeaderInfo();
-		}
-		initialData();
-	}, [dataSource]);
 
 	useEffect(() => {
 		switch (mode) {
@@ -156,14 +143,17 @@ export const LeaderTaskModal = ({
 									>
 										<DatePicker.RangePicker
 											showNow
-											showTime
 											placeholder={["Bắt đầu", "Kết thúc"]}
 											className="w-full"
 											format="HH:mm DD/MM/YYYY"
 											disabledDate={(date) => {
 												return (
-													date.isBefore(info.startTime)
+													date.isBefore(dayjs(), "date")
 												);
+											}}
+											disabledTime={disabledDateTime}
+											showTime={{
+												hideDisabledOptions: true,
 											}}
 										/>
 									</Form.Item>

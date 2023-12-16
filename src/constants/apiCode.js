@@ -126,6 +126,7 @@ const ApiCodes = {
 	76: "Bước này đang tồn tại trong quy trình, hãy xoá ra khỏi trước khi xoá bước!",
 	//Report
 	23: "Không tìm thấy thông tin công việc nghiệm thu!",
+	86: "Chưa tới ngày bắt đầu công việc, không thể gửi báo cáo vào lúc này!",
 	98: "Số lượng mặt hàng thất bại không lớn hơn số lượng mặt hàng!",
 	101: "Đã quá hạn chỉnh sửa báo cáo!",
 	//Notification
@@ -140,7 +141,6 @@ const ApiCodes = {
 	109: "Sản phẩm đã tồn tại trong đơn hàng!",
 	110: "Không tìm thấy thông tin vật liệu!",
 	//Not used
-	86: "",
 };
 
 export default ApiCodes;

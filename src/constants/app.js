@@ -277,7 +277,6 @@ export const USER_PERMISSIONS = {
     ALL_PERMISSIONS.dashboard.sider,
     ALL_PERMISSIONS.dashboard.view,
     // ACCOUNTS
-    ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
     // materials
     ALL_PERMISSIONS.materials.sider,

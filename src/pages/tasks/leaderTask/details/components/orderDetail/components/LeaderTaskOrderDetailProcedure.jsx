@@ -1,7 +1,7 @@
-import { Edit, Forbid, More, Unlock, Plus, PreviewOpen } from "@icon-park/react";
+import { Edit, Forbid, More, Unlock, Plus, PreviewOpen, FileExcel } from "@icon-park/react";
 import { Typography, Row, message, Col } from "antd";
 import dayjs from "dayjs";
-import React, { useContext, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
@@ -15,8 +15,13 @@ import { LeaderTaskModal } from "../../../../components/LeaderTaskModal";
 import ReportApi from "../../../../../../../apis/task-report";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 import { LeaderTaskAcceptanceModal } from "../../../../components/LeaderTaskAcceptanceModal";
+import UserApi from "../../../../../../../apis/user";
 
-export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
+export const LeaderTaskOrderDetailProcedure = ({
+  title,
+  orderId,
+}) => {
+
   const { tasks, info, reload, filterTask, acceptance } = useContext(TaskContext);
 
   const { Title } = Typography;
@@ -32,7 +37,9 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
   const [eTaskUpdateLoading, setETaskUpdateLoading] = useState(false);
   const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
 
-  const [searchData, setSearchData] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchData, setSearchData] = useState("")
+  const [leadersData, setLeadersData] = useState([]);
 
   const leaderTaskInfo = useRef();
 
@@ -46,16 +53,12 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
         icon: <PreviewOpen />,
         onClick: () => {
           leaderTaskInfo.current = record;
-          navigate(
-            routes.dashboard.workersTasks + "/" + id,
-            {
-              state: {
-                orderId: orderId,
-                orderDetailId: info.id,
-              },
-            },
-            { replace: true }
-          );
+          navigate(routes.dashboard.workersTasks + "/" + id, {
+            state: {
+              orderId: orderId,
+              orderDetailId: info.id,
+            }
+          }, { replace: true });
         },
       },
       {
@@ -68,7 +71,7 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
       },
       {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
+        label: isActive ? "Mở khóa" : "Xoá",
         danger: !isActive,
         icon: !isActive ? <Forbid /> : <Unlock />,
         onClick: () => {
@@ -78,7 +81,7 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
             type: "confirm",
             cancelText: "Hủy",
             onOk: () => deleteTaskProcedure(record.id),
-            onCancel: () => {},
+            onCancel: () => { },
             closable: true,
           });
         },
@@ -90,20 +93,20 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
     if (!eTaskId) return;
     const data = await LeaderTasksApi.getLeaderTaskById(eTaskId);
     if (data.code === 0) {
-      console.log("data detail", data.data);
+      console.log("data detail", data.data)
       leaderTaskInfo.current = data.data;
       setShowUpdateModal(true);
     } else {
       message.error(data.message);
     }
-  };
+  }
 
   const columns = [
     {
       title: "Độ ưu tiên",
       dataIndex: "priority",
       key: "priority",
-      defaultSortOrder: "ascend",
+      defaultSortOrder: 'ascend',
       // align: "center",
       width: "10%",
       render: (_, record) => {
@@ -124,13 +127,10 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
       sorter: (a, b) => a.leaderName.localeCompare(b.leaderName),
     },
     {
-      title: "Sản phẩm",
-      dataIndex: "itemName",
-      key: "itemName",
-      sorter: (a, b) => a.itemName.localeCompare(b.itemName),
-      render: (_, record) => {
-        return <span>{record?.item?.name}</span>;
-      },
+      title: "Số lượng sản phẩm",
+      dataIndex: "itemQuantity",
+      key: "itemQuantity",
+      sorter: (a, b) => a.itemQuantity < b.itemQuantity,
     },
     {
       title: "Ngày bắt đầu",
@@ -182,13 +182,23 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
     },
   ];
 
-  const handleSearch = (value) => {
+  const handleReload = (value = searchData, current = currentPage) => {
+    setLoading(true);
     setSearchData(value);
-    filterTask(1, value);
+    filterTask(current, value);
+    setLoading(false);
+  };
+
+  const handleSearch = (value) => {
+    setLoading(true);
+    // setCurrentPage(1);
+    handleReload(value);
+    setLoading(false);
   };
 
   const onPageChange = (current) => {
-    filterTask(current, searchData);
+    setCurrentPage(current);
+    handleReload(searchData, current);
   };
 
   const handleSubmitCreate = async (values) => {
@@ -204,14 +214,14 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
       endTime: values.dates?.[1],
       description: values?.description,
       orderId: orderId,
-    };
-    console.log("create", data);
+    }
+    console.log("create", data)
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
         message.success(create.message);
         setShowCreateModal(false);
-        reload(false);
+        handleReload();
       } else {
         message.error(create.message);
       }
@@ -234,14 +244,14 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
       endTime: values.dates?.[1],
       description: values?.description,
       status: values?.status,
-    };
+    }
     try {
       console.log("update task: ", data);
       const update = await LeaderTasksApi.updateLeaderTasks(data);
       if (update.code === 0) {
         message.success(update.message);
         setShowUpdateModal(false);
-        reload(false);
+        handleReload();
       } else {
         message.error(update.message);
       }
@@ -253,35 +263,44 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
   };
 
   const deleteTaskProcedure = async (value) => {
-    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
-      setLoading(true);
-      try {
-        const success = await LeaderTasksApi.deleteLeaderTasks(value);
-        if (success) {
-          message.success(success.message);
-          reload(false);
-        } else {
-          message.error(success.message);
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setLoading(false);
+    console.log("deleteTaskProcedure", value)
+    setLoading(true);
+    try {
+      const success = await LeaderTasksApi.deleteLeaderTasks(value);
+      if (success) {
+        message.success(success.message);
+        handleReload();
+      } else {
+        message.error(success.message);
       }
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSubmitAcceptanceReportCreate = async (values) => {
-    console.log("create task acceptance", values);
+    console.log("create task acceptance", values)
     setAcceptanceReportLoading(true);
     const resp = await LeaderTasksApi.createAcceptanceTasks(values);
     if (resp) {
       message.success(resp.message);
       setAcceptanceReportLoading(false);
+      handleReload();
     } else {
       message.error(resp.message);
     }
-  };
+  }
+
+  const handleRetrieveLeaderInfo = async () => {
+    const resp = await UserApi.getByLeaderRole();
+    setLeadersData(resp);
+  }
+
+  useEffect(() => {
+    handleRetrieveLeaderInfo();
+  }, []);
 
   return (
     <>
@@ -290,26 +309,33 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
           <Title level={4} style={{ margin: 0 }}>
             {titleInfo}
           </Title>
-          {info?.status === OrderStatus.InProgress && (
+          {info?.status === OrderStatus.InProgress &&
             <Button
               icon={<Plus />}
               className="flex-center ml-3"
               shape="circle"
               type="primary"
-              onClick={() => setShowCreateModal(true)}
+              onClick={() => {
+                handleRetrieveLeaderInfo();
+                setShowCreateModal(true);
+              }
+              }
             />
-          )}
-          {acceptance && (
+          }
+          {acceptance &&
             <Col>
               <Button
                 className="flex-center ml-3"
                 type="primary"
-                onClick={() => setShowAcceptanceReportModal(true)}
+                onClick={() => {
+                  handleRetrieveLeaderInfo();
+                  setShowAcceptanceReportModal(true);
+                }}
               >
-                Thêm công việc nghiệm thu
+                <Plus style={{ display: "flex" }} /> Nghiệm thu
               </Button>
             </Col>
-          )}
+          }
         </Row>
       </Row>
       <BaseTable
@@ -339,6 +365,7 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
         confirmLoading={eTaskCreateLoading}
         dataSource={[]}
         mode={modalModes.CREATE}
+        leadersData={leadersData}
       />
       <LeaderTaskModal
         open={showUpdateModal}
@@ -351,16 +378,18 @@ export const LeaderTaskOrderDetailProcedure = ({ title, orderId }) => {
         dataSource={leaderTaskInfo.current}
         mode={modalModes.UPDATE}
         message={message}
+        leadersData={leadersData}
       />
       <LeaderTaskAcceptanceModal
         open={showAcceptanceReportModal}
         onCancel={() => {
           leaderTaskInfo.current = null;
-          setShowAcceptanceReportModal(false);
+          setShowAcceptanceReportModal(false)
         }}
         onSubmit={handleSubmitAcceptanceReportCreate}
         confirmLoading={acceptanceReportLoading}
         title={"Thêm công việc nghiệm thu"}
+        leadersData={leadersData}
       />
     </>
   );

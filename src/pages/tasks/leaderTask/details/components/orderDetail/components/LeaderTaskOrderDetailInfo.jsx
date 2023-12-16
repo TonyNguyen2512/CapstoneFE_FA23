@@ -114,7 +114,7 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
                         <Row gutter={[16, 16]}>
                           {materials?.data?.map((item, index) => (
                             <Col className="gutter-row" span={24} key={item.materialId}>
-                              {index + 1}. {item.materialName}
+                              {index + 1}. {item.materialName} ({item.quantity * quantity})
                             </Col>
                           ))}
                         </Row>

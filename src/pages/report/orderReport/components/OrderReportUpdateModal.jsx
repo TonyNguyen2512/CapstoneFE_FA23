@@ -131,7 +131,7 @@ const OrderReportUpdateModal = ({ data, idOrderReport, open, onCancel, getReport
         >
           <Select
             options={Object.keys(orderReportMap)
-              ?.filter((x) => x != EReport.Achieved)
+              ?.filter((x) => x != WReport.Achieved)
               ?.map((x) => {
                 return {
                   value: x - 0,

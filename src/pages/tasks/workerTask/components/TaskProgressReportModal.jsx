@@ -17,7 +17,7 @@ export const TaskProgressReportModal = ({
 }) => {
   const formProgressRef = useRef();
   const { info } = useContext(TaskContext);
-
+  
   const onFinish = async (values) => {
     const resource = formProgressRef.current?.getFieldValue('resource');
     values.resource = [resource];
@@ -35,7 +35,7 @@ export const TaskProgressReportModal = ({
       <Form
         ref={formProgressRef}
         initialValues={{
-          leaderTaskId: info?.leaderTaskId,
+          leaderTaskId: info?.id,
           itemFailed: 0,
           resource: "",
         }}
