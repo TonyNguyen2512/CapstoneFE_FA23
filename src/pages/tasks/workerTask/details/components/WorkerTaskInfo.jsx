@@ -141,8 +141,8 @@ export const WorkerTaskInfo = ({ loading }) => {
                 Tên công việc: <strong>{name}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Tên quản lý:{" "}
-                <strong>{leaderName || defaultValue("Không xác định được quản lý")}</strong>
+                Tên tổ trưởng:{" "}
+                <strong>{leaderName || defaultValue("Không xác định được Tổ trưởng")}</strong>
               </Col>
               <Col></Col>
               <Col className="gutter-row" span={8}>

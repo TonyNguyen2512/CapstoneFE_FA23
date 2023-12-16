@@ -237,99 +237,27 @@ const searchGetByForemanRole = async (search, pageIndex, pageSize) => {
 	}
 };
 
-const getByLeaderRole = async (search, pageIndex, pageSize) => {
+const getByLeaderRole = async () => {
 	try {
-		if (search) {
-			return await searchGetByLeaderRole(search, pageIndex, pageSize);
-		}
-		else {
-			var params = {};
-			if (pageIndex) {
-				params = { ...params, pageIndex };
-			}
-			if (pageSize) {
-				params = { ...params, pageSize };
-			}
-			const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
-				params: params,
-			});
-			return response.data;
-		}
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRole`)
+		return response.data;
 	} catch (error) {
 		console.log("Error enroll group: ", error);
 		return false;
 	}
 };
 
-const searchGetByLeaderRole = async (search, pageIndex, pageSize) => {
+const getByLeaderRoleAndWorkerRole = async () => {
 	try {
-		var params = {};
-		if (search) {
-			params = { ...params, search };
-		}
-		if (pageIndex) {
-			params = { ...params, pageIndex };
-		}
-		if (pageSize) {
-			params = { ...params, pageSize };
-		}
-		const response = await BaseApi.get(`/${resource}/GetByLeaderRole`, {
-			params: params,
-		});
+		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`)
 		return response.data;
-	} catch (error) {
-		console.log("Error get group: ", error);
-		return false;
-	}
-};
-
-const getByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
-	try {
-		if (search) {
-			return await searchGetByLeaderRoleAndWorkerRole(search, pageIndex, pageSize);
-		}
-		else {
-			var params = {};
-			if (pageIndex) {
-				params = { ...params, pageIndex };
-			}
-			if (pageSize) {
-				params = { ...params, pageSize };
-			}
-			const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
-				params: params,
-			});
-			return response.data;
-		}
 	} catch (error) {
 		console.log("Error enroll group: ", error);
 		return false;
 	}
 };
 
-const searchGetByLeaderRoleAndWorkerRole = async (search, pageIndex, pageSize) => {
-	try {
-		var params = {};
-		if (search) {
-			params = { ...params, search };
-		}
-		if (pageIndex) {
-			params = { ...params, pageIndex };
-		}
-		if (pageSize) {
-			params = { ...params, pageSize };
-		}
-		const response = await BaseApi.get(`/${resource}/GetByLeaderRoleAndWorkerRole`, {
-			params: params,
-		});
-		return response.data;
-	} catch (error) {
-		console.log("Error get group: ", error);
-		return false;
-	}
-};
-
-const getRoleLeaderAndWorker = async (id) => {
+const getRoleLeaderAndWorker = async () => {
 	try {
 		const response = await BaseApi.get(`/${resource}/GetRoleLeaderAndWorker`);
 		return response.data;
