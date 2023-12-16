@@ -48,7 +48,6 @@ const OrderDetailPage = () => {
   const [orderReportLoading, setOrderReportLoading] = useState(false);
   const { info, orderDetails, reload, filterTask } = useContext(TaskContext);
 
-
   const itemRef = useRef();
   const orderRef = useRef();
   const orderDetailRef = useRef();
@@ -418,7 +417,7 @@ const OrderDetailPage = () => {
       title: "Tên sản phẩm",
       dataIndex: "itemName",
       key: "itemName",
-      width: "25%",
+      width: "18%",
       render: (_, record) => <span>{record?.itemName}</span>,
       sorter: (a, b) => a?.itemName.localeCompare(b?.itemName),
     },
@@ -440,6 +439,51 @@ const OrderDetailPage = () => {
       dataIndex: "totalPrice",
       key: "totalPrice",
       sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
+    },
+    {
+      title: "Dài",
+      dataIndex: "itemLength",
+      key: "itemLength",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.itemLength || "-"}</span>;
+      },
+      sorter: (a, b) => a?.itemLength.localeCompare(b?.itemLength),
+    },
+
+    {
+      title: "Sâu",
+      dataIndex: "itemDepth",
+      key: "itemDepth",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.itemDepth || "-"}</span>;
+      },
+      sorter: (a, b) => a?.itemDepth.localeCompare(b?.itemDepth),
+    },
+    {
+      title: "Cao",
+      dataIndex: "itemHeight",
+      key: "itemHeight",
+      width: "5%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.itemHeight || "-"}</span>;
+      },
+      sorter: (a, b) => a?.itemHeight.localeCompare(b?.itemHeight),
+    },
+    {
+      title: "Đơn vị",
+      dataIndex: "itemUnit",
+      key: "itemUnit",
+      width: "7%",
+      align: "center",
+      render: (_, record) => {
+        return <span>{record?.itemUnit || "-"}</span>;
+      },
+      sorter: (a, b) => a?.itemUnit.localeCompare(b?.itemUnit),
     },
     {
       title: "Ghi chú",
