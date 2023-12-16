@@ -120,12 +120,10 @@ const ItemList = ({ canModify }) => {
       dataIndex: "name",
       key: "name",
       render: (_, record) => {
-        console.log(record.image);
         return (
           <Tooltip title={() => <img src={record.image} className="w-full" />}>
             {record.name}
           </Tooltip>
-          // <span onClick={() => showModal(record)}>{record.name}</span>
         );
       },
       sorter: (a, b) => a.name - b.name,

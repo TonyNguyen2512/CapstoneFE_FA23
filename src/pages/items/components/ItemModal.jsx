@@ -34,7 +34,7 @@ export const ItemModal = ({
       return { ...e, index: i };
     })
   );
-  const [listMaterial, setListMaterial] = useState([]);
+  const [listMaterial, setListMaterial] = useState(data?.listMaterial || []);
   const [progress, setProgress] = useState(-1);
   const [tableKey, setTableKey] = useState(0);
 
@@ -391,7 +391,6 @@ export const ItemModal = ({
                   beforeUpload={() => false}
                   onChange={handleUploadDrawing2D}
                   maxCount={1}
-                  defaultValue=""
                 >
                   <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
