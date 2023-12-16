@@ -381,7 +381,7 @@ export const ItemModal = ({
                   onChange={handleUploadImage}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               {/*  */}
@@ -393,7 +393,7 @@ export const ItemModal = ({
                   maxCount={1}
                   defaultValue=""
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               {/*  */}
@@ -404,7 +404,7 @@ export const ItemModal = ({
                   onChange={handleUploadDrawing3D}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
               <Form.Item name="drawingsTechnical" label="Bảng vẽ kỹ thuật">
@@ -414,7 +414,7 @@ export const ItemModal = ({
                   onChange={handleUploadDrawingTechnical}
                   maxCount={1}
                 >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
+                  <Button icon={<UploadOutlined />}>Tải lên</Button>
                 </Upload>
               </Form.Item>
 

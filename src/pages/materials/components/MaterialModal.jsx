@@ -282,7 +282,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
               onChange={handleUploadImage}
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>
+              <Button icon={<UploadOutlined />}>Tải lên</Button>
             </Upload>
           </Space>
         </Form.Item>

@@ -148,7 +148,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
               onChange={handleUploadContract}
               maxCount={1}
             >
-              <Button icon={<UploadOutlined />}>Upload</Button>
+              <Button icon={<UploadOutlined />}>Tải lên</Button>
             </Upload>
           </Space>
         </Form.Item>
