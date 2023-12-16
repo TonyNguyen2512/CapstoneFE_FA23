@@ -3,6 +3,12 @@ import ApiCodes from "../constants/apiCode";
 
 const resource = "TaskReport";
 
+const retrieveDataSuccessCode = 300;
+const createSuccessCode = 302;
+const updateSuccessCode = 303;
+const deleteSuccessCode = 304;
+const updateStatusSuccessCode = 305;
+
 const errorComposer = (error) => {
   if (error?.response?.data) {
     const { code } = error?.response?.data
@@ -76,7 +82,7 @@ const searchReport = async (search, pageIndex, pageSize) => {
 
 const getReportByReportId = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/GetReportByReportId/${id}`);
+    const response = await BaseApi.get(`/${resource}/GetById/${id}`);
     return response.data;
   } catch (error) {
     console.log("Error get item by id: ", error);
@@ -117,6 +123,15 @@ const updateProblemTaskReport = async (data) => {
     return response.status === 200;
   } catch (error) {
     console.log("Error update item: ", error);
+    return false;
+  }
+};
+const updateStatusReport = async (id, status) => {
+  try {
+    const response = await BaseApi.put(`/${resource}/UpdateStatusReport/${id}/${status}`);
+    return response.status === 200;
+  } catch (error) {
+    console.log("Error UpdateStatusReport: ", error);
     return false;
   }
 };
@@ -191,6 +206,52 @@ const getReportByLeaderIdAndLeaderTaskId = async (leaderTaskId, pageIndex, pageS
   }
 };
 
+const getReportByForemanId = async (search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetReportByForemanId(search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetReportByForemanId`, {
+				params: params,
+			});
+			return successComposer(retrieveDataSuccessCode, response);
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return errorComposer(error);
+	}
+};
+
+const searchGetReportByForemanId = async (search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetReportByForemanId`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return errorComposer(error);
+	}
+};
+
 const ReportApi = {
   getReportByLeaderId,
   searchReport,
@@ -205,6 +266,8 @@ const ReportApi = {
   sendProblemReportFeedback,
   updateProblemTaskReport,
   getReportByLeaderIdAndLeaderTaskId,
+  getReportByForemanId,
+  updateStatusReport,
 };
 
 export default ReportApi;

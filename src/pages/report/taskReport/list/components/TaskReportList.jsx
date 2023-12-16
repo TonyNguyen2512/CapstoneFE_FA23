@@ -1,48 +1,48 @@
-import { Button, Dropdown, message } from "antd";
+import { Button, Dropdown, Tag, message } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import moment from "moment";
 import OrderReportApi from "../../../../../apis/order-report";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { ReportMap, orderReportMap } from "../../../../../constants/enum";
+import { PageSize, ReportMap, ReportTypeMap, orderReportMap } from "../../../../../constants/enum";
 import { UserContext } from "../../../../../providers/user";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
 import OrderReportUpdateModal from "../../../orderReport/components/OrderReportUpdateModal";
+import ReportApi from "../../../../../apis/task-report";
+import TaskReportDetail from "../../detail/components/TaslReportDetail";
+import TaskReportUpdateModal from "../../components/TaskReportUpdateModal";
 
 export const TaskReportList = () => {
   const navigate = useNavigate();
 
-  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
-  const [pageIndex, setPageIndex] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [search, setSearch] = useState(null);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectingOrderReport, setSelectingOrderReport] = useState();
 
-  const getReports = async () => {
-    setLoading(true);
-    // const data = await OrderReportApi.getAll(pageIndex, pageSize, search);
-    const data = await OrderReportApi.getByForemanId(user?.id, pageIndex, pageSize, search);
-    setReports(data);
+  const getReports = async (search, pageIndex, handleLoading) => {
+    if (handleLoading) {
+      setLoading(true);
+    }
+    const data = await ReportApi.getReportByForemanId(search, pageIndex, PageSize.TASK_REPORT_LIST);
+    setReports(data.data);
     setLoading(false);
   };
 
   useEffect(() => {
-    if (user?.id) {
-      getReports();
-    }
-  }, [user?.id, pageSize, pageIndex]);
+    getReports();
+  }, []);
 
-  useEffect(() => {
-    if (pageIndex != 1) {
-      setPageIndex(1);
-    } else {
-      getReports();
-    }
-  }, [search]);
+  const handleSearch = (value) => {
+    getReports(value, 1, true);
+  };
+
+  const onPageChange = (current) => {
+    setCurrentPage(current);
+    getReports(null, current, false);
+  };
 
   const getActionOrderReports = (record) => {
     return [
@@ -54,18 +54,17 @@ export const TaskReportList = () => {
           navigate(record?.id);
         },
       },
-
       {
         key: "UPDATE_DETAIL",
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          if (moment().diff(moment(record?.createdDate), "days") >= 1) {
-            message.error("Đã quá hạn cập nhật báo cáo!");
-          } else {
+          // if (moment().diff(moment(record?.createdDate), "days") >= 1) {
+          //   message.error("Đã quá hạn cập nhật báo cáo!");
+          // } else {
             setSelectingOrderReport(record);
             setOpenUpdateModal(true);
-          }
+          // }
         },
       },
     ];
@@ -73,25 +72,55 @@ export const TaskReportList = () => {
 
   const columns = [
     {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1 + (currentPage - 1) * PageSize.TASK_REPORT_LIST}</span>;
+      },
+    },
+    {
       key: "title",
       title: "Tên báo cáo",
+      width: "16%",
       render: (_, record) => {
         return record?.title ?? "";
       },
       sorter: (a, b) => a.title.localeCompare(b.title),
     },
     {
-      key: "ordername",
-      title: "Tên đơn",
+      key: "reportType",
+      title: "Loại báo cáo",
+      width: "8%",
       render: (_, record) => {
-        return record?.order?.name ?? "";
+        let data = ReportTypeMap[record?.reportType];
+        return (
+          <Tag
+            className="text-center"
+            color={data?.color}
+            style={{ fontWeight: "bold" }}
+          >
+            {(data ? data?.label : "-")}
+          </Tag>
+        );
       },
-      sorter: (a, b) => a.order?.name.localeCompare(b.order?.name),
-      
+      sorter: (a, b) => a.reportType - (b.reportType),
+    },
+    {
+      key: "reporterName",
+      title: "Người báo cáo",
+      width: "15%",
+      render: (_, record) => {
+        return record?.reporterName ?? "";
+      },
+      sorter: (a, b) => a.reporterName.localeCompare(b.reporterName),
     },
     {
       key: "createdDate",
       title: "Ngày tạo",
+      width: "8%",
       render: (_, record) => {
         return record?.createdDate ? formatDate(record?.createdDate, "DD/MM/YYYY") : "";
       },
@@ -100,15 +129,25 @@ export const TaskReportList = () => {
     {
       key: "status",
       title: "Trạng thái",
+      width: "10%",
       render: (_, record) => {
-        let data = orderReportMap[record?.status];
-        return <strong className={data?.color}>{data ? data.label : ""}</strong>;
+        let data = ReportMap[record?.status];
+        return <strong className={data?.color}>{data ? data.label : "-"}</strong>;
       },
-      sorter: (a, b) => a.status - (b.status),
+      sorter: (a, b) => a.status - b.status,
+    },
+    {
+      key: "title",
+      title: "Nội dung",
+      render: (_, record) => {
+        return record?.title ?? "-";
+      },
+      sorter: (a, b) => a.title.localeCompare(b.title),
     },
     {
       key: "action",
       title: "Thao tác",
+      width: "7%",
       render: (_, record) => {
         return (
           <Dropdown menu={{ items: getActionOrderReports(record) }}>
@@ -123,24 +162,23 @@ export const TaskReportList = () => {
     <>
       <BaseTable
         title="Danh sách báo cáo"
-        dataSource={reports?.data || []}
+        dataSource={reports.data || []}
         columns={columns}
         loading={loading}
         pagination={{
-          current: pageIndex,
-          pageSize: pageSize, //<= reports?.total ? pageSize : reports?.total,
+          onChange: onPageChange,
+          pageSize: PageSize.TASK_REPORT_LIST,
           total: reports?.total,
-          onChange: setPageIndex,
         }}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm báo cáo...",
-          onSearch: setSearch,
+          placeholder: "Tìm kiếm tiến độ...",
+          onSearch: handleSearch,
           width: 300,
         }}
       />
 
-      <OrderReportUpdateModal
+      <TaskReportUpdateModal
         idOrderReport={selectingOrderReport?.id}
         open={openUpdateModal}
         onCancel={() => setOpenUpdateModal(false)}

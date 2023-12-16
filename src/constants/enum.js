@@ -132,13 +132,6 @@ export const wTaskMap = {
     label: "Hoàn thành",
   },
 }
-
-export const EReport = {
-  Pending: 5,
-  Reject: 6,
-  Approve: 7,
-};
-
 export const WReport = {
   Uncomplete: 1,
   Complete: 2,
@@ -150,16 +143,34 @@ export const WReport = {
   Provided: 8,
 };
 
-export const orderReportMap = {
-  [EReport.Pending]: {
+export const TaskReportMap = {
+  [WReport.Pending]: {
     color: "text-yellow-500",
     label: "Chờ duyệt",
   },
-  [EReport.Reject]: {
+  [WReport.Reject]: {
     color: "text-red-500",
     label: "Từ chối",
   },
-  [EReport.Approve]: {
+  [WReport.Approve]: {
+    color: "text-green-500",
+    label: "Duyệt",
+  },
+  [WReport.Provided]: {
+    color: "text-blue-500",
+    label: "Đã cung cấp",
+  },
+};
+export const orderReportMap = {
+  [WReport.Pending]: {
+    color: "text-yellow-500",
+    label: "Chờ duyệt",
+  },
+  [WReport.Reject]: {
+    color: "text-red-500",
+    label: "Từ chối",
+  },
+  [WReport.Approve]: {
     color: "text-green-500",
     label: "Duyệt",
   },
@@ -179,11 +190,11 @@ export const ReportMap = {
     label: "Không đạt",
   },
   [WReport.Achieved]: {
-    color: "text-red-500",
+    color: "text-pink-500",
     label: "Đạt",
   },
   [WReport.Pending]: {
-    color: "text-green-500",
+    color: "text-yellow-500",
     label: "Chờ duyệt",
   },
   [WReport.Reject]: {
@@ -195,7 +206,7 @@ export const ReportMap = {
     label: "Duyệt",
   },
   [WReport.Provided]: {
-    color: "text-red-500",
+    color: "text-blue-500",
     label: "Đã cung cấp",
   },
 };
@@ -235,6 +246,7 @@ export const PageSize = {
   LOG_MATERIAL_LIST: 10,
   STEP_LIST: 10, 
   PROCEDURE_LIST: 10,
+  TASK_REPORT_LIST: 10,
 };
 
 export const NotificationType = {
@@ -254,3 +266,29 @@ export const OrderReportStatusLabel = [
   "Thất bại",
   "Hoàn thành",
 ];
+
+export const ReportType = {
+  ProgressReport: 0,
+  ProblemReport: 1,
+  AcceptanceReport: 2,
+  OrderReport: 3,
+};
+
+export const ReportTypeMap = {
+  [ReportType.ProgressReport]: {
+    color: "#BEBB6D",
+    label: "Tiến độ",
+  },
+  [ReportType.ProblemReport]: {
+    color: "#CB7A00",
+    label: "Vấn đề",
+  },
+  [ReportType.AcceptanceReport]: {
+    color: "#FBD305",
+    label: "Nghiệm thu",
+  },
+  [ReportType.OrderReport]: {
+    color: "#29CB00",
+    label: "Đơn hàng",
+  },
+}

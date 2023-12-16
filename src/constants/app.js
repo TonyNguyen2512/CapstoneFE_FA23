@@ -208,7 +208,6 @@ export const USER_PERMISSIONS = {
   ],
   [roles.FOREMAN]: [
     // ACCOUNTS
-    ALL_PERMISSIONS.accounts.sider,
     ALL_PERMISSIONS.accounts.view,
     // materials
     ALL_PERMISSIONS.materials.sider,
