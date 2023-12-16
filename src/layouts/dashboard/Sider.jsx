@@ -108,7 +108,7 @@ export const AppSider = () => {
         canViewAccounts && {
           key: itemKeys.ACCOUNTS,
           icon: <UserOutlined size={iconSize - 2} />,
-          label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+          label: <Link to={routes.dashboard.accounts}>Tài khoản</Link>,
         },
         canViewEmployees && {
           key: itemKeys.EMPLOYEES,

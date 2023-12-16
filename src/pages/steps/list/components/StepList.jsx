@@ -11,6 +11,7 @@ const StepList = () => {
   const [showItemCategoryModal, setShowItemCategoryModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [stepList, setStepList] = useState([]);
+  const [total, setTotal] = useState([]);
 
   const stepRef = useRef();
 
@@ -19,7 +20,9 @@ const StepList = () => {
       setLoading(true);
     }
     const response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
-    setStepList(response);
+    setStepList(response.data);
+    console.log(response.total);
+    setTotal(response.total || []);
     setLoading(false);
   };
 
@@ -66,7 +69,7 @@ const StepList = () => {
       dataIndex: "action",
       key: "action",
       align: "center",
-      width: "120px",
+      width: "10%",
       render: (_, record) => {
         return (
           <Dropdown menu={{ items: getActionItems(record) }}>
@@ -99,6 +102,10 @@ const StepList = () => {
     getData(value, 1, true);
   };
 
+  useEffect(() => {
+    getData(null, 1);
+  }, []);
+
   const onPageChange = (current) => {
     setCurrentPage(current);
     getData(null, current, false);
@@ -124,7 +131,7 @@ const StepList = () => {
         pagination={{
           onChange: onPageChange,
           pageSize: PageSize.STEP_LIST,
-          total: stepList?.total,
+          total: total,
         }}
         searchOptions={{
           visible: true,
