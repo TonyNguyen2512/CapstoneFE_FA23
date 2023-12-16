@@ -95,10 +95,32 @@ export const AppSider = () => {
       icon: <DataFile size={iconSize - 4} />,
       label: <Link to={routes.dashboard.home}>Tổng quan</Link>,
     },
-    canViewAccounts && {
-      key: itemKeys.ACCOUNTS,
-      icon: <UserOutlined size={iconSize - 2} />,
-      label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+    // canViewAccounts && {
+    //   key: itemKeys.ACCOUNTS,
+    //   icon: <UserOutlined size={iconSize - 2} />,
+    //   label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+    // },
+    (canViewEmployees || canViewGroups || canViewAccounts) && {
+      key: itemKeys.P_EMPLOYEES,
+      icon: <DataUser size={iconSize - 2} />,
+      label: "Quản lý nhân sự",
+      children: [
+        canViewAccounts && {
+          key: itemKeys.ACCOUNTS,
+          icon: <UserOutlined size={iconSize - 2} />,
+          label: <Link to={routes.dashboard.accounts}>Quản lý tài khoản</Link>,
+        },
+        canViewEmployees && {
+          key: itemKeys.EMPLOYEES,
+          icon: <UserOutlined size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.employees}>Nhân viên</Link>,
+        },
+        canViewGroups && {
+          key: itemKeys.GROUPS,
+          icon: <EveryUser size={iconSize - 4} />,
+          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
+        },
+      ],
     },
     canViewOrders && {
       key: itemKeys.ORDERS,
@@ -161,23 +183,6 @@ export const AppSider = () => {
           key: itemKeys.ITEMS,
           icon: <AdjacentItem size={iconSize - 4} />,
           label: <Link to={routes.dashboard.items}>Sản phẩm</Link>,
-        },
-      ],
-    },
-    (canViewEmployees || canViewGroups) && {
-      key: itemKeys.P_EMPLOYEES,
-      icon: <DataUser size={iconSize - 2} />,
-      label: "Quản lý nhân sự",
-      children: [
-        canViewEmployees && {
-          key: itemKeys.EMPLOYEES,
-          icon: <UserOutlined size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.employees}>Nhân viên</Link>,
-        },
-        canViewGroups && {
-          key: itemKeys.GROUPS,
-          icon: <EveryUser size={iconSize - 4} />,
-          label: <Link to={routes.dashboard.groups}>Tổ</Link>,
         },
       ],
     },

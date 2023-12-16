@@ -18,7 +18,14 @@ import { PageSize } from "../../../constants/enum";
 import OrderReportApi from "../../../apis/order-report";
 import { LeaderTaskOrderReportModal } from "../../tasks/leaderTask/components/LeaderTaskOrderReportModal";
 import LeaderTasksApi from "../../../apis/leader-task";
-import { dateSort, formatDate, getTaskStatusColor, getTaskStatusName } from "../../../utils";
+import {
+  dateSort,
+  formatDate,
+  formatMoney,
+  formatNum,
+  getTaskStatusColor,
+  getTaskStatusName,
+} from "../../../utils";
 import confirm from "antd/es/modal/confirm";
 import { TaskContext } from "../../../providers/task";
 
@@ -432,12 +439,22 @@ const OrderDetailPage = () => {
       title: "Đơn giá",
       dataIndex: "price",
       key: "price",
+      align: "center",
+      render: (price) => {
+        const money = formatNum(price);
+        return `${formatMoney(money)}`;
+      },
       sorter: (a, b) => a?.price.localeCompare(b?.price),
     },
     {
       title: "Thành tiền",
       dataIndex: "totalPrice",
       key: "totalPrice",
+      align: "center",
+      render: (totalPrice) => {
+        const money = formatNum(totalPrice);
+        return `${formatMoney(money)}`;
+      },
       sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
     },
     {
@@ -623,6 +640,7 @@ const OrderDetailPage = () => {
                 pageSize: PageSize.ORDER_LIST,
                 total: itemList?.total,
               }}
+              rowKey={(record) => record.id}
               searchOptions={{
                 visible: true,
                 placeholder: "Tìm kiếm sản phẩm...",
