@@ -13,6 +13,7 @@ const ItemCategoryList = ({ canModify }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [total, setTotal] = useState([]);
 
   const categoryRef = useRef();
 
@@ -25,7 +26,9 @@ const ItemCategoryList = ({ canModify }) => {
       pageIndex,
       PageSize.ITEM_CATEGORY_LIST
     );
-    setItemCategoryList(response.data);
+    setItemCategoryList(response.data.data);
+    setTotal(response.data.total || []);
+
     setLoading(false);
   };
 
@@ -152,7 +155,7 @@ const ItemCategoryList = ({ canModify }) => {
         pagination={{
           onChange: onPageChange,
           pageSize: PageSize.ITEM_CATEGORY_LIST,
-          total: itemCategoryList?.total,
+          total: total,
         }}
         searchOptions={{
           visible: true,

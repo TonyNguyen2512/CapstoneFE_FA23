@@ -2,7 +2,7 @@ import BaseApi from ".";
 
 const resource = "ItemCategory";
 
-const getAllItem = async (search, pageIndex, pageSize = 1000) => {
+const getAllItem = async (search, pageIndex, pageSize) => {
   try {
     var params = {};
     if (search) {
@@ -17,7 +17,7 @@ const getAllItem = async (search, pageIndex, pageSize = 1000) => {
     const response = await BaseApi.get(`/${resource}/GetAll`, {
       params: params,
     });
-    return response.data;
+    return response;
   } catch (error) {
     console.log("Error get item: ", error);
     return false;

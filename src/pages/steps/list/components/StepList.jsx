@@ -21,8 +21,8 @@ const StepList = () => {
     }
     const response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
     setStepList(response.data);
-    console.log(response.data.data);
-    setTotal(response.data.total || []);
+    console.log(response.total);
+    setTotal(response.total || []);
     setLoading(false);
   };
 
@@ -55,7 +55,7 @@ const StepList = () => {
       width: "5%",
       // align: "center",
       render: (_, record, index) => {
-        return <span>{index + 1 + (currentPage - 1) * PageSize.ORDER_LIST}</span>;
+        return <span>{index + 1 + (currentPage - 1) * PageSize.STEP_LIST}</span>;
       },
     },
     {
@@ -108,7 +108,7 @@ const StepList = () => {
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current);
+    getData(null, current, false);
   };
 
   return (
@@ -130,7 +130,7 @@ const StepList = () => {
         loading={loading}
         pagination={{
           onChange: onPageChange,
-          pageSize: PageSize.ORDER_LIST,
+          pageSize: PageSize.STEP_LIST,
           total: total,
         }}
         searchOptions={{
