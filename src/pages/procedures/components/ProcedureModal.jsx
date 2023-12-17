@@ -23,7 +23,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
     setLoading(false);
   };
 
-  const handleChange = (value) => {
+  const handleChange = async (value) => {
     setListStep(
       value?.map((e, i) => {
         return {
@@ -33,6 +33,16 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
       })
     );
   };
+
+  useEffect(() => {
+    handleWorkerNotInGroup();
+    setListStep([]);
+  }, []);
+
+  useEffect(() => {
+    handleWorkerNotInGroup();
+    setListStep(data?.listStep || []);
+  }, [data]);
 
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -85,21 +95,29 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
           label="Danh sách các bước"
           rules={[
             {
-              required: true,
-              message: "Vui lòng chọn các bước cần thực hiện",
+              validator: (_, value) => {
+                if (value && value.length > 0) {
+                  return Promise.resolve();
+                }
+                return Promise.reject("Vui lòng chọn các bước cần thực hiện");
+              },
             },
           ]}
         >
+          {" "}
           <Select
             mode="multiple"
             style={{ width: "100%" }}
             placeholder="Chọn các bước cần thực hiện..."
-            defaultValue={listStep}
-            fieldNames={{ value: "stepId", label: "stepName" }}
+            value={listStep.map((step) => step.stepId)} // Use value instead of defaultValue
             onChange={handleChange}
-            optionLabelProp="label"
-            options={options}
-          />
+          >
+            {options.map((option) => (
+              <Select.Option key={option.value} value={option.value}>
+                {option.label}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
       </Form>
       {/* <AddWorkerToGroupModal
