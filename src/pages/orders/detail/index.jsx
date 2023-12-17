@@ -814,7 +814,7 @@ const OrderDetailPage = () => {
               onSubmit={handleSubmitOrderReport}
               confirmLoading={orderReportLoading}
               message={message}
-              title="Báo cáo công việc"
+              title="Báo cáo tiến độ"
             />
             <ItemOrderModal
               orderId={details?.id}

@@ -127,7 +127,7 @@ export const WorkerTaskInfo = ({ loading }) => {
                 onClick={() => setShowProgressReportModal(true)}
                 // disabled={acceptance}
               >
-                Báo cáo công việc
+                Báo cáo tiến độ
               </Button>
             </div>
           </>
@@ -250,7 +250,7 @@ export const WorkerTaskInfo = ({ loading }) => {
             onSubmit={handleProgressReportCreate}
             confirmLoading={progressReportLoading}
             message={message}
-            title="Báo cáo công việc"
+            title="Báo cáo tiến độ"
           />
         </>
       )}

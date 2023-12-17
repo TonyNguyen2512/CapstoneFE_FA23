@@ -96,15 +96,14 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
           rules={[
             {
               validator: (_, value) => {
-                if (value && value.length > 0) {
-                  return Promise.resolve();
+                if (!value || value.length === 0) {
+                  return Promise.reject(new Error("Vui lòng chọn các bước cần thực hiện."));
                 }
-                return Promise.reject("Vui lòng chọn các bước cần thực hiện");
+                return Promise.resolve();
               },
             },
           ]}
         >
-          {" "}
           <Select
             mode="multiple"
             style={{ width: "100%" }}
