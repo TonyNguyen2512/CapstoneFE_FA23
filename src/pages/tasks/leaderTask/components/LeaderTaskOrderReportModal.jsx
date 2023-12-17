@@ -90,6 +90,7 @@ export const LeaderTaskOrderReportModal = ({
         onFinish={onFinish}
         initialValues={{
           orderId: info?.id,
+          status: 5,
           resource: "",
         }}
       >
@@ -123,25 +124,8 @@ export const LeaderTaskOrderReportModal = ({
               <Form.Item
                 name="status"
                 label={<Text strong>Trạng thái</Text>}
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn trạng thái",
-                  },
-                ]}
+                hidden
               >
-                <Select
-                  className="w-full"
-                  placeholder="Chọn sản phẩm"
-                  options={Object.keys(orderReportMap)
-                    ?.filter((x) => x != WReport.NotAchieved)
-                    ?.map((x) => {
-                      return {
-                        value: x - 0,
-                        label: ReportMap[x].label,
-                      };
-                    })}
-                />
               </Form.Item>
               <UploadFile
                 formRef={leadOrderReportFormRef}

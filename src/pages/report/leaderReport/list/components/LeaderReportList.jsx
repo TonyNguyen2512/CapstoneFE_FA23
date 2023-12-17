@@ -1,10 +1,10 @@
-import { Button, Dropdown, message } from "antd";
+import { Button, Dropdown, Tag, message } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import moment from "moment";
 import OrderReportApi from "../../../../../apis/order-report";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { PageSize, ReportMap, orderReportMap } from "../../../../../constants/enum";
+import { PageSize, ReportMap, ReportTypeMap, orderReportMap } from "../../../../../constants/enum";
 import { UserContext } from "../../../../../providers/user";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
@@ -13,8 +13,6 @@ import ReportApi from "../../../../../apis/task-report";
 
 export const LeaderReportList = () => {
   const navigate = useNavigate();
-
-  const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
   const [reports, setReports] = useState([]);
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
@@ -83,20 +81,38 @@ export const LeaderReportList = () => {
       },
     },
     {
-      key: "orderName",
-      title: "Tên đơn hàng",
+      key: "title",
+      title: "Tiêu đề",
       render: (_, record) => {
-        return record?.orderName ?? "";
+        return record?.title ?? "";
       },
-      sorter: (a, b) => a.orderName.localeCompare(b.orderName),
+      sorter: (a, b) => a.title.localeCompare(b.title),
     },
     {
-      key: "taskName",
+      key: "reportType",
+      title: "Loại báo cáo",
+      width: "8%",
+      render: (_, record) => {
+        let data = ReportTypeMap[record?.reportType];
+        return (
+          <Tag
+            className="text-center"
+            color={data?.color}
+            style={{ fontWeight: "bold" }}
+          >
+            {(data ? data?.label : "-")}
+          </Tag>
+        );
+      },
+      sorter: (a, b) => a.reportType - (b.reportType),
+    },
+    {
+      key: "leaderTaskName",
       title: "Tên công việc",
       render: (_, record) => {
-        return record?.taskName ?? "";
+        return record?.leaderTaskName ?? "";
       },
-      sorter: (a, b) => a.taskName.localeCompare(b.taskName),
+      sorter: (a, b) => a.leaderTaskName.localeCompare(b.leaderTaskName),
     },
     {
       key: "createdDate",
@@ -142,7 +158,7 @@ export const LeaderReportList = () => {
         }}
         searchOptions={{
           visible: true,
-          placeholder: "Tìm kiếm đơn hàng...",
+          placeholder: "Tìm kiếm đơn báo cáo...",
           onSearch: handleSearch,
           width: 300,
         }}

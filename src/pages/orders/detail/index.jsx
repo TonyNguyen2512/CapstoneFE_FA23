@@ -33,6 +33,8 @@ import { LeaderTaskModal } from "../../tasks/leaderTask/components/LeaderTaskMod
 import TaskDetailModal from "../../../components/modals/task/detail";
 import WorkerTasksApi from "../../../apis/worker-task";
 import GroupApi from "../../../apis/group";
+import { DamagedModal } from "../../tasks/leaderTask/components/DamagedModal";
+import { MaterialModal } from "../../tasks/leaderTask/components/MaterialModal";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
@@ -56,7 +58,8 @@ const OrderDetailPage = () => {
   const [leadersData, setLeadersData] = useState([]);
   const [workers, setWorkers] = useState([]);
   const [searchData, setSearchData] = useState("");
-
+  const [showMaterialModal, setShowMaterialModal] = useState(false);
+  const [showDamagedModal, setShowDamagedModal] = useState(false);
   const [showWTaskDetailModal, setShowWTaskDetailModal] = useState(false);
   const [wTaskDetailLoading, setWTaskDetaiLoading] = useState(false);
 
@@ -121,7 +124,6 @@ const OrderDetailPage = () => {
     }
   };
 
-
   const getETaskActionItems = (record) => {
     const { isActive, id } = record;
 
@@ -132,7 +134,7 @@ const OrderDetailPage = () => {
         icon: <PreviewOpen />,
         onClick: () => {
           eTaskInfoRef.current = record;
-          console.log(details)
+          console.log(details);
           navigate(
             routes.dashboard.workersTasks + "/" + id,
             {
@@ -751,13 +753,20 @@ const OrderDetailPage = () => {
             <Space className="w-full flex justify-between mb-6">
               <div></div>
               <div className="flex gap-3">
-                {/* <Button
+                <Button
                   type="primary"
                   className="btn-primary app-bg-primary font-semibold text-white"
-                  onClick={() => setShowOrderReportModal(true)}
+                  onClick={() => setShowMaterialModal(true)}
                 >
-                  Báo cáo tiến độ đơn hàng
-                </Button> */}
+                  Danh sách nguyên vật liệu
+                </Button>
+                <Button
+                  type="primary"
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={() => setShowDamagedModal(true)}
+                >
+                  Danh sách cung cấp
+                </Button>
                 <Button
                   type="primary"
                   className="btn-primary app-bg-primary font-semibold text-white"
@@ -874,6 +883,22 @@ const OrderDetailPage = () => {
               orderRef.current = null;
             }}
             onSuccess={() => window.location.reload()}
+          />
+          <MaterialModal
+            open={showMaterialModal}
+            onCancel={() => {
+              setShowMaterialModal(false);
+            }}
+            title="Danh sách tài nguyên đơn hàng"
+            orderId={id}
+          />
+          <DamagedModal
+            open={showDamagedModal}
+            onCancel={() => {
+              setShowDamagedModal(false);
+            }}
+            title="Danh sách tài nguyên đã cung cấp"
+            orderId={id}
           />
         </OrderDetailsProvider>
       </Spin>

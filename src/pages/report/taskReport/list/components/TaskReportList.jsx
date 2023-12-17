@@ -27,7 +27,7 @@ export const TaskReportList = () => {
       setLoading(true);
     }
     const data = await ReportApi.getReportByForemanId(search, pageIndex, PageSize.ADMIN_REPORT_LIST);
-    setReports(data.data);
+    setReports(data);
     setLoading(false);
   };
 

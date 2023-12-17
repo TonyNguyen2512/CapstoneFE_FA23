@@ -77,7 +77,7 @@ const WorkerTaskList = () => {
     <Spin spinning={loading}>
       <Space className="w-full flex justify-between mb-6">
         <Text strong style={{ fontSize: 20, color: "#ddb850" }}>
-          {user?.group?.name}
+          Tổ {user?.group?.name}
         </Text>
       </Space>
       <Space className="w-full flex justify-between mb-6">
