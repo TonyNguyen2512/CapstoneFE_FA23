@@ -244,7 +244,7 @@ export const PageSize = {
   PROCEDURE_LIST: 5,
   ADMIN_REPORT_LIST: 10,
   ADMIN_REPORT_LIST: 10,
-  STEP_LIST_MAX: 1000,
+  STEP_LIST_MAX: 100000,
 };
 
 export const NotificationType = {

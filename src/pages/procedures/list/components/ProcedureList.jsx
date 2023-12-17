@@ -15,21 +15,17 @@ const ProcedureList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState([]);
 
-  const categoryRef = useRef();
+  const prodRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
-    let response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST_MAX);
+    handleLoading && setLoading(true);
+    let response = await StepApi.getAll(null, pageIndex, PageSize.STEP_LIST_MAX);
     setStepList(response.data);
-    // console.log(response.data.data);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
     setProcedureList(response.data);
     response = await ProcedureApi.getAllTotal(search, pageIndex, PageSize.STEP_LIST);
     setTotal(response.data || []);
-    // console.log("total: ", response.data);
-    setLoading(false);
+    handleLoading && setLoading(false);
   };
 
   const getActionItems = (record) => {
@@ -39,7 +35,7 @@ const ProcedureList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          categoryRef.current = record;
+          prodRef.current = record;
           setShowStepModal(true);
         },
       },
@@ -78,7 +74,8 @@ const ProcedureList = () => {
       render: (_, { listStep }) =>
         listStep?.map((e, i) => (
           <p>
-            {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            {i + 1}.{" "}
+            {e.stepName ? e.stepName : stepList?.find((step) => step.id === e?.stepId)?.name}
           </p>
         )),
     },
@@ -144,24 +141,19 @@ const ProcedureList = () => {
           width: 300,
         }}
       />
-      {/* <AddStepToProcedureModal
-        open={true}
-        // onSubmit={handleCreateGroup}
-        // confirmLoading={groupCreating}
-        // onCancel={false}
-        // group={id}
-        // workers={workerNotInGroupList}
-      /> */}
       <ProcedureModal
-        data={categoryRef.current}
-        options={stepList.map((e) => {
+        data={prodRef.current}
+        options={stepList?.map((e) => {
           return {
             label: e.name,
             value: e.id,
           };
         })}
         open={showStepModal}
-        onCancel={() => setShowStepModal(false)}
+        onCancel={() => {
+          setShowStepModal(false);
+          prodRef.current = null;
+        }}
         onSuccess={() => getData()}
       />
     </>
