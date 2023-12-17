@@ -131,15 +131,14 @@ const OrderDetailPage = () => {
         label: "Xem thông tin chi tiết",
         icon: <PreviewOpen />,
         onClick: () => {
-  console.log("info: ", info.id)
-
           eTaskInfoRef.current = record;
+          console.log(details)
           navigate(
             routes.dashboard.workersTasks + "/" + id,
             {
               state: {
-                
-                orderDetailId: info.id,
+                orderId: details?.id,
+                // orderDetailId: info.id,
               },
             },
             { replace: true }
@@ -680,6 +679,7 @@ const OrderDetailPage = () => {
   };
 
   const handleSearch = async (value) => {
+    setCurrentPage(1);
     getDetails(value, 1, true);
   };
 
@@ -793,6 +793,7 @@ const OrderDetailPage = () => {
                 onChange: onPageChange,
                 pageSize: PageSize.ORDER_LIST,
                 total: itemList?.total,
+                current: currentPage,
               }}
               rowKey={(record) => record.id}
               searchOptions={{

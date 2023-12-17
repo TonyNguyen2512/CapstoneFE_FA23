@@ -191,7 +191,7 @@ export const LeaderTaskOrderDetailProcedure = ({
 
   const handleSearch = (value) => {
     setLoading(true);
-    // setCurrentPage(1);
+    setCurrentPage(1);
     handleReload(value);
     setLoading(false);
   };
@@ -346,6 +346,7 @@ export const LeaderTaskOrderDetailProcedure = ({
           onChange: onPageChange,
           pageSize: PageSize.LEADER_TASK_PROCEDURE_LIST,
           total: tasks?.total,
+          current: currentPage,
         }}
         rowKey={(record) => record.id}
         searchOptions={{

@@ -38,7 +38,7 @@ export const WorkerTaskInfo = ({ loading }) => {
 
   const isInProgress = status === ETaskStatus.InProgress;
 
-  const completedTasks = tasks?.filter((e) => e.status === ETaskStatus.Completed);
+  const completedTasks = tasks?.data?.filter((e) => e.status === ETaskStatus.Completed);
   const isCompletedTasks =
     tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
 

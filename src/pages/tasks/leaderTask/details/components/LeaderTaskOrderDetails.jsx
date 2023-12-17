@@ -577,8 +577,8 @@ export const LeaderTaskOrderDetails = ({ title }) => {
 
   const handleSearch = (value) => {
     setLoading(true);
-    // setCurrentPage(1);
-    handleReload(value);
+    setCurrentPage(1);
+    handleReload(value, 1);
     setLoading(false);
   };
 
@@ -633,6 +633,7 @@ export const LeaderTaskOrderDetails = ({ title }) => {
           onChange: onPageChange,
           pageSize: PageSize.LEADER_TASK_ORDER_DETAIL_LIST,
           total: orderDetails?.total,
+          current: currentPage,
         }}
         rowKey={(record) => record.id}
         searchOptions={{

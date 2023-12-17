@@ -120,7 +120,7 @@ export const handleRetrieveWorkerOnTask = (members) => {
   return members?.map((e) => {
     return {
       id: e.memberId,
-      fullname: e.memberFullName
+      fullName: e.memberFullName
     }
   })
 }

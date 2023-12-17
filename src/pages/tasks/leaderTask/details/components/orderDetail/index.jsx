@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { LeaderTaskOrderDetailInfo } from "./components/LeaderTaskOrderDetailInfo";
 import { Space, Spin, message } from "antd";
@@ -12,8 +12,14 @@ import OrderDetailMaterialApi from "../../../../../../apis/order-details-materia
 import OrderApi from "../../../../../../apis/order";
 import { LeaderTaskOrderDetailProcedureOverview } from "./components/LeaderTaskOrderDetailProcedureOverview";
 import { LeaderTaskOrderDetailProcedure } from "./components/LeaderTaskOrderDetailProcedure";
+import { ALL_PERMISSIONS, roles } from "../../../../../../constants/app";
+import { UserContext } from "../../../../../../providers/user";
+import { usePermissions } from "../../../../../../hooks/permission";
 
 export const LeaderTaskOrderDetailsPage = () => {
+  const permissions = usePermissions();
+  const canView = permissions?.includes(ALL_PERMISSIONS.leadersTasks.view)
+                  || permissions?.includes(ALL_PERMISSIONS.orders.view);
   // const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
@@ -28,6 +34,10 @@ export const LeaderTaskOrderDetailsPage = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  
+  const { user } = useContext(UserContext);
+  const isForeman = user?.role?.name === roles.FOREMAN;
+  const isAdmin = user?.role?.name === roles.ADMIN;
 
   const getOrderDetailData = async (handleLoading, pageIndex, search) => {
     if (handleLoading) {
@@ -111,8 +121,13 @@ export const LeaderTaskOrderDetailsPage = () => {
 
   const handleBack = () => {
     if (state?.orderId) {
-      let path = "";
-      path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
+      let path = `${routes.dashboard.root}`;
+      if (isForeman) {
+        path += `/${routes.dashboard.managersTasks}`;
+      }
+      if (isAdmin) {
+        path += `/${routes.dashboard.orders}`;
+      }
       if (state?.orderId) {
         path += `/${state?.orderId}`;
       }
@@ -124,7 +139,7 @@ export const LeaderTaskOrderDetailsPage = () => {
     }
   }
 
-  return (
+  return canView && (
     <BasePageContent onBack={handleBack} >
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">

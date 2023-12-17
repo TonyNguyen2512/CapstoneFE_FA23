@@ -118,6 +118,7 @@ export const WorkerTaskManagement = () => {
 	const handleRetrieveWorkersUpdate = async (task) => {
 		console.log("fetch workers update", task);
 		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
+		console.log("dataWorkers", dataWorkers)
 		const dataWorkerOnTask = handleRetrieveWorkerOnTask(task?.members);
 		if (dataWorkers.code === 0) {
 			const dataTeam = [...dataWorkers.data, ...dataWorkerOnTask];

@@ -4,22 +4,27 @@ import {
 	Row,
 	Typography,
 } from "antd";
-import React from "react";
+import React, { useContext } from "react";
 import { TextTile } from "../../../../../components/TextTile";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { SearchOutlined } from "@ant-design/icons";
+import { roles } from "../../../../../constants/app";
+import { UserContext } from "../../../../../providers/user";
 
 const { Text } = Typography;
 
 const WorkerTaskItem = ({ task, onView }) => {
 
-	const { id, name, startTime, endTime, status } = task;
+	const { user } = useContext(UserContext);
+	const isAdmin = user?.role?.name === roles.LEADER;
+
+	const { id, name, startTime, endTime, status, leaderTaskName } = task;
 
 	return (
 		<>
 			<Card
 				className="mb-2"
-				title={`Công việc ${name}`}
+				title={isAdmin ? `Công việc ${name}` : `Công việc ${leaderTaskName} - ${name}`}
 				extra={<SearchOutlined className="mt-1" style={{ fontSize: '20px', color: '#08c' }} onClick={() => onView && onView(task)} />}
 				key={id}
 			>
