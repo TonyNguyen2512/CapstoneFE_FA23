@@ -1,3 +1,4 @@
+import { message } from "antd";
 import BaseApi from ".";
 import ApiCodes from "../constants/apiCode";
 
@@ -80,13 +81,13 @@ const searchReport = async (search, pageIndex, pageSize) => {
   }
 };
 
-const getReportByReportId = async (id) => {
+const getById = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/GetById/${id}`);
     return response.data;
   } catch (error) {
     console.log("Error get item by id: ", error);
-    return undefined;
+    message.error("Lấy thông tin báo cáo thất bại");
   }
 };
 
@@ -255,7 +256,7 @@ const searchGetReportByForemanId = async (search, pageIndex, pageSize) => {
 const ReportApi = {
   getReportByLeaderId,
   searchReport,
-  getReportByReportId,
+  getById,
   updateReport,
   getProgressReportsByManagerId,
   getProblemReportsByManagerId,

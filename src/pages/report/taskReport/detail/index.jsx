@@ -7,6 +7,7 @@ import { Bill, Edit } from "@icon-park/react";
 import routes from "../../../../constants/routes";
 import TaskReportDetail from "./components/TaslReportDetail";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import ReportApi from "../../../../apis/task-report";
 const { Title } = Typography;
 
 const TaskReportDetailPage = () => {
@@ -24,7 +25,7 @@ const TaskReportDetailPage = () => {
 
   const getOrderReportDetailById = async (id) => {
     setLoading(true);
-    const data = await OrderReportApi.getOrderReportById(id);
+    const data = await ReportApi.getById(id);
     setReport(data);
     setLoading(false);
   };

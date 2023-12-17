@@ -14,6 +14,8 @@ import { roles } from "../../../../constants/app";
 import OrderReportApi from "../../../../apis/order-report";
 import ApiCodes from "../../../../constants/apiCode";
 import { LeaderTaskOrderReportModal } from "../components/LeaderTaskOrderReportModal";
+import { MaterialModal } from "../components/MaterialModal";
+import { DamagedModal } from "../components/DamagedModal";
 
 export const LeaderTaskDetailsPage = () => {
   const { user } = useContext(UserContext);
@@ -26,6 +28,8 @@ export const LeaderTaskDetailsPage = () => {
   const [orderDetailInfo, setOrderDetailInfo] = useState();
   const [managerOrder, setManagerOrder] = useState([]);
   const [showOrderReportModal, setShowOrderReportModal] = useState(false);
+  const [showMaterialModal, setShowMaterialModal] = useState(false);
+  const [showDamagedModal, setShowDamagedModal] = useState(false);
   const [orderReportLoading, setOrderReportLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -57,36 +61,6 @@ export const LeaderTaskDetailsPage = () => {
     // setOrderStatus(getOrderStatus);
   };
 
-  // const getLeaderTaskData = async (handleLoading, pageIndex, search) => {
-  //   if (handleLoading) {
-  //     setLoading(true);
-  //   }
-  //   // retrieve leader task by order id
-  //   try {
-  //     let dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(
-  //       id,
-  //       search,
-  //       pageIndex,
-  //       PageSize.LEADER_TASK_PROCEDURE_LIST
-  //     );
-  //     if (dataLeaderTasks.code === 0) {
-  //       setTaskInfo(dataLeaderTasks?.data);
-  //     } else {
-  //       message.error(dataLeaderTasks.message);
-  //     }
-  //     dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByOrderId(id);
-  //     if (dataLeaderTasks.code === 0) {
-  //       setAllTasks(dataLeaderTasks?.data);
-  //     } else {
-  //       message.error(dataLeaderTasks.message);
-  //     }
-  //   } catch (e) {
-  //     console.log(e);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const getData = (handleLoading, pageIndex, search) => {
     if (handleLoading) {
       setLoading(true);
@@ -111,7 +85,7 @@ export const LeaderTaskDetailsPage = () => {
     if (!orderId) return;
 
     let orderDetailData = [];
-    console.log("pageIndex", pageIndex)
+    console.log("pageIndex", pageIndex);
     for (let index = pageIndex; index >= 1; index--) {
       orderDetailData = await OrderDetailApi.getListByOrderId(
         orderId,
@@ -119,8 +93,8 @@ export const LeaderTaskDetailsPage = () => {
         index,
         PageSize.LEADER_TASK_ORDER_DETAIL_LIST
       );
-      console.log("orderDetailData", orderDetailData)
-      if (index == 1 || orderDetailData && orderDetailData?.data?.length > 0) {
+      console.log("orderDetailData", orderDetailData);
+      if (index == 1 || (orderDetailData && orderDetailData?.data?.length > 0)) {
         setOrderDetailInfo(orderDetailData);
         break;
       }
@@ -153,40 +127,59 @@ export const LeaderTaskDetailsPage = () => {
         <Space direction="vertical" className="w-full gap-6">
           {
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button
+                type="primary"
+                style={{ marginRight: "10px" }}
+                className="btn-primary app-bg-primary font-semibold text-white"
+                onClick={() => setShowMaterialModal(true)}
+              >
+                Danh sách nguyên vật liệu
+              </Button>
+              {(orderInfo.status === OrderStatus.InProgress ||
+                orderInfo.status === OrderStatus.Completed) && (
+                <Button
+                  type="primary"
+                  style={{ marginRight: "10px" }}
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={() => setShowDamagedModal(true)}
+                >
+                  Danh sách cung cấp
+                </Button>
+              )}
               {(orderInfo.status !== OrderStatus.Completed ||
                 orderInfo.status !== OrderStatus.Cancel) && (
-                  <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button
-                      type="primary"
-                      className="btn-primary app-bg-primary font-semibold text-white"
-                      onClick={() => setShowOrderReportModal(true)}
-                    >
-                      Báo cáo tiến độ đơn hàng
-                    </Button>
-                  </div>
-                )}
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <Button
+                    type="primary"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => setShowOrderReportModal(true)}
+                  >
+                    Báo cáo tiến độ đơn hàng
+                  </Button>
+                </div>
+              )}
               {(orderInfo.status === OrderStatus.Pending ||
                 orderInfo.status === OrderStatus.Reject ||
                 orderInfo.status === OrderStatus.Request) && (
-                  <>
-                    <Button
-                      style={{ marginLeft: "10px" }}
-                      type="primay"
-                      className="btn-primary app-bg-primary font-semibold text-white"
-                      onClick={() => syncMaterials()}
-                    >
-                      Cập nhật nguyên vật liệu
-                    </Button>
-                    <Button
-                      style={{ marginLeft: "10px" }}
-                      type="primay"
-                      className="btn-primary app-bg-primary font-semibold text-white"
-                      onClick={() => getOrderStatus()}
-                    >
-                      Báo giá đơn hàng
-                    </Button>
-                  </>
-                )}
+                <>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    type="primay"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => syncMaterials()}
+                  >
+                    Cập nhật nguyên vật liệu
+                  </Button>
+                  <Button
+                    style={{ marginLeft: "10px" }}
+                    type="primay"
+                    className="btn-primary app-bg-primary font-semibold text-white"
+                    onClick={() => getOrderStatus()}
+                  >
+                    Báo giá đơn hàng
+                  </Button>
+                </>
+              )}
             </div>
           }
           <TaskProvider
@@ -215,7 +208,25 @@ export const LeaderTaskDetailsPage = () => {
               onSubmit={handleSubmitOrderReport}
               confirmLoading={orderReportLoading}
               message={message}
-              title="Báo cáo công việc"
+              title="Báo cáo tiến độ đơn hàng"
+            />
+            <MaterialModal
+              open={showMaterialModal}
+              onCancel={() => {
+                setShowMaterialModal(false);
+              }}
+              confirmLoading={orderReportLoading}
+              title="Danh sách tài nguyên đơn hàng"
+              orderId={id}
+            />
+            <DamagedModal
+              open={showDamagedModal}
+              onCancel={() => {
+                setShowDamagedModal(false);
+              }}
+              confirmLoading={orderReportLoading}
+              title="Danh sách tài nguyên đã cung cấp"
+              orderId={id}
             />
           </TaskProvider>
         </Space>

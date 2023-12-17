@@ -314,7 +314,7 @@ const TaskDetailModal = ({
 										<>
 											<Text strong>Độ ưu tiên</Text>
 											<p>
-												task?.priority
+												{task?.priority}
 											</p>
 										</>
 									)

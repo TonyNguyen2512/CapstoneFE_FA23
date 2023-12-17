@@ -42,7 +42,7 @@ export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 		if (!isCompleted) {
 			items.push(
 				{
-					label: "Chat",
+					label: "Thảo luận",
 					icon: <WechatOutlined className="mt-1" />,
 					onClick: () => onChat(task),
 				},
