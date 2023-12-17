@@ -9,11 +9,13 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
   const isCreate = !data;
   const typeMessage = isCreate ? "Thêm" : "Cập nhật";
   const formRef = useRef();
+  console.log(data);
 
   const [listStep, setListStep] = useState(data?.listStep || []);
   const [loading, setLoading] = useState(false);
   const [addWorkerToGroupModal, setAddWorkerToGroupModal] = useState(false);
 
+  console.log(listStep);
   const handleWorkerNotInGroup = async () => {
     setLoading(true);
     const response = await GroupApi.getAllWorkerNoYetGroup();

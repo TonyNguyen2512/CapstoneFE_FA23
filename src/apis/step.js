@@ -53,6 +53,29 @@ const getAll = async (search, pageIndex, pageSize) => {
   }
 };
 
+const getAllTotal = async (search, pageIndex, pageSize) => {
+  try {
+    if (search) {
+      return await searchGetAll(search, pageIndex, pageSize);
+    } else {
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAll`, {
+        params: params,
+      });
+      return successComposer(retrieveDataSuccessCode, response.data.total);
+    }
+  } catch (error) {
+    console.log("Error enroll group: ", error);
+    return errorComposer(error);
+  }
+};
+
 const searchGetAll = async (search, pageIndex, pageSize) => {
   try {
     var params = {};
@@ -117,6 +140,7 @@ const deleteItem = async (id) => {
 
 const StepApi = {
   getAll,
+  getAllTotal,
   getItemById,
   createItem,
   updateItem,

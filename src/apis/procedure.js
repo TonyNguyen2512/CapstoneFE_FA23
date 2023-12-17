@@ -10,71 +10,93 @@ const deleteSuccessCode = 304;
 const updateStatusSuccessCode = 305;
 
 const errorComposer = (error) => {
-	if (error?.response?.data) {
-		const { code } = error?.response?.data
-		return {
-			code,
-			message: ApiCodes[code],
-		}
-	}
-	return {
-		message: "Có lỗi xảy ra",
-		code: -1
-	};
-}
+  if (error?.response?.data) {
+    const { code } = error?.response?.data;
+    return {
+      code,
+      message: ApiCodes[code],
+    };
+  }
+  return {
+    message: "Có lỗi xảy ra",
+    code: -1,
+  };
+};
 
 const successComposer = (messageId, data) => {
-	return {
-		code: 0,
-		message: ApiCodes[messageId],
-		data: data?.data || data,
-	}
-}
+  return {
+    code: 0,
+    message: ApiCodes[messageId],
+    data: data?.data || data,
+  };
+};
 
 const getAll = async (search, pageIndex, pageSize) => {
-	try {
-		if (search) {
-			return await searchGetAll(search, pageIndex, pageSize);
-		}
-		else {
-			var params = {};
-			if (pageIndex) {
-				params = { ...params, pageIndex };
-			}
-			if (pageSize) {
-				params = { ...params, pageSize };
-			}
-			const response = await BaseApi.get(`/${resource}/GetAll`, {
-				params: params,
-			});
-			return successComposer(retrieveDataSuccessCode, response);;
-		}
-	} catch (error) {
-		console.log("Error enroll group: ", error);
-		return errorComposer(error);
-	}
+  try {
+    if (search) {
+      return await searchGetAll(search, pageIndex, pageSize);
+    } else {
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAll`, {
+        params: params,
+      });
+      return successComposer(retrieveDataSuccessCode, response.data);
+    }
+  } catch (error) {
+    console.log("Error enroll group: ", error);
+    return errorComposer(error);
+  }
+};
+
+const getAllTotal = async (search, pageIndex, pageSize) => {
+  try {
+    if (search) {
+      return await searchGetAll(search, pageIndex, pageSize);
+    } else {
+      var params = {};
+      if (pageIndex) {
+        params = { ...params, pageIndex };
+      }
+      if (pageSize) {
+        params = { ...params, pageSize };
+      }
+      const response = await BaseApi.get(`/${resource}/GetAll`, {
+        params: params,
+      });
+      return successComposer(retrieveDataSuccessCode, response.data.total);
+    }
+  } catch (error) {
+    console.log("Error enroll group: ", error);
+    return errorComposer(error);
+  }
 };
 
 const searchGetAll = async (search, pageIndex, pageSize) => {
-	try {
-		var params = {};
-		if (search) {
-			params = { ...params, search };
-		}
-		if (pageIndex) {
-			params = { ...params, pageIndex };
-		}
-		if (pageSize) {
-			params = { ...params, pageSize };
-		}
-		const response = await BaseApi.get(`/${resource}/GetAll`, {
-			params: params,
-		});
-		return successComposer(retrieveDataSuccessCode, response.data);
-	} catch (error) {
-		console.log("Error get group: ", error);
-		return errorComposer(error);
-	}
+  try {
+    var params = {};
+    if (search) {
+      params = { ...params, search };
+    }
+    if (pageIndex) {
+      params = { ...params, pageIndex };
+    }
+    if (pageSize) {
+      params = { ...params, pageSize };
+    }
+    const response = await BaseApi.get(`/${resource}/GetAll`, {
+      params: params,
+    });
+    return successComposer(retrieveDataSuccessCode, response.data);
+  } catch (error) {
+    console.log("Error get group: ", error);
+    return errorComposer(error);
+  }
 };
 
 const getItemById = async (id) => {
@@ -119,6 +141,7 @@ const deleteItem = async (id) => {
 
 const ProcedureApi = {
   getAll,
+  getAllTotal,
   getItemById,
   createItem,
   updateItem,
