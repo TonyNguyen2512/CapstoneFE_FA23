@@ -104,8 +104,8 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
             },
           ]}
         >
-          {" "}
           <Select
+            key={listStep?.length}
             mode="multiple"
             style={{ width: "100%" }}
             placeholder="Chọn các bước cần thực hiện..."

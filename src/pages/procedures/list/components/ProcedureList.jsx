@@ -78,7 +78,8 @@ const ProcedureList = () => {
       render: (_, { listStep }) =>
         listStep?.map((e, i) => (
           <p>
-            {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
+            {i + 1}.{" "}
+            {e.stepName ? e.stepName : stepList?.find((step) => step.id === e?.stepId)?.name}
           </p>
         )),
     },
