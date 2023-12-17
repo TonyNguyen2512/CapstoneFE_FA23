@@ -35,11 +35,7 @@ export const orderLabels = [
   "Đã huỷ",
   "Hoàn thành",
 ];
-export const genderLabels = [
-  "Nam",
-  "Nữ",
-  "Khác"
-];
+export const genderLabels = ["Nam", "Nữ", "Khác"];
 
 export const orderColors = [
   "#BEBB6D",
@@ -89,7 +85,7 @@ export const TaskMap = {
     color: "#29CB00",
     label: "Hoàn thành",
   },
-}
+};
 
 export const ETaskMap = {
   [ETaskStatus.New]: {
@@ -112,7 +108,7 @@ export const ETaskMap = {
     color: "#29CB00",
     label: "Hoàn thành",
   },
-}
+};
 
 export const wTaskMap = {
   [wTaskStatus.New]: {
@@ -131,7 +127,7 @@ export const wTaskMap = {
     color: "#29CB00",
     label: "Hoàn thành",
   },
-}
+};
 export const WReport = {
   Uncomplete: 1,
   Complete: 2,
@@ -244,10 +240,11 @@ export const PageSize = {
   LOG_GROUP_LIST: 10,
   LOG_ITEM_LIST: 10,
   LOG_MATERIAL_LIST: 10,
-  STEP_LIST: 10, 
-  PROCEDURE_LIST: 10,
+  STEP_LIST: 10,
+  PROCEDURE_LIST: 5,
   ADMIN_REPORT_LIST: 10,
   ADMIN_REPORT_LIST: 10,
+  STEP_LIST_MAX: 1000,
 };
 
 export const NotificationType = {
@@ -263,10 +260,7 @@ export const OrderReportStatus = {
   Complete: 2,
 };
 
-export const OrderReportStatusLabel = [
-  "Thất bại",
-  "Hoàn thành",
-];
+export const OrderReportStatusLabel = ["Thất bại", "Hoàn thành"];
 
 export const ReportType = {
   ProgressReport: 0,
@@ -292,4 +286,4 @@ export const ReportTypeMap = {
     color: "#29CB00",
     label: "Đơn hàng",
   },
-}
+};

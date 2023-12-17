@@ -11,10 +11,10 @@ const TaskReportDetail = ({ data }) => {
           <Card style={{ borderRadius: "1rem" }}>
             <Row gutter={[16, 16]}>
               <Col className="gutter-row" span={12}>
-                Tên báo cáo: <strong>{data?.title}</strong>
+                Tên báo cáo: <strong>{data?.leaderTaskName}</strong>
               </Col>
               <Col className="gutter-row" span={12}>
-                Tên người báo cáo: <strong>{data?.reporter?.fullName}</strong>
+                Tên người báo cáo: <strong>{data?.reporterName}</strong>
               </Col>
               <Col className="gutter-row" span={12}>
                 Ngày tạo báo cáo: <strong>{formatDate(data?.createdDate, "DD/MM/YYYY")}</strong>
@@ -28,7 +28,7 @@ const TaskReportDetail = ({ data }) => {
                 </span>
               </Col>
               <Col className="gutter-row" span={12}>
-                Tên đơn hàng: <strong>{data?.order?.name}</strong>
+                Tên đơn hàng: <strong>{data?.orderName}</strong>
               </Col>
             </Row>
           </Card>

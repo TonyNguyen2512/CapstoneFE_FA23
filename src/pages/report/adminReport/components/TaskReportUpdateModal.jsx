@@ -26,7 +26,7 @@ const TaskReportUpdateModal = ({ data, idOrderReport, open, onCancel, getReports
 
   const getOrderReportDetailById = async (id) => {
     setLoading(true);
-    const data = await ReportApi.getReportByReportId(id);
+    const data = await ReportApi.getById(id);
     setReport(data);
     formRef.current.setFieldsValue(data);
     setLoading(false);

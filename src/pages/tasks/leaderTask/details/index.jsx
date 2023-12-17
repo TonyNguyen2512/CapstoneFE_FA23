@@ -15,6 +15,8 @@ import OrderReportApi from "../../../../apis/order-report";
 import ApiCodes from "../../../../constants/apiCode";
 import { LeaderTaskOrderReportModal } from "../components/LeaderTaskOrderReportModal";
 import { usePermissions } from "../../../../hooks/permission";
+import { MaterialModal } from "../components/MaterialModal";
+import { DamagedModal } from "../components/DamagedModal";
 
 export const LeaderTaskDetailsPage = () => {
   const permissions = usePermissions();
@@ -136,14 +138,17 @@ export const LeaderTaskDetailsPage = () => {
               >
                 Danh sách nguyên vật liệu
               </Button>
-              <Button
-                type="primary"
-                style={{ marginRight: "10px" }}
-                className="btn-primary app-bg-primary font-semibold text-white"
-                onClick={() => setShowDamagedModal(true)}
-              >
-                Danh sách thiệt hại
-              </Button>
+              {(orderInfo.status === OrderStatus.InProgress ||
+                orderInfo.status === OrderStatus.Completed) && (
+                <Button
+                  type="primary"
+                  style={{ marginRight: "10px" }}
+                  className="btn-primary app-bg-primary font-semibold text-white"
+                  onClick={() => setShowDamagedModal(true)}
+                >
+                  Danh sách cung cấp
+                </Button>
+              )}
               {(orderInfo.status !== OrderStatus.Completed ||
                 orderInfo.status !== OrderStatus.Cancel) && (
                 <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -206,7 +211,25 @@ export const LeaderTaskDetailsPage = () => {
               onSubmit={handleSubmitOrderReport}
               confirmLoading={orderReportLoading}
               message={message}
-              title="Báo cáo công việc"
+              title="Báo cáo tiến độ đơn hàng"
+            />
+            <MaterialModal
+              open={showMaterialModal}
+              onCancel={() => {
+                setShowMaterialModal(false);
+              }}
+              confirmLoading={orderReportLoading}
+              title="Danh sách tài nguyên đơn hàng"
+              orderId={id}
+            />
+            <DamagedModal
+              open={showDamagedModal}
+              onCancel={() => {
+                setShowDamagedModal(false);
+              }}
+              confirmLoading={orderReportLoading}
+              title="Danh sách tài nguyên đã cung cấp"
+              orderId={id}
             />
           </TaskProvider>
         </Space>
