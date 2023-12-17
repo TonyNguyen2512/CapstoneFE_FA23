@@ -1,5 +1,5 @@
 
-import { Col, Empty, Input, Row, Space, Spin, Typography } from "antd";
+import { Col, Empty, Input, Pagination, Row, Space, Spin, Typography } from "antd";
 import React, { useContext, useEffect, useState } from "react";
 import { message } from "antd/lib";
 import { useNavigate } from "react-router-dom";
@@ -20,27 +20,28 @@ const WorkerTaskList = () => {
   const [leaderTasksInfo, setLeaderTasksInfo] = useState([]);
   const [searchName, setSearchName] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const isWorker = user?.role?.name === roles.WORKER;
 
   const navigate = useNavigate();
 
-  const getData = async (handleLoading, taskName) => {
+  const getData = async (handleLoading, taskName, current) => {
     if (handleLoading) {
       setLoading(true);
     }
     // retrieve leader task data by id
     let dataLeaderTasks = [];
-    if(isWorker) {
-      dataLeaderTasks = await WorkerTasksApi.getWorkerTaskByUserId(user.id, searchName);
+    if (isWorker) {
+      dataLeaderTasks = await WorkerTasksApi.getWorkerTaskByUserId(user.id, searchName, current, 6);
     } else {
-      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName);
+      dataLeaderTasks = await LeaderTasksApi.getLeaderTaskByLeaderId(user.id, searchName, current, 6);
     }
     // const dataLeaderTasks = await LeaderTasksApi.getAll();
     if (dataLeaderTasks.code === 0) {
-      setLeaderTasksInfo(dataLeaderTasks?.data?.data || dataLeaderTasks?.data);
+      setLeaderTasksInfo(dataLeaderTasks?.data);
       if (taskName) {
-        setSearchParams({["taskName"]: taskName});
+        setSearchParams({ ["taskName"]: taskName });
       }
     } else {
       message.error(dataLeaderTasks.message);
@@ -59,11 +60,17 @@ const WorkerTaskList = () => {
       state: {
         taskName: searchName
       }
-    }, {replace: true});
+    }, { replace: true });
   }
 
   const handleSearch = (value) => {
-    getData(true, value);
+    setCurrentPage(1);
+    getData(true, value, 1);
+  };
+
+  const handleOnChange = (current) => {
+    setCurrentPage(current);
+    getData(true, searchName, current);
   };
 
   return (
@@ -78,7 +85,7 @@ const WorkerTaskList = () => {
       </Space>
       <Space className="w-full flex justify-between mb-6">
         <Row gutter={[16, 16]}>
-          {leaderTasksInfo?.map((task, index) => (
+          {leaderTasksInfo?.data?.map((task, index) => (
             <Col className="gutter-row" span={12} key={task.id}>
               <WorkerTaskItem
                 task={task}
@@ -88,11 +95,19 @@ const WorkerTaskList = () => {
             </Col>
           ))}
           <Col className="gutter-row" span={16}>
-            {leaderTasksInfo?.length <= 0 && (
+            {leaderTasksInfo?.total <= 0 && (
               <Empty description={<Text disabled>Chưa có công việc</Text>} />
             )}
           </Col>
         </Row>
+      </Space>
+      <Space className="w-full flex justify-end md6">
+        <Pagination
+          current={currentPage}
+          defaultCurrent={1}
+          total={leaderTasksInfo?.total}
+          onChange={handleOnChange}
+        />
       </Space>
     </Spin>
   );

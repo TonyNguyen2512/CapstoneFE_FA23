@@ -20,7 +20,7 @@ export const WorkerTaskOverview = ({
 }) => {
   // const isLeader = user?.userId === team?.leader?.id;
   const { allTasks } = useContext(TaskContext);
-  const allWTasks = allTasks;
+  const allWTasks = allTasks?.data;
   const completedTasks = allWTasks?.filter(
     (e) => e.status === TaskStatus.Completed
   );

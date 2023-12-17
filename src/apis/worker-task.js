@@ -27,7 +27,7 @@ const successComposer = (messageId, data) => {
 	return {
 		code: 0,
 		message: ApiCodes[messageId],
-		data: data?.data || data,
+		data: data,
 	}
 }
 
