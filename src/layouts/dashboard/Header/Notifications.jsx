@@ -101,16 +101,15 @@ const Notifications = ({}) => {
         break;
       case NotificationType.LeaderTask:
         console.log("goToDetail - LeaderTask: ");
-        navigate(`${root}/${dashboard.managersTasks}/${noti?.orderId}`);
+        navigate(`${root}/${dashboard.workersTasks}/${noti?.leaderTaskId}`);
         break;
       case NotificationType.WorkerTask:
         console.log("goToDetail - WorkerTask: ");
-        const leaderRoute = `${root}/${dashboard.managersTasks}/${noti?.orderId}`;
-        const workerRoute = `${dashboard.workersTasks}/${noti?.leaderTaskId}`;
-        navigate(`${leaderRoute}/${workerRoute}`);
+        navigate(`${root}/${dashboard.workersTasks}/${noti?.leaderTaskId}`);
         break;
       case NotificationType.TaskReport:
         console.log("goToDetail - TaskReport: ");
+        navigate(`${root}/${dashboard.taskReports}/${noti?.reportId}`);
         break;
       case NotificationType.OrderReport:
         console.log("goToDetail - OrderReport: ");
