@@ -218,7 +218,6 @@ export const LeaderTaskDetailsPage = () => {
               onCancel={() => {
                 setShowMaterialModal(false);
               }}
-              confirmLoading={orderReportLoading}
               title="Danh sách tài nguyên đơn hàng"
               orderId={id}
             />
@@ -227,7 +226,6 @@ export const LeaderTaskDetailsPage = () => {
               onCancel={() => {
                 setShowDamagedModal(false);
               }}
-              confirmLoading={orderReportLoading}
               title="Danh sách tài nguyên đã cung cấp"
               orderId={id}
             />

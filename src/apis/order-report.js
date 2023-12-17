@@ -69,7 +69,7 @@ const searchGetAll = async (search, pageIndex, pageSize) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/GetAll`, {
+    const response = await BaseApi.get(`/${resource}/GetAll`, {
       params: params,
     });
 
@@ -96,7 +96,7 @@ const getByForemanId = async (foremanId, pageIndex = 1, pageSize = 1, search = u
   }
 };
 
-const getOrderReportById = async (id) => {
+const getById = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/GetById/${id}`);
     return response.data;
@@ -129,7 +129,7 @@ const createOrderReport = async (data) => {
 const OrderReportApi = {
   getAll,
   getByForemanId,
-  getOrderReportById,
+  getById,
   updateOrderReport,
   createOrderReport,
 };
