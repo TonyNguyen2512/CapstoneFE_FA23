@@ -1,21 +1,25 @@
-import { Modal, Tooltip, Button, Table, Row, Col } from "antd";
+import { Modal, Tooltip, Button, Table, Row, Col, Card, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { BaseTable } from "../../../../components/BaseTable";
 import OrderApi from "../../../../apis/order";
 import { formatMoney, formatNum } from "../../../../utils";
-import Title from "antd/lib/skeleton/Title";
+
+const { Text } = Typography;
 
 export const DamagedModal = ({ open, orderId, title, onCancel }) => {
   const [materialList, setMaterialList] = useState([]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const getData = async () => {
     setLoading(true);
     const response = await OrderApi.getQuoteMaterialByOrderId(orderId);
+    setData(response);
     setMaterialList(response.listFromSupplyDamage);
     console.log(response.listFromSupplyDamage);
     setLoading(false);
   };
+
+  const price = formatMoney(formatNum(data.totalPriceSupplyDamage));
 
   useEffect(() => {
     getData();
@@ -108,8 +112,34 @@ export const DamagedModal = ({ open, orderId, title, onCancel }) => {
   ];
 
   return (
-    <Modal footer={null} open={open} width="80%" onCancel={onCancel} title={title}>
-      <Table pagination={false} dataSource={materialList} columns={columns} loading={loading} />
-    </Modal>
+    <div>
+      <Modal footer={null} open={open} width="80%" height="40%" onCancel={onCancel} title={title}>
+        <Card>
+          <Row gutter={16}>
+            <Col span={8}>
+              <Text>
+                {" "}
+                Tổng thiệt hại:
+                <Text style={{ fontSize: 17 }} strong>
+                  {" "}
+                  {price}
+                </Text>
+              </Text>
+            </Col>
+            <Col span={8}>
+              <Text>
+                Phần trăm thiệt hại:{" "}
+                <Text style={{ fontSize: 17 }} strong>
+                  {Math.round(data.percentDamage)}
+                </Text>{" "}
+                %
+              </Text>
+            </Col>
+          </Row>
+        </Card>
+
+        <Table pagination={false} dataSource={materialList} columns={columns} loading={loading} />
+      </Modal>
+    </div>
   );
 };
