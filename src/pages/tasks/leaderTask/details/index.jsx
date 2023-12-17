@@ -10,14 +10,18 @@ import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
 import { OrderStatus, PageSize } from "../../../../constants/enum";
 import OrderDetailApi from "../../../../apis/order-details";
-import { roles } from "../../../../constants/app";
+import { ALL_PERMISSIONS, roles } from "../../../../constants/app";
 import OrderReportApi from "../../../../apis/order-report";
 import ApiCodes from "../../../../constants/apiCode";
 import { LeaderTaskOrderReportModal } from "../components/LeaderTaskOrderReportModal";
+import { usePermissions } from "../../../../hooks/permission";
 import { MaterialModal } from "../components/MaterialModal";
 import { DamagedModal } from "../components/DamagedModal";
 
 export const LeaderTaskDetailsPage = () => {
+  const permissions = usePermissions();
+  const canView = permissions?.includes(ALL_PERMISSIONS.leadersTasks.view);
+
   const { user } = useContext(UserContext);
 
   const [loading, setLoading] = useState(false);
@@ -85,7 +89,6 @@ export const LeaderTaskDetailsPage = () => {
     if (!orderId) return;
 
     let orderDetailData = [];
-    console.log("pageIndex", pageIndex);
     for (let index = pageIndex; index >= 1; index--) {
       orderDetailData = await OrderDetailApi.getListByOrderId(
         orderId,
@@ -119,7 +122,7 @@ export const LeaderTaskDetailsPage = () => {
     getData(true);
   }, [id]);
 
-  return (
+  return canView && (
     <BasePageContent
       onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.managersTasks}`)}
     >

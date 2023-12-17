@@ -129,7 +129,9 @@ const LeaderTaskList = () => {
   ];
 
   const handleSearch = (value) => {
+    setCurrentPage(1);
     getData(value, 1, true);
+    console.log("setCurrentPage", currentPage)
   };
 
   const onPageChange = (current) => {
@@ -148,6 +150,7 @@ const LeaderTaskList = () => {
           onChange: onPageChange,
           pageSize: PageSize.LEADER_TASK_ORDER_LIST,
           total: orderList?.total,
+          current: currentPage,
         }}
         rowKey={(record) => record.id}
         searchOptions={{

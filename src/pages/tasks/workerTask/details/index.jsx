@@ -10,17 +10,23 @@ import WorkerTasksApi from "../../../../apis/worker-task";
 import routes from "../../../../constants/routes";
 import { TaskProvider } from "../../../../providers/task";
 import { UserContext } from "../../../../providers/user";
-import { roles } from "../../../../constants/app";
+import { ALL_PERMISSIONS, roles } from "../../../../constants/app";
 import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
 import GroupApi from "../../../../apis/group";
 import { ETaskStatus } from "../../../../constants/enum";
+import { usePermissions } from "../../../../hooks/permission";
 
 
 export const WorkerTaskDetailsPage = () => {
+  const permissions = usePermissions();
+  const canView = permissions?.includes(ALL_PERMISSIONS.workersTasks.view)
+                || permissions?.includes(ALL_PERMISSIONS.leadersTasks.view)
+                || permissions?.includes(ALL_PERMISSIONS.orders.view);
 
   const { user } = useContext(UserContext);
   const isLeader = user?.role?.name === roles.LEADER;
   const isForeman = user?.role?.name === roles.FOREMAN;
+  const isAdmin = user?.role?.name === roles.ADMIN;
   const isWorker = user?.role?.name === roles.WORKER;
 
   const [loading, setLoading] = useState(false);
@@ -44,7 +50,7 @@ export const WorkerTaskDetailsPage = () => {
     }
     let dataWorkerTasks = [];
     if (memberId) {
-      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByUserId(memberId, leaderTaskId)
+      dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskIdAndUserId(memberId, leaderTaskId)
     } else {
       dataWorkerTasks = await WorkerTasksApi.getWorkerTaskByLeaderTaskId(leaderTaskId);
     }
@@ -71,8 +77,6 @@ export const WorkerTaskDetailsPage = () => {
       if (dataLeaderTask.code !== 0) {
         message.error(dataLeaderTask?.message);
         return;
-      } else {
-        setLeaderTaskInfo(dataLeaderTask?.data);
       }
 
       let dataLeaderUser = [];
@@ -82,28 +86,37 @@ export const WorkerTaskDetailsPage = () => {
 
       if (!dataLeaderUser) {
         message.error("Không tìm thấy thông tin tổ trưởng");
-      } else {
-        setLeaderInfo(dataLeaderUser);
+        return;
       }
-      console.log("dataLeaderUser", dataLeaderUser)
 
       let dataGroupMembers = [];
       if (dataLeaderUser?.groupId) {
         dataGroupMembers = await GroupApi.getWorkersByGroupId(dataLeaderUser?.groupId);
         if (!dataGroupMembers) {
           message.error("Không tìm thấy thông tin các thành viên trong tổ");
+          return;
         }
       } else {
         message.error("Tổ trưởng chưa có tổ phụ trách");
+        return;
       }
-      setGroupMemberList(dataGroupMembers?.data);
 
-      if (isWorker) {
+      const isGroupMember = dataGroupMembers?.data?.filter((mem) => mem.id === user?.id);
+      console.log("isWorker", isWorker)
+      if (isWorker && isGroupMember) {
         handleRetrieveWorkerTaskList(true, leaderTaskId, user?.id);
-      } else {
+      } else if ((isWorker && !isGroupMember)) {
+        message.error("Công việc không thuộc tổ của nhân viên");
+        return;
+      }
+
+      if (!isWorker) {
         handleRetrieveWorkerTaskList(true, leaderTaskId, null);
       }
 
+      setLeaderTaskInfo(dataLeaderTask?.data);
+      setGroupMemberList(dataGroupMembers?.data);
+      setLeaderInfo(dataLeaderUser);
       setLoading(false);
     }
 
@@ -123,16 +136,26 @@ export const WorkerTaskDetailsPage = () => {
   }, [leaderTaskInfo])
 
   const handleBack = () => {
-    if (state?.taskName || state?.orderId) {
-      let path = "";
-      if (isLeader) {
-        path = `${routes.dashboard.root}/${routes.dashboard.workersTasks}`;
+    if (state) {
+      let path = `${routes.dashboard.root}`;
+      if (isLeader || isWorker) {
+        path += `/${routes.dashboard.workersTasks}`;
         if (state?.taskName) {
           path += `?taskName=${state?.taskName}`;
         }
       }
       if (isForeman) {
-        path = `${routes.dashboard.root}/${routes.dashboard.managersTasks}`;
+        path += `/${routes.dashboard.managersTasks}`;
+        if (state?.orderId) {
+          path += `/${state?.orderId}`;
+
+          if (state?.orderDetailId) {
+            path += `/${routes.dashboard.taskOrderDetails}/${state?.orderDetailId}`
+          }
+        }
+      }
+      if (isAdmin) {
+        path += `/${routes.dashboard.orders}`;
         if (state?.orderId) {
           path += `/${state?.orderId}`;
 
@@ -149,7 +172,7 @@ export const WorkerTaskDetailsPage = () => {
     }
   }
 
-  return (
+  return canView && (
     <BasePageContent onBack={() => handleBack()}>
       <Spin spinning={loading}>
         <Space direction="vertical" className="w-full gap-6">

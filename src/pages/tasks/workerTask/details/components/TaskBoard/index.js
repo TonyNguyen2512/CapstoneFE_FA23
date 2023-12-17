@@ -141,7 +141,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
   }
 
   useEffect(() => {
-    loadColumn(tasks);
+    loadColumn(tasks?.data);
   }, [tasks]);
 
   return (

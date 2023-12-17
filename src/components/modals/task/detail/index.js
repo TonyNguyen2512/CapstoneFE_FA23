@@ -4,7 +4,7 @@ import { EditableInput } from "../../../EditableInput";
 import { Button, Card, Col, DatePicker, Form, Image, Input, InputNumber, Row, Select, Typography } from "antd";
 import { EditableRichText } from "../../../EditableRichText";
 import { UserContext } from "../../../../providers/user";
-import { WTaskStatusOptions } from "../../../../constants/app";
+import { WTaskStatusOptions, roles } from "../../../../constants/app";
 import { ErrorImage, TaskMap, TaskStatus } from "../../../../constants/enum";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../RichTextEditor";
@@ -12,6 +12,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { taskFeedbackReportsRef } from "../../../../middleware/firebase";
 import { UploadFile } from "../../../UploadFile";
 import { disabledDateTime, formatDate } from "../../../../utils";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 const FORMAT_DATE_TIME = "HH:mm DD/MM/YYYY";
@@ -37,9 +38,11 @@ const TaskDetailModal = ({
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 	// const [fileListUrl, setFileListUrl] = useState([]);
 
-	const isLeader = user?.userId === task?.leaderTaskId;
+	const isManager = user?.role?.name === roles.LEADER 
+						|| user?.role?.name === roles.FOREMAN
+						|| user?.role?.name === roles.ADMIN;
 
-	const WTaskStsOpts = isLeader ? WTaskStatusOptions : WTaskStatusOptions.filter((x) => x.value !== TaskStatus.Completed);
+	const WTaskStsOpts = isManager ? WTaskStatusOptions : WTaskStatusOptions.filter((x) => x.value !== TaskStatus.Completed);
 	const startDate = formatDate(task?.startTime, FORMAT_DATE_TIME);
 	const endDate = formatDate(task?.endTime, FORMAT_DATE_TIME);
 	// const ownedTask =
@@ -47,6 +50,8 @@ const TaskDetailModal = ({
 
 	const isPending = task?.status === TaskStatus.Pending;
 	const isCompleted = task?.status === TaskStatus.Completed;
+
+	const isEditable = isManager && !isCompleted
 
 	const onFinish = async (values) => {
 
@@ -140,13 +145,13 @@ const TaskDetailModal = ({
 				taskFormRef.current?.submit();
 			}}
 			confirmLoading={confirmLoading}
-			okButtonProps={{ style: { display: isCompleted ? 'none' : '' } }}
+			okButtonProps={{ style: { display: !isEditable ? 'none' : '' } }}
 		>
 			<Form
 				ref={taskFormRef}
 				initialValues={{
 					description: task?.description,
-					dates: [startDate, endDate],
+					dates: [dayjs(startDate, FORMAT_DATE_TIME), dayjs(endDate, FORMAT_DATE_TIME)],
 					assignees: task?.members?.map((e) => e.memberId),
 					status: task?.status || TaskStatus.New,
 					...task,
@@ -173,7 +178,7 @@ const TaskDetailModal = ({
 								placeholder="Tên công việc"
 								value={task?.name}
 								onChange={(value) => (nameRef.current = value)}
-								editable={isLeader && !isCompleted}
+								editable={isEditable}
 							/>
 							<div className="mt-4 ml-1 mb-1">
 								<Text strong>Mô tả</Text>
@@ -181,11 +186,11 @@ const TaskDetailModal = ({
 							<EditableRichText
 								onChange={(v) => (descRef.current = v)}
 								value={task?.description}
-								editable={isLeader && !isCompleted}
+								editable={isEditable}
 							/>
 							<Row gutter={16}>
 								<Col span={12}>
-									{(isLeader && !isCompleted) &&
+									{(isEditable) &&
 										<Form.Item
 											name="dates"
 											label={<Text strong>Thời hạn công việc</Text>}
@@ -204,7 +209,6 @@ const TaskDetailModal = ({
 												placeholder={["Bắt đầu", "Kết thúc"]}
 												className="w-full"
 												format="HH:mm DD/MM/YYYY"
-												rang
 												// disabled={!isLeader || isCompleted}
 												disabledDate={(date) => {
 													return (
@@ -215,7 +219,7 @@ const TaskDetailModal = ({
 											/>
 										</Form.Item>
 									}
-									{(!isLeader || isCompleted) && (
+									{(!isEditable) && (
 										<>
 											<Text strong>Thời hạn công việc</Text>
 											<p>
@@ -225,7 +229,7 @@ const TaskDetailModal = ({
 									)}
 								</Col>
 								<Col span={12}>
-									{(!isCompleted) &&
+									{(isEditable) &&
 										<Form.Item
 											name="status"
 											label={<Text strong>Trạng thái</Text>}
@@ -244,7 +248,7 @@ const TaskDetailModal = ({
 											/>
 										</Form.Item>
 									}
-									{(isCompleted) && (
+									{(!isEditable) && (
 										<>
 											<Text strong>Trạng thái</Text>
 											<p>{TaskMap[task?.status || TaskStatus.New].label}</p>
@@ -254,7 +258,7 @@ const TaskDetailModal = ({
 							</Row>
 							<Row gutter={16}>
 								<Col span={12}>
-									{(isLeader && !isCompleted) &&
+									{(isEditable) &&
 										<Form.Item
 											name="assignees"
 											rules={[
@@ -271,7 +275,7 @@ const TaskDetailModal = ({
 												placeholder="Chọn thành viên"
 												options={team?.map((e) => {
 													return {
-														label: `${e.fullname}`,
+														label: `${e.fullName}`,
 														value: e.id,
 													};
 												})}
@@ -279,7 +283,7 @@ const TaskDetailModal = ({
 											/>
 										</Form.Item>
 									}
-									{(!isLeader || isCompleted) && (
+									{(!isEditable) && (
 										<>
 											<Text strong>Thành viên được phân công</Text>
 											{task?.members?.map((e, i) => (
@@ -291,7 +295,7 @@ const TaskDetailModal = ({
 									)}
 								</Col>
 								<Col span={12}>
-									{(isLeader && !isCompleted) &&
+									{(isEditable) &&
 										<Form.Item
 											name="priority"
 											label={<Text strong>Độ ưu tiên</Text>}
@@ -306,11 +310,10 @@ const TaskDetailModal = ({
 												min={0}
 												max={10}
 												placeholder="Độ ưu tiên"
-												disabled={!isLeader || isCompleted}
 											/>
 										</Form.Item>
 									}
-									{(!isLeader || isCompleted) && (
+									{(!isEditable) && (
 										<>
 											<Text strong>Độ ưu tiên</Text>
 											<p>
