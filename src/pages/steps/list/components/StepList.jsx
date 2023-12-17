@@ -15,14 +15,15 @@ const StepList = () => {
 
   const stepRef = useRef();
 
-  const getData = async (search, pageIndex, handleLoading) => {
+  const getData = async (search, pageIndex, handleLoading = true) => {
     if (handleLoading) {
       setLoading(true);
     }
-    const response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
+    let response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
     setStepList(response.data);
-    console.log(response.total);
-    setTotal(response.total || []);
+    console.log(response.data);
+    response = await StepApi.getAllTotal(search, pageIndex, PageSize.STEP_LIST);
+    setTotal(response.data || []);
     setLoading(false);
   };
 
@@ -102,14 +103,14 @@ const StepList = () => {
     getData(value, 1, true);
   };
 
-  useEffect(() => {
-    getData(null, 1);
-  }, []);
-
   const onPageChange = (current) => {
     setCurrentPage(current);
     getData(null, current, false);
   };
+
+  useEffect(() => {
+    getData(null, 1, true);
+  }, []);
 
   return (
     <>
@@ -125,7 +126,7 @@ const StepList = () => {
       </Space>
       <BaseTable
         title="Danh sách bước"
-        dataSource={stepList?.data}
+        dataSource={stepList}
         columns={columns}
         loading={loading}
         pagination={{

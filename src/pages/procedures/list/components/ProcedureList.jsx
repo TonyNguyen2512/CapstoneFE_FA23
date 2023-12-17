@@ -21,12 +21,14 @@ const ProcedureList = () => {
     if (handleLoading) {
       setLoading(true);
     }
-    let response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST);
+    let response = await StepApi.getAll(search, pageIndex, PageSize.STEP_LIST_MAX);
     setStepList(response.data);
-    console.log(stepList);
+    // console.log(response.data.data);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
     setProcedureList(response.data);
-    setTotal(response.data.total || []);
+    response = await ProcedureApi.getAllTotal(search, pageIndex, PageSize.STEP_LIST);
+    setTotal(response.data || []);
+    // console.log("total: ", response.data);
     setLoading(false);
   };
 
@@ -101,17 +103,17 @@ const ProcedureList = () => {
   };
 
   useEffect(() => {
-    getData();
-  }, []);
-
-  useEffect(() => {
-    getData(null, 1);
+    getData(null, 1, true);
   }, []);
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current);
+    getData(null, current, false);
   };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <>
@@ -127,7 +129,7 @@ const ProcedureList = () => {
       </Space>
       <BaseTable
         title="Danh sách quy trình"
-        dataSource={procedureList?.data}
+        dataSource={procedureList}
         columns={columns}
         loading={loading}
         pagination={{
