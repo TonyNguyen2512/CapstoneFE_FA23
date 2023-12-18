@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { Form, Input, Select, message } from "antd";
+import { Form, Input, Select, Typography, message } from "antd";
 import ProcedureApi from "../../../apis/procedure";
 import { AddWorkerToGroupModal } from "../../group/detail/components/AddWorkerToGroupModal";
 import GroupApi from "../../../apis/group";
@@ -32,6 +32,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         };
       })
     );
+    console.log(value);
   };
 
   useEffect(() => {
@@ -90,9 +91,12 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         >
           <Input placeholder="Nhập tên quy trình..." />
         </Form.Item>
-        <Form.Item
+        <Typography name="listStep">Danh sách các bước</Typography>
+        <Select
           name="listStep"
           label="Danh sách các bước"
+          key={listStep?.length}
+          mode="multiple"
           rules={[
             {
               validator: (_, value) => {
@@ -103,17 +107,12 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
               },
             },
           ]}
-        >
-          <Select
-            key={listStep?.length}
-            mode="multiple"
-            style={{ width: "100%" }}
-            placeholder="Chọn các bước cần thực hiện..."
-            value={listStep?.map((e) => e.stepId)} // Use value instead of defaultValue
-            onChange={handleChange}
-            options={options}
-          ></Select>
-        </Form.Item>
+          style={{ width: "100%" }}
+          placeholder="Chọn các bước cần thực hiện..."
+          value={listStep?.map((e) => e.stepId)} // Use value instead of defaultValue
+          onChange={handleChange}
+          options={options}
+        ></Select>
       </Form>
     </BaseModal>
   );

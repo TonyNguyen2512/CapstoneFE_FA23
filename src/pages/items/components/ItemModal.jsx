@@ -9,6 +9,7 @@ import TextArea from "antd/lib/input/TextArea";
 import { InputNumber } from "antd/lib";
 import { BaseTable } from "../../../components/BaseTable";
 import { Plus } from "@icon-park/react";
+import Typography from "antd/lib/typography/Typography";
 
 export const ItemModal = ({
   data,
@@ -471,17 +472,19 @@ export const ItemModal = ({
                   </>
                 )}
               </Form.List> */}
-              <Form.Item name="listMaterial" label="Danh sách nguyên vật liệu">
-                <Select
-                  mode="multiple"
-                  style={{ width: "100%" }}
-                  placeholder="Chọn nguyên vật liệu cần dùng..."
-                  defaultValue={data?.listMaterial}
-                  optionLabelProp="label"
-                  options={listMaterials}
-                  onChange={handleChangeMaterials}
-                />
-              </Form.Item>
+              {/* <Form.Item name="listMaterial" label="Danh sách nguyên vật liệu">
+              </Form.Item> */}
+              <Typography name="listMaterial">Danh sách nguyên vật liệu</Typography>
+              <Select
+                name="listMaterial"
+                mode="multiple"
+                style={{ width: "100%" }}
+                placeholder="Chọn nguyên vật liệu cần dùng..."
+                defaultValue={data?.listMaterial}
+                optionLabelProp="label"
+                options={listMaterials}
+                onChange={handleChangeMaterials}
+              />
 
               {/* Quantity input for each selected material */}
               {listMaterial.map((material, index) => (

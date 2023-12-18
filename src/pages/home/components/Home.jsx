@@ -243,7 +243,7 @@ const Home = () => {
         emphasis: {
           label: {
             show: true,
-            fontSize: 50,
+            fontSize: 36,
             fontWeight: "bold",
           },
         },
