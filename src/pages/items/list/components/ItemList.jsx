@@ -12,6 +12,7 @@ import MaterialApi from "../../../../apis/material";
 import StepApi from "../../../../apis/step";
 import { useNavigate, useParams } from "react-router-dom";
 import routes from "../../../../constants/routes";
+import { ProcedureModal } from "../../../procedures/components/ProcedureModal";
 
 const ItemList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,12 @@ const ItemList = ({ canModify }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const [showProcedurepModal, setShowProcedurepModal] = useState(false);
+  const prodRef = useRef();
+
+  const [showStepModal, setShowStepModal] = useState(false);
+  const stepRef = useRef();
 
   const searchRef = useRef();
   const itemRef = useRef();
@@ -213,6 +220,20 @@ const ItemList = ({ canModify }) => {
     },
   ];
 
+  const getActionProcedures = (record) => {
+    return [
+      {
+        key: "UPDATE_ROLE",
+        label: "Chỉnh sửa thông tin",
+        icon: <Edit />,
+        onClick: () => {
+          prodRef.current = listProcedures.find((ew) => ew.id === record.procedureId);
+          setShowProcedurepModal(true);
+        },
+      },
+    ];
+  };
+
   const expandedRowRender = (row) => {
     // columns for procedure
     const columns = [
@@ -247,9 +268,9 @@ const ItemList = ({ canModify }) => {
         key: "action",
         width: "10%",
         align: "center",
-        render: (_, record) => {
+        render: (_, record, index) => {
           return (
-            <Dropdown menu={{ items: getActionItems(record) }}>
+            <Dropdown menu={{ items: getActionProcedures(record) }}>
               <Button className="mx-auto flex-center" icon={<More />} />
             </Dropdown>
           );
@@ -354,19 +375,41 @@ const ItemList = ({ canModify }) => {
           };
         })}
         open={showItemModal}
-        onCancel={() => setShowItemModal(false)}
+        onCancel={() => {
+          setShowItemModal(false);
+          itemRef.current = null;
+        }}
         onSuccess={() => getData()}
       />
       <ItemDuplicateModal
         data={itemRef.current}
         open={showItemDuplicateModal}
-        onCancel={() => setShowItemDuplicateModal(false)}
+        onCancel={() => {
+          setShowItemDuplicateModal(false);
+          itemRef.current = null;
+        }}
         id={id}
         onSuccess={() => getData()}
       />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />
       </Modal>
+
+      <ProcedureModal
+        data={prodRef.current}
+        options={stepList?.map((e) => {
+          return {
+            label: e.name,
+            value: e.id,
+          };
+        })}
+        open={showProcedurepModal}
+        onCancel={() => {
+          setShowProcedurepModal(false);
+          prodRef.current = null;
+        }}
+        onSuccess={() => getData(searchRef.current, currentPage, true)}
+      />
     </>
   );
 };
