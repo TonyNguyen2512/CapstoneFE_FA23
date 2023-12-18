@@ -8,6 +8,7 @@ import {
   Input,
   Progress,
   Row,
+  Select,
   Space,
   Spin,
   Typography,
@@ -153,9 +154,18 @@ const ProfilePage = () => {
                     />
                   )}
                 </Form.Item>
-                <Form.Item name="genderLabel" label="Giới tính">
-                  {genderLabels[user?.gender]}
-                  {/* <Input placeholder="Giới tính..." /> */}
+                <Form.Item name="gender" label="Giới tính">
+                  {/* {genderLabels[user?.gender]} */}
+                  <Select
+                    value={user?.gender}
+                    placeholder="Giới tính..."
+                    options={genderLabels.map((e, i) => {
+                      return {
+                        label: e,
+                        value: i,
+                      };
+                    })}
+                  />
                 </Form.Item>
                 <Form.Item name="roleId" label="Vai trò">
                   <b>{getRoleName(user?.role?.name)}</b>
