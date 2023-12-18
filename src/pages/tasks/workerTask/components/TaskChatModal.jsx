@@ -256,11 +256,11 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
                           <span>
                             <b className="mr-2">{x.user?.fullName}</b>
                             <small>
-                              ({user?.id == x.user?.id ? "Bạn" : ROLE_MAP[x.user?.role?.name]})
+                              ({user?.id === x.user?.id ? "Bạn" : ROLE_MAP[x.user?.role?.name]})
                             </small>
                           </span>
                         )}
-                        {editingCmt == x.id ? (
+                        {editingCmt === x.id ? (
                           <Form
                             key={i}
                             ref={formChatUpdateRef}
@@ -314,7 +314,7 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
                       </Space>
                       <small>{x.commentTime ? moment(x.commentTime)?.fromNow() : ""}</small>
                     </Space>
-                    {user?.id == x.user?.id && (
+                    {user?.id === x.user?.id && (
                       <div>
                         <Dropdown menu={{ items: getActionComments(x) }}>
                           <MoreOutlined

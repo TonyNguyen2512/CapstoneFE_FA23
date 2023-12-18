@@ -27,6 +27,8 @@ const ItemList = ({ canModify }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const { id } = useParams();
   const navigate = useNavigate();
+
+  const searchRef = useRef();
   const itemRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading = true) => {
@@ -85,7 +87,7 @@ const ItemList = ({ canModify }) => {
         onClick: ({ id }) => {
           if (window.confirm("Bạn chắc chắn muốn xoá?")) {
             const success = ItemApi.deleteItem(id);
-            success && getData();
+            success && getData(searchRef.current, currentPage, true);
           }
         },
       },
@@ -272,12 +274,13 @@ const ItemList = ({ canModify }) => {
   };
 
   const handleSearch = (value) => {
+    searchRef.current = value;
     getData(value, 1, true);
   };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current, false);
+    getData(searchRef.current, current, false);
   };
 
   useEffect(() => {

@@ -90,11 +90,11 @@ const Notifications = ({}) => {
 
     switch (noti?.type) {
       case NotificationType.Order:
-        if (role.name == roles.ADMIN) {
+        if (role.name === roles.ADMIN) {
           console.log("goToDetail - Order - ADMIN: ");
           navigate(`${root}/${dashboard.orders}/${noti?.orderId}`);
         }
-        if (role.name == roles.FOREMAN) {
+        if (role.name === roles.FOREMAN) {
           console.log("goToDetail - Order - FOREMAN: ");
           navigate(`${root}/${dashboard.managersTasks}/${noti?.orderId}`);
         }

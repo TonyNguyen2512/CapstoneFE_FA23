@@ -1,5 +1,5 @@
-import { Edit, Forbid, More, Unlock } from "@icon-park/react";
-import { Button, Dropdown, Modal, Space } from "antd";
+import { Delete, Edit, Forbid, More, Unlock } from "@icon-park/react";
+import { Button, Dropdown, Modal, Space, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ItemCategoryModal } from "../../components/ItemCategoryModal";
@@ -15,12 +15,11 @@ const ItemCategoryList = ({ canModify }) => {
   const [previewUrl, setPreviewUrl] = useState("");
   const [total, setTotal] = useState([]);
 
+  const searchRef = useRef();
   const categoryRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
+    handleLoading && setLoading(true);
     const response = await ItemCategoryApi.getAllItem(
       search,
       pageIndex,
@@ -29,7 +28,7 @@ const ItemCategoryList = ({ canModify }) => {
     setItemCategoryList(response.data.data);
     setTotal(response.data.total || []);
 
-    setLoading(false);
+    handleLoading && setLoading(false);
   };
 
   const showModal = (item) => {
@@ -59,10 +58,10 @@ const ItemCategoryList = ({ canModify }) => {
       },
       {
         key: "SET_STATUS",
-        label: isActive ? "Mở khóa" : "Khóa",
-        danger: !isActive,
-        icon: !isActive ? <Forbid /> : <Unlock />,
-        onClick: () => {},
+        label: "Xoá",
+        danger: true,
+        icon: <Delete />,
+        onClick: () => handleRemove(record.id),
       },
     ];
   };
@@ -121,18 +120,31 @@ const ItemCategoryList = ({ canModify }) => {
     },
   ];
 
+  const handleRemove = async (id) => {
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      const success = await ItemCategoryApi.deleteItem(id);
+      if (success) {
+        message.success(`Xoá thành công`);
+      } else {
+        message.error(`Xoá thất bại`);
+      }
+      await getData(searchRef.current, currentPage, true);
+      setLoading(false);
+    }
+  };
+
   const handleSearch = (value) => {
-    getData(value, 1, true);
+    searchRef.current = value;
   };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current, false);
   };
 
   useEffect(() => {
-    getData(null, 1, true);
-  }, []);
+    getData(searchRef.current, currentPage, currentPage === 1);
+  }, [currentPage, searchRef.current]);
 
   return (
     <>
@@ -167,8 +179,11 @@ const ItemCategoryList = ({ canModify }) => {
       <ItemCategoryModal
         data={categoryRef.current}
         open={showItemCategoryModal}
-        onCancel={() => setShowItemCategoryModal(false)}
-        onSuccess={() => getData()}
+        onCancel={() => {
+          setShowItemCategoryModal(false);
+          categoryRef.current = null;
+        }}
+        onSuccess={() => getData(searchRef.current, currentPage, true)}
       />
       <Modal centered open={isModalOpen} onOk={closeModal} onCancel={closeModal} footer={null}>
         <img src={previewUrl} className="w-full h-full object-cover mt-8" />

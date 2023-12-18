@@ -140,7 +140,7 @@ const updateItem = async (data) => {
 
 const deleteItem = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/Delete/${id}`);
+    const response = await BaseApi.delete(`/${resource}/Delete/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error delete item: ", error);
