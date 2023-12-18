@@ -2,6 +2,7 @@ import {
   SupplyLabel,
   SupplyStatus,
   ETaskMap,
+  wTaskMap,
   ETaskStatus,
   TaskStatus,
   TaskMap,
