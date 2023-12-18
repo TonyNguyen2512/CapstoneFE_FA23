@@ -30,20 +30,18 @@ const ItemList = ({ canModify }) => {
   const itemRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading = true) => {
-    if (handleLoading) {
-      setLoading(true);
-    }
+    handleLoading && setLoading(true);
     let response = await ItemApi.getAllItem(search, pageIndex, PageSize.ITEM_LIST);
     setItemList(response);
     response = await ItemCategoryApi.getAllItem();
     setItemCategoryList(response.data.data);
-    setLoading(false);
     response = await ProcedureApi.getAll();
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
     response = await StepApi.getAll();
     setStepList(response.data);
+    handleLoading && setLoading(false);
   };
 
   const showModal = (item) => {
@@ -121,7 +119,7 @@ const ItemList = ({ canModify }) => {
       key: "name",
       render: (_, record) => {
         return (
-          <Tooltip title={() => <img src={record.image} className="w-full" />}>
+          <Tooltip title={() => <img loading="eager" src={record.image} className="w-full" />}>
             {record.name}
           </Tooltip>
         );

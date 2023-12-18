@@ -8,7 +8,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import { InputNumber } from "antd/lib";
 import { BaseTable } from "../../../components/BaseTable";
-import { Plus } from "@icon-park/react";
+import { Minus, Plus } from "@icon-park/react";
 import Typography from "antd/lib/typography/Typography";
 
 export const ItemModal = ({
@@ -244,12 +244,18 @@ export const ItemModal = ({
     setTableKey((prevKey) => prevKey + 1);
   };
 
+  const removeProcedure = (index) => {
+    setListProcedure((prevList) => prevList.filter((e) => e.index === index));
+    // Increment the key to force re-render the table
+    setTableKey((prevKey) => prevKey + 1);
+  };
+
   const columns = [
     {
       title: "Độ ưu tiên",
       dataIndex: "priority",
       key: "priority",
-      width: "40%",
+      width: "30%",
       // align: "center",
       render: (_, record, index) => {
         return (
@@ -264,6 +270,7 @@ export const ItemModal = ({
     {
       title: "Tên quy trình",
       dataIndex: "procedureId",
+      width: "60%",
       key: "procedureId",
       render: (_, record, index) => {
         return (
@@ -278,18 +285,20 @@ export const ItemModal = ({
         );
       },
     },
-    // {
-    //   title: "",
-    //   dataIndex: "_",
-    //   key: "procedureId",
-    //   render: (_, record, index) => {
-    //     return index === listProcedure.length - 1 ? (
-    //       <Plus role="button" onClick={addNewProcedure} />
-    //     ) : (
-    //       <></>
-    //     );
-    //   },
-    // },
+    {
+      key: "_",
+      title: "",
+      width: "10%",
+      dataIndex: "_",
+      render: (_, record, index) => (
+        <Minus
+          size={20}
+          role="button"
+          className="text-danger"
+          onClick={() => removeProcedure(index)}
+        />
+      ),
+    },
   ];
 
   return (
@@ -369,7 +378,12 @@ export const ItemModal = ({
                   dataSource={listProcedure}
                   addButton={
                     <div className="mb-2">
-                      <Plus role="button" onClick={addNewProcedure} />
+                      <Plus
+                        size={20}
+                        role="button"
+                        className="text-success"
+                        onClick={addNewProcedure}
+                      />
                     </div>
                   }
                 />
