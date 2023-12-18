@@ -19,8 +19,8 @@ const ProcedureList = () => {
 
   const getData = async (search, pageIndex, handleLoading) => {
     handleLoading && setLoading(true);
-    let response = await StepApi.getAll(null, pageIndex, PageSize.STEP_LIST_MAX);
-    setStepList(response.data);
+    let response = await StepApi.getAllWithoutPaging();
+    setStepList(response);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
     setProcedureList(response.data);
     response = await ProcedureApi.getAllTotal(search, pageIndex, PageSize.STEP_LIST);
