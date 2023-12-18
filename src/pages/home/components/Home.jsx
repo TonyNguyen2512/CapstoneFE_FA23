@@ -101,7 +101,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "User's statistic",
+        name: "Vai trò người dùng",
         type: "pie",
         radius: ["54%", "80%"],
         avoidLabelOverlap: false,
@@ -143,7 +143,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Order's statistic",
+        name: "Trạng thái đơn hàng",
         type: "pie",
         radius: ["0%", "80%"],
         avoidLabelOverlap: false,
@@ -185,7 +185,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Order's statistic",
+        name: "Trạng thái đơn hàng",
         type: "pie",
         radius: ["0%", "80%"],
         avoidLabelOverlap: false,
@@ -227,7 +227,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "User's statistic",
+        name: "Trạng thái đơn hàng",
         type: "pie",
         radius: ["54%", "80%"],
         avoidLabelOverlap: false,
@@ -243,7 +243,7 @@ const Home = () => {
         emphasis: {
           label: {
             show: true,
-            fontSize: 36,
+            fontSize: 50,
             fontWeight: "bold",
           },
         },
