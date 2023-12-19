@@ -217,7 +217,7 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
                 value: v.id,
               };
             })}
-            placeholder="Tên khách hàng..."
+            placeholder="Tên người báo giá..."
           />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">

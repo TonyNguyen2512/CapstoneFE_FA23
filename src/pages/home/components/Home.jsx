@@ -185,7 +185,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Trạng thái đơn hàng",
+        name: "Trạng thái công việc",
         type: "pie",
         radius: ["0%", "80%"],
         avoidLabelOverlap: false,
@@ -227,7 +227,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Trạng thái đơn hàng",
+        name: "Trạng thái công việc",
         type: "pie",
         radius: ["54%", "80%"],
         avoidLabelOverlap: false,

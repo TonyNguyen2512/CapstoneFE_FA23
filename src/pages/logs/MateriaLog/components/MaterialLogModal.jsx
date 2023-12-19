@@ -91,7 +91,7 @@ const MaterialLogModal = () => {
       title: "Ngày chỉnh sửa",
       dataIndex: "modifiedTime",
       key: "modifiedTime",
-      width: "11%",
+      width: "15%",
       render: (_, record) => {
         const formattedDate = formatDate(record.modifiedTime, "DD/MM/YYYY - HH:MM:SS");
         return <span>{formattedDate}</span>;
