@@ -105,28 +105,16 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
           ]}
         >
           <Select
+            key={listStep?.length}
             mode="multiple"
             style={{ width: "100%" }}
             placeholder="Chọn các bước cần thực hiện..."
-            value={listStep.map((step) => step.stepId)} // Use value instead of defaultValue
+            value={listStep?.map((e) => e.stepId)} // Use value instead of defaultValue
             onChange={handleChange}
-          >
-            {options.map((option) => (
-              <Select.Option key={option.value} value={option.value}>
-                {option.label}
-              </Select.Option>
-            ))}
-          </Select>
+            options={options}
+          ></Select>
         </Form.Item>
       </Form>
-      {/* <AddWorkerToGroupModal
-        open={addWorkerToGroupModal}
-        // onSubmit={handleCreateGroup}
-        // confirmLoading={groupCreating}
-        onCancel={addWorkerToGroupModal(false)}
-        // group={id}
-        // workers={workerNotInGroupList}
-      /> */}
     </BaseModal>
   );
 };

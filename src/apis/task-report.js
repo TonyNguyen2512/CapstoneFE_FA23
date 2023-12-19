@@ -39,7 +39,6 @@ const getReportByLeaderId = async (search, pageIndex, pageSize) => {
       return await searchReport(search, pageIndex, pageSize);
     }
     else {
-
       var params = {};
       if (pageIndex) {
         params = { ...params, pageIndex };
@@ -70,7 +69,7 @@ const searchReport = async (search, pageIndex, pageSize) => {
       params = { ...params, pageSize };
     }
 
-    const response = await BaseApi.post(`/${resource}/GetReportByLeaderId`, {
+    const response = await BaseApi.get(`/${resource}/GetReportByLeaderId`, {
       params: params,
     });
 
@@ -223,7 +222,7 @@ const getReportByForemanId = async (search, pageIndex, pageSize) => {
 			const response = await BaseApi.get(`/${resource}/GetReportByForemanId`, {
 				params: params,
 			});
-			return successComposer(retrieveDataSuccessCode, response);
+			return successComposer(retrieveDataSuccessCode, response.data);
 		}
 	} catch (error) {
 		console.log("Error enroll group: ", error);

@@ -113,7 +113,7 @@ const Notifications = ({}) => {
         break;
       case NotificationType.OrderReport:
         console.log("goToDetail - OrderReport: ");
-        navigate(`${root}/${dashboard.orderReports}/${noti?.reportId}`);
+        navigate(`${root}/${dashboard.adminReports}/${noti?.reportId}`);
         break;
       default:
         console.log("goToDetail - default - home: ");
