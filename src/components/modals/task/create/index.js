@@ -110,7 +110,14 @@ export const TaskCreateModal = ({
                   message: "Vui lòng nhập trạng thái",
                 },
               ]} >
-              <Select options={WTaskStatusOptions} placeholder="Chọn trạng thái" />
+              <Select
+                showSearch
+                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                }
+                options={WTaskStatusOptions} 
+                placeholder="Chọn trạng thái" />
             </Form.Item>
           </Col>
         </Row>
@@ -128,6 +135,11 @@ export const TaskCreateModal = ({
               ]}
             >
               <Select
+                showSearch
+                filterOption={(input, option) => (option?.label ?? '').includes(input)}
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                }
                 options={team?.map((e) => {
                   const isLeader = user?.id === e.id;
                   return {

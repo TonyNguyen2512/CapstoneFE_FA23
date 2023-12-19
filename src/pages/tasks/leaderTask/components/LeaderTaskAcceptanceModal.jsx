@@ -81,6 +81,11 @@ export const LeaderTaskAcceptanceModal = ({
             ]}
           >
             <Select
+              showSearch
+              filterOption={(input, option) => (option?.label ?? '').includes(input)}
+              filterSort={(optionA, optionB) =>
+                (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+              }
               className="w-full"
               placeholder="Chọn Tổ trưởng"
               options={leadersData?.map((e) => {

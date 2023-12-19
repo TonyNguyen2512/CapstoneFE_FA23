@@ -87,6 +87,9 @@ export const LeaderTaskModal = ({
 							<Form.Item name="id" hidden>
 								<Input />
 							</Form.Item>
+							<Form.Item name="itemId" hidden >
+								<Input />
+							</Form.Item>
 							{!isAcceptance &&
 								<Form.Item
 									name="name"
@@ -116,6 +119,11 @@ export const LeaderTaskModal = ({
 								]}
 							>
 								<Select
+									showSearch
+									filterOption={(input, option) => (option?.label ?? '').includes(input)}
+									filterSort={(optionA, optionB) =>
+										(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+									}
 									className="w-full"
 									placeholder="Chọn Tổ trưởng"
 									options={leadersData?.map((e) => {
@@ -125,12 +133,6 @@ export const LeaderTaskModal = ({
 										};
 									})}
 								/>
-							</Form.Item>
-							<Form.Item
-								name="itemId"
-								hidden
-							>
-								<Input />
 							</Form.Item>
 							<Row gutter={16}>
 								<Col span={isAcceptance ? 24 : 16}>
@@ -196,6 +198,11 @@ export const LeaderTaskModal = ({
 											]}
 										>
 											<Select
+												showSearch
+												filterOption={(input, option) => (option?.label ?? '').includes(input)}
+												filterSort={(optionA, optionB) =>
+													(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+												}
 												className="w-full"
 												placeholder="Chọn sản phẩm"
 												options={ETaskStatusOptions}
