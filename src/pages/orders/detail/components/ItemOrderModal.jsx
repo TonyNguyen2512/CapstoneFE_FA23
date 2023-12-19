@@ -164,7 +164,7 @@ export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSucc
                 },
               ]}
             >
-              <Select options={listItem} placeholder="Chọn sản phẩm..." />
+              <Select showSearch options={listItem} placeholder="Chọn sản phẩm..." />
             </Form.Item>
           </Col>
           <Col span={4}>

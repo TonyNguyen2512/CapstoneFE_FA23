@@ -6,6 +6,7 @@ import { DocDetail, Download } from "@icon-park/react";
 import React, { useContext, useState } from "react";
 import dayjs from "dayjs";
 import { orderLabels } from "../../../../constants/enum";
+import { formatMoney } from "../../../../utils";
 
 const { Title } = Typography;
 
@@ -67,7 +68,7 @@ export const OrderDetail = () => {
             Ngày tạo đơn: <strong>{dayjs(details?.createTime).format("HH:mm DD/MM/YYYY")}</strong>
           </Col>
           <Col className="gutter-row" span={6}>
-            Báo giá xưởng: <strong>{details?.totalPrice}</strong>
+            Báo giá đơn hàng: <strong>{formatMoney(details?.totalPrice)}</strong>
           </Col>
 
           <Col className="gutter-row" span={9}>

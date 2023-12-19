@@ -16,9 +16,11 @@ const BaseModal = ({
   width,
   okText,
   footer,
+  style = "",
 }) => {
   return (
     <Modal
+      style={style}
       destroyOnClose
       okText={okText ?? "Xác nhận"}
       cancelText="Hủy"

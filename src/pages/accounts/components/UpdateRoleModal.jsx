@@ -48,6 +48,7 @@ export const UpdateRoleModal = ({ user, open, onCancel, roleOptions, onSuccess }
           ]}
         >
           <Select
+            showSearch
             options={roleOptions}
             placeholder="Chọn vai trò..."
             onChange={(e) => setRoleId(e)}

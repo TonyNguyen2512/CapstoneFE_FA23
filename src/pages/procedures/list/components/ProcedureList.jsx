@@ -1,5 +1,5 @@
 import { Delete, Edit, More } from "@icon-park/react";
-import { Button, Dropdown, Space } from "antd";
+import { Button, Dropdown, Space, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import { BaseTable } from "../../../../components/BaseTable";
 import { ProcedureModal } from "../../components/ProcedureModal";
@@ -15,12 +15,13 @@ const ProcedureList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState([]);
 
+  const searchRef = useRef();
   const prodRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading) => {
     handleLoading && setLoading(true);
-    let response = await StepApi.getAll(null, pageIndex, PageSize.STEP_LIST_MAX);
-    setStepList(response.data);
+    let response = await StepApi.getAllWithoutPaging();
+    setStepList(response);
     response = await ProcedureApi.getAll(search, pageIndex, PageSize.PROCEDURE_LIST);
     setProcedureList(response.data);
     response = await ProcedureApi.getAllTotal(search, pageIndex, PageSize.STEP_LIST);
@@ -44,7 +45,7 @@ const ProcedureList = () => {
         label: "Xoá",
         danger: true,
         icon: <Delete />,
-        onClick: () => {},
+        onClick: () => handleRemove(record.id),
       },
     ];
   };
@@ -95,22 +96,31 @@ const ProcedureList = () => {
     },
   ];
 
-  const handleSearch = (value) => {
-    getData(value, 1, true);
+  const handleRemove = async (id) => {
+    if (window.confirm("Bạn chắc chắn muốn xoá?")) {
+      setLoading(true);
+      const success = await ProcedureApi.deleteItem(id);
+      if (success) {
+        message.success(`Xoá thành công`);
+      } else {
+        message.error(`Xoá thất bại`);
+      }
+      await getData(searchRef.current, currentPage, currentPage === 1);
+      setLoading(false);
+    }
   };
 
-  useEffect(() => {
-    getData(null, 1, true);
-  }, []);
+  const handleSearch = (value) => {
+    searchRef.current = value;
+  };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current, false);
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(searchRef.current, currentPage, currentPage === 1);
+  }, [currentPage, searchRef.current]);
 
   return (
     <>
@@ -154,7 +164,7 @@ const ProcedureList = () => {
           setShowStepModal(false);
           prodRef.current = null;
         }}
-        onSuccess={() => getData()}
+        onSuccess={() => getData(searchRef.current, currentPage, true)}
       />
     </>
   );

@@ -35,6 +35,7 @@ export const orderLabels = [
   "Đã huỷ",
   "Hoàn thành",
 ];
+
 export const genderLabels = ["Nam", "Nữ", "Khác"];
 
 export const orderColors = [

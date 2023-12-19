@@ -1,6 +1,12 @@
 import { Card, Col, Row, Typography, Space, Spin } from "antd";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { getRoleName, getStatusName, reduceNumber } from "../../../utils";
+import {
+  getRoleName,
+  getStatusName,
+  getTaskStatusName,
+  getWTaskStatusName,
+  reduceNumber,
+} from "../../../utils";
 import ReactECharts from "echarts-for-react";
 import DashboardApi from "../../../apis/dashboard";
 import { UserContext } from "../../../providers/user";
@@ -68,7 +74,7 @@ const Home = () => {
   const getLTasksStatistics = () => {
     return (
       leaderTaskData?.map((e) => {
-        return { name: getStatusName(e.taskStatus), value: e.total };
+        return { name: getTaskStatusName(e.taskStatus), value: e.total };
       }) || []
     );
   };
@@ -76,7 +82,7 @@ const Home = () => {
   const getWTasksStatistics = () => {
     return (
       workerTaskData?.map((e) => {
-        return { name: getStatusName(e.taskStatus), value: e.total };
+        return { name: getWTaskStatusName(e.taskStatus), value: e.total };
       }) || []
     );
   };
@@ -95,7 +101,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "User's statistic",
+        name: "Vai trò người dùng",
         type: "pie",
         radius: ["54%", "80%"],
         avoidLabelOverlap: false,
@@ -137,7 +143,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Order's statistic",
+        name: "Trạng thái đơn hàng",
         type: "pie",
         radius: ["0%", "80%"],
         avoidLabelOverlap: false,
@@ -179,7 +185,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "Order's statistic",
+        name: "Trạng thái công việc",
         type: "pie",
         radius: ["0%", "80%"],
         avoidLabelOverlap: false,
@@ -221,7 +227,7 @@ const Home = () => {
     },
     series: [
       {
-        name: "User's statistic",
+        name: "Trạng thái công việc",
         type: "pie",
         radius: ["54%", "80%"],
         avoidLabelOverlap: false,

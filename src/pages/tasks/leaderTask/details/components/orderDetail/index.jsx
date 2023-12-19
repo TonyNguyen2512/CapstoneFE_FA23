@@ -54,7 +54,7 @@ export const LeaderTaskOrderDetailsPage = () => {
           PageSize.LEADER_TASK_PROCEDURE_LIST
         );
         if (dataLeaderTasks.code === 0) {
-          if (index == 1 || dataLeaderTasks?.data?.data?.length > 0) {
+          if (index === 1 || dataLeaderTasks?.data?.data?.length > 0) {
             setTaskInfo(dataLeaderTasks?.data);
             break;
           }

@@ -50,8 +50,19 @@ const ItemLogModal = () => {
       },
     },
     {
+      title: "Mã sản phẩm",
+      dataIndex: "itemCode",
+      key: "itemCode",
+      width: "10%",
+      render: (_, record) => {
+        return <span>{record?.itemCode || "-"}</span>;
+      },
+      sorter: (a, b) => a.itemCode - b.itemCode,
+    },
+    {
       title: "Tên sản phẩm",
       dataIndex: "itemName",
+      width: "25%",
       key: "itemName",
       render: (_, record) => {
         return (
@@ -70,6 +81,7 @@ const ItemLogModal = () => {
       title: "Người chỉnh sửa",
       dataIndex: "userName",
       key: "userName",
+      width: "15%",
       render: (_, record) => {
         return (
           <span
@@ -87,7 +99,7 @@ const ItemLogModal = () => {
       title: "Ngày chỉnh sửa",
       dataIndex: "modifiedTime",
       key: "modifiedTime",
-      width: "11%",
+      width: "15%",
       render: (_, record) => {
         const formattedDate = formatDate(record.modifiedTime, "DD/MM/YYYY - HH:MM:SS");
         return <span>{formattedDate}</span>;

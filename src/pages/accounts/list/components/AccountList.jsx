@@ -30,6 +30,7 @@ const AccountList = () => {
   const [roleCreateOptions, setRoleCreateOptions] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const searchRef = useRef();
   const userRef = useRef();
 
   const getUsers = async (search, pageIndex, handleLoading) => {
@@ -63,22 +64,28 @@ const AccountList = () => {
   };
 
   const banUser = async (userId) => {
-    const success = await UserApi.banUser(userId);
-    if (success) {
-      message.success("Đã khóa tài khoản");
-      getUsers();
-    } else {
-      message.error("Khóa tài khoản thất bại");
+    if (window.confirm("Bạn có chắc muốn khoá tài khoản?")) {
+      const response = await UserApi.banUser(userId);
+      if (!response || response?.data?.errorMessage) {
+        if (response.data.errorMessage) message.error(response.data.errorMessage);
+        else message.error("Khóa tài khoản thất bại");
+      } else {
+        await getUsers(searchRef.current, currentPage, true);
+        message.success("Khóa tài khoản thành công");
+      }
     }
   };
 
   const unbanUser = async (userId) => {
-    const success = await UserApi.unbanUser(userId);
-    if (success) {
-      message.success("Đã mở khóa tài khoản");
-      getUsers();
-    } else {
-      message.error("Mở khóa tài khoản thất bại");
+    if (window.confirm("Bạn có chắc muốn mở khoá tài khoản?")) {
+      const response = await UserApi.unbanUser(userId);
+      if (!response || response?.data?.errorMessage) {
+        if (response.data.errorMessage) message.error(response.data.errorMessage);
+        else message.error("Mở khóa tài khoản thất bại");
+      } else {
+        await getUsers(searchRef.current, currentPage, true);
+        message.success("Mở khóa tài khoản thành công");
+      }
     }
   };
 

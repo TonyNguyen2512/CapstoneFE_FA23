@@ -13,6 +13,7 @@ const StepList = () => {
   const [stepList, setStepList] = useState([]);
   const [total, setTotal] = useState([]);
 
+  const searchRef = useRef();
   const stepRef = useRef();
 
   const getData = async (search, pageIndex, handleLoading = true) => {
@@ -90,27 +91,22 @@ const StepList = () => {
       } else {
         message.error(`Xoá thất bại`);
       }
-      getData();
+      await getData(searchRef.current, currentPage, currentPage === 1);
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    getData();
-  }, []);
-
   const handleSearch = (value) => {
-    getData(value, 1, true);
+    searchRef.current = value;
   };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current, false);
   };
 
   useEffect(() => {
-    getData(null, 1, true);
-  }, []);
+    getData(searchRef.current, currentPage, currentPage === 1);
+  }, [currentPage, searchRef.current]);
 
   return (
     <>
@@ -144,8 +140,11 @@ const StepList = () => {
       <StepModal
         data={stepRef.current}
         open={showItemCategoryModal}
-        onCancel={() => setShowItemCategoryModal(false)}
-        onSuccess={() => getData()}
+        onCancel={() => {
+          setShowItemCategoryModal(false);
+          stepRef.current = null;
+        }}
+        onSuccess={() => getData(searchRef.current, currentPage, true)}
       />
     </>
   );

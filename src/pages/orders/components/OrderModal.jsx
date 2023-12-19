@@ -210,13 +210,14 @@ export const OrderModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           ]}
         >
           <Select
+            showSearch
             options={users.map((v) => {
               return {
                 label: `${v.fullName} - ${v.userName}`,
                 value: v.id,
               };
             })}
-            placeholder="Tên khách hàng..."
+            placeholder="Tên người báo giá..."
           />
         </Form.Item>
         <Form.Item name="description" label="Mô tả">

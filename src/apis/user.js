@@ -1,3 +1,4 @@
+import { message } from "antd";
 import BaseApi from ".";
 
 const resource = "User";
@@ -141,20 +142,20 @@ const createUser = async (role, user) => {
 const banUser = async (id) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/BanUser/${id}`);
-		return response.status === 200;
+		return response;
 	} catch (error) {
 		console.log("Error ban user: ", error);
-		return false;
+		return null;
 	}
 };
 
 const unbanUser = async (id) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/UnBanUser/${id}`);
-		return response.status === 200;
+		return response;
 	} catch (error) {
 		console.log("Error unban user: ", error);
-		return false;
+		return null;
 	}
 };
 

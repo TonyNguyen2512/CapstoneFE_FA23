@@ -5,10 +5,6 @@ const resource = "MaterialCategory";
 
 const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
   try {
-    // if (search) {
-    //   return await searchMaterialCategory(search, pageIndex, pageSize);
-    // }
-    // else {
     var params = {};
     if (pageIndex) {
       params = { ...params, pageIndex };
@@ -28,30 +24,6 @@ const getAllMaterialCategory = async (search, pageIndex, pageSize) => {
     console.log("Error get item: ", error);
   }
 };
-
-// const searchMaterialCategory = async (search, pageIndex, pageSize) => {
-//   try {
-//     var params = {};
-//     if (search) {
-//       params = { ...params, search };
-//     }
-//     if (pageIndex) {
-//       params = { ...params, pageIndex };
-//     }
-//     if (pageSize) {
-//       params = { ...params, pageSize };
-//     }
-
-//     const response = await BaseApi.post(`/${resource}/SearchMaterialCategory`, {
-//       params: params,
-//     });
-
-//     return response.data;
-//   } catch (error) {
-//     console.log("Error search item: ", error);
-//     return [];
-//   }
-// };
 
 const getMaterialCategoryById = async (id) => {
   try {

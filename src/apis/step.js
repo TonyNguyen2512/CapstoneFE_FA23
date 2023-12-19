@@ -53,6 +53,16 @@ const getAll = async (search, pageIndex, pageSize) => {
   }
 };
 
+const getAllWithoutPaging = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAllWithoutPaging`);
+		return response.data;
+	} catch (error) {
+		console.log("Error get user by role: ", error);
+		return false;
+	}
+};
+
 const getAllTotal = async (search, pageIndex, pageSize) => {
   try {
     if (search) {
@@ -130,7 +140,7 @@ const updateItem = async (data) => {
 
 const deleteItem = async (id) => {
   try {
-    const response = await BaseApi.get(`/${resource}/Delete/${id}`);
+    const response = await BaseApi.delete(`/${resource}/Delete/${id}`);
     return response.status === 200;
   } catch (error) {
     console.log("Error delete item: ", error);
@@ -140,6 +150,7 @@ const deleteItem = async (id) => {
 
 const StepApi = {
   getAll,
+  getAllWithoutPaging,
   getAllTotal,
   getItemById,
   createItem,

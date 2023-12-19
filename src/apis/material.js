@@ -5,31 +5,6 @@ const resource = "Material";
 
 const getAllMaterial = async (search, pageIndex, pageSize) => {
   try {
-    if (search) {
-      return await searchMaterial(search, pageIndex, pageSize);
-    }
-    else {
-
-      var params = {};
-      if (pageIndex) {
-        params = { ...params, pageIndex };
-      }
-      if (pageSize) {
-        params = { ...params, pageSize };
-      }
-      const response = await BaseApi.get(`/${resource}/GetAll`, {
-        params: params,
-      });
-      return response.data;
-    }
-  } catch (error) {
-    console.log("Error get items: ", error);
-    return false;
-  }
-};
-
-const searchMaterial = async (search, pageIndex, pageSize) => {
-  try {
     var params = {};
     if (search) {
       params = { ...params, search };
@@ -40,15 +15,13 @@ const searchMaterial = async (search, pageIndex, pageSize) => {
     if (pageSize) {
       params = { ...params, pageSize };
     }
-
-    const response = await BaseApi.post(`/${resource}/SearchMaterial`, {
+    const response = await BaseApi.get(`/${resource}/GetAll`, {
       params: params,
     });
-
     return response.data;
   } catch (error) {
-    console.log("Error search item: ", error);
-    return [];
+    console.log("Error get items: ", error);
+    return false;
   }
 };
 
@@ -143,7 +116,6 @@ const deleteMaterial = async (id) => {
 
 const MaterialApi = {
   getAllMaterial,
-  searchMaterial,
   getMaterialById,
   createMaterial,
   updateMaterial,
