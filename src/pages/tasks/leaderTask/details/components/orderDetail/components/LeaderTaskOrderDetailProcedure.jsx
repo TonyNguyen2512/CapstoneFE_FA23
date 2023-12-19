@@ -112,7 +112,6 @@ export const LeaderTaskOrderDetailProcedure = ({
       title: "Độ ưu tiên",
       dataIndex: "priority",
       key: "priority",
-      defaultSortOrder: 'ascend',
       // align: "center",
       width: "10%",
       render: (_, record) => {

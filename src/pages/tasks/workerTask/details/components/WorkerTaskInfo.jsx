@@ -1,5 +1,5 @@
 import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "antd";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
 import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
@@ -16,6 +16,7 @@ import {
   LeaderTaskTaskReportModal,
   TaskAcceptanceReportModal,
 } from "../../components/TaskAcceptanceReportModal";
+import { useParams } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -23,11 +24,11 @@ export const WorkerTaskInfo = ({ loading }) => {
   const { Title } = Typography;
   const { user } = useContext(UserContext);
   const { info, team, tasks, accepted: acceptance, acceptanceTask } = useContext(TaskContext);
-
+  const { leaderTaskId } = useParams();
   const [problemReportLoading, setProblemReportLoading] = useState(false);
   const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
   const [progressReportLoading, setProgressReportLoading] = useState(false);
-
+  const [materialList, setMaterialList] = useState([]);
   const [showProblemReportModal, setShowProblemReportModal] = useState(false);
   const [showAcceptanceModal, setShowAcceptanceReportModal] = useState(false);
   const [showProgressReportModal, setShowProgressReportModal] = useState(false);
@@ -83,6 +84,19 @@ export const WorkerTaskInfo = ({ loading }) => {
     }
     setProgressReportLoading(false);
   };
+
+  const getMaterial = async () => {
+    setProgressReportLoading(true);
+    const material = await LeaderTasksApi.getMaterialByLeaderId(leaderTaskId);
+    setMaterialList(material.data)
+    console.log("Material: ", material.data);
+    setProgressReportLoading(false);
+  };
+
+  useEffect(() => {
+    getMaterial();
+  }, []);
+
 
   const defaultValue = (value) => {
     return <Text style={{ color: "red" }}>{value}</Text>;
@@ -209,12 +223,12 @@ export const WorkerTaskInfo = ({ loading }) => {
                   ghost
                   items={[
                     {
-                      label: `Danh sách vật liệu (${item?.itemMaterials?.length ?? 0})`,
+                      label: `Danh sách vật liệu (${materialList?.length ?? 0})`,
                       children: (
                         <Row gutter={[16, 16]}>
-                          {item?.itemMaterials?.map((item, index) => (
+                          {materialList?.map((item, index) => (
                             <Col className="gutter-row" span={24} key={item.materialId}>
-                              {index + 1}. {item.materialName} ({item.quantity})
+                              {index + 1}. Vật liệu: {item.name} - Số lượng: {item.quantity}
                             </Col>
                           ))}
                         </Row>

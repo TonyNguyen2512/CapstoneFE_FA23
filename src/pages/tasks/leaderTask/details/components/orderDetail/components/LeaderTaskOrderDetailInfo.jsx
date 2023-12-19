@@ -12,7 +12,21 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
 
   const { info, materials } = useContext(TaskContext);
 
-  const { itemName, itemCode, itemImage, itemLength, itemDepth, itemHeight, itemUnit, itemDrawingsTechnical, itemDrawings2D, itemDrawings3D, quantity, price, totalPrice } = info || [];
+  const {
+    itemName,
+    itemCode,
+    itemImage,
+    itemLength,
+    itemDepth,
+    itemHeight,
+    itemUnit,
+    itemDrawingsTechnical,
+    itemDrawings2D,
+    itemDrawings3D,
+    quantity,
+    price,
+    totalPrice,
+  } = info || [];
 
   const defaultValue = (value) => {
     return <Text style={{ color: "red" }}>{value}</Text>;
@@ -38,47 +52,35 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
                 Mã sản phẩm:{" "}
                 <strong>{itemCode || defaultValue("Không xác định được mã sản phẩm")}</strong>
               </Col>
+              {/* <Col className="gutter-row" span={8}>
+                Hình ảnh: <Image src={itemImage} fallback={ErrorImage} width="10%" />
+              </Col> */}
               <Col className="gutter-row" span={8}>
-                Hình ảnh:{" "}
-                <Image src={itemImage} fallback={ErrorImage} width="10%" />
+                Chiều dài: <strong>{`${itemLength || 0} ${itemUnit || ""}`}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Chiều dài:{" "}
-                <strong>{`${itemLength || 0} ${itemUnit || ""}`}</strong>
+                Chiều cao: <strong>{`${itemDepth || 0} ${itemUnit || ""}`}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Chiều cao:{" "}
-                <strong>{`${itemDepth || 0} ${itemUnit || ""}`}</strong>
+                Chiều rộng: <strong>{`${itemHeight || 0} ${itemUnit || ""}`}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Chiều rộng:{" "}
-                <strong>{`${itemHeight || 0} ${itemUnit || ""}`}</strong>
+                Số lượng: <strong>{quantity || defaultValue("Chưa thêm số lượng")}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
-                Số lượng:{" "}
-                <strong>
-                  {quantity || defaultValue("Chưa thêm số lượng")}
-                </strong>
-              </Col>
-              <Col className="gutter-row" span={8}>
-                Đơn giá:{" "}
-                <strong>
-                  {formatMoney(price) || defaultValue("Chưa thêm đơn giá")}
-                </strong>
+                Đơn giá: <strong>{formatMoney(price) || defaultValue("Chưa thêm đơn giá")}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
                 Thành tiền:{" "}
-                <strong>
-                  {formatMoney(totalPrice) || defaultValue("Chưa thêm thành tiền")}
-                </strong>
+                <strong>{formatMoney(totalPrice) || defaultValue("Chưa thêm thành tiền")}</strong>
               </Col>
               <Col className="gutter-row" span={8}>
                 Bản vẽ 2D:{" "}
                 <Button
                   disabled={!itemDrawings2D}
                   icon={<DownloadOutlined />}
-                  onClick={(e) => handleDownloadFile(itemDrawings2D, "drawings2D")
-                  }>
+                  onClick={(e) => handleDownloadFile(itemDrawings2D, "drawings2D")}
+                >
                   Tải bản vẽ
                 </Button>
               </Col>
@@ -87,8 +89,8 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
                 <Button
                   disabled={!itemDrawings3D}
                   icon={<DownloadOutlined />}
-                  onClick={(e) => handleDownloadFile(itemDrawings3D, "drawings3D")
-                  }>
+                  onClick={(e) => handleDownloadFile(itemDrawings3D, "drawings3D")}
+                >
                   Tải bản vẽ
                 </Button>
               </Col>
@@ -97,8 +99,8 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
                 <Button
                   disabled={!itemDrawingsTechnical}
                   icon={<DownloadOutlined />}
-                  onClick={(e) => handleDownloadFile(itemDrawingsTechnical, "drawingsTechnical")
-                  }>
+                  onClick={(e) => handleDownloadFile(itemDrawingsTechnical, "drawingsTechnical")}
+                >
                   Tải bản vẽ
                 </Button>
               </Col>
@@ -114,7 +116,7 @@ export const LeaderTaskOrderDetailInfo = ({ loading }) => {
                         <Row gutter={[16, 16]}>
                           {materials?.data?.map((item, index) => (
                             <Col className="gutter-row" span={24} key={item.materialId}>
-                              {index + 1}. {item.materialName} ({item.quantity * quantity})
+                              {index + 1}. Vật liệu: {item.materialName} - Số lượng: {item.quantity * quantity}
                             </Col>
                           ))}
                         </Row>
