@@ -19,7 +19,7 @@ import { usePermissions } from "../../../../../../hooks/permission";
 export const LeaderTaskOrderDetailsPage = () => {
   const permissions = usePermissions();
   const canView = permissions?.includes(ALL_PERMISSIONS.leadersTasks.view)
-                  || permissions?.includes(ALL_PERMISSIONS.orders.view);
+    || permissions?.includes(ALL_PERMISSIONS.orders.view);
   // const { user } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
 
@@ -30,11 +30,11 @@ export const LeaderTaskOrderDetailsPage = () => {
   const [allTasks, setAllTasks] = useState([]);
   const [materialInfo, setMaterialInfo] = useState();
   const [state, setState] = useState([]);
-  const [acceptance, setAcceptance] = useState(false);
+  const [accepted, setAccepted] = useState(false);
 
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const { user } = useContext(UserContext);
   const isForeman = user?.role?.name === roles.FOREMAN;
   const isAdmin = user?.role?.name === roles.ADMIN;
@@ -66,11 +66,11 @@ export const LeaderTaskOrderDetailsPage = () => {
       if (dataLeaderTasks.code === 0) {
         setAllTasks(dataLeaderTasks?.data);
 
-        const completedTasks = dataLeaderTasks?.data?.data?.filter(
-          (e) => e.status === ETaskStatus.Completed
+        const acceptanceTasks = dataLeaderTasks?.data?.data?.filter(
+          (e) => e.status === ETaskStatus.Acceptance
         );
-        if (completedTasks.length !== dataLeaderTasks?.data?.total) {
-          setAcceptance(true);
+        if (acceptanceTasks.length === 1) {
+          setAccepted(true);
         }
       } else {
         message.error(dataLeaderTasks.message);
@@ -87,13 +87,13 @@ export const LeaderTaskOrderDetailsPage = () => {
       setLoading(true);
     }
 
-    if (!orderDetailId) return;
+    if (!orderDetailId || !id) return;
 
     const orderData = await OrderApi.getOrderById(id);
     // retrieve order detail data by id
     const orderDetailData = await OrderDetailApi.getAllTaskByOrderDetailId(orderDetailId);
     if (orderDetailData) {
-      setOrderDetailInfo({ ...orderDetailData, status: orderData?.status });
+      setOrderDetailInfo({ ...orderDetailData, status: orderData?.status, orderId: orderData?.id });
     }
 
     const materialData = await OrderDetailMaterialApi.getByOrderDetailId(orderDetailId);
@@ -148,7 +148,7 @@ export const LeaderTaskOrderDetailsPage = () => {
             allTasks={allTasks}
             info={orderDetailInfo}
             materials={materialInfo}
-            acceptance={acceptance}
+            accepted={accepted}
             onReload={(handleLoading) => {
               getOrderDetailData(handleLoading, 1);
             }}
@@ -163,7 +163,7 @@ export const LeaderTaskOrderDetailsPage = () => {
               <LeaderTaskOrderDetailProcedureOverview title="Tiến độ quy trình" />
             </div>
             <div className="mt-4">
-              <LeaderTaskOrderDetailProcedure title="Danh sách quy trình" orderId={id} />
+              <LeaderTaskOrderDetailProcedure title="Danh sách quy trình" />
             </div>
           </TaskProvider>
         </Space>

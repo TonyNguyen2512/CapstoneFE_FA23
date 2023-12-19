@@ -52,7 +52,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
     }
     var canDrop = true;
     const taskId = draggableId;
-    const task = tasks?.find((e) => e.id === taskId);
+    const task = tasks?.data?.find((e) => e.id === taskId);
     const ownedTask = task?.members.find((e) => e.id === user?.id) !== undefined;
 
     if (!isLeader && !ownedTask) {

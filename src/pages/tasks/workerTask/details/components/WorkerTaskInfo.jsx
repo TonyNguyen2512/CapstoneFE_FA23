@@ -2,7 +2,7 @@ import { Typography, Col, Row, Space, Card, Collapse, Button, message } from "an
 import React, { useContext, useState } from "react";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../utils";
 import { UserContext } from "../../../../../providers/user";
-import { ETaskStatus } from "../../../../../constants/enum";
+import { ETaskStatus, TaskStatus } from "../../../../../constants/enum";
 import { TaskContext } from "../../../../../providers/task";
 import ReportApi from "../../../../../apis/task-report";
 import { TaskProblemReportModal, TaskReportModal } from "../../components/TaskProblemReportModal";
@@ -22,7 +22,7 @@ const { Text } = Typography;
 export const WorkerTaskInfo = ({ loading }) => {
   const { Title } = Typography;
   const { user } = useContext(UserContext);
-  const { info, team, tasks, acceptance, acceptanceTask } = useContext(TaskContext);
+  const { info, team, tasks, accepted: acceptance, acceptanceTask } = useContext(TaskContext);
 
   const [problemReportLoading, setProblemReportLoading] = useState(false);
   const [acceptanceReportLoading, setAcceptanceReportLoading] = useState(false);
@@ -36,11 +36,12 @@ export const WorkerTaskInfo = ({ loading }) => {
 
   const { name, leaderName, status, startTime, endTime, item } = info || [];
 
-  const isInProgress = status === ETaskStatus.InProgress;
+  const isLeaderStatusProgress = status === ETaskStatus.InProgress;
+  const isLeaderStatusAcceptance = status === ETaskStatus.Acceptance;
 
-  const completedTasks = tasks?.data?.filter((e) => e.status === ETaskStatus.Completed);
+  const completedTasks = tasks?.data?.filter((e) => e.status === TaskStatus.Completed);
   const isCompletedTasks =
-    tasks.length >= 1 && completedTasks && completedTasks.length === tasks.length;
+    tasks?.total >= 1 && completedTasks && completedTasks.length === tasks?.total;
 
   const handleProblemReportCreate = async (values) => {
     setProblemReportLoading(true);
@@ -49,7 +50,7 @@ export const WorkerTaskInfo = ({ loading }) => {
     const report = await ReportApi.sendProblemReport(values);
     if (report.code === 0) {
       setShowProblemReportModal(false);
-      message.info(report.message);
+      message.info("Tạo báo cáo thành công!");
     } else {
       message.error(report.message);
     }
@@ -62,7 +63,7 @@ export const WorkerTaskInfo = ({ loading }) => {
     const report = await ReportApi.sendAcceptanceReport(values);
     if (report.code === 0) {
       setShowAcceptanceReportModal(false);
-      message.info(report.message);
+      message.info("Tạo báo cáo thành công!");
       acceptanceTask();
     } else {
       message.error(report.message);
@@ -95,21 +96,8 @@ export const WorkerTaskInfo = ({ loading }) => {
             Chi tiết việc làm {name}
           </Title>
         </Col>
-        {isLeader && isInProgress && (
+        {isLeader && (isLeaderStatusProgress && (
           <>
-            {isCompletedTasks && (
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <Button
-                  style={{ marginLeft: "10px" }}
-                  type="primary"
-                  className="btn-primary app-bg-success font-semibold text-white"
-                  onClick={() => setShowAcceptanceReportModal(true)}
-                  disabled={acceptance}
-                >
-                  Báo cáo nghiệm thu
-                </Button>
-              </div>
-            )}
             <div style={{ display: "flex", justifyContent: "flex-end" }}>
               <Button
                 style={{ marginLeft: "10px" }}
@@ -125,13 +113,32 @@ export const WorkerTaskInfo = ({ loading }) => {
                 type="primary"
                 className="btn-primary app-bg-primary font-semibold text-white"
                 onClick={() => setShowProgressReportModal(true)}
-                // disabled={acceptance}
+              // disabled={acceptance}
               >
                 Báo cáo tiến độ
               </Button>
             </div>
           </>
-        )}
+        ))
+        }
+        {isLeader && isLeaderStatusAcceptance && (
+          <>
+            {isCompletedTasks && (
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button
+                  style={{ marginLeft: "10px" }}
+                  type="primary"
+                  className="btn-primary app-bg-success font-semibold text-white"
+                  onClick={() => setShowAcceptanceReportModal(true)}
+                  disabled={acceptance}
+                >
+                  Báo cáo nghiệm thu
+                </Button>
+              </div>
+            )}
+          </>
+        )
+        }
       </Row>
       <Row gutter={[16, 16]}>
         <Col span={24}>

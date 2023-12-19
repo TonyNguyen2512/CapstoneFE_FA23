@@ -3,7 +3,7 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
 import BaseModal from "../../../../components/BaseModal";
 import dayjs from "dayjs";
-import { modalModes } from "../../../../constants/enum";
+import { ETaskStatus, modalModes } from "../../../../constants/enum";
 import UserApi from "../../../../apis/user";
 import { DownloadOutlined } from "@ant-design/icons";
 import { disabledDateTime, handleDownloadFile } from "../../../../utils";
@@ -32,7 +32,8 @@ export const LeaderTaskModal = ({
 	const isDrawingsTechnical = dataSource?.item?.drawingsTechnical;
 
 	const isCreate = mode === modalModes.CREATE;
-	
+	const isAcceptance = dataSource?.status === ETaskStatus.Acceptance;
+
 	const onFinish = async (values) => {
 		await onSubmit({ ...values });
 	};
@@ -56,7 +57,7 @@ export const LeaderTaskModal = ({
 			title={title}
 			onOk={() => leadTaskFormRef.current?.submit()}
 			confirmLoading={confirmLoading}
-			width="50%"
+			width={!isAcceptance ? "50%" : "35%"}
 			okText="Lưu"
 		>
 			<Form
@@ -86,22 +87,24 @@ export const LeaderTaskModal = ({
 							<Form.Item name="id" hidden>
 								<Input />
 							</Form.Item>
-							<Form.Item
-								name="name"
-								label={<Text strong>Tên công việc</Text>}
-								rules={[
-									{
-										required: true,
-										message: "Vui lòng nhập tên quy trình",
-									},
-								]}
-							>
-								<Input
-									showCount
-									maxLength={255}
-									placeholder="Tên công việc"
-								/>
-							</Form.Item>
+							{!isAcceptance &&
+								<Form.Item
+									name="name"
+									label={<Text strong>Tên công việc</Text>}
+									rules={[
+										{
+											required: true,
+											message: "Vui lòng nhập tên quy trình",
+										},
+									]}
+								>
+									<Input
+										showCount
+										maxLength={255}
+										placeholder="Tên công việc"
+									/>
+								</Form.Item>
+							}
 							<Form.Item
 								name="leaderId"
 								label={<Text strong>Tổ trưởng</Text>}
@@ -130,7 +133,7 @@ export const LeaderTaskModal = ({
 								<Input />
 							</Form.Item>
 							<Row gutter={16}>
-								<Col span={16}>
+								<Col span={isAcceptance ? 24 : 16}>
 									<Form.Item
 										name="dates"
 										label={<Text strong>Thời gian</Text>}
@@ -159,27 +162,29 @@ export const LeaderTaskModal = ({
 									</Form.Item>
 								</Col>
 								<Col span={6}>
-									<Form.Item
-										name="priority"
-										label={<Text strong>Độ ưu tiên</Text>}
-										rules={[
-											{
-												required: true,
-												message: "Vui lòng thêm độ ưu tiên",
-											},
-										]}
-									>
-										<InputNumber
-											min={1}
-											max={10}
-											placeholder="Độ ưu tiên"
-										/>
-									</Form.Item>
+									{!isAcceptance &&
+										<Form.Item
+											name="priority"
+											label={<Text strong>Độ ưu tiên</Text>}
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng thêm độ ưu tiên",
+												},
+											]}
+										>
+											<InputNumber
+												min={1}
+												max={10}
+												placeholder="Độ ưu tiên"
+											/>
+										</Form.Item>
+									}
 								</Col>
 							</Row>
 							<Row gutter={16}>
 								<Col span={16}>
-									{!isCreate &&
+									{!isCreate && !isAcceptance &&
 										<Form.Item
 											name="status"
 											label={<Text strong>Trạng thái</Text>}
@@ -199,22 +204,24 @@ export const LeaderTaskModal = ({
 									}
 								</Col>
 								<Col span={isCreate ? 16 : 8}>
-									<Form.Item
-										name="itemQuantity"
-										label={<Text strong>Số lượng sản phẩm</Text>}
-										rules={[
-											{
-												required: true,
-												message: "Vui lòng thêm số lượng sản phẩm",
-											},
-										]}
-									>
-										<InputNumber
-											min={1}
-											// max={10}
-											placeholder="Số lượng sản phẩm"
-										/>
-									</Form.Item>
+									{!isAcceptance &&
+										<Form.Item
+											name="itemQuantity"
+											label={<Text strong>Số lượng sản phẩm</Text>}
+											rules={[
+												{
+													required: true,
+													message: "Vui lòng thêm số lượng sản phẩm",
+												},
+											]}
+										>
+											<InputNumber
+												min={1}
+												// max={10}
+												placeholder="Số lượng sản phẩm"
+											/>
+										</Form.Item>
+									}
 								</Col>
 							</Row>
 							<Form.Item
@@ -226,7 +233,7 @@ export const LeaderTaskModal = ({
 								/>
 							</Form.Item>
 
-							{!isCreate &&
+							{!isCreate && !isAcceptance &&
 								<Row gutter={16}>
 									<Col span={8}>
 										<Form.Item hidden name="drawings2D">

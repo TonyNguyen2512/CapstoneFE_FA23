@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import { DatePicker, Form, Input, Select, Typography } from "antd";
+import { Card, DatePicker, Form, Input, Select, Typography } from "antd";
 import BaseModal from "../../../../components/BaseModal";
 import { TaskContext } from "../../../../providers/task";
 import { RichTextEditor } from "../../../../components/RichTextEditor";
@@ -20,13 +20,16 @@ export const LeaderTaskAcceptanceModal = ({
   const formAcceptanceRef = useRef();
   const { info } = useContext(TaskContext);
 
+  console.log("info acceptance", info)
+
   const onFinish = async (values) => {
     const datas = {
       leaderId: values.leaderId,
+      itemId: values?.itemId,
       orderId: values.orderId,
-      description: values.description,
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
+      description: values.description,
     }
     await onSubmit({ ...datas });
   }
@@ -43,80 +46,94 @@ export const LeaderTaskAcceptanceModal = ({
         ref={formAcceptanceRef}
         initialValues={{
           leaderId: info?.leaderId,
-          orderDetailId: info?.id,
+          orderId: info?.orderId,
           startTime: info?.startTime,
           endTime: info?.endTime,
+          itemId: info?.itemId,
           description: "",
         }}
         onFinish={onFinish}
         layout="vertical"
       >
-        <Form.Item name="orderDetailId" hidden>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="leaderId"
-          label={<Text strong>Tổ trưởng</Text>}
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng chọn Tổ trưởng",
-            },
-          ]}
+        <Card
+          bodyStyle={{
+            padding: 0,
+            paddingLeft: 8,
+            paddingTop: 12,
+            paddingRight: 8,
+            paddingBottom: 16,
+          }}
         >
-          <Select
-            className="w-full"
-            placeholder="Chọn Tổ trưởng"
-            options={leadersData?.map((e) => {
-              return {
-                label: e.fullName,
-                value: e.id,
-              };
-            })}
-          />
-        </Form.Item>
-        <Form.Item
-          name="dates"
-          label={<Text strong>Thời hạn công việc</Text>}
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng chọn ngày bắt đầu & kết thúc",
-            },
-          ]}
-        >
-          <DatePicker.RangePicker
-            showNow
-            showTime={{
-              hideDisabledOptions: true,
-            }}
-            placeholder={["Bắt đầu", "Kết thúc"]}
-            className="w-full"
-            format="HH:mm DD/MM/YYYY"
-            rang
-            disabledDate={(date) => {
-              return (
-                date.isBefore(dayjs(), "day")
-              );
-            }}
-            disabledTime={disabledDateTime}
-          />
-        </Form.Item>
-        <Form.Item
-          name="description"
-          label={<Text strong>Mô tả báo cáo</Text>}
-          rules={[
-            {
-              required: true,
-              message: "Vui lòng thêm mô tả báo cáo",
-            },
-          ]}
-        >
-          <RichTextEditor
-            // onChange={(value) => (descRef.current = value)}
-            placeholder="Nhập mô tả báo cáo..."
-          />
-        </Form.Item>
+          <Form.Item name="orderId" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item name="itemId" hidden>
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="leaderId"
+            label={<Text strong>Tổ trưởng</Text>}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn Tổ trưởng",
+              },
+            ]}
+          >
+            <Select
+              className="w-full"
+              placeholder="Chọn Tổ trưởng"
+              options={leadersData?.map((e) => {
+                return {
+                  label: e.fullName,
+                  value: e.id,
+                };
+              })}
+            />
+          </Form.Item>
+          <Form.Item
+            name="dates"
+            label={<Text strong>Thời hạn công việc</Text>}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng chọn ngày bắt đầu & kết thúc",
+              },
+            ]}
+          >
+            <DatePicker.RangePicker
+              showNow
+              showTime={{
+                hideDisabledOptions: true,
+              }}
+              placeholder={["Bắt đầu", "Kết thúc"]}
+              className="w-full"
+              format="HH:mm DD/MM/YYYY"
+              rang
+              disabledDate={(date) => {
+                return (
+                  date.isBefore(dayjs(), "day")
+                );
+              }}
+              disabledTime={disabledDateTime}
+            />
+          </Form.Item>
+          <Form.Item
+            name="description"
+            label={<Text strong>Mô tả báo cáo</Text>}
+            rules={[
+              {
+                required: true,
+                message: "Vui lòng thêm mô tả báo cáo",
+              },
+            ]}
+          >
+            <RichTextEditor
+              // onChange={(value) => (descRef.current = value)}
+              placeholder="Nhập mô tả báo cáo..."
+            />
+          </Form.Item>
+        </Card>
       </Form>
     </BaseModal>
   );

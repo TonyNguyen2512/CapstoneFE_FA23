@@ -36,6 +36,10 @@ export const LeaderTaskOrderDetailProcedureOverview = ({
     (e) => e.status === ETaskStatus.InProgress
   );
 
+  const acceptanceTasks = allETasks?.filter(
+    (e) => e.status === ETaskStatus.Acceptance
+  );
+
   const expireTasks = allETasks?.filter((e) =>
     moment(e.timeReport).isBefore(now()) && e.status !== ETaskStatus.Completed
   );
@@ -82,6 +86,10 @@ export const LeaderTaskOrderDetailProcedureOverview = ({
           {
             label: "Quy trình đã quá hạn",
             children: expireTasks?.length,
+          },
+          {
+            label: "Quy trình nghiệm thu",
+            children: acceptanceTasks?.length,
           },
         ]}
       />

@@ -423,6 +423,10 @@ export const ETaskStatusOptions = [
     value: ETaskStatus.Completed,
     label: ETaskMap[ETaskStatus.Completed].label,
   },
+  // {
+  //   value: ETaskStatus.Acceptance,
+  //   label: ETaskMap[ETaskStatus.Acceptance].label,
+  // },
 ];
 
 export const WTaskStatusOptions = [
