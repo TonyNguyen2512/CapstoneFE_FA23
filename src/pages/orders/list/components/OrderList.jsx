@@ -142,7 +142,7 @@ const OrderList = () => {
       sorter: (a, b) => a.customerName - b.customerName,
     },
     {
-      title: "Báo giáo xưởng",
+      title: "Báo giá xưởng",
       dataIndex: "totalPrice",
       key: "totalPrice",
       sorter: (a, b) => a.totalPrice - b.totalPrice,
