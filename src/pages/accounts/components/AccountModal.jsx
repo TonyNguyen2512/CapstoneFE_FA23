@@ -67,6 +67,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
               rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
             >
               <Select
+                showSearch
                 options={roleOptions}
                 placeholder="Chọn vai trò..."
                 onChange={(val) => {

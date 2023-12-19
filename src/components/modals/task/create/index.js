@@ -128,6 +128,7 @@ export const TaskCreateModal = ({
               ]}
             >
               <Select
+                showSearch
                 options={team?.map((e) => {
                   const isLeader = user?.id === e.id;
                   return {

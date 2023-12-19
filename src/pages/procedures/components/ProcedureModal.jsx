@@ -93,6 +93,7 @@ export const ProcedureModal = ({ data, options, open, onCancel, onSuccess }) => 
         </Form.Item>
         <Typography name="listStep">Danh sách các bước</Typography>
         <Select
+          showSearch
           name="listStep"
           label="Danh sách các bước"
           key={listStep?.length}

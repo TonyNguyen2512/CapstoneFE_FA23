@@ -49,6 +49,7 @@ export const UpdateStatus = ({ data, open, onCancel, onSuccess }) => {
           ]}
         >
           <Select
+            showSearch
             options={orderLabels.map((e, i) => {
               return { label: e, value: i };
             })}

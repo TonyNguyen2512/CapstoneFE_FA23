@@ -30,8 +30,8 @@ export const ItemModal = ({
   const [drawings2D, setDrawings2D] = useState(data?.drawings2D ?? "");
   const [drawings3D, setDrawings3D] = useState(data?.drawings3D ?? "");
   const [drawingsTechnical, setDrawingsTechnical] = useState(data?.drawingsTechnical ?? "");
-  const [listProcedure, setListProcedure] = useState(data?.listProcedure);
-  const [listMaterial, setListMaterial] = useState(data?.listMaterial);
+  const [listProcedure, setListProcedure] = useState(data?.listProcedure || []);
+  const [listMaterial, setListMaterial] = useState(data?.listMaterial || []);
   const [progress, setProgress] = useState(-1);
   const [tableKey, setTableKey] = useState(0);
 
@@ -373,10 +373,8 @@ export const ItemModal = ({
   ];
 
   useEffect(() => {
-    if (data) {
-      setListProcedure(data?.listProcedure);
-      setListMaterial(data?.listMaterial);
-    }
+    setListProcedure(data?.listProcedure || []);
+    setListMaterial(data?.listMaterial || []);
   }, [data]);
 
   return (

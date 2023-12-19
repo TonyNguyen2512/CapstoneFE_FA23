@@ -163,6 +163,7 @@ export const QuoteModal = ({ data, users, isCreate, open, onCancel, onSuccess })
           ]}
         >
           <Select
+            showSearch
             options={users.map((v) => {
               return {
                 label: `${v.fullName} - ${v.userName} (${getRoleName(v.role)})`,

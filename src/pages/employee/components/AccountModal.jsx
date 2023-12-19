@@ -21,7 +21,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
       : await UserApi.updateUserInfo(val);
     if (!response || !response.errorMessage) {
       message.success(`${typeMessage} thành công`);
-      onSuccess()
+      onSuccess();
     } else {
       message.error(`${typeMessage} thất bại. ${response.errorMessage}`);
     }
@@ -68,6 +68,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
               rules={[{ required: true, message: "Vui lòng chọn vai trò" }]}
             >
               <Select
+                showSearch
                 options={roleOptions}
                 placeholder="Chọn vai trò..."
                 onChange={(val) => {
