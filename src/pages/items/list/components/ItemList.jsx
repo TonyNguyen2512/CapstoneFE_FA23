@@ -14,6 +14,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import routes from "../../../../constants/routes";
 import { ProcedureModal } from "../../../procedures/components/ProcedureModal";
 import { formatMoney, formatNum } from "../../../../utils";
+import { StepModal } from "../../../steps/components/StepModal";
 
 const ItemList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -22,7 +23,7 @@ const ItemList = ({ canModify }) => {
   const [itemList, setItemList] = useState([]);
   const [itemCategoryList, setItemCategoryList] = useState([]);
   const [listProcedures, setListProcedures] = useState([]);
-  const [stepList, setStepList] = useState([]);
+  const [listSteps, setListSteps] = useState([]);
   const [listMaterials, setListMaterials] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState("");
@@ -50,7 +51,7 @@ const ItemList = ({ canModify }) => {
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
     response = await StepApi.getAll();
-    setStepList(response.data);
+    setListSteps(response.data);
     handleLoading && setLoading(false);
   };
 
@@ -225,8 +226,8 @@ const ItemList = ({ canModify }) => {
   const getActionProcedures = (record) => {
     return [
       {
-        key: "UPDATE_ROLE",
-        label: "Chỉnh sửa thông tin",
+        key: "UPDATE_PROCEDURE",
+        label: "Chỉnh sửa",
         icon: <Edit />,
         onClick: () => {
           prodRef.current = listProcedures.find((ew) => ew.id === record.procedureId);
@@ -235,8 +236,7 @@ const ItemList = ({ canModify }) => {
       },
     ];
   };
-
-  const expandedRowRender = (row) => {
+  const expandedProcedureRender = (row) => {
     // columns for procedure
     const columns = [
       {
@@ -260,7 +260,7 @@ const ItemList = ({ canModify }) => {
         render: (_, { procedure }) =>
           procedure?.listStep?.map((e, i) => (
             <p className="my-1">
-              {i + 1}. {stepList?.find((step) => step.id === e.stepId)?.name}
+              {i + 1}. {listSteps?.find((step) => step.id === e.stepId)?.name}
             </p>
           )),
       },
@@ -281,6 +281,7 @@ const ItemList = ({ canModify }) => {
     ];
     return (
       <Table
+        size="small"
         columns={columns}
         dataSource={row.listProcedure?.map((e) => {
           return {
@@ -289,7 +290,72 @@ const ItemList = ({ canModify }) => {
             procedure: listProcedures?.find((p) => p.id === e.procedureId) || null,
           };
         })}
+        pagination={false}
+        expandable={{
+          expandedRowRender: expandedStepRender,
+        }}
+        style={{ marginRight: "4%" }}
+      />
+    );
+  };
+
+  const getActionSteps = (record) => {
+    return [
+      {
+        key: "UPDATE_STEP",
+        label: "Chỉnh sửa",
+        icon: <Edit />,
+        onClick: () => {
+          stepRef.current = listSteps?.find((ew) => ew.id === record.stepId);
+          setShowStepModal(true);
+        },
+      },
+    ];
+  };
+  const expandedStepRender = (row) => {
+    // columns for procedure
+    const columns = [
+      {
+        title: "Bước",
+        width: "30%",
+        dataIndex: "stepId",
+        key: "stepId",
+        render: (_, { step }) => <span>{step?.name}</span>,
+      },
+      {
+        title: "Độ ưu tiên",
+        width: "12%",
+        align: "center",
+        dataIndex: "priority",
+        key: "priority",
+        render: (_, { priority }) => <span>{priority + 1}</span>,
+      },
+      {
+        title: "Thao tác",
+        dataIndex: "action",
+        key: "action",
+        width: "10%",
+        align: "center",
+        render: (_, record, index) => {
+          return (
+            <Dropdown menu={{ items: getActionSteps(record) }}>
+              <Button className="mx-auto flex-center" icon={<More />} />
+            </Dropdown>
+          );
+        },
+      },
+    ];
+    return (
+      <Table
         size="small"
+        columns={columns}
+        dataSource={row.listStep?.map((e) => {
+          return {
+            ...e,
+            key: e.stepId,
+            step: listSteps?.find((p) => p.id === e.stepId) || null,
+          };
+        })}
         pagination={false}
         style={{ marginRight: "4%" }}
       />
@@ -346,7 +412,7 @@ const ItemList = ({ canModify }) => {
           total: itemList?.total,
         }}
         expandable={{
-          expandedRowRender,
+          expandedRowRender: expandedProcedureRender,
         }}
         searchOptions={{
           visible: true,
@@ -399,7 +465,7 @@ const ItemList = ({ canModify }) => {
 
       <ProcedureModal
         data={prodRef.current}
-        options={stepList?.map((e) => {
+        options={listSteps?.map((e) => {
           return {
             label: e.name,
             value: e.id,
@@ -409,6 +475,16 @@ const ItemList = ({ canModify }) => {
         onCancel={() => {
           setShowProcedurepModal(false);
           prodRef.current = null;
+        }}
+        onSuccess={() => getData(searchRef.current, currentPage, true)}
+      />
+
+      <StepModal
+        data={stepRef.current}
+        open={showStepModal}
+        onCancel={() => {
+          setShowStepModal(false);
+          stepRef.current = null;
         }}
         onSuccess={() => getData(searchRef.current, currentPage, true)}
       />
