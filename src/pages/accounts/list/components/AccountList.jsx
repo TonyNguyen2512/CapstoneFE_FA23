@@ -1,4 +1,4 @@
-import { Edit, Forbid, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
+import { Edit, Forbid, Key, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
 import { Button, Dropdown, Space, Tag, message } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../../apis/role";
@@ -10,6 +10,8 @@ import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
 import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
 import { PageSize } from "../../../../constants/enum";
+import { ResetPasswordModal } from "../../components/ResetPasswordModal";
+import { useNavigate } from "react-router-dom";
 
 const roleColors = {
   ADMIN: "#FF7777",
@@ -21,9 +23,11 @@ const roleColors = {
 };
 
 const AccountList = () => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [resetPasswordModal, setResetPasswordModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -125,6 +129,16 @@ const AccountList = () => {
         onClick: () => {
           userRef.current = record;
           setShowModal(true);
+        },
+      },
+      {
+        key: "RESET_PASSWORD",
+        label: "Đặt lại mật khẩu",
+        icon: <Key />,
+        disabled: role?.name === roles.ADMIN,
+        onClick: () => {
+          userRef.current = record;
+          setResetPasswordModal(true);
         },
       },
       {
@@ -334,6 +348,15 @@ const AccountList = () => {
           setShowPhoneModal(false);
           userRef.current = null;
         }}
+      />
+      <ResetPasswordModal
+        data={userRef.current}
+        open={resetPasswordModal}
+        onCancel={() => {
+          setResetPasswordModal(false);
+          userRef.current = null;
+        }}
+        onSuccess={() => getUsers()}
       />
     </>
   );
