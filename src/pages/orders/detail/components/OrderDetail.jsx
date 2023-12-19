@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { DocDetail, Download } from "@icon-park/react";
 import React, { useContext, useState } from "react";
 import dayjs from "dayjs";
-import { orderLabels } from "../../../../constants/enum";
+import { orderColors, orderLabels } from "../../../../constants/enum";
 import { formatMoney } from "../../../../utils";
 
 const { Title } = Typography;
@@ -58,7 +58,10 @@ export const OrderDetail = () => {
             Người được giao: <strong>{details?.assignTo?.fullName}</strong>
           </Col>
           <Col className="gutter-row" span={6}>
-            Trạng thái: <strong>{orderLabels[details?.status]}</strong>
+            Trạng thái:{" "}
+            <strong style={{ color: orderColors[details?.status] }}>
+              {orderLabels[details?.status]}
+            </strong>
           </Col>
 
           <Col className="gutter-row" span={9}>
