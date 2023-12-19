@@ -110,7 +110,7 @@ const QuoteList = () => {
       sorter: (a, b) => a.customerName.localeCompare(b.customerName),
     },
     {
-      title: "Báo giá đơn hàng",
+      title: "Tổng đơn hàng",
       dataIndex: "totalPrice",
       key: "totalPrice",
       sorter: (a, b) => a.totalPrice.localeCompare(b.totalPrice),

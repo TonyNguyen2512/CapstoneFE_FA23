@@ -30,7 +30,7 @@ export const WorkerTaskDetailsPage = () => {
   const isWorker = user?.role?.name === roles.WORKER;
 
   const [loading, setLoading] = useState(false);
-  const [acceptance, setAcceptance] = useState(false);
+  const [accepted, setAccepted] = useState(false);
   const { leaderTaskId } = useParams();
 
   const [leaderTaskInfo, setLeaderTaskInfo] = useState([]);
@@ -131,7 +131,7 @@ export const WorkerTaskDetailsPage = () => {
 
   useEffect(() => {
     if (leaderTaskInfo?.status === ETaskStatus.Completed) {
-      setAcceptance(true);
+      setAccepted(true);
     }
   }, [leaderTaskInfo])
 
@@ -182,7 +182,7 @@ export const WorkerTaskDetailsPage = () => {
             info={leaderTaskInfo}
             team={groupMemberList}
             leader={leaderInfo}
-            acceptance={acceptance}
+            accepted={accepted}
             onReload={(handleLoading) => {
               handleRetrieveWorkerTaskList(handleLoading, leaderTaskId);
             }}
@@ -190,7 +190,7 @@ export const WorkerTaskDetailsPage = () => {
               handleRetrieveWorkerTaskList(false, leaderTaskId, memberId);
             }}
             onAcceptanceTask={() => {
-              setAcceptance(true);
+              setAccepted(true);
             }}
           >
             <div className="mt-4">

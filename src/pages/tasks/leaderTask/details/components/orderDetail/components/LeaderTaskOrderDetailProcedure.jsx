@@ -7,7 +7,7 @@ import { BaseTable } from "../../../../../../../components/BaseTable";
 import confirm from "antd/es/modal/confirm";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import { Button } from "antd/lib";
-import { OrderStatus, PageSize, modalModes } from "../../../../../../../constants/enum";
+import { ETaskStatus, OrderStatus, PageSize, modalModes } from "../../../../../../../constants/enum";
 import LeaderTasksApi from "../../../../../../../apis/leader-task";
 import routes from "../../../../../../../constants/routes";
 import { TaskContext } from "../../../../../../../providers/task";
@@ -19,10 +19,9 @@ import UserApi from "../../../../../../../apis/user";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
-  orderId,
 }) => {
 
-  const { tasks, info, reload, filterTask, acceptance } = useContext(TaskContext);
+  const { tasks, info, reload, filterTask, accepted, allTasks } = useContext(TaskContext);
 
   const { Title } = Typography;
   const titleInfo = title + ` (${tasks?.total ? tasks.total : 0})`;
@@ -43,6 +42,13 @@ export const LeaderTaskOrderDetailProcedure = ({
 
   const leaderTaskInfo = useRef();
 
+  const completedTasks = allTasks?.data?.filter(
+    (e) => e.status === ETaskStatus.Completed
+  );
+
+  const isCompletedTasks = allTasks?.total >= 1
+    && completedTasks && completedTasks.length === allTasks?.total;
+
   const getActionItems = (record) => {
     const { isActive, id } = record;
 
@@ -55,7 +61,7 @@ export const LeaderTaskOrderDetailProcedure = ({
           leaderTaskInfo.current = record;
           navigate(routes.dashboard.workersTasks + "/" + id, {
             state: {
-              orderId: orderId,
+              orderId: info.orderId,
               orderDetailId: info.id,
             }
           }, { replace: true });
@@ -213,7 +219,7 @@ export const LeaderTaskOrderDetailProcedure = ({
       startTime: values.dates?.[0],
       endTime: values.dates?.[1],
       description: values?.description,
-      orderId: orderId,
+      orderId: info?.orderId,
     }
     console.log("create", data)
     try {
@@ -283,13 +289,19 @@ export const LeaderTaskOrderDetailProcedure = ({
   const handleSubmitAcceptanceReportCreate = async (values) => {
     console.log("create task acceptance", values)
     setAcceptanceReportLoading(true);
-    const resp = await LeaderTasksApi.createAcceptanceTasks(values);
-    if (resp) {
-      message.success(resp.message);
+    try {
+      const resp = await LeaderTasksApi.createAcceptanceTasks(values);
+      if (resp.code === 0) {
+        message.success(resp.message);
+        setShowAcceptanceReportModal(false);
+        handleReload();
+      } else {
+        message.error(resp.message);
+      }
+    } catch (e) {
+      console.log(e);
+    } finally {
       setAcceptanceReportLoading(false);
-      handleReload();
-    } else {
-      message.error(resp.message);
     }
   }
 
@@ -322,7 +334,7 @@ export const LeaderTaskOrderDetailProcedure = ({
               }
             />
           }
-          {acceptance &&
+          {!accepted && isCompletedTasks &&
             <Col>
               <Button
                 className="flex-center ml-3"

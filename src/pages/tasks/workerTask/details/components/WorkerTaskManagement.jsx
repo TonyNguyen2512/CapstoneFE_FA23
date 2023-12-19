@@ -19,10 +19,11 @@ const { Title } = Typography;
 export const WorkerTaskManagement = () => {
 
 	const { user } = useContext(UserContext);
-	const { filterTask, reload, tasks, info, team, acceptance, leader } = useContext(TaskContext);
+	const { filterTask, reload, tasks, info, team, accepted, leader } = useContext(TaskContext);
 
 	const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
-	const isInProgress = info.status === ETaskStatus.InProgress;
+	const isLeaderTaskStatus = info.status === ETaskStatus.InProgress
+						|| info.status === ETaskStatus.Acceptance;
 
 	const [taskCreateLoading, setTaskCreateLoading] = useState(false);
 	const [taskUpdateLoading, setTaskUpdateLoading] = useState(false);
@@ -108,7 +109,6 @@ export const WorkerTaskManagement = () => {
 		console.log("fetch workers create");
 		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
 		if (dataWorkers.code === 0) {
-			console.log(dataWorkers)
 			setWorkers(dataWorkers.data);
 		} else {
 			message.error(dataWorkers.message);
@@ -118,7 +118,6 @@ export const WorkerTaskManagement = () => {
 	const handleRetrieveWorkersUpdate = async (task) => {
 		console.log("fetch workers update", task);
 		const dataWorkers = await GroupApi.getWorkersNotAtWorkByGroupId(leader?.groupId);
-		console.log("dataWorkers", dataWorkers)
 		const dataWorkerOnTask = handleRetrieveWorkerOnTask(task?.members);
 		if (dataWorkers.code === 0) {
 			const dataTeam = [...dataWorkers.data, ...dataWorkerOnTask];
@@ -135,7 +134,7 @@ export const WorkerTaskManagement = () => {
 					<Title level={5} style={{ margin: 0 }}>
 						Công việc ({tasks?.length || 0})
 					</Title>
-					{!acceptance && isLeader && isInProgress && (
+					{!accepted && isLeader && isLeaderTaskStatus && (
 						<Button
 							icon={<Plus />}
 							className="flex-center ml-3"

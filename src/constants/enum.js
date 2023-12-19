@@ -60,6 +60,7 @@ export const ETaskStatus = {
   Pending: 2,
   NotAchived: 3,
   Completed: 4,
+  Acceptance: 5,
 };
 
 export const wTaskStatus = {
@@ -72,11 +73,11 @@ export const wTaskStatus = {
 export const TaskMap = {
   [TaskStatus.New]: {
     color: "#BEBB6D",
-    label: "Mới tạo",
+    label: "Cần làm",
   },
   [TaskStatus.InProgress]: {
     color: "#CB7A00",
-    label: "Đang tiến hành",
+    label: "Trong tiến độ",
   },
   [TaskStatus.Pending]: {
     color: "#FBD305",
@@ -108,6 +109,10 @@ export const ETaskMap = {
   [ETaskStatus.Completed]: {
     color: "#29CB00",
     label: "Hoàn thành",
+  },
+  [ETaskStatus.Acceptance]: {
+    color: "#FBD305",
+    label: "Nghiệm thu",
   },
 };
 

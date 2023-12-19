@@ -77,7 +77,7 @@ const LeaderTaskList = () => {
       sorter: (a, b) => a.customerName.localeCompare(b.customerName),
     },
     {
-      title: "Báo giá xưởng",
+      title: "Tổng đơn hàng",
       dataIndex: "totalPrice",
       key: "totalPrice",
       sorter: (a, b) => a.totalPrice - b.totalPrice,

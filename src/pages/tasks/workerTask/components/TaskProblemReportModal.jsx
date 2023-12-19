@@ -61,8 +61,8 @@ export const TaskProblemReportModal = ({
 		// 	setResourceErrorMsg("Vui lòng thêm ảnh báo cáo");
 		// 	return false;
 		// } else {
-			setResourceErrorMsg("");
-			return true;
+		setResourceErrorMsg("");
+		return true;
 		// }
 	}
 
@@ -130,7 +130,7 @@ export const TaskProblemReportModal = ({
 							</Form.Item>
 							<Form.Item
 								label={<Text strong>Mô tả báo cáo</Text>}
-								name="content"					
+								name="content"
 							>
 								<RichTextEditor
 									placeholder="Mô tả báo cáo..."
@@ -149,6 +149,11 @@ export const TaskProblemReportModal = ({
 										]}
 									>
 										<Select
+											showSearch
+											filterOption={(input, option) => (option?.label ?? '').includes(input)}
+											filterSort={(optionA, optionB) =>
+												(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+											}
 											className="w-full"
 											placeholder="Chọn trạng thái báo cáo"
 											options={SupplyOptions?.map((e) => {
@@ -158,7 +163,7 @@ export const TaskProblemReportModal = ({
 									</Form.Item>
 								</Col>
 								<Col span={8}>
-									<UploadFile 
+									<UploadFile
 										formRef={worderReportFormRef}
 										imageRef={taskProblemReportsRef}
 										itemName="resource"
@@ -193,6 +198,11 @@ export const TaskProblemReportModal = ({
 																		name={[field.name, 'materialId']}
 																	>
 																		<Select
+																			showSearch
+																			filterOption={(input, option) => (option?.label ?? '').includes(input)}
+																			filterSort={(optionA, optionB) =>
+																				(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+																			}
 																			placeholder="Chọn vật liệu"
 																			allowClear
 																			options={materialInfo?.map((e) => {

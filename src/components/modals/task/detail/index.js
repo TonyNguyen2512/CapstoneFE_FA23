@@ -38,9 +38,9 @@ const TaskDetailModal = ({
 	const [resourceErrorMsg, setResourceErrorMsg] = useState("");
 	// const [fileListUrl, setFileListUrl] = useState([]);
 
-	const isManager = user?.role?.name === roles.LEADER 
-						|| user?.role?.name === roles.FOREMAN
-						|| user?.role?.name === roles.ADMIN;
+	const isManager = user?.role?.name === roles.LEADER
+		|| user?.role?.name === roles.FOREMAN
+		|| user?.role?.name === roles.ADMIN;
 
 	const WTaskStsOpts = isManager ? WTaskStatusOptions : WTaskStatusOptions.filter((x) => x.value !== TaskStatus.Completed);
 	const startDate = formatDate(task?.startTime, FORMAT_DATE_TIME);
@@ -241,6 +241,11 @@ const TaskDetailModal = ({
 											]}
 										>
 											<Select
+												showSearch
+												filterOption={(input, option) => (option?.label ?? '').includes(input)}
+												filterSort={(optionA, optionB) =>
+													(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+												}
 												className="w-full"
 												placeholder="Chọn trạng thái"
 												options={WTaskStsOpts}
@@ -270,6 +275,11 @@ const TaskDetailModal = ({
 											label={<Text strong>Thành viên được phân công</Text>}
 										>
 											<Select
+												showSearch
+												filterOption={(input, option) => (option?.label ?? '').includes(input)}
+												filterSort={(optionA, optionB) =>
+													(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+												}
 												mode="multiple"
 												className="w-full"
 												placeholder="Chọn thành viên"
