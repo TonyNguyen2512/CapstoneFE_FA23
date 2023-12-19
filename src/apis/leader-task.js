@@ -165,6 +165,16 @@ const getLeaderTaskByLeaderId = async (leaderId, searchName, pageIndex, pageSize
 	}
 };
 
+const getMaterialByLeaderId = async (id) => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetMaterialByLeaderId?leaderId=${id}`);
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error GetMaterialByLeaderId: ", error);
+		return errorComposer(error);
+	}
+};
+
 const LeaderTasksApi = {
 	getAll,
 	getLeaderTaskByOrderDetailId,
@@ -175,6 +185,7 @@ const LeaderTasksApi = {
 	updateLeaderTasksStatus,
 	updateLeaderTasks,
 	deleteLeaderTasks,
+	getMaterialByLeaderId,
 };
 
 export default LeaderTasksApi;
