@@ -63,6 +63,16 @@ const OrderAssignDashboardByForemanId = async (id) => {
   }
 };
 
+const LeaderTaskDashboardByLeaderId = async (id) => {
+  try {
+    const response = await BaseApi.get(`/${resource}/LeaderTaskDashboardByLeaderId/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log("Error get items: ", error);
+    return false;
+  }
+};
+
 const WorkerTaskDashboardByLeaderId = async (id) => {
   try {
     const response = await BaseApi.get(`/${resource}/WorkerTaskDashboardByLeaderId/${id}`);
@@ -80,6 +90,7 @@ const DashboardApi = {
   LeaderTaskDashboard,
   WorkerTaskDashboard,
   OrderAssignDashboardByForemanId,
+  LeaderTaskDashboardByLeaderId,
   WorkerTaskDashboardByLeaderId
 };
 

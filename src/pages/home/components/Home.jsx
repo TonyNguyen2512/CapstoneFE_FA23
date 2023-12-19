@@ -30,11 +30,9 @@ const Home = () => {
     setUserData(data);
     data = await DashboardApi.OrderByMonthDashboard();
     setOrderByMonthData(data);
-    data = await DashboardApi.LeaderTaskDashboard();
-    setLeaderTaskData(data);
 
     if (user?.role?.name === roles.FOREMAN) {
-      data = await DashboardApi.OrderAssignDashboardByForemanId(user.id);
+      data = await DashboardApi.OrderAssignDashboardByForemanId(user?.id);
       setOrderData(data);
     } else if (user?.role?.name === roles.ADMIN) {
       data = await DashboardApi.OrderDashboard();
@@ -42,9 +40,13 @@ const Home = () => {
     }
 
     if (user?.role?.name === roles.LEADER) {
-      data = await DashboardApi.WorkerTaskDashboardByLeaderId(user.id);
+      data = await DashboardApi.LeaderTaskDashboardByLeaderId(user?.id);
+      setLeaderTaskData(data);
+      data = await DashboardApi.WorkerTaskDashboardByLeaderId(user?.id);
       setWorkerTaskData(data);
     } else {
+      data = await DashboardApi.LeaderTaskDashboard();
+      setLeaderTaskData(data);
       data = await DashboardApi.WorkerTaskDashboard();
       setWorkerTaskData(data);
     }
@@ -62,7 +64,6 @@ const Home = () => {
       }) || []
     );
   };
-
   const getOrdersStatistics = () => {
     return (
       orderData?.map((e) => {
@@ -70,7 +71,6 @@ const Home = () => {
       }) || []
     );
   };
-
   const getLTasksStatistics = () => {
     return (
       leaderTaskData?.map((e) => {
@@ -78,7 +78,6 @@ const Home = () => {
       }) || []
     );
   };
-
   const getWTasksStatistics = () => {
     return (
       workerTaskData?.map((e) => {
@@ -128,7 +127,6 @@ const Home = () => {
       },
     ],
   };
-
   const orderOptions = {
     textStyle: {
       fontFamily: "Roboto",
@@ -170,7 +168,6 @@ const Home = () => {
       },
     ],
   };
-
   const leaderTaskOptions = {
     textStyle: {
       fontFamily: "Roboto",
@@ -212,7 +209,6 @@ const Home = () => {
       },
     ],
   };
-
   const workerTaskOptions = {
     textStyle: {
       fontFamily: "Roboto",
@@ -300,7 +296,7 @@ const Home = () => {
               </Card>
             </Col>
           )}
-          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+          {[roles.ADMIN, roles.FOREMAN, roles.LEADER].includes(user?.role?.name) && (
             <Col span={6}>
               <Card style={{ borderRadius: "1rem", backgroundColor: "#E3F5FF" }} loading={loading}>
                 <Row>
@@ -356,7 +352,7 @@ const Home = () => {
           </Row>
         )}
         <Row gutter={32}>
-          {[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) && (
+          {[roles.ADMIN, roles.FOREMAN, roles.LEADER].includes(user?.role?.name) && (
             <Col span={12}>
               <Title level={4}>Thống kê công việc (tổ trưởng)</Title>
               <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
@@ -364,7 +360,7 @@ const Home = () => {
               </Card>
             </Col>
           )}
-          <Col span={[roles.ADMIN, roles.FOREMAN].includes(user?.role?.name) ? 12 : 24}>
+          <Col span={[roles.ADMIN, roles.FOREMAN, roles.LEADER].includes(user?.role?.name) ? 12 : 24}>
             <Title level={4}>Thống kê công việc (công nhân)</Title>
             <Card style={{ borderRadius: "1rem", backgroundColor: "#fff" }} loading={loading}>
               <ReactECharts className="!h-[420px]" option={workerTaskOptions} />
