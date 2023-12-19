@@ -13,6 +13,7 @@ import StepApi from "../../../../apis/step";
 import { useNavigate, useParams } from "react-router-dom";
 import routes from "../../../../constants/routes";
 import { ProcedureModal } from "../../../procedures/components/ProcedureModal";
+import { formatMoney, formatNum } from "../../../../utils";
 
 const ItemList = ({ canModify }) => {
   const [loading, setLoading] = useState(false);
@@ -197,8 +198,9 @@ const ItemList = ({ canModify }) => {
       key: "price",
       align: "center",
       width: "12%",
-      render: (_, { price }) => {
-        return <span>{price} VND</span>;
+      render: (price) => {
+        const prices = formatNum(price);
+        return `${formatMoney(prices)}`;
       },
       sorter: (a, b) => a?.price - b?.price,
     },

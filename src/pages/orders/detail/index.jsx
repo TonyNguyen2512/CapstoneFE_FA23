@@ -526,12 +526,24 @@ const OrderDetailPage = () => {
       },
     },
     {
+      title: "Mã sản phẩm",
+      dataIndex: "itemCode",
+      key: "itemCode",
+      width: "10%",
+      render: (_, record) => {
+        return <span>{record?.itemCode || "-"}</span>;
+      },
+      sorter: (a, b) => a.itemCode - b.itemCode,
+    },
+    {
       title: "Tên sản phẩm",
       dataIndex: "itemName",
       key: "itemName",
       width: "18%",
-      render: (_, record) => <span>{record?.itemName}</span>,
-      sorter: (a, b) => a?.itemName.localeCompare(b?.itemName),
+      render: (_, record) => {
+        return <span>{record?.itemName || "-"}</span>;
+      },
+      sorter: (a, b) => a.itemName - b.itemName,
     },
 
     {
@@ -543,7 +555,7 @@ const OrderDetailPage = () => {
       render: (_, record) => {
         return <span>{record?.itemLength || "-"}</span>;
       },
-      sorter: (a, b) => a?.itemLength.localeCompare(b?.itemLength),
+      sorter: (a, b) => a.itemLength - b.itemLength,
     },
 
     {
@@ -555,7 +567,7 @@ const OrderDetailPage = () => {
       render: (_, record) => {
         return <span>{record?.itemDepth || "-"}</span>;
       },
-      sorter: (a, b) => a?.itemDepth.localeCompare(b?.itemDepth),
+      sorter: (a, b) => a.itemDepth - b.itemDepth,
     },
     {
       title: "Cao",
@@ -566,7 +578,7 @@ const OrderDetailPage = () => {
       render: (_, record) => {
         return <span>{record?.itemHeight || "-"}</span>;
       },
-      sorter: (a, b) => a?.itemHeight.localeCompare(b?.itemHeight),
+      sorter: (a, b) => a.itemHeight - b.itemHeight,
     },
     {
       title: "Đơn vị",
@@ -577,14 +589,14 @@ const OrderDetailPage = () => {
       render: (_, record) => {
         return <span>{record?.itemUnit || "-"}</span>;
       },
-      sorter: (a, b) => a?.itemUnit.localeCompare(b?.itemUnit),
+      sorter: (a, b) => a.itemUnit - b.itemUnit,
     },
     {
       title: "Số lượng",
       dataIndex: "quantity",
       key: "quantity",
       width: 120,
-      sorter: (a, b) => a?.quantity.localeCompare(b?.quantity),
+      sorter: (a, b) => a.quantity - b.quantity,
     },
     {
       title: "Đơn giá",
@@ -595,7 +607,7 @@ const OrderDetailPage = () => {
         const money = formatNum(price);
         return `${formatMoney(money)}`;
       },
-      sorter: (a, b) => a?.price.localeCompare(b?.price),
+      sorter: (a, b) => a.price - b.price,
     },
     {
       title: "Thành tiền",
@@ -606,14 +618,14 @@ const OrderDetailPage = () => {
         const money = formatNum(totalPrice);
         return `${formatMoney(money)}`;
       },
-      sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
+      sorter: (a, b) => a.totalPrice - b.totalPrice,
     },
     {
       title: "Ghi chú",
       dataIndex: "description",
       key: "description",
       width: "30%",
-      // sorter: (a, b) => a?.description.localeCompare(b?.description),
+      sorter: (a, b) => a.description - b.description,
     },
     {
       title: "Hành động",
