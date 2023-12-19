@@ -136,16 +136,18 @@ const ItemCategoryList = ({ canModify }) => {
 
   const handleSearch = (value) => {
     searchRef.current = value;
+    getData(value, 1, true);
   };
 
   const onPageChange = (current) => {
     setCurrentPage(current);
+    getData(searchRef.current, current, false);
   };
 
   useEffect(() => {
-    getData(searchRef.current, currentPage, currentPage === 1);
-  }, [currentPage, searchRef.current]);
-
+    getData(null, 1, true);
+  }, []);
+  
   return (
     <>
       <Space className="w-full flex justify-between mb-6">
