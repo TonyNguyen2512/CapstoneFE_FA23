@@ -188,6 +188,7 @@ export const MaterialModal = ({ data, open, onCancel, onSuccess }) => {
                 width: "100%",
               }}
               placeholder="Độ dày..."
+              min={0}
             />
           </Form.Item>
           <Form.Item

@@ -33,13 +33,13 @@ export const AppHeader = () => {
         {title}
       </Title>
       <Space direction="horizontial" size="middle">
-        <Space.Compact>
+        {/* <Space.Compact>
           <Input
             placeholder="Tìm kiếm hoặc gõ lệnh (Ctrl + G)"
             style={{ width: "280px" }}
             prefix={<Search size="16" fill="#999" style={{ marginTop: "4px" }} />}
           />
-        </Space.Compact>
+        </Space.Compact> */}
         <Notifications />
         <ProfileBar />
       </Space>

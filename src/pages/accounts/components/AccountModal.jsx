@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import BaseModal from "../../../components/BaseModal";
-import { DatePicker, Form, Input, Select, message } from "antd";
+import { DatePicker, Form, Input, InputNumber, Select, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import UserApi from "../../../apis/user";
 import dayjs from "dayjs";
@@ -17,6 +17,13 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
   const handleSubmit = async (val) => {
     const payload = { ...val, phoneNumber: val.phoneNumber, gender };
     setLoading(true);
+    if (isCreate) {
+      // Exclude roleId from payload if it's a create operation
+      delete payload.roleId;
+    } else {
+      // For update operation, set roleId from data
+      payload.roleId = data.roleId;
+    }
     console.log(roleName);
     const response = isCreate
       ? await UserApi.createUser(roleName, payload)
@@ -54,7 +61,7 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
             <Form.Item
               name="password"
               label="Mật Khẩu"
-              rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+              rules={[{ required: true, message: "Vui lòng nhập mật khẩu" }]}
             >
               <Input.Password
                 placeholder="Nhập mật khẩu..."
@@ -94,9 +101,15 @@ export const AccountModal = ({ data, roleOptions, open, onCancel, onSuccess }) =
         <Form.Item
           name="phoneNumber"
           label="Số điện thoại"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại" }]}
+          rules={[
+            { required: true, message: "Vui lòng nhập số điện thoại" },
+            {
+              pattern: /^0[0-9]{9}$/, // Starts with 0 and has 9 to 11 more digits
+              message: "Số điện thoại gồm 10 chữ số, bắt đầu từ số 0",
+            },
+          ]}
         >
-          <Input placeholder="Nhập số điện thoại..." />
+          <Input type="number" placeholder="Nhập số điện thoại..." />
         </Form.Item>
         <Form.Item
           name="email"

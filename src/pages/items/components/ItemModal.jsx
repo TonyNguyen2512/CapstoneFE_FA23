@@ -242,6 +242,7 @@ export const ItemModal = ({
       render: (_, record, index) => {
         return (
           <Select
+            showSearch
             style={{ width: "100%" }}
             placeholder="Chọn quy trình cần thực hiện..."
             defaultValue={record?.procedureId}
@@ -269,6 +270,7 @@ export const ItemModal = ({
             type="number"
             defaultValue={record?.priority}
             onInput={(value) => changeProcedurePriority(value, index)}
+            min={0}
           />
         );
       },
@@ -323,6 +325,7 @@ export const ItemModal = ({
       render: (_, record, index) => {
         return (
           <Select
+            showSearch
             style={{ width: "100%" }}
             placeholder="Chọn vật liệu..."
             defaultValue={record?.materialId}
@@ -350,6 +353,7 @@ export const ItemModal = ({
             type="number"
             defaultValue={record?.quantity}
             onInput={(value) => changeMaterialQuantity(value, index)}
+            min={0}
           />
         );
       },
@@ -442,7 +446,7 @@ export const ItemModal = ({
                   },
                 ]}
               >
-                <Select options={listCategories} placeholder="Chọn loại sản phẩm..." />
+                <Select showSearch options={listCategories} placeholder="Chọn loại sản phẩm..." />
               </Form.Item>
               <Row gutter={24}>
                 <Col span={6}>
@@ -461,6 +465,7 @@ export const ItemModal = ({
                         width: "100%",
                       }}
                       placeholder="Nhập chiều dài..."
+                      min={0}
                     />
                   </Form.Item>
                 </Col>
@@ -480,6 +485,7 @@ export const ItemModal = ({
                         width: "100%",
                       }}
                       placeholder="Nhập chiều rộng..."
+                      min={0}
                     />
                   </Form.Item>
                 </Col>
@@ -499,6 +505,7 @@ export const ItemModal = ({
                         width: "100%",
                       }}
                       placeholder="Nhập chiều cao..."
+                      min={0}
                     />
                   </Form.Item>
                 </Col>
@@ -532,6 +539,7 @@ export const ItemModal = ({
                     width: "100%",
                   }}
                   placeholder="Nhập khối lượng..."
+                  min={0}
                 />
               </Form.Item>
               <Form.Item name="description" label="Mô tả">
