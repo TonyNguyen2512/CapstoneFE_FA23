@@ -102,7 +102,6 @@ const getById = async (id) => {
     return response.data;
   } catch (error) {
     console.log("Error get order report by id: ", error);
-    message.error("Lấy thông tin báo cáo thất bại");
   }
 };
 

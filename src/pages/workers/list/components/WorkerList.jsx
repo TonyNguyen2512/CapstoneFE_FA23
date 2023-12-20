@@ -46,15 +46,14 @@ const WorkerList = () => {
     setLoading(false);
   };
 
-  const getRoleForCreateUsers = async () => {
-    const data = await RoleApi.getRoleForCreateUser();
-    setRoleCreateOptions(data);
-    getUsers();
+  const getLeaderAndWorker = async () => {
+    const data = await UserApi.getRoleLeaderAndWorker();
+    setRoleOptions(data.data);
   };
 
   useEffect(() => {
     getUsers();
-    getRoleForCreateUsers();
+    getLeaderAndWorker();
   }, []);
 
   const getActionItems = (record) => {

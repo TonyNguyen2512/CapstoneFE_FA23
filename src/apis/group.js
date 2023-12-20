@@ -58,7 +58,7 @@ const getWorkersByGroupId = async (id, search, pageIndex, pageSize) => {
 			const response = await BaseApi.get(`/${resource}/GetWorkersByGroupId/${id}`, {
 				params: params,
 			});
-			return successComposer(retrieveDataSuccessCode, response.data);;
+			return response.data;;
 		}
 	} catch (error) {
 		console.log("Error enroll group: ", error);
@@ -81,7 +81,7 @@ const searchGetWorkersByGroupId = async (id, search, pageIndex, pageSize) => {
 		const response = await BaseApi.get(`/${resource}/GetWorkersByGroupId/${id}`, {
 			params: params,
 		});
-		return successComposer(retrieveDataSuccessCode, response.data);
+		return response.data;
 	} catch (error) {
 		console.log("Error get group: ", error);
 		return errorComposer(error);

@@ -1,29 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
-import BaseModal from "../../../components/BaseModal";
 import {
   Card,
   Col,
-  DatePicker,
-  Dropdown,
-  Form,
-  Input,
   Row,
-  Select,
   Typography,
   message,
 } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import dayjs from "dayjs";
-import WorkerTasksApi from "../../../apis/worker-task";
-import { PageSize, orderColors, orderLabels } from "../../../constants/enum";
-import { BaseTable } from "../../../components/BaseTable";
+import { PageSize, orderColors, orderLabels } from "../../../../constants/enum";
+import { dateSort, formatDate } from "../../../../utils";
 import { useNavigate, useParams } from "react-router-dom";
-import { BasePageContent } from "../../../layouts/containers/BasePageContent";
-import routes from "../../../constants/routes";
-import { dateSort, formatDate } from "../../../utils";
-import UserApi from "../../../apis/user";
+import WorkerTasksApi from "../../../../apis/worker-task";
+import UserApi from "../../../../apis/user";
+import { BasePageContent } from "../../../../layouts/containers/BasePageContent";
+import { BaseTable } from "../../../../components/BaseTable";
+import routes from "../../../../constants/routes";
 
-export const WorkerListModal = ({}) => {
+export const DetailListModal = ({}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [workerDetail, setWorkerDetail] = useState([]);
@@ -102,7 +95,7 @@ export const WorkerListModal = ({}) => {
           </span>
         );
       },
-      sorter: (a, b) => a.priority.localeCompare(b.priority),
+      sorter: (a, b) => a.priority - (b.priority),
     },
     {
       title: "Thời gian bắt đầu",
@@ -146,7 +139,7 @@ export const WorkerListModal = ({}) => {
 
   return (
     <BasePageContent
-      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.workers}`)}
+      onBack={() => navigate(`${routes.dashboard.root}/${routes.dashboard.groups}/${workerInf?.groupId}`)}
     >
       <Row justify="middle">
         <Col span={8}>
