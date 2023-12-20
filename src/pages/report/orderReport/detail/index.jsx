@@ -24,7 +24,7 @@ const OrderReportDetailPage = () => {
 
   const getOrderReportDetailById = async (id) => {
     setLoading(true);
-    const data = await OrderReportApi.getOrderReportById(id);
+    const data = await OrderReportApi.getById(id);
     setReport(data);
     setLoading(false);
   };

@@ -23,7 +23,6 @@ const GroupList = () => {
       setLoading(true);
     }
     const response = await GroupApi.getAll(search, pageIndex, PageSize.GROUP_LIST);
-
     setGroupTypeList(response.data);
     setLoading(false);
   };

@@ -49,7 +49,7 @@ export const LeaderReportList = () => {
         label: "Xem thông tin chi tiết",
         icon: <ViewList />,
         onClick: () => {
-          navigate(record?.taskId);
+          navigate(record?.id);
         },
       },
 

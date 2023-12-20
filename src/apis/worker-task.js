@@ -147,6 +147,52 @@ const getWorkerTaskByUserId = async (memberId, searchName, pageIndex, pageSize =
 	}
 };
 
+const getByUserId = async (id, search, pageIndex, pageSize) => {
+	try {
+		if (search) {
+			return await searchGetByUserId(id, search, pageIndex, pageSize);
+		}
+		else {
+			var params = {};
+			if (pageIndex) {
+				params = { ...params, pageIndex };
+			}
+			if (pageSize) {
+				params = { ...params, pageSize };
+			}
+			const response = await BaseApi.get(`/${resource}/GetByUserId/${id}`, {
+				params: params,
+			});
+			return successComposer(retrieveDataSuccessCode, response.data);;
+		}
+	} catch (error) {
+		console.log("Error enroll group: ", error);
+		return errorComposer(error);
+	}
+};
+
+const searchGetByUserId = async (id, search, pageIndex, pageSize) => {
+	try {
+		var params = {};
+		if (search) {
+			params = { ...params, search };
+		}
+		if (pageIndex) {
+			params = { ...params, pageIndex };
+		}
+		if (pageSize) {
+			params = { ...params, pageSize };
+		}
+		const response = await BaseApi.get(`/${resource}/GetByUserId/${id}`, {
+			params: params,
+		});
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error get group: ", error);
+		return errorComposer(error);
+	}
+};
+
 const sendFeedback = async (data) => {
 	try {
 		const response = await BaseApi.put(`/${resource}/SendFeedback`, data);
@@ -167,6 +213,7 @@ const WorkerTasksApi = {
 	getWorkerTaskByLeaderTaskIdAndUserId,
 	getWorkerTaskByUserId,
 	sendFeedback,
+	getByUserId
 };
 
 export default WorkerTasksApi;

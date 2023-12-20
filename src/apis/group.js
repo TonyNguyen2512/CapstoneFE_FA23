@@ -13,11 +13,11 @@ const errorComposer = (error) => {
 		const { code } = error?.response?.data
 		return {
 			code,
-			message: ApiCodes[code],
+			errorMessage: ApiCodes[code],
 		}
 	}
 	return {
-		message: "Có lỗi xảy ra",
+		errorMessage: "Có lỗi xảy ra",
 		code: -1
 	};
 }

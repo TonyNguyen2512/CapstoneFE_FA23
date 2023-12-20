@@ -29,7 +29,7 @@ export const OrderStatus = {
 export const orderLabels = [
   "Chờ báo giá",
   "Chờ duyệt",
-  "Huỷ báo giá",
+  "Báo giá không đạt",
   "Đã duyệt",
   "Đang tiến hành",
   "Đã huỷ",
@@ -239,6 +239,7 @@ export const PageSize = {
   ITEM_CATEGORY_LIST: 10,
   ITEM_LIST: 10,
   EMPLOYEES_LIST: 10,
+  WORKERS_LIST: 10,
   GROUP_LIST: 10,
   WORKER_IN_GROUP_LIST: 10,
   LEADER_REPORT_LIST: 10,
