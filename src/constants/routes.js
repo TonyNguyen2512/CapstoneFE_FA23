@@ -19,6 +19,7 @@ const routes = {
     itemCategories: "item-categories",
     employees: "employees",
     groups: "groups",
+    groupsDetail: "groupsDetail",
     groupsLog: "groupsLog",
     materialsLog: "materialsLog",
     itemsLog: "itemsLog",

@@ -1,4 +1,4 @@
-import { Button, Dropdown, Tag } from "antd";
+import { Button, Dropdown, Tag, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { BaseTable } from "../../../../../components/BaseTable";
@@ -7,6 +7,7 @@ import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
 import ReportApi from "../../../../../apis/task-report";
 import TaskReportUpdateModal from "../../components/TaskReportUpdateModal";
+import moment from "moment";
 
 export const TaskReportList = () => {
   const navigate = useNavigate();
@@ -54,12 +55,12 @@ export const TaskReportList = () => {
         label: "Cập nhật thông tin",
         icon: <Edit />,
         onClick: () => {
-          // if (moment().diff(moment(record?.createdDate), "days") >= 1) {
-          //   message.error("Đã quá hạn cập nhật báo cáo!");
-          // } else {
+          if (moment().diff(moment(record?.createdDate), "days") >= 1) {
+            message.error("Đã quá hạn cập nhật báo cáo!");
+          } else {
             setSelectingOrderReport(record);
             setOpenUpdateModal(true);
-          // }
+          }
         },
       },
     ];

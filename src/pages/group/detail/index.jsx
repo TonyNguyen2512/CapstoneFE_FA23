@@ -62,7 +62,7 @@ const GroupDetailPage = () => {
 
   const onPageChange = (current) => {
     setCurrentPage(current);
-    getData(null, current, false);
+    getData(id, null, current, false);
   };
 
   const handleWorkerNotInGroup = async () => {
@@ -111,15 +111,6 @@ const GroupDetailPage = () => {
         onClick: () => {
           groupRef.current = record;
           navigate(record?.id);
-        },
-      },
-      {
-        key: "UPDATE_GROUP",
-        label: "Cập nhật thông tin",
-        icon: <Edit />,
-        onClick: () => {
-          groupRef.current = record;
-          setAddWorkerToGroupModal(true);
         },
       },
       {

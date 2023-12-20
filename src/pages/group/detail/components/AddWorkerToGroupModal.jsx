@@ -131,7 +131,7 @@ export const AddWorkerToGroupModal = ({
                     block
                     icon={<PlusOutlined />}
                   >
-                    Thêm thành viên
+                    Thêm công nhân
                   </Button>
                 </Form.Item>
               }

@@ -39,6 +39,7 @@ import AdminReportListPage from "../pages/report/adminReport/list";
 import AdminReportDetailPage from "../pages/report/adminReport/detail";
 import { WorkerListPage } from "../pages/workers/list";
 import { WorkerListModal } from "../pages/workers/components/WorkerListModal";
+import { DetailListModal } from "../pages/group/detail/components/DetailListModal";
 
 export const router = createBrowserRouter([
   {
@@ -163,6 +164,10 @@ export const router = createBrowserRouter([
           {
             path: `${routes.dashboard.groups}/:id`,
             element: <GroupDetailPage />,
+          },
+          {
+            path: `${routes.dashboard.groups}/:id/:id`,
+            element: <DetailListModal />,
           },
           {
             path: `${routes.dashboard.groupsLog}`,

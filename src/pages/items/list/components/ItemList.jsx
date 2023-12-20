@@ -130,7 +130,7 @@ const ItemList = ({ canModify }) => {
       key: "name",
       render: (_, record) => {
         return (
-          <Tooltip title={() => <img loading="eager" src={record.image} className="w-full" />}>
+          <Tooltip title={() => <img loading="eager" src={record?.image} className="w-full" />}>
             {record.name}
           </Tooltip>
         );
