@@ -12,7 +12,7 @@ export const TaskBoard = ({ onViewTask, onDeleteTask, onChatTask }) => {
   const { user } = useContext(UserContext);
   const { tasks, reload } = useContext(TaskContext);
 
-  const isLeader = user?.role?.name === roles.LEADER || user?.role?.name === roles.FOREMAN;
+  const isLeader = user?.role?.name !== roles.WORKER;
 
   const [columns, setColumns] = useState([
     {

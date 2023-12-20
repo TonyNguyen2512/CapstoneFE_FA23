@@ -38,14 +38,14 @@ export const TaskItem = ({ task, index, onView, onDelete, onChat }) => {
 				icon: <PreviewOpen className="mt-1" />,
 				onClick: () => onView(task),
 			},
+			{
+				label: "Thảo luận",
+				icon: <WechatOutlined className="mt-1" />,
+				onClick: () => onChat(task),
+			},
 		];
 		if (!isCompleted) {
 			items.push(
-				{
-					label: "Thảo luận",
-					icon: <WechatOutlined className="mt-1" />,
-					onClick: () => onChat(task),
-				},
 				{
 					label: "Xóa",
 					icon: <Delete className="mt-1" />,

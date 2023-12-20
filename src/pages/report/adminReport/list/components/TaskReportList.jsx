@@ -115,12 +115,12 @@ export const AdminReportList = () => {
       sorter: (a, b) => a.status - b.status,
     },
     {
-      key: "title",
+      key: "content",
       title: "Nội dung",
       render: (_, record) => {
-        return record?.title ?? "-";
+        return record?.content ?? "-";
       },
-      sorter: (a, b) => a.title.localeCompare(b.title),
+      sorter: (a, b) => a.content.localeCompare(b.content),
     },
     {
       key: "action",

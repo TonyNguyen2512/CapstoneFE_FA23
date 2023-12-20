@@ -37,6 +37,8 @@ import { ItemLogListPage } from "../pages/logs/ItemLog";
 import TaskReportDetailPage from "../pages/report/taskReport/detail";
 import AdminReportListPage from "../pages/report/adminReport/list";
 import AdminReportDetailPage from "../pages/report/adminReport/detail";
+import { WorkerListPage } from "../pages/workers/list";
+import { WorkerListModal } from "../pages/workers/components/WorkerListModal";
 
 export const router = createBrowserRouter([
   {
@@ -213,6 +215,14 @@ export const router = createBrowserRouter([
           {
             path: `${routes.dashboard.employees}/:id`,
             // element: <OrderReportDetailPage />,
+          },
+          {
+            path: routes.dashboard.workers,
+            element: <WorkerListPage />,
+          },
+          {
+            path: `${routes.dashboard.workers}/:id`,
+            element: <WorkerListModal />,
           },
         ],
       },

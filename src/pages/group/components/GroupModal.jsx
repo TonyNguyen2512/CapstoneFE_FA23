@@ -18,12 +18,7 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
     const success = isCreate
       ? await GroupApi.createGroup(values)
       : await GroupApi.updateGroup(values);
-    if (success) {
-      message.success(`${typeMessage} thành công`);
-      onSuccess();
-    } else {
-      message.error(`${typeMessage} thất bại`);
-    }
+   
     setLoading(false);
     onCancel();
   };

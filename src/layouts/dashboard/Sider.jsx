@@ -207,6 +207,11 @@ export const AppSider = () => {
         },
       ],
     },
+    canViewWorkers && {
+      key: itemKeys.WORKERS,
+      icon: <UserOutlined size={iconSize - 4} />,
+      label: <Link to={routes.dashboard.workers}>Công nhân</Link>,
+    },
     canViewLeaderReports && {
       key: itemKeys.LEADER_REPORTS,
       icon: <ListView size={iconSize - 4} />,

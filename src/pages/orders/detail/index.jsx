@@ -232,8 +232,6 @@ const OrderDetailPage = () => {
     try {
       const create = await LeaderTasksApi.createLeaderTasks(data);
       if (create.code === 0) {
-        message.success(create.message);
-        setShowETaskCreateModal(false);
         reload(false);
       } else {
         message.error(create.message);

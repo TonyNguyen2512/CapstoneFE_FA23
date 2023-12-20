@@ -126,12 +126,6 @@ export const LeaderTaskAcceptanceModal = ({
           <Form.Item
             name="description"
             label={<Text strong>Mô tả báo cáo</Text>}
-            rules={[
-              {
-                required: true,
-                message: "Vui lòng thêm mô tả báo cáo",
-              },
-            ]}
           >
             <RichTextEditor
               // onChange={(value) => (descRef.current = value)}

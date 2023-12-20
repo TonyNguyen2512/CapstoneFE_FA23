@@ -55,7 +55,7 @@ const OrderReportUpdateModal = ({ data, idOrderReport, open, onCancel, getReport
 
   const getOrderReportDetailById = async (id) => {
     setLoading(true);
-    const data = await OrderReportApi.getOrderReportById(id);
+    const data = await OrderReportApi.getById(id);
     setReport(data);
     formRef.current.setFieldsValue(data);
     setLoading(false);

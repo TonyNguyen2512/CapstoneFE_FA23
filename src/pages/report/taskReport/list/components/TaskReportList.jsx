@@ -1,16 +1,11 @@
-import { Button, Dropdown, Tag, message } from "antd";
-import React, { useContext, useEffect, useState } from "react";
+import { Button, Dropdown, Tag } from "antd";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import moment from "moment";
-import OrderReportApi from "../../../../../apis/order-report";
 import { BaseTable } from "../../../../../components/BaseTable";
-import { PageSize, ReportMap, ReportTypeMap, orderReportMap } from "../../../../../constants/enum";
-import { UserContext } from "../../../../../providers/user";
+import { PageSize, ReportMap, ReportType, ReportTypeMap, orderReportMap } from "../../../../../constants/enum";
 import { Edit, More, ViewList } from "@icon-park/react";
 import { formatDate } from "../../../../../utils";
-import OrderReportUpdateModal from "../../../orderReport/components/OrderReportUpdateModal";
 import ReportApi from "../../../../../apis/task-report";
-import TaskReportDetail from "../../detail/components/TaslReportDetail";
 import TaskReportUpdateModal from "../../components/TaskReportUpdateModal";
 
 export const TaskReportList = () => {
@@ -162,7 +157,7 @@ export const TaskReportList = () => {
     <>
       <BaseTable
         title="Danh sách báo cáo"
-        dataSource={reports.data || []}
+        dataSource={reports.data}
         columns={columns}
         loading={loading}
         pagination={{

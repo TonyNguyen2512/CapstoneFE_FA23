@@ -1,9 +1,95 @@
 import React from "react";
-import { Card, Col, Image, Row, Space } from "antd";
-import { ErrorImage, ReportMap, orderReportMap } from "../../../../../constants/enum";
-import { formatDate } from "../../../../../utils";
+import { Button, Card, Col, Image, Row, Space, Table, Tooltip } from "antd";
+import { ErrorImage, ReportMap, ReportType, orderReportMap } from "../../../../../constants/enum";
+import { formatDate, formatMoney, formatNum } from "../../../../../utils";
 
-const LeaderReportDetail = ({ data }) => {
+const LeaderReportDetail = ({ data, supplies }) => {
+  const columns = [
+    {
+      title: "#",
+      dataIndex: "index",
+      key: "index",
+      width: "5%",
+      // align: "center",
+      render: (_, record, index) => {
+        return <span>{index + 1}</span>;
+      },
+    },
+    {
+      title: "Tên vật liệu",
+      dataIndex: "name",
+      key: "name",
+      render: (_, record) => {
+        console.log(record.image);
+        return (
+          <Tooltip title={() => <img src={record.materialName} className="w-full" />}>
+            {record.materialName}
+          </Tooltip>
+          // <span onClick={() => showModal(record)}>{record.name}</span>
+        );
+      },
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: "Mã vật liệu (SKU)",
+      dataIndex: "materialSku",
+      key: "materialSku",
+      // align: "center",
+      sorter: (a, b) => a.materialSku.localeCompare(b.materialSku),
+    },
+    {
+      title: "Số lượng",
+      dataIndex: "amount",
+      key: "amount",
+      sorter: (a, b) => a?.amount.localeCompare(b?.amount),
+    },
+    {
+      title: "Giá",
+      dataIndex: "price",
+      key: "price",
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
+      },
+      sorter: (a, b) => a?.price.localeCompare(b?.price),
+    },
+    {
+      title: "Thành tiền",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (totalPrice) => {
+        const price = formatNum(totalPrice);
+        return `${formatMoney(price)}`;
+      },
+      sorter: (a, b) => a?.totalPrice.localeCompare(b?.totalPrice),
+    },
+    {
+      title: "Nhà cung cấp",
+      dataIndex: "materialSupplier",
+      key: "materialSupplier",
+      sorter: (a, b) => a.materialSupplier.localeCompare(b.materialSupplier),
+    },
+    {
+      title: "Mã màu",
+      dataIndex: "color",
+      key: "color",
+      // align: "center",
+      render: (_, color) => {
+        return (
+          <Tooltip title={color?.materialColor}>
+            <Button
+              block
+              type="primary"
+              style={{ background: color?.materialColor }}
+              align="center"
+            ></Button>
+          </Tooltip>
+        );
+      },
+      // sorter: (a, b) => a.addedDate.localeCompare(b.addedDate),
+    },
+  ];
+
   return (
     <Space direction="vertical" className="w-full gap-6">
       <Row gutter={[16, 16]}>
@@ -28,8 +114,13 @@ const LeaderReportDetail = ({ data }) => {
                 </span>
               </Col>
               <Col className="gutter-row" span={12}>
-                Tên đơn hàng: <strong>{data?.order?.name}</strong>
+                Tên đơn hàng: <strong>{data?.orderName}</strong>
               </Col>
+              {data?.reportType === ReportType.ProgressReport && (
+                <Col className="gutter-row" span={12}>
+                  Số sản phẩm thất bại: <strong>{data?.itemFailed}</strong>
+                </Col>
+              )}
             </Row>
           </Card>
         </Col>
@@ -66,6 +157,9 @@ const LeaderReportDetail = ({ data }) => {
           </Card>
         </Col>
       </Row>
+      {data?.reportType === ReportType.ProblemReport && (
+        <Table pagination={false} dataSource={supplies} columns={columns}></Table>
+      )}
     </Space>
   );
 };

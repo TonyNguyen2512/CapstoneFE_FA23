@@ -82,20 +82,26 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
 
   const getComments = async () => {
     const res = await CommentApi.getCommentByWorkerTaskId(id);
-    setListComment(res);
+    setListComment(res.data);
   };
 
   const addComment = async () => {
     if (!newCmtContent && !imageUrlsRef.current.length) return;
     try {
       setLoading(true);
-      await CommentApi.createComment({
+      const create = await CommentApi.createComment({
         workerTaskId: id,
         commentContent: newCmtContent || "",
         resource: imageUrlsRef.current,
       });
+      if (create.code === 0) {
+        message.success(create.message);
+        setLoading(false);
+      } else {
+        message.error(create.message);
+      }
     } catch (error) {
-      //
+      console.log(error);
     } finally {
       imageUrlsRef.current = [];
       countRef.current = 0;
@@ -108,9 +114,15 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
   const updateComment = async (obj) => {
     try {
       setLoading(true);
-      await CommentApi.updateComment(obj);
+      const updated = await CommentApi.updateComment(obj);
       formChatUpdateRef.current.setFieldValue("commentContent", undefined);
       setEditingCmt();
+      if (updated.code === 0) {
+        message.success(updated.message);
+        setLoading(false);
+      } else {
+        message.error(updated.message);
+      }
     } catch (error) {
     } finally {
       await getComments();
@@ -122,7 +134,13 @@ export const TaskChatModal = ({ open, onCancel, dataSource }) => {
     if (window.confirm("Bạn chắc chắn muốn xoá?")) {
       try {
         setLoading(true);
-        await CommentApi.deleteComment(id);
+        const deleted = await CommentApi.deleteComment(id);
+        if (deleted.code === 0) {
+          message.success(deleted.message);
+          setLoading(false);
+        } else {
+          message.error(deleted.message);
+        }
       } catch (error) {
       } finally {
         await getComments();
