@@ -50,8 +50,8 @@ const ItemList = ({ canModify }) => {
     setListProcedures(response.data);
     response = await MaterialApi.getAllMaterial();
     setListMaterials(response.data);
-    response = await StepApi.getAll();
-    setListSteps(response.data);
+    response = await StepApi.getAllWithoutPaging();
+    setListSteps(response);
     handleLoading && setLoading(false);
   };
 
