@@ -55,7 +55,6 @@ export const LeaderTaskDetailsPage = () => {
     setLoading(true);
     const getOrderStatus = await OrderApi.updateOrderStatus(1, id);
     if (getOrderStatus) {
-      message.success(`Báo giá thành công`);
       getData(id, true);
     } else {
       message.error(`Báo giá thất bại`);
