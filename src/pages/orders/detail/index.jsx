@@ -842,7 +842,7 @@ const OrderDetailPage = () => {
               listItem={
                 listItemSelect?.map((i) => {
                   return {
-                    label: i.name,
+                    label: `${i.name} - ${i.code}`,
                     value: i.id,
                   };
                 }) || []

@@ -304,6 +304,26 @@ const getRoleLeaderAndWorker = async () => {
 	}
 };
 
+const changePassword = async (data) => {
+	try {
+		const response = await BaseApi.post(`/${resource}/ChangePassword`, data);
+		return response.data;
+	} catch (error) {
+		console.log("Error ban user: ", error);
+		return false;
+	}
+};
+
+const resetPassword = async (data) => {
+	try {
+		const response = await BaseApi.post(`/${resource}/ResetPassword`, data);
+		return response.data;
+	} catch (error) {
+		console.log("Error ban user: ", error);
+		return false;
+	}
+};
+
 const UserApi = {
 	searchUsers,
 	banUser,
@@ -323,6 +343,8 @@ const UserApi = {
 	getByLeaderRole,
 	getByLeaderRoleAndWorkerRole,
 	getRoleLeaderAndWorker,
+	changePassword,
+	resetPassword,
 };
 
 export default UserApi;

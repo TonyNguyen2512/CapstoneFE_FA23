@@ -1,5 +1,5 @@
-import { Edit, Forbid, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
-import { Button, Dropdown, Space, Tag, message } from "antd";
+import { Edit, Forbid, Key, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
+import { Button, Dropdown, Space, Tag, message, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../../apis/role";
 import UserApi from "../../../../apis/user";
@@ -10,6 +10,8 @@ import { UpdateRoleModal } from "../../components/UpdateRoleModal";
 import { AccountModal } from "../../components/AccountModal";
 import { UpdatePhoneModal } from "../../components/UpdatePhoneModal";
 import { PageSize } from "../../../../constants/enum";
+import { ResetPasswordModal } from "../../components/ResetPasswordModal";
+import { useNavigate } from "react-router-dom";
 
 const roleColors = {
   ADMIN: "#FF7777",
@@ -21,9 +23,11 @@ const roleColors = {
 };
 
 const AccountList = () => {
+  const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
+  const [resetPasswordModal, setResetPasswordModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
@@ -128,6 +132,16 @@ const AccountList = () => {
         },
       },
       {
+        key: "RESET_PASSWORD",
+        label: "Đặt lại mật khẩu",
+        icon: <Key />,
+        disabled: role?.name === roles.ADMIN,
+        onClick: () => {
+          userRef.current = record;
+          setResetPasswordModal(true);
+        },
+      },
+      {
         key: "SET_STATUS",
         label: banStatus ? "Mở khóa tài khoản" : "Khóa tài khoản",
         danger: !banStatus,
@@ -159,6 +173,13 @@ const AccountList = () => {
       title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
+      render: (_, record) => {
+        return (
+          <Tooltip title={() => <img loading="eager" src={record.image} className="w-full" />}>
+            {record.fullName}
+          </Tooltip>
+        );
+      },
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
     {
@@ -334,6 +355,15 @@ const AccountList = () => {
           setShowPhoneModal(false);
           userRef.current = null;
         }}
+      />
+      <ResetPasswordModal
+        data={userRef.current}
+        open={resetPasswordModal}
+        onCancel={() => {
+          setResetPasswordModal(false);
+          userRef.current = null;
+        }}
+        onSuccess={() => getUsers()}
       />
     </>
   );

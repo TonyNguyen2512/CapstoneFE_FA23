@@ -11,3 +11,7 @@
 .activity-sider.ant-layout-sider {
   border-left: 1px solid #ddd !important;
 }
+
+.fs-7 {
+  font-size: 14px;
+}

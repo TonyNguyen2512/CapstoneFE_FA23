@@ -25,16 +25,21 @@ import { genderLabels } from "../../constants/enum";
 import UserApi from "../../apis/user";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { profileUserRef } from "../../middleware/firebase";
+import { Edit } from "@icon-park/react";
+import { ChangePasswordModal } from "./components/ChangePasswordModal";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const typeMessage = "Cập nhật thông tin";
   const { user, setUser } = useContext(UserContext);
 
   const formRef = useRef(user);
   const [progress, setProgress] = useState(-1);
   const [loading, setLoading] = useState(false);
+  const [changePasswordModal, setChangePasswordModal] = useState(false);
   const [profileImage, setProfileImage] = useState(user?.image ?? "");
 
   const handleUploadImage = (event) => {
@@ -127,24 +132,23 @@ const ProfilePage = () => {
               <Space direction="vertical" className="w-[80%] flex content-center">
                 <Form.Item name="userName" label="Số điện thoại">
                   {user?.userName}
-                  {/* <Input placeholder="Số điện thoại..." disabled readOnly /> */}
                 </Form.Item>
                 <Form.Item name="email" label="Email">
                   {user?.email}
-                  {/* <Input placeholder="Email..." /> */}
                 </Form.Item>
-                <Form.Item name="password" label="Mật khẩu" hidden>
-                  <Input.Password placeholder="Mật khẩu..." disabled />
-                </Form.Item>
+                {/* <Form.Item name="password" label="Mật khẩu">
+                  <Space gutter={12}>
+                    <Input.Password value={user?.password} placeholder="Mật khẩu..." disabled />
+                    <Edit size={24} />
+                  </Space>
+                </Form.Item> */}
                 <Form.Item name="fullName" label="Họ và tên">
                   <Input placeholder="Họ và tên..." />
                 </Form.Item>
                 <Form.Item name="address" label="Địa chỉ">
-                  {/* {user?.address} */}
                   <Input placeholder="Địa chỉ..." />
                 </Form.Item>
                 <Form.Item name="dob" label="Sinh nhật">
-                  {/* {user?.dob} */}
                   {user?.dob && (
                     <DatePicker
                       className="w-full"
@@ -155,7 +159,6 @@ const ProfilePage = () => {
                   )}
                 </Form.Item>
                 <Form.Item name="gender" label="Giới tính">
-                  {/* {genderLabels[user?.gender]} */}
                   <Select
                     value={user?.gender}
                     placeholder="Giới tính..."
@@ -171,13 +174,12 @@ const ProfilePage = () => {
                   <b>{getRoleName(user?.role?.name)}</b>
                 </Form.Item>
 
-                <Button
-                  onClick={() => formRef.current?.submit()}
-                  style={{ float: "right" }}
-                  icon={null}
-                >
-                  Cập nhật
-                </Button>
+                <Space style={{ float: "right", marginRight: "3em" }}>
+                  <Button onClick={() => setChangePasswordModal(true)}>Đổi mật khẩu</Button>
+                  <Button onClick={() => formRef.current?.submit()} icon={null}>
+                    Cập nhật
+                  </Button>
+                </Space>
 
                 <Form.Item name="id" label="ID" hidden>
                   <Input disabled readOnly />
@@ -195,6 +197,17 @@ const ProfilePage = () => {
             </Col>
           </Row>
         </Form>
+        <ChangePasswordModal
+          userId={user?.id}
+          open={changePasswordModal}
+          onCancel={() => {
+            setChangePasswordModal(false);
+          }}
+          onSuccess={() => {
+            alert("Bạn phải đăng nhập lại để hoàn thành cập nhật thông tin!");
+            navigate("/login");
+          }}
+        />
       </Container>
     </Spin>
   );
