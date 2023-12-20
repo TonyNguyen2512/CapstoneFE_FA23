@@ -43,7 +43,7 @@ export const ProfileBar = () => {
     <Container theme="light">
       <Space size={24} style={{ margin: "0 0.5rem" }}>
         {/* <Avatar size="default" icon={<UserOutlined />} /> */}
-        <Image width={30} height={30} src={user?.image} />
+        <img width={30} height={30} src={user?.image} />
       </Space>
       <Dropdown
         menu={{
