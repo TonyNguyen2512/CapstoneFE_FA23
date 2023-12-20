@@ -1,6 +1,6 @@
 import { Down, Logout, User } from "@icon-park/react";
 import { UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Space } from "antd";
+import { Avatar, Dropdown, Image, Space } from "antd";
 import React, { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../providers/user";
@@ -15,6 +15,7 @@ export const ProfileBar = () => {
   const navigate = useNavigate();
 
   const { user, setUser } = useContext(UserContext);
+  // console.log(user);
 
   const handleLogout = () => {
     localStorage.removeItem("jwt");
@@ -41,7 +42,8 @@ export const ProfileBar = () => {
   return (
     <Container theme="light">
       <Space size={24} style={{ margin: "0 0.5rem" }}>
-        <Avatar size="default" icon={<UserOutlined />} />
+        {/* <Avatar size="default" icon={<UserOutlined />} /> */}
+        <Image width={30} height={30} src={user?.image} />
       </Space>
       <Dropdown
         menu={{
