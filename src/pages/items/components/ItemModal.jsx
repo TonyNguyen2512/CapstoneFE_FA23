@@ -132,7 +132,6 @@ export const ItemModal = ({
         setProgress(percent);
       },
       (err) => {
-        console.log(err);
         setLoading(false);
       },
       () => {
@@ -175,7 +174,6 @@ export const ItemModal = ({
   };
 
   const handleSubmit = async (values) => {
-    setLoading(true);
     // Update the values with the correct listMaterial
     const updatedValues = {
       ...values,
@@ -193,10 +191,10 @@ export const ItemModal = ({
     if (!updatedValues.listProcedure) {
       updatedValues.listProcedure = [];
     }
-    if (isCreate) {
-      !!listItemNames.find((e) => e === values.name) && message.error(`Tên sản phẩm đã tồn tại`);
-      return;
-    }
+    // if (isCreate) {
+    //   !!listItemNames.find((e) => e === values.name) && message.error(`Tên sản phẩm đã tồn tại`);
+    //   return;
+    // }
 
     const success = isCreate
       ? await ItemApi.createItem(updatedValues)

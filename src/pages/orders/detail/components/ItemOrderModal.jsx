@@ -155,7 +155,7 @@ export const ItemOrderModal = ({ orderId, data, listItem, open, onCancel, onSucc
         <Row gutter={[16, 16]}>
           <Col span={20}>
             <Form.Item
-              name="itemId"
+              name="itemName"
               label="Sản phẩm"
               rules={[
                 {
