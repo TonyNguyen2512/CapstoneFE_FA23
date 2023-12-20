@@ -85,7 +85,9 @@ export const TaskAcceptanceReportModal = ({
 				onFinish={onFinish}
 				initialValues={{
 					acceptanceTaskId: info?.id,
-					resource: ""
+					resource: "",
+					name: "Nghiệm thu",
+
 				}}
 			>
 				<Row gutter={16}>

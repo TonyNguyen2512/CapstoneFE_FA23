@@ -7,6 +7,8 @@ import {
   formatNum,
   getTaskStatusColor,
   getTaskStatusName,
+  getWTaskStatusColor,
+  getWTaskStatusName,
   handleRetrieveWorkerOnTask,
 } from "../../../../../utils";
 import { TaskContext } from "../../../../../providers/task";
@@ -350,7 +352,7 @@ export const LeaderTaskOrderDetails = ({ title }) => {
     setETaskUpdateLoading(true);
     const data = {
       id: values?.id,
-      name: values?.name,
+      name: values?.name || "Nghiệm thu",
       leaderId: values?.leaderId,
       priority: values?.priority,
       itemQuantity: values?.itemQuantity,
@@ -460,8 +462,8 @@ export const LeaderTaskOrderDetails = ({ title }) => {
         width: "15.3%",
         render: (_, record) => {
           return (
-            <span style={{ color: getTaskStatusColor(record.status), fontWeight: "bold" }}>
-              {getTaskStatusName(record.status)}
+            <span style={{ color: getWTaskStatusColor(record.status), fontWeight: "bold" }}>
+              {getWTaskStatusName(record.status)}
             </span>
           );
         },
