@@ -146,7 +146,7 @@ const ItemList = ({ canModify }) => {
       render: (_, record) => {
         return <span>{record?.itemCategoryName || "-"}</span>;
       },
-      sorter: (a, b) => a?.itemCategoryName.localeCompare(b?.itemCategoryName),
+      sorter: (a, b) => a?.itemCategoryName - b?.itemCategoryName,
     },
     {
       title: "Dài",
@@ -157,7 +157,7 @@ const ItemList = ({ canModify }) => {
       render: (_, record) => {
         return <span>{record?.length || "-"}</span>;
       },
-      sorter: (a, b) => a?.length.localeCompare(b?.length),
+      sorter: (a, b) => a?.length - b?.length,
     },
 
     {
@@ -169,7 +169,7 @@ const ItemList = ({ canModify }) => {
       render: (_, record) => {
         return <span>{record?.depth || "-"}</span>;
       },
-      sorter: (a, b) => a?.depth.localeCompare(b?.depth),
+      sorter: (a, b) => a?.depth - b?.depth,
     },
     {
       title: "Cao",
@@ -180,7 +180,7 @@ const ItemList = ({ canModify }) => {
       render: (_, record) => {
         return <span>{record?.height || "-"}</span>;
       },
-      sorter: (a, b) => a?.height.localeCompare(b?.height),
+      sorter: (a, b) => a?.height - b?.height,
     },
     {
       title: "Đơn vị",
@@ -191,7 +191,7 @@ const ItemList = ({ canModify }) => {
       render: (_, record) => {
         return <span>{record?.unit || "-"}</span>;
       },
-      sorter: (a, b) => a?.unit.localeCompare(b?.unit),
+      sorter: (a, b) => a?.unit - b?.unit,
     },
     {
       title: "Đơn giá",
@@ -245,6 +245,7 @@ const ItemList = ({ canModify }) => {
         dataIndex: "procedureId",
         key: "procedureId",
         render: (_, { procedure }) => <span>{procedure?.name}</span>,
+        sorter: (a, b) => a?.name - b?.name,
       },
       {
         title: "Độ ưu tiên",
@@ -252,6 +253,7 @@ const ItemList = ({ canModify }) => {
         align: "center",
         dataIndex: "priority",
         key: "priority",
+        sorter: (a, b) => a?.priority - b?.priority,
       },
       {
         title: "Danh sách các bước",
@@ -329,6 +331,7 @@ const ItemList = ({ canModify }) => {
         dataIndex: "priority",
         key: "priority",
         render: (_, { priority }) => <span>{priority + 1}</span>,
+        sorter: (a, b) => a?.priority - b?.priority,
       },
       {
         title: "Thao tác",
