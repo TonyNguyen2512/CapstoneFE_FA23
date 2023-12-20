@@ -160,7 +160,7 @@ export const DetailListModal = ({}) => {
               </Col>
               <Col className="gutter-row" span={8}>
                 Ngày sinh: <strong>
-                  {formatDate(workerInf?.dob, "DD/MM/YYYY") || defaultValue("Chưa thêm ngày")}
+                  {formatDate(workerInf?.dob, "DD/MM/YYYY") || "Chưa thêm ngày"}
                 </strong>
               </Col>
               <Col className="gutter-row" span={8}>
