@@ -1,5 +1,5 @@
 import { Edit, Forbid, Key, More, Phone, Unlock, UserPositioning } from "@icon-park/react";
-import { Button, Dropdown, Space, Tag, message } from "antd";
+import { Button, Dropdown, Space, Tag, message, Tooltip } from "antd";
 import React, { useEffect, useRef, useState } from "react";
 import RoleApi from "../../../../apis/role";
 import UserApi from "../../../../apis/user";
@@ -173,6 +173,13 @@ const AccountList = () => {
       title: "Họ và tên",
       dataIndex: "fullName",
       key: "fullName",
+      render: (_, record) => {
+        return (
+          <Tooltip title={() => <img loading="eager" src={record.image} className="w-full" />}>
+            {record.fullName}
+          </Tooltip>
+        );
+      },
       sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
     {
