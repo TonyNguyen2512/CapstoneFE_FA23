@@ -198,11 +198,11 @@ export const LeaderTaskModal = ({
 											]}
 										>
 											<Select
-												showSearch
-												filterOption={(input, option) => (option?.label ?? '').includes(input)}
-												filterSort={(optionA, optionB) =>
-													(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-												}
+												// showSearch
+												// filterOption={(input, option) => (option?.label ?? '').includes(input)}
+												// filterSort={(optionA, optionB) =>
+												// 	(optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+												// }
 												className="w-full"
 												placeholder="Chọn sản phẩm"
 												options={ETaskStatusOptions}

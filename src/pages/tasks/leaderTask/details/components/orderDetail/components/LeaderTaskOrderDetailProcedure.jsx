@@ -241,7 +241,7 @@ export const LeaderTaskOrderDetailProcedure = ({
     setETaskUpdateLoading(true);
     const data = {
       id: values?.id,
-      name: values?.name,
+      name: values?.name || "Nghiệm thu",
       priority: values?.priority,
       leaderId: values?.leaderId,
       itemQuantity: values?.itemQuantity,
