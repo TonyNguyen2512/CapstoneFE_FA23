@@ -1,6 +1,7 @@
 import { Select } from "antd";
 import React, { useEffect, useState } from "react";
 import UserApi from "../../../apis/user";
+import GroupApi from "../../../apis/group";
 
 export const LeaderSelect = ({
   value,
@@ -16,7 +17,7 @@ export const LeaderSelect = ({
   const initLeaderInfo = async () => {
 		// const data = await UserApi.getAllUser();
 		const roleId = "dd733ddb-949c-4441-b69b-08dbdf6e1008";
-		const leadersData = await UserApi.getUserByRoleId(roleId);
+		const leadersData = await GroupApi.getAllLeaderNoHaveGroup();
 		setLeader(leadersData?.data);
     setLoading(false)
 	}

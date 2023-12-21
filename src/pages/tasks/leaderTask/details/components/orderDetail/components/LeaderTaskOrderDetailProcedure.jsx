@@ -16,6 +16,7 @@ import ReportApi from "../../../../../../../apis/task-report";
 import { formatDate, getTaskStatusColor, getTaskStatusName } from "../../../../../../../utils";
 import { LeaderTaskAcceptanceModal } from "../../../../components/LeaderTaskAcceptanceModal";
 import UserApi from "../../../../../../../apis/user";
+import GroupApi from "../../../../../../../apis/group";
 
 export const LeaderTaskOrderDetailProcedure = ({
   title,
@@ -305,8 +306,8 @@ export const LeaderTaskOrderDetailProcedure = ({
   }
 
   const handleRetrieveLeaderInfo = async () => {
-    const resp = await UserApi.getByLeaderRole();
-    setLeadersData(resp);
+    const resp = await GroupApi.getAllLeaderHaveGroup();
+    setLeadersData(resp?.data);
   }
 
   useEffect(() => {
