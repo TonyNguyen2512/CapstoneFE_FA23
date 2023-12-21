@@ -598,8 +598,8 @@ export const LeaderTaskOrderDetails = ({ title }) => {
   };
 
   const handleRetrieveLeaderInfo = async () => {
-    const resp = await UserApi.getByLeaderRole();
-    setLeadersData(resp);
+    const resp = await GroupApi.getAllLeaderHaveGroup();
+    setLeadersData(resp?.data);
   };
 
   useEffect(() => {

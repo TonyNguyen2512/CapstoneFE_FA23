@@ -18,7 +18,12 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
     const success = isCreate
       ? await GroupApi.createGroup(values)
       : await GroupApi.updateGroup(values);
-   
+    if (success) {
+      message.success(`${typeMessage} thành công`);
+      onSuccess();
+    } else {
+      message.error(`${typeMessage} thất bại`);
+    }
     setLoading(false);
     onCancel();
   };
@@ -53,7 +58,7 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
         layout="vertical"
         initialValues={{
           id: data?.id,
-          name: data?.name, 
+          name: data?.name,
           leaderId: data?.leaderName,
           isDeleted: data?.isDeleted,
         }}
@@ -83,7 +88,7 @@ export const GroupModal = ({ data, open, onCancel, onSuccess }) => {
             {
               required: true,
               message: "Vui lòng chọn tổ trưởng",
-            }, 
+            },
           ]}
         >
           <LeaderSelect

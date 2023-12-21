@@ -97,6 +97,15 @@ const getAllUserNotInGroupId = async (id) => {
 		return errorComposer(error);
 	}
 };
+const getAllLeaderHaveGroup = async () => {
+	try {
+		const response = await BaseApi.get(`/${resource}/GetAllLeaderHaveGroup`);
+		return successComposer(retrieveDataSuccessCode, response.data);
+	} catch (error) {
+		console.log("Error GetAllUserNotInGroupId class: ", error);
+		return errorComposer(error);
+	}
+};
 
 const getAll = async (search, pageIndex, pageSize) => {
 	try {
@@ -347,6 +356,7 @@ const GroupApi = {
 	getAllLogOnGroup,
 	getAllLeaderNoHaveGroup,
 	getWorkersNotAtWorkByGroupId,
+	getAllLeaderHaveGroup,
 };
 
 export default GroupApi;
